@@ -39,6 +39,8 @@ Within that structure, the current universal schema recommendation is:
 
 Business intent defines what the asset is meant to achieve. Creative intent defines how that purpose is meant to be expressed. Creative discretion should remain legible within the model, but as scoped freedom shaped by intent, bounded by constraints, exercised through orchestration, and validated through governance rather than treated as unbounded free-form behavior.
 The ordering of business intent and creative intent is descriptive, not yet a formal precedence rule, and any explicit tradeoff rule between them remains an open design question.
+Partial second-level nesting is likely to emerge first under inputs, constraints, and governance. Orchestration and outputs remain intentionally flat for now. This is a tentative structural direction, not yet a finalized ontology specification.
+Within that direction, inputs are currently trending toward source materials, supplied parameters, and contextual instructions, though that substructure also remains tentative rather than finalized.
 
 That means the repository will need to clarify:
 
