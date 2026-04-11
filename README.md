@@ -9,3 +9,10 @@ The purpose of this repository is not to lock those decisions early. Its immedia
 The intended production surface begins with still-image workflows. Extension to video is expected later, once the underlying information architecture is clear enough to support that expansion without collapsing distinct concerns.
 
 At this stage, the ontology remains open. The repository exists to create a disciplined place for that design work to happen.
+
+## Entry Points
+
+- `docs/architecture.md`: current ontology and architectural direction
+- `docs/workflow-instance-template.md`: illustrative workflow-instance template
+- `docs/workflow-boundary.md`: repo-local versus external control-surface boundary
+- `AGENTS.md`: repo-local execution guidance
