@@ -18,6 +18,27 @@ The repository is expected to support still-image workflows first. Video should 
 
 The architectural task ahead is to define a model that can express normative intent and workflow governance without collapsing operational, creative, and approval concerns into a single undifferentiated layer.
 
+## Current Working Model
+
+- universal schema
+- workflow-stream variants
+- brand-specific policy overlays
+
+- intent
+  - business intent
+  - creative intent
+- inputs
+- constraints
+- orchestration
+- outputs
+- governance
+
+- inputs -> source materials, supplied parameters, contextual instructions
+- constraints -> hard requirements, bounded discretion, exclusion rules
+- governance -> validation, approval, override
+
+This is the current working model, not a finalized ontology specification.
+
 One useful way to keep that model small and legible is to treat the repository as a three-layer system:
 
 - universal schema
