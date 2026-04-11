@@ -16,7 +16,11 @@ Keep each branch scoped to one coherent change.
 
 Do not mix bootstrap documentation work with implementation work.
 
+Exact scoped diff review is the mandatory approval checkpoint before meaningful write actions complete. That approval may be given inside Codex after the scoped diff is reviewed, and once given, Codex may complete the remaining git workflow steps without requiring separate manual GitHub UI actions. Manual GitHub UI ceremony is optional; it is not the review boundary itself.
+
 Use pull requests to explain change intent, boundary decisions, unresolved questions, and review needs.
+
+Branch plus PR remains the default path for meaningful architecture, ontology, or repo-structure changes. Narrow low-risk edits or explicitly scoped bootstrap tasks may allow direct push to `main` when that scope is made explicit and approved.
 
 ## Scope Discipline
 
