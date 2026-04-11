@@ -41,6 +41,8 @@ Business intent defines what the asset is meant to achieve. Creative intent defi
 The ordering of business intent and creative intent is descriptive, not yet a formal precedence rule, and any explicit tradeoff rule between them remains an open design question.
 Partial second-level nesting is likely to emerge first under inputs, constraints, and governance. Orchestration and outputs remain intentionally flat for now. This is a tentative structural direction, not yet a finalized ontology specification.
 Within that direction, inputs are currently trending toward source materials, supplied parameters, and contextual instructions, though that substructure also remains tentative rather than finalized.
+Constraints are currently trending toward hard requirements, bounded discretion, and exclusion rules, though that substructure also remains tentative rather than finalized.
+Governance is currently trending toward validation, approval, and override, though that substructure also remains tentative rather than finalized.
 
 That means the repository will need to clarify:
 
