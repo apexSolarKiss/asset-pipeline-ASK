@@ -20,22 +20,27 @@ The architectural task ahead is to define a model that can express normative int
 
 ## Current Working Model
 
+Current working structure:
+
+- three-layer model
+  - universal schema
+  - workflow-stream variants
+  - brand-specific policy overlays
+
 - universal schema
-- workflow-stream variants
-- brand-specific policy overlays
+  - intent
+    - business intent
+    - creative intent
+  - inputs
+  - constraints
+  - orchestration
+  - outputs
+  - governance
 
-- intent
-  - business intent
-  - creative intent
-- inputs
-- constraints
-- orchestration
-- outputs
-- governance
-
-- inputs -> source materials, supplied parameters, contextual instructions
-- constraints -> hard requirements, bounded discretion, exclusion rules
-- governance -> validation, approval, override
+- tentative second-level directions
+  - inputs -> source materials, supplied parameters, contextual instructions
+  - constraints -> hard requirements, bounded discretion, exclusion rules
+  - governance -> validation, approval, override
 
 This is the current working model, not a finalized ontology specification.
 
