@@ -25,3 +25,9 @@ At this stage, the ontology remains open. The repository exists to create a disc
 
 - [`docs/workflow-boundary.md`](docs/workflow-boundary.md): repo-local versus external control-surface boundary
 - [`AGENTS.md`](AGENTS.md): repo-local execution guidance
+
+## License
+
+Copyright (c) 2026 Andrew S Klug // ASK
+
+Licensed under the Apache License 2.0. See [`LICENSE`](LICENSE).
