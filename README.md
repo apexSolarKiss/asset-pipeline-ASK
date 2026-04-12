@@ -17,7 +17,8 @@ At this stage, the ontology remains open. The repository exists to create a disc
 ### Substance / Payload
 
 - [`docs/architecture.md`](docs/architecture.md): current ontology and architectural direction
-- [`docs/workflow-instance-template.md`](docs/workflow-instance-template.md): illustrative workflow-instance template
+- [`docs/workflow-mode-comparison.md`](docs/workflow-mode-comparison.md): synthesis of what held constant and what varied across abstract workflow modes
+- [`docs/consulting/README.md`](docs/consulting/README.md): entry point for consulting-facing artifacts
 
 ### Governance
 
