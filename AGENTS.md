@@ -18,7 +18,14 @@ Do not mix bootstrap documentation work with implementation work.
 
 Exact scoped diff review is the mandatory approval checkpoint before meaningful write actions complete. That approval may be given inside Codex after the scoped diff is reviewed, and once given, Codex may complete the remaining git workflow steps without requiring separate manual GitHub UI actions. Manual GitHub UI ceremony is optional; it is not the review boundary itself.
 
-Use pull requests to explain change intent, boundary decisions, unresolved questions, and review needs.
+Meaningful changes also require a structured change summary covering:
+
+- why this change exists
+- what changed
+- what did not change
+- what remains out of scope
+
+If a pull request is used, that summary belongs in the PR description. If no pull request is used, the same summary must still be produced in the Codex handoff or approval record before meaningful write actions complete.
 
 Branch plus PR remains the default path for meaningful architecture, ontology, or repo-structure changes. Narrow low-risk edits or explicitly scoped bootstrap tasks may allow direct push to `main` when that scope is made explicit and approved.
 
@@ -37,6 +44,8 @@ Use code comments only for local clarification inside implementation artifacts w
 Use repository docs for durable repo-local truth, boundary definitions, architecture framing, and evolving project understanding.
 
 Use pull requests for change-specific explanation, reviewer guidance, tradeoffs, and temporary decision context that does not belong in long-lived documentation.
+
+Keep repo-local documentation separate from change-specific explanation. Repository docs hold durable repo-local truth. Structured change summaries and PR descriptions explain the specific change being reviewed or approved.
 
 ## Early-Stage Discipline
 
