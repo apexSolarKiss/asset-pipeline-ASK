@@ -2,6 +2,8 @@
 
 This template illustrates one workflow instance using the repository's current working ontology. It is provisional and intended for discussion and iteration.
 
+This template is instantiated in [`docs/example-campaign-workflow-instance.md`](example-campaign-workflow-instance.md) and [`docs/example-sku-workflow-instance.md`](example-sku-workflow-instance.md).
+
 ## Intent
 
 Describe what the workflow is meant to achieve and how that purpose is meant to be expressed.

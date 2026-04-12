@@ -81,3 +81,10 @@ That means the repository will need to clarify:
 - what governance applies at each decision boundary
 
 Those decisions are not yet finalized. For now, the repository should preserve enough structure to make those questions explicit and debatable without implying that they are already solved.
+
+## Related Documents
+
+- [`docs/workflow-instance-template.md`](workflow-instance-template.md): illustrative template for one workflow instance
+- [`docs/example-campaign-workflow-instance.md`](example-campaign-workflow-instance.md): abstract campaign-oriented example instance
+- [`docs/example-sku-workflow-instance.md`](example-sku-workflow-instance.md): abstract SKU-oriented example instance
+- [`docs/workflow-mode-comparison.md`](workflow-mode-comparison.md): short comparison of the two abstract workflow modes

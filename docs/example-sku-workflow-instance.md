@@ -2,6 +2,8 @@
 
 This example illustrates one abstract workflow instance using the repository's current working ontology. It is intended to pressure-test the model against a modular, repeatable SKU-driven workflow without introducing brand-specific assumptions.
 
+This abstract example is based on [`docs/workflow-instance-template.md`](workflow-instance-template.md).
+
 ## Intent
 
 Describe what the workflow is meant to achieve and how that purpose is meant to be expressed.

@@ -2,6 +2,8 @@
 
 This note compares the current abstract campaign and SKU workflow examples to identify what now appears universal, what appears workflow-stream-variable, and what remains unresolved.
 
+This note synthesizes [`docs/example-campaign-workflow-instance.md`](example-campaign-workflow-instance.md) and [`docs/example-sku-workflow-instance.md`](example-sku-workflow-instance.md).
+
 ## What Held Constant
 
 - Across both examples, the top-level universal schema held cleanly:
