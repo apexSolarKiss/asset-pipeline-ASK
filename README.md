@@ -18,7 +18,7 @@ At this stage, the ontology remains open. The repository exists to create a disc
 
 - [`docs/architecture.md`](docs/architecture.md): current ontology and architectural direction
 - [`docs/workflow-mode-comparison.md`](docs/workflow-mode-comparison.md): synthesis of what held constant and what varied across abstract workflow modes
-- [`docs/consulting/README.md`](docs/consulting/README.md): entry point for consulting-facing artifacts
+- [`docs/application/README.md`](docs/application/README.md): entry point for application artifacts
 
 ### Governance
 
