@@ -30,4 +30,4 @@ At this stage, the ontology remains open. The repository exists to create a disc
 
 Copyright (c) 2026 Andrew S Klug // ASK
 
-Licensed under the Apache License 2.0. See [`LICENSE`](LICENSE).
+Licensed under the Apache License 2.0 // see [`LICENSE`](LICENSE)
