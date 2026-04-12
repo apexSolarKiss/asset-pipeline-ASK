@@ -16,6 +16,7 @@ At this stage, the ontology remains open. The repository exists to create a disc
 
 ### Substance / Payload
 
+- [`docs/problem-and-approach.md`](docs/problem-and-approach.md): concise statement of the workflow-structure problem and the repo's current approach
 - [`docs/method.md`](docs/method.md): concise explanation of the repo's method, layers, and working sequence
 - [`docs/architecture.md`](docs/architecture.md): current ontology and architectural direction
 - [`docs/workflow-mode-comparison.md`](docs/workflow-mode-comparison.md): synthesis of what held constant and what varied across abstract workflow modes
