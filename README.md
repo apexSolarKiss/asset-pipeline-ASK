@@ -1,3 +1,5 @@
+![asset-pipeline-ASK banner](production-pipeline-ASK-banner.png)
+
 # asset-pipeline-ASK
 
 This repository is an open-source template and system for structured visual asset production workflows.
