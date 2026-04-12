@@ -12,7 +12,12 @@ At this stage, the ontology remains open. The repository exists to create a disc
 
 ## Entry Points
 
+### Substance / Payload
+
 - [`docs/architecture.md`](docs/architecture.md): current ontology and architectural direction
 - [`docs/workflow-instance-template.md`](docs/workflow-instance-template.md): illustrative workflow-instance template
+
+### Governance
+
 - [`docs/workflow-boundary.md`](docs/workflow-boundary.md): repo-local versus external control-surface boundary
 - [`AGENTS.md`](AGENTS.md): repo-local execution guidance
