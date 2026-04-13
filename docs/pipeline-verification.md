@@ -38,4 +38,12 @@ This boundary should remain explicit.
 - deterministic checks should be the default where rules can be stated explicitly
 - some review and approval checks remain intentionally less formal for now
 
+## Shared Verification Mechanics
+
+Small shared verification mechanics are allowed where repetition is exact and purely mechanical.
+
+Seam-specific rules and validation policy should remain local to the individual verification seams.
+
+Broader validator framework design remains out of scope for now.
+
 The current verification model is provisional and should sharpen with implementation.
