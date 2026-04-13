@@ -1,14 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any
 from collections.abc import Mapping
+from typing import Any
 
+from ._validation_common import ValidationResult, is_empty
 
-@dataclass(frozen=True)
-class IngestValidationResult:
-    is_valid: bool
-    errors: list[str]
+IngestValidationResult = ValidationResult
 
 
 def validate_ingest(payload: Any) -> IngestValidationResult:
@@ -34,7 +31,7 @@ def _validate_required_category(
         errors.append(f"{key} is required")
         return
 
-    if _is_empty(payload[key]):
+    if is_empty(payload[key]):
         errors.append(f"{key} must not be empty")
 
 
@@ -47,7 +44,7 @@ def _validate_contextual_instructions(
         return
 
     value = payload[key]
-    if _is_empty(value):
+    if is_empty(value):
         errors.append(f"{key} must not be empty")
         return
 
@@ -55,19 +52,3 @@ def _validate_contextual_instructions(
         errors.append(
             f"{key} must be a non-empty string, list, or mapping"
         )
-
-
-def _is_empty(value: Any) -> bool:
-    if value is None:
-        return True
-
-    if isinstance(value, str):
-        return not value.strip()
-
-    if isinstance(value, Mapping):
-        return len(value) == 0
-
-    if isinstance(value, list):
-        return len(value) == 0
-
-    return False

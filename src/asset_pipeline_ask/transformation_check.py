@@ -1,14 +1,11 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass
 from typing import Any
 
+from ._validation_common import ValidationResult, is_empty
 
-@dataclass(frozen=True)
-class TransformationCheckResult:
-    is_valid: bool
-    errors: list[str]
+TransformationCheckResult = ValidationResult
 
 
 def validate_transformation(payload: Any) -> TransformationCheckResult:
@@ -35,21 +32,5 @@ def _validate_required_field(
         errors.append(f"{key} is required")
         return
 
-    if _is_empty(payload[key]):
+    if is_empty(payload[key]):
         errors.append(f"{key} must not be empty")
-
-
-def _is_empty(value: Any) -> bool:
-    if value is None:
-        return True
-
-    if isinstance(value, str):
-        return not value.strip()
-
-    if isinstance(value, Mapping):
-        return len(value) == 0
-
-    if isinstance(value, list):
-        return len(value) == 0
-
-    return False
