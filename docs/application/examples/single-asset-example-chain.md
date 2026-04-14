@@ -27,7 +27,7 @@ This is a concrete example slice of the current deterministic verification chain
 
 ```python
 {
-    "governed_output_references": ["final/sku-123-front-final.png"],
+    "governed_outputs": ["final/sku-123-front-final.png"],
     "review_artifacts": ["review/sku-123-front-contact-sheet.png"],
 }
 ```
