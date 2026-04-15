@@ -4,7 +4,7 @@
 
 This repository is an open-source template and system for structured visual asset production workflows.
 
-It is being developed from first principles to support normative intent, workflow governance, and scalable asset production across multiple workflow classes. Likely classes include brand marketing workflows, SKU-driven production workflows, and hybrid workflows, but the taxonomy and ontology are still being defined.
+It is being developed from first principles to support normative intent, workflow governance, and scalable asset production across multiple workflow classes. Current working workflow modes include SKU-driven product imagery, collection / merchandising context, marketing / message-driven workflows, and brand campaign / editorial workflows, though the taxonomy and ontology are still being defined.
 
 The purpose of this repository is not to lock those decisions early. Its immediate role is to hold the smallest honest documentation scaffold needed to define repo-local execution rules and to make later ontology design legible.
 
