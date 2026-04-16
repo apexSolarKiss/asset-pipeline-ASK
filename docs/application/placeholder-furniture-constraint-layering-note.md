@@ -4,7 +4,7 @@ This note clarifies current constraint scope within the placeholder furniture SK
 
 ## Brand-Wide Constraints
 
-Brand-wide constraints are the stable visual and behavioral constraints that apply across the placeholder brand as a whole. In the current furniture example, these include calm presentation, scene restraint, material-led clarity, proportion credibility, and the expectation that outputs stay usable for controlled ecommerce and catalog contexts.
+Brand-wide constraints are the stable visual and behavioral constraints that apply across the placeholder brand as a whole. In the current placeholder furniture example for Example Furniture Brand, these include calm presentation, scene restraint, material-led clarity, proportion credibility, and the expectation that outputs stay usable for controlled ecommerce and catalog contexts.
 
 ## Category-Level Constraints
 

@@ -4,7 +4,7 @@ This is a single provisional workflow packet example for one SKU-driven furnitur
 
 ## Product Context
 
-- SKU: `NH-SF-214-OAT`
+- SKU: `EFB-SF-214-OAT`
 - product class: sofa
 - silhouette: three-seat upholstered sofa with straight track arms
 - finish and material facts: oat-colored woven upholstery, matte oak block feet
@@ -12,7 +12,7 @@ This is a single provisional workflow packet example for one SKU-driven furnitur
 
 ## Brand And Style Context
 
-This packet assumes the Northline House placeholder brand premise: calm, architectural product presentation for ecommerce and catalog use. Style direction should stay bright, restrained, material-led, and quiet rather than editorial, decorative, or narrative-heavy.
+This packet assumes the Example Furniture Brand placeholder premise: calm, architectural product presentation for ecommerce and catalog use. Style direction should stay bright, restrained, material-led, and quiet rather than editorial, decorative, or narrative-heavy.
 
 ## Bounded Creative Discretion
 
@@ -31,7 +31,7 @@ Creative choice is allowed in how the scene is simplified, how lighting is balan
 
 ## Requested Production Objective
 
-Produce a small governed image set for `NH-SF-214-OAT` that presents the sofa as brand-consistent, product-faithful, and ready to advance through the current verification chain toward release-readiness review.
+Produce a small governed image set for `EFB-SF-214-OAT` that presents the sofa as brand-consistent, product-faithful, and ready to advance through the current verification chain toward release-readiness review.
 
 ## What This Packet Is Not
 
