@@ -4,7 +4,7 @@ This is a fictive SKU-driven furniture-brand style spec meant to test normative 
 
 ## Brand Premise
 
-Northline House is a placeholder contemporary furniture brand focused on calm, architectural product presentation for ecommerce and catalog use. The visual direction is quiet, material-led, and bright without becoming lifestyle-editorial or decorative for its own sake.
+Example Furniture Brand is a placeholder contemporary furniture brand focused on calm, architectural product presentation for ecommerce and catalog use. The visual direction is quiet, material-led, and bright without becoming lifestyle-editorial or decorative for its own sake.
 
 ## Input Categories
 
