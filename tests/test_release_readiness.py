@@ -1,7 +1,7 @@
 from asset_pipeline_ask import validate_release_readiness
 
 
-def test_valid_release_readiness_payload_passes() -> None:
+def test_valid_ready_for_approval_payload_passes() -> None:
     result = validate_release_readiness(
         {
             "governed_output_references": ["final-image.png"],

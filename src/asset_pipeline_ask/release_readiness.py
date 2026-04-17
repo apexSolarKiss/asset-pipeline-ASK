@@ -1,4 +1,5 @@
 from __future__ import annotations
+"""Bounded readiness checks before outputs are presented for approval."""
 
 from collections.abc import Mapping
 from typing import Any
@@ -9,6 +10,7 @@ ReleaseReadinessResult = ValidationResult
 
 
 def validate_release_readiness(payload: Any) -> ReleaseReadinessResult:
+    """Validate readiness to present outputs for approval, not approval itself."""
     if not isinstance(payload, Mapping):
         return ReleaseReadinessResult(
             is_valid=False,

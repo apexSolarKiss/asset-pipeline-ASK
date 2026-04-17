@@ -1,4 +1,5 @@
 from __future__ import annotations
+"""Governed output sufficiency checks for produced deliverables."""
 
 from collections.abc import Mapping
 from typing import Any
@@ -9,6 +10,7 @@ OutputValidationResult = ValidationResult
 
 
 def validate_outputs(payload: Any) -> OutputValidationResult:
+    """Validate whether governed outputs are sufficient to proceed."""
     if not isinstance(payload, Mapping):
         return OutputValidationResult(
             is_valid=False,
