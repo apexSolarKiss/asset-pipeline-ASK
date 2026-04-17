@@ -1,7 +1,7 @@
 from asset_pipeline_ask import validate_outputs
 
 
-def test_valid_output_payload_passes() -> None:
+def test_valid_governed_output_payload_passes() -> None:
     result = validate_outputs(
         {
             "governed_outputs": ["final-image.png"],

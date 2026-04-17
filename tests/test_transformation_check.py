@@ -1,7 +1,7 @@
 from asset_pipeline_ask import validate_transformation
 
 
-def test_valid_transformation_record_passes() -> None:
+def test_valid_stage_local_transformation_record_passes() -> None:
     result = validate_transformation(
         {
             "stage_name": "resize",

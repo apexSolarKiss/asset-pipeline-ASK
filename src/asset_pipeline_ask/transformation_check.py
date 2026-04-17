@@ -1,4 +1,5 @@
 from __future__ import annotations
+"""Stage-local transition checks for bounded transformation steps."""
 
 from collections.abc import Mapping
 from typing import Any
@@ -9,6 +10,7 @@ TransformationCheckResult = ValidationResult
 
 
 def validate_transformation(payload: Any) -> TransformationCheckResult:
+    """Validate one transformation record as a stage-local transition."""
     if not isinstance(payload, Mapping):
         return TransformationCheckResult(
             is_valid=False,
