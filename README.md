@@ -25,7 +25,8 @@ At this stage, the ontology remains open. The repository exists to create a disc
 
 ### Start Here
 
-- [`docs/truth-pressure-across-workflow-modes-note.md`](docs/truth-pressure-across-workflow-modes-note.md): current cross-mode comparison of single-item truth, relational truth, and campaign coherence
+- [`docs/four-mode-truth-and-constraint-pressure-note.md`](docs/four-mode-truth-and-constraint-pressure-note.md): current four-mode comparison across single-item truth, relational truth, message-bearing discipline, and campaign coherence
+- [`docs/truth-pressure-across-workflow-modes-note.md`](docs/truth-pressure-across-workflow-modes-note.md): earlier cross-mode comparison of single-item truth, relational truth, and campaign coherence
 - [`docs/verification-record-carrying-clarification.md`](docs/verification-record-carrying-clarification.md): current clarification on what seam records must carry across the chain
 - [`docs/seam-local-verification-boundary-note.md`](docs/seam-local-verification-boundary-note.md): current clarification on later-seam verification responsibility
 
