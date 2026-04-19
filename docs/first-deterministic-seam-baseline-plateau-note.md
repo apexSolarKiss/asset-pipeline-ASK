@@ -56,3 +56,9 @@ This counts as a plateau because the repo now has a coherent minimal stack from 
 ## Next Open Question
 
 The next open question is what should be pressure-tested next from this plateau without widening prematurely into runtime or orchestration design.
+
+## Operating Rule For Further Explanatory Notes
+
+Current `main` now has a coherent four-mode comparative layer with intentionally asymmetric local elaboration. That means further mode-specific explanatory notes should be triggered by demonstrated layered tension rather than by completeness pressure alone.
+
+The compact operating rule from this plateau is: no new explanatory note unless a current note becomes visibly unable to carry the burden.
