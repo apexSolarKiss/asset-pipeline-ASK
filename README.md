@@ -21,8 +21,27 @@ At this stage, the ontology remains open. The repository exists to create a disc
 - [`docs/problem-and-approach.md`](docs/problem-and-approach.md): concise statement of the workflow-structure problem and the repo's current approach
 - [`docs/method.md`](docs/method.md): concise explanation of the repo's method, layers, and working sequence
 - [`docs/architecture.md`](docs/architecture.md): current ontology and architectural direction
-- [`docs/workflow-mode-comparison.md`](docs/workflow-mode-comparison.md): synthesis of what held constant and what varied across abstract workflow modes
 - [`docs/application/README.md`](docs/application/README.md): entry point for application artifacts
+
+### Start Here
+
+- [`docs/truth-pressure-across-workflow-modes-note.md`](docs/truth-pressure-across-workflow-modes-note.md): current cross-mode comparison of single-item truth, relational truth, and campaign coherence
+- [`docs/verification-record-carrying-clarification.md`](docs/verification-record-carrying-clarification.md): current clarification on what seam records must carry across the chain
+- [`docs/seam-local-verification-boundary-note.md`](docs/seam-local-verification-boundary-note.md): current clarification on later-seam verification responsibility
+
+### Worked Examples
+
+- [`docs/application/examples/placeholder-furniture-workflow-packet-example.md`](docs/application/examples/placeholder-furniture-workflow-packet-example.md): SKU-driven packet example
+- [`docs/application/examples/placeholder-collection-merchandising-workflow-packet-example.md`](docs/application/examples/placeholder-collection-merchandising-workflow-packet-example.md): collection / merchandising packet example
+- [`docs/application/examples/placeholder-marketing-message-driven-workflow-packet-example.md`](docs/application/examples/placeholder-marketing-message-driven-workflow-packet-example.md): marketing / message-driven packet example
+- [`docs/application/examples/placeholder-campaign-workflow-packet-example.md`](docs/application/examples/placeholder-campaign-workflow-packet-example.md): campaign / editorial packet example
+
+### Worked-Example Bridges
+
+- [`docs/application/placeholder-furniture-style-spec-to-seam-chain-map.md`](docs/application/placeholder-furniture-style-spec-to-seam-chain-map.md): furniture style-spec bridge into the seam chain
+- [`docs/application/placeholder-collection-merchandising-packet-to-seam-chain-map.md`](docs/application/placeholder-collection-merchandising-packet-to-seam-chain-map.md): collection / merchandising bridge into the seam chain
+- [`docs/application/placeholder-marketing-message-driven-packet-to-seam-chain-map.md`](docs/application/placeholder-marketing-message-driven-packet-to-seam-chain-map.md): marketing / message-driven bridge into the seam chain
+- [`docs/application/placeholder-campaign-packet-to-seam-chain-map.md`](docs/application/placeholder-campaign-packet-to-seam-chain-map.md): campaign / editorial bridge into the seam chain
 
 ### Governance
 
