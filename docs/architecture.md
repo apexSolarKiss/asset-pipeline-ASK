@@ -84,8 +84,14 @@ Those decisions are not yet finalized. For now, the repository should preserve e
 
 ## Related Documents
 
-- [`docs/workflow-modes-note.md`](workflow-modes-note.md): current working note on how workflow modes differ by governing logic
-- [`docs/workflow-instance-template.md`](workflow-instance-template.md): illustrative template for one workflow instance
-- [`docs/example-campaign-workflow-instance.md`](example-campaign-workflow-instance.md): abstract campaign-oriented example instance
-- [`docs/example-sku-workflow-instance.md`](example-sku-workflow-instance.md): abstract SKU-oriented example instance
-- [`docs/workflow-mode-comparison.md`](workflow-mode-comparison.md): short comparison from the earlier abstract workflow framing
+- [`docs/truth-pressure-across-workflow-modes-note.md`](truth-pressure-across-workflow-modes-note.md): current cross-mode comparison of the repo's strongest worked-example pressures
+- [`docs/verification-record-carrying-clarification.md`](verification-record-carrying-clarification.md): current clarification on what seam records must carry across the chain
+- [`docs/seam-local-verification-boundary-note.md`](seam-local-verification-boundary-note.md): current clarification on later-seam verification responsibility
+- [`docs/application/examples/placeholder-furniture-workflow-packet-example.md`](application/examples/placeholder-furniture-workflow-packet-example.md): current SKU-driven packet example
+- [`docs/application/examples/placeholder-collection-merchandising-workflow-packet-example.md`](application/examples/placeholder-collection-merchandising-workflow-packet-example.md): current collection / merchandising packet example
+- [`docs/application/examples/placeholder-marketing-message-driven-workflow-packet-example.md`](application/examples/placeholder-marketing-message-driven-workflow-packet-example.md): current marketing / message-driven packet example
+- [`docs/application/examples/placeholder-campaign-workflow-packet-example.md`](application/examples/placeholder-campaign-workflow-packet-example.md): current campaign / editorial packet example
+- [`docs/application/placeholder-furniture-style-spec-to-seam-chain-map.md`](application/placeholder-furniture-style-spec-to-seam-chain-map.md): current furniture bridge into the seam chain
+- [`docs/application/placeholder-collection-merchandising-packet-to-seam-chain-map.md`](application/placeholder-collection-merchandising-packet-to-seam-chain-map.md): current collection / merchandising bridge into the seam chain
+- [`docs/application/placeholder-marketing-message-driven-packet-to-seam-chain-map.md`](application/placeholder-marketing-message-driven-packet-to-seam-chain-map.md): current marketing / message-driven bridge into the seam chain
+- [`docs/application/placeholder-campaign-packet-to-seam-chain-map.md`](application/placeholder-campaign-packet-to-seam-chain-map.md): current campaign / editorial bridge into the seam chain
