@@ -1,5 +1,10 @@
 # Airtable Base Spec // SKU-Driven Furniture v1
 
+## Companion Artifacts
+
+- [`docs/airtable-build-plan-sku-driven-furniture-v1.md`](airtable-build-plan-sku-driven-furniture-v1.md)
+- [`docs/airtable-base-configuration-sku-driven-furniture-v1.md`](airtable-base-configuration-sku-driven-furniture-v1.md)
+
 ## Purpose
 
 This document records one narrow execution proof for the current repo-local model: an Airtable base spec for the most elaborated current workflow track, `SKU-driven product imagery` in the placeholder furniture context.
