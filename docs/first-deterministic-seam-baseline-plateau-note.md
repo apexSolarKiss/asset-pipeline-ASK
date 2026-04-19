@@ -20,9 +20,11 @@ The current repo-local plateau is: `first deterministic seam baseline plateau`.
   - release-readiness
 - later-seam asymmetry is clarified in docs
 - record shape remains provisional, but record carrying burden is more clearly stated
-- the repo now has two concrete application pressure tests:
+- the repo now has four worked-example workflow tracks:
   - a SKU-driven placeholder furniture example set
-  - a placeholder campaign/editorial packet plus bridge
+  - a placeholder collection / merchandising packet plus bridge
+  - a placeholder marketing / message-driven packet plus bridge
+  - a placeholder campaign / editorial packet plus bridge
 - the current seam code and tests align with that baseline and pass cleanly
 
 ## What Remains Intentionally Untrue

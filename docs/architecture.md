@@ -81,9 +81,12 @@ That means the repository will need to clarify:
 - what governance applies at each decision boundary
 
 Those decisions are not yet finalized. For now, the repository should preserve enough structure to make those questions explicit and debatable without implying that they are already solved.
+Current `main` now pressure-tests the shared model across four worked-example workflow modes without hardening those modes into schema or taxonomy.
 
 ## Related Documents
 
+- [`docs/four-mode-truth-and-constraint-pressure-note.md`](four-mode-truth-and-constraint-pressure-note.md): current four-mode comparison across the repo's worked-example pressure surfaces
+- [`docs/cross-mode-constraint-layering-note.md`](cross-mode-constraint-layering-note.md): current planning-level comparison of universal, workflow-mode, and brand-overlay constraint layering
 - [`docs/truth-pressure-across-workflow-modes-note.md`](truth-pressure-across-workflow-modes-note.md): current cross-mode comparison of the repo's strongest worked-example pressures
 - [`docs/verification-record-carrying-clarification.md`](verification-record-carrying-clarification.md): current clarification on what seam records must carry across the chain
 - [`docs/seam-local-verification-boundary-note.md`](seam-local-verification-boundary-note.md): current clarification on later-seam verification responsibility
