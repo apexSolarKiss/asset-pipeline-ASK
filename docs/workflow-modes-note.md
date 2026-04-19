@@ -6,7 +6,7 @@ These are current working workflow modes for the repo, used to distinguish diffe
 
 This mode is governed primarily by SKU truth, standardized asset requirements, repeatability, and product clarity. The main pressure comes from keeping product facts stable while producing reliable, comparable outputs across many items.
 
-## Collection / Merchandising Context
+## Collection / Merchandising
 
 This mode is governed by how products belong together in assortment, collection, or room and set context rather than by a single SKU alone. The main pressure comes from preserving product truth while also making grouping, adjacency, and merchandising relationships legible.
 
