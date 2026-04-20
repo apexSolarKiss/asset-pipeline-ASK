@@ -26,6 +26,7 @@ At this stage, the ontology remains open. The repository exists to create a disc
 ### Start Here
 
 - [`docs/airtable-base-spec-sku-driven-furniture-v1.md`](docs/airtable-base-spec-sku-driven-furniture-v1.md): narrow Airtable execution proof for the SKU-driven furniture track as a first schema-pressure test
+- [`Airtable base // SKU-Driven Furniture v1`](https://airtable.com/appoqJ25B6w4vSuX9/shrGGnxr3uvLRkEU4): live Airtable base corresponding to the current narrow SKU-driven furniture v1 proof
 - [`docs/four-mode-truth-and-constraint-pressure-note.md`](docs/four-mode-truth-and-constraint-pressure-note.md): current four-mode comparison across single-item truth, relational truth, message-bearing discipline, and campaign coherence
 - [`docs/shared-vs-mode-weighted-pressure-note.md`](docs/shared-vs-mode-weighted-pressure-note.md): current comparison of shared pressures, mode-weighted pressures, and still-unearned claims across the four worked-example modes
 - [`docs/review-artifacts-optional-vs-load-bearing-note.md`](docs/review-artifacts-optional-vs-load-bearing-note.md): current comparison of where review artifacts appear optional versus structurally load-bearing across the four worked-example modes

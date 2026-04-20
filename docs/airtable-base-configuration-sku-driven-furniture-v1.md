@@ -6,6 +6,10 @@ This document is a field-by-field manual build sheet for the SKU-driven furnitur
 
 It is the closest thing to a copy-pasteable setup guide for the base without pretending to be importable schema code.
 
+## Live Base
+
+- [`Airtable base // SKU-Driven Furniture v1`](https://airtable.com/appoqJ25B6w4vSuX9/shrGGnxr3uvLRkEU4)
+
 ## Table Configuration
 
 ### `products`

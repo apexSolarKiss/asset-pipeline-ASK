@@ -4,6 +4,7 @@
 
 - [`docs/airtable-build-plan-sku-driven-furniture-v1.md`](airtable-build-plan-sku-driven-furniture-v1.md)
 - [`docs/airtable-base-configuration-sku-driven-furniture-v1.md`](airtable-base-configuration-sku-driven-furniture-v1.md)
+- [`Airtable base // SKU-Driven Furniture v1`](https://airtable.com/appoqJ25B6w4vSuX9/shrGGnxr3uvLRkEU4)
 
 ## Purpose
 
