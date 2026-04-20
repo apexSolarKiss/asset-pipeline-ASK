@@ -8,6 +8,43 @@ Its purpose is to capture what happened in the live base, what carried cleanly, 
 
 Keep the write-up empirical. Prefer observable state, concrete run behavior, and explicit end conditions over retrospective narrative.
 
+## Base State Before [This Cycle]
+
+State the smallest relevant live-base condition before this cycle began.
+
+Useful anchors may include:
+
+- what the prior cycle had already proven
+- which tables, records, or flows already existed
+- which local gap this cycle was about to pressure-test
+
+Keep this focused on observable starting conditions rather than on broader repo history.
+
+## Schema Changes Made
+
+Record only the local schema or field-surface changes actually made for this cycle.
+
+Useful anchors may include:
+
+- new fields
+- removed fields
+- field-type changes
+- whether a new table was added or explicitly avoided
+
+If no schema changes were made, say that directly.
+
+## Why Those Changes Were The Smallest Honest Remedy
+
+State why the local changes used in this cycle were the narrowest working remedy.
+
+Useful anchors may include:
+
+- why the change stayed packet-local or seam-local
+- what larger structure was not introduced
+- what question the smaller change was sufficient to test
+
+Keep this empirical and local. Do not widen into generalized process or architecture claims.
+
 ## What Was Tested
 
 State the narrow test burden for this cycle:
@@ -117,6 +154,18 @@ Useful anchors may include:
 - whether the main burden gap was capture/refinement rather than architecture failure
 
 Keep conclusions close to the observable run. Do not widen into generalized system claims.
+
+## Follow-On Questions From Prior Cycle — Status
+
+If the prior cycle ended with explicit follow-on questions, record which ones this cycle did or did not materially answer.
+
+Useful anchors may include:
+
+- which prior questions became live-tested
+- which prior questions remain open
+- which prior questions were deferred because this cycle stayed narrower
+
+If there was no relevant prior-cycle question set, say that directly.
 
 ## Follow-On Questions Before [Next Cycle]
 

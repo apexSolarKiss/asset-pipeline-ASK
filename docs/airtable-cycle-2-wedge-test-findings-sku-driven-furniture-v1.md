@@ -143,9 +143,11 @@ Cycle 2 counts as the first live wedge test for prompt composition inside the Ai
 
 The narrow conclusion is not that the repo now needs a larger composition system. The narrow conclusion is that prompt composition has moved from predicted pressure to live-tested pressure, and that the smallest working local remedy was to add `workflow_packets.composed_prompt_output` and `workflow_packets.prompt_composition_notes` without adding a new table.
 
-The first-pass failure showed that layered packet meaning can flatten into generic studio-product language during composition.
+The first-pass failure showed that layered packet meaning can flatten into generic studio-product language during composition. In other words, naive flattening recreates the prompt-soup failure mode.
 
-The second-pass recovery showed that the wedge can be carried locally if the composed prompt explicitly preserves product-specific silhouette and finish, scoped rules, reference-role distinctions, bounded creative discretion, and the required output set.
+The second-pass recovery showed that layered packet meaning can survive composition, but only when composition is deliberate. The wedge can be carried locally if the composed prompt explicitly preserves product-specific silhouette and finish, scoped rules, reference-role distinctions, bounded creative discretion, and the required output set.
+
+That means the current packet structure is necessary but not yet sufficient on its own. The structure can carry the right burden, but the composition step still has to preserve that burden intentionally.
 
 No current repo-local note visibly failed to carry the burden yet.
 
