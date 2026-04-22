@@ -1,5 +1,7 @@
 # Airtable Campaign / Editorial Cycle 1 Findings v1
 
+Live Airtable write surface: Codex Computer Use via Chrome
+
 ## Purpose Of This Cycle
 
 This document records the first bounded campaign / editorial Airtable proof run executed against [docs/airtable-campaign-editorial-proof-plan-v1.md](/Users/ask/repos/asset-pipeline-ASK/docs/airtable-campaign-editorial-proof-plan-v1.md).

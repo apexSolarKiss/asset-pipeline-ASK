@@ -1,5 +1,7 @@
 # Airtable Campaign / Editorial Cycle 1 Rerun Findings v1
 
+Live Airtable write surface: GPT Airtable connector
+
 ## Purpose Of The Rerun
 
 This document records a clean re-attempt of the same bounded campaign / editorial Airtable proof defined in [docs/airtable-campaign-editorial-proof-plan-v1.md](/Users/ask/repos/asset-pipeline-ASK/docs/airtable-campaign-editorial-proof-plan-v1.md).
