@@ -1,4 +1,4 @@
-![asset-pipeline-ASK banner](production-pipeline-ASK-banner.jpg)
+![asset-pipeline-ASK banner](asset-pipeline-ASK-banner.jpg)
 
 # asset-pipeline-ASK
 
