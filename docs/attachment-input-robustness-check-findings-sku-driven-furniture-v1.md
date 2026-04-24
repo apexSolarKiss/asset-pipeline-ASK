@@ -68,21 +68,27 @@ That append behavior is a material finding, not an incidental note, because it d
 
 Recommended outcome class:
 
-- `counter-pressure`
+- `insufficient evidence`
 
-Why `counter-pressure` is the smallest honest reading:
+Why `insufficient evidence` is the smallest honest reading:
 
 - some comparison criteria improved
-- the required output set was incomplete
-- the append behavior introduced new capture / governability pressure
+- 2 new outputs were produced
+- the expected front three-quarter / hero-like output was missing
+- Airtable appended new outputs rather than replacing prior outputs
+- the two new outputs appeared aligned with the attachment-backed product image input
 
-This result should not be overstated as a clean reinforcement of the earlier attachment-input pressure.
+The append-not-replace behavior remains a valid capture-surface finding.
 
-It also should not be flattened into simple failure.
+But the incomplete-output conclusion now has to be downgraded, because Airtable AI credits were later discovered to be exhausted around this run.
 
-Attachment-backed input appeared to help product-truth anchoring.
+That means the missing third output can no longer be cleanly interpreted as model, prompt, or capture behavior on its own.
 
-But output-set completeness and capture-surface governability degraded under this denser rerun condition.
+This run should therefore not be read as clean counter-pressure against attachment-backed input under denser SKU-mode burden.
+
+It also should not be overcorrected into reinforcement.
+
+Attachment-backed input still appeared to help product-truth anchoring, while the observed capture-surface behavior remained real.
 
 ## What This Does And Does Not Mean
 
@@ -90,10 +96,11 @@ This result does **not** prove that attachment-backed input should be adopted st
 
 It also does **not** prove that attachment-backed input fails generally.
 
-It does show a more mixed pressure picture than `PKT-SKU-006` alone:
+It does show a more mixed but now more confounded picture than `PKT-SKU-006` alone:
 
 - product-truth anchoring appears to benefit
-- denser multi-output burden and rerun capture behavior introduce counter-pressure
+- append behavior introduces real capture-surface pressure
+- output-set completeness can no longer be interpreted cleanly because of the credit-exhaustion confound
 
 This run does not settle whether the missing hero view was due to:
 
@@ -110,6 +117,10 @@ This findings note does **not** resolve that question here, and it does **not** 
 
 The next honest move is not another rerun of `PKT-SKU-003`.
 
-The next honest move is a new bounded plan for a fresh packet on a fresh product, with a required 3-view output set, so the project can test attachment-backed multi-output behavior without rerun-append contamination.
+The next fresh-run multi-output check remains the correct next test.
+
+But it should not be executed until Airtable AI credits are available again.
+
+The next honest move is therefore a new bounded plan for a fresh packet on a fresh product, with a required 3-view output set, so the project can test attachment-backed multi-output behavior without rerun-append contamination.
 
 Staying in the chair category first is the narrowest honest way to do that.
