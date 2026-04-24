@@ -53,13 +53,31 @@ This comparison should not widen into a second variable test.
 
 ## Product Image Input Test
 
-This experiment pre-registers one new attachment field in `workflow_packets`:
+This experiment should keep product-truth image input on the product record, where stable SKU truth belongs, rather than duplicating that input locally on the packet.
 
-- `product_image`
+That means `workflow_packets` should access the product image through the linked SKU surface rather than carry a second packet-local product image source.
+
+Before execution:
+
+- delete or ignore the previously added `workflow_packets.product_image` field
+
+This experiment pre-registers one new canonical attachment field on `products`:
+
+- `products.product_image`
+
+The product-truth image should be uploaded into:
+
+- `products / SKU-CHAIR-002 / product_image`
+
+This experiment also pre-registers one lookup field on `workflow_packets`:
+
+- `workflow_packets.product_image_lookup`
+- source: linked `sku_key`
+- lookup: `products.product_image`
 
 Before any comparison execution is attempted, the experiment must first check one bounded setup question:
 
-- can the existing Airtable-native invocation container `live_generated_image_v1` actually consume `workflow_packets.product_image` cleanly as input
+- can the existing Airtable-native invocation container `live_generated_image_v1` actually consume `workflow_packets.product_image_lookup` cleanly as input alongside `workflow_packets.composed_prompt_output`
 
 That capability must **not** be assumed as already proven.
 
@@ -70,6 +88,11 @@ If the existing container cannot consume the attachment input cleanly, execution
 - bounded setup failure for this experiment
 
 That outcome should not be treated as permission to widen into new tooling surfaces, alternate invocation paths, or broader Airtable reconfiguration.
+
+If the capability check succeeds, `workflow_packets.live_generated_image_v1` should be configured to use:
+
+- `workflow_packets.composed_prompt_output`
+- `workflow_packets.product_image_lookup`
 
 ## Comparison Criteria
 
@@ -130,6 +153,9 @@ It also does **not** authorize mutating `PKT-SKU-005`.
 After this note is landed, the next honest move is:
 
 1. prepare `PKT-SKU-006` as the attachment-input comparison packet anchored on `SKU-CHAIR-002`
-2. check whether `live_generated_image_v1` can actually consume `workflow_packets.product_image` cleanly
-3. stop immediately and record bounded setup failure if it cannot
-4. if it can, execute one bounded comparison run against the pre-registered criteria above
+2. add `products.product_image`
+3. upload the product-truth image into `products / SKU-CHAIR-002 / product_image`
+4. add `workflow_packets.product_image_lookup` through linked `sku_key`
+5. check whether `live_generated_image_v1` can actually consume `workflow_packets.product_image_lookup` cleanly alongside `workflow_packets.composed_prompt_output`
+6. stop immediately and record bounded setup failure if it cannot
+7. if it can, execute one bounded comparison run against the pre-registered criteria above
