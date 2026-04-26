@@ -36,12 +36,17 @@ At this stage, the ontology remains open. The repository exists to create a disc
 
 - [`docs/airtable-base-spec-sku-driven-furniture-v1.md`](docs/airtable-base-spec-sku-driven-furniture-v1.md): narrow Airtable execution proof for the SKU-driven furniture track as a first schema-pressure test
 - [`Airtable base // SKU-Driven Furniture v1`](https://airtable.com/appoqJ25B6w4vSuX9/shrGGnxr3uvLRkEU4): live Airtable base corresponding to the current narrow SKU-driven furniture v1 proof
+- [`docs/multi-output-slot-generation-execution-record-sku-driven-furniture-v1.md`](docs/multi-output-slot-generation-execution-record-sku-driven-furniture-v1.md): completed Gate 6 execution record for the SKU-driven Furniture v1 output-slot generation evidence chain
+- [`docs/multi-output-slot-generation-findings-sku-driven-furniture-v1.md`](docs/multi-output-slot-generation-findings-sku-driven-furniture-v1.md): bounded findings from the `PKT-SKU-007` Gate 6 output-slot generation execution
 - [`docs/four-mode-truth-and-constraint-pressure-note.md`](docs/four-mode-truth-and-constraint-pressure-note.md): current four-mode comparison across single-item truth, relational truth, message-bearing discipline, and campaign coherence
 - [`docs/shared-vs-mode-weighted-pressure-note.md`](docs/shared-vs-mode-weighted-pressure-note.md): current comparison of shared pressures, mode-weighted pressures, and still-unearned claims across the four worked-example modes
 - [`docs/review-artifacts-optional-vs-load-bearing-note.md`](docs/review-artifacts-optional-vs-load-bearing-note.md): current comparison of where review artifacts appear optional versus structurally load-bearing across the four worked-example modes
 - [`docs/truth-pressure-across-workflow-modes-note.md`](docs/truth-pressure-across-workflow-modes-note.md): earlier cross-mode comparison of single-item truth, relational truth, and campaign coherence
 - [`docs/verification-record-carrying-clarification.md`](docs/verification-record-carrying-clarification.md): current clarification on what seam records must carry across the chain
 - [`docs/seam-local-verification-boundary-note.md`](docs/seam-local-verification-boundary-note.md): current clarification on later-seam verification responsibility
+
+The SKU-driven Furniture v1 thread now includes a completed output-side planning-through-live-execution evidence chain for `PKT-SKU-007`.
+That chain remains bounded evidence only; it does not establish production readiness, generalized output doctrine, or a cross-mode conclusion.
 
 ### Worked Examples
 
