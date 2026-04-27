@@ -83,13 +83,27 @@ That means the repository will need to clarify:
 Those decisions are not yet finalized. For now, the repository should preserve enough structure to make those questions explicit and debatable without implying that they are already solved.
 Current `main` now pressure-tests the shared model across four worked-example workflow modes without hardening those modes into schema or taxonomy.
 
+## Bounded Prototype State
+
+For reading order across current, historical, and trigger-based docs, see [`docs/index.md`](index.md). That index is a navigation artifact, not architecture doctrine; linked docs remain authoritative for their subject matter.
+
+The active SKU-driven Furniture v1 Airtable prototype has surfaced bounded concrete schema pressure around multi-output generation and capture. In that bounded prototype, `output_slots` now function as first-class expected output obligations, and slot-level generation has proven cleaner than packet-level generation for role-specific output production. `generated_assets` has been bounded as a promoted / captured review / governance / delivery layer, not as raw generation storage, and `slot_status` lifecycle has been decided for SKU-driven Furniture v1. Asset-family coherence / reuse / derivative pressure and `generated_assets` capture mechanics from raw slot attachments have been captured but remain unresolved.
+
+These are bounded SKU-driven Furniture v1 findings and decisions, not generalized cross-mode doctrine. They do not establish production readiness, final schema doctrine, an asset-family or asset-applications schema, solved capture mechanics, or Airtable as the final system.
+
 ## Related Documents
 
+- [`docs/index.md`](index.md): current reading-order map and docs navigation artifact
 - [`docs/four-mode-truth-and-constraint-pressure-note.md`](four-mode-truth-and-constraint-pressure-note.md): current four-mode comparison across the repo's worked-example pressure surfaces
 - [`docs/shared-vs-mode-weighted-pressure-note.md`](shared-vs-mode-weighted-pressure-note.md): current comparison of shared pressures, mode-weighted pressures, and still-unearned claims across the four worked-example modes
 - [`docs/review-artifacts-optional-vs-load-bearing-note.md`](review-artifacts-optional-vs-load-bearing-note.md): current comparison of where review artifacts appear optional versus structurally load-bearing across the four worked-example modes
 - [`docs/cross-mode-constraint-layering-note.md`](cross-mode-constraint-layering-note.md): current planning-level comparison of universal, workflow-mode, and brand-overlay constraint layering
 - [`docs/truth-pressure-across-workflow-modes-note.md`](truth-pressure-across-workflow-modes-note.md): current cross-mode comparison of the repo's strongest worked-example pressures
+- [`docs/multi-output-slot-representation-structural-decision-note-sku-driven-furniture-v1.md`](multi-output-slot-representation-structural-decision-note-sku-driven-furniture-v1.md): bounded structural decision choosing first-class expected output slots
+- [`docs/airtable-slot-level-generation-schema-fit-note-sku-driven-furniture-v1.md`](airtable-slot-level-generation-schema-fit-note-sku-driven-furniture-v1.md): bounded slot-level generation schema-fit and prototype finding
+- [`docs/generated-assets-promotion-boundary-structural-decision-note-sku-driven-furniture-v1.md`](generated-assets-promotion-boundary-structural-decision-note-sku-driven-furniture-v1.md): bounded generated-assets promotion-boundary decision
+- [`docs/output-slot-status-lifecycle-structural-decision-note-sku-driven-furniture-v1.md`](output-slot-status-lifecycle-structural-decision-note-sku-driven-furniture-v1.md): bounded output-slot status lifecycle decision
+- [`docs/asset-family-coherence-and-reuse-pressure-note-sku-driven-furniture-v1.md`](asset-family-coherence-and-reuse-pressure-note-sku-driven-furniture-v1.md): bounded asset-family coherence, reuse, derivative, and capture-mechanics pressure
 - [`docs/verification-record-carrying-clarification.md`](verification-record-carrying-clarification.md): current clarification on what seam records must carry across the chain
 - [`docs/seam-local-verification-boundary-note.md`](seam-local-verification-boundary-note.md): current clarification on later-seam verification responsibility
 - [`docs/application/examples/placeholder-furniture-workflow-packet-example.md`](application/examples/placeholder-furniture-workflow-packet-example.md): current SKU-driven packet example
