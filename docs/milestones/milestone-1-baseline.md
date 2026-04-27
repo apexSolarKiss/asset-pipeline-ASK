@@ -15,6 +15,14 @@ This note records the first coherent baseline now present on `main`.
 - the deterministic-vs-agent boundary is explicit
 - one concrete worked example exists
 
+Anchor docs:
+
+- [`docs/first-deterministic-seam-baseline-plateau-note.md`](../first-deterministic-seam-baseline-plateau-note.md)
+- [`docs/ingest-validation-plan.md`](../ingest-validation-plan.md)
+- [`docs/transformation-check-plan.md`](../transformation-check-plan.md)
+- [`docs/output-validation-plan.md`](../output-validation-plan.md)
+- [`docs/release-readiness-plan.md`](../release-readiness-plan.md)
+
 ## What It Did Not Establish
 
 - runtime orchestration
