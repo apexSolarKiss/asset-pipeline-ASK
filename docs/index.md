@@ -155,6 +155,7 @@ Slot-level generation and current decisions:
 - [docs/output-slot-status-lifecycle-structural-decision-note-sku-driven-furniture-v1.md](output-slot-status-lifecycle-structural-decision-note-sku-driven-furniture-v1.md): output-slot status lifecycle decision
 - [docs/asset-family-coherence-and-reuse-pressure-note-sku-driven-furniture-v1.md](asset-family-coherence-and-reuse-pressure-note-sku-driven-furniture-v1.md): asset-family coherence, reuse, derivative, and capture-mechanics pressure
 - [docs/hero-prompt-invariant-retry-probe-findings-sku-driven-furniture-v1.md](hero-prompt-invariant-retry-probe-findings-sku-driven-furniture-v1.md): bounded HERO prompt-invariant retry probe findings // pre-registered reopen trigger fired
+- [docs/packet-family-invariant-constraint-layer-options-note-sku-driven-furniture-v1.md](packet-family-invariant-constraint-layer-options-note-sku-driven-furniture-v1.md): packet / family invariant constraint layer options // no option chosen
 
 Current state:
 
@@ -165,6 +166,7 @@ Current state:
 - Output-slot status lifecycle has been decided for SKU-driven Furniture v1.
 - Asset-family coherence / reuse / derivative pressure is captured but unresolved.
 - Bounded HERO prompt-invariant retry probe completed; standalone quality improved but set-level coherence was not solved; pre-registered reopen trigger fired; structural-options work around shared invariant / variant constraint layering is earned but not yet chosen.
+- Structural-options work around shared invariant / variant constraint layering has been opened as options; no option has been chosen yet.
 - `generated_assets` capture mechanics from raw slot attachments remain unresolved.
 - SKU-driven Furniture v1 doctrine should not be generalized across all modes without further evidence.
 
