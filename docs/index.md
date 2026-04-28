@@ -154,6 +154,7 @@ Slot-level generation and current decisions:
 - [docs/generated-assets-promotion-boundary-structural-decision-note-sku-driven-furniture-v1.md](generated-assets-promotion-boundary-structural-decision-note-sku-driven-furniture-v1.md): generated-assets promotion-boundary decision
 - [docs/output-slot-status-lifecycle-structural-decision-note-sku-driven-furniture-v1.md](output-slot-status-lifecycle-structural-decision-note-sku-driven-furniture-v1.md): output-slot status lifecycle decision
 - [docs/asset-family-coherence-and-reuse-pressure-note-sku-driven-furniture-v1.md](asset-family-coherence-and-reuse-pressure-note-sku-driven-furniture-v1.md): asset-family coherence, reuse, derivative, and capture-mechanics pressure
+- [docs/hero-prompt-invariant-retry-probe-findings-sku-driven-furniture-v1.md](hero-prompt-invariant-retry-probe-findings-sku-driven-furniture-v1.md): bounded HERO prompt-invariant retry probe findings // pre-registered reopen trigger fired
 
 Current state:
 
@@ -163,6 +164,7 @@ Current state:
 - `generated_assets` promotion boundary has been decided for SKU-driven Furniture v1.
 - Output-slot status lifecycle has been decided for SKU-driven Furniture v1.
 - Asset-family coherence / reuse / derivative pressure is captured but unresolved.
+- Bounded HERO prompt-invariant retry probe completed; standalone quality improved but set-level coherence was not solved; pre-registered reopen trigger fired; structural-options work around shared invariant / variant constraint layering is earned but not yet chosen.
 - `generated_assets` capture mechanics from raw slot attachments remain unresolved.
 - SKU-driven Furniture v1 doctrine should not be generalized across all modes without further evidence.
 
