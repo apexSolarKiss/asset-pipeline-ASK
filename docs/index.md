@@ -158,6 +158,7 @@ Slot-level generation and current decisions:
 - [docs/packet-family-invariant-constraint-layer-options-note-sku-driven-furniture-v1.md](packet-family-invariant-constraint-layer-options-note-sku-driven-furniture-v1.md): packet / family invariant constraint layer options // no option chosen
 - [docs/packet-family-invariant-constraint-layer-structural-decision-note-sku-driven-furniture-v1.md](packet-family-invariant-constraint-layer-structural-decision-note-sku-driven-furniture-v1.md): packet / family invariant constraint layer next-probe decision
 - [docs/precomposed-shared-invariant-prompt-probe-plan-sku-driven-furniture-v1.md](precomposed-shared-invariant-prompt-probe-plan-sku-driven-furniture-v1.md): pre-composed shared invariant prompt probe plan // exact proposed prompt mutations, no Airtable mutation authorized
+- [docs/precomposed-shared-invariant-prompt-probe-findings-sku-driven-furniture-v1.md](precomposed-shared-invariant-prompt-probe-findings-sku-driven-furniture-v1.md): pre-composed shared invariant prompt probe findings // Partial success
 
 Current state:
 
@@ -170,6 +171,7 @@ Current state:
 - Bounded HERO prompt-invariant retry probe completed; standalone quality improved but set-level coherence was not solved; pre-registered reopen trigger fired; structural-options work around shared invariant / variant constraint layering is earned but not yet chosen.
 - Structural-options work around shared invariant / variant constraint layering has moved from options opened to next-probe direction chosen: minimal pre-composed shared invariant prompt probe path; no schema mutation or Airtable mutation is authorized yet.
 - Pre-composed shared invariant prompt probe plan defines exact proposed HERO / PROFILE / DETAIL prompt mutations; no Airtable mutation or generation has occurred.
+- Pre-composed shared invariant prompt probe completed as Partial success: slot roles held and set coherence materially improved, but HERO background / studio-plane drift remained; higher-layer invariant representation is more strongly earned but not yet chosen.
 - `generated_assets` capture mechanics from raw slot attachments remain unresolved.
 - SKU-driven Furniture v1 doctrine should not be generalized across all modes without further evidence.
 
