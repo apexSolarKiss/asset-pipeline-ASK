@@ -161,6 +161,7 @@ Slot-level generation and current decisions:
 - [docs/precomposed-shared-invariant-prompt-probe-findings-sku-driven-furniture-v1.md](precomposed-shared-invariant-prompt-probe-findings-sku-driven-furniture-v1.md): pre-composed shared invariant prompt probe findings // Partial success
 - [docs/visual-invariant-anchor-refinement-note-sku-driven-furniture-v1.md](visual-invariant-anchor-refinement-note-sku-driven-furniture-v1.md): visual invariant anchor refinement // external reference vs generated invariant anchor
 - [docs/generated-visual-invariant-anchor-structural-decision-note-sku-driven-furniture-v1.md](generated-visual-invariant-anchor-structural-decision-note-sku-driven-furniture-v1.md): generated visual invariant anchor next-probe decision
+- [docs/generated-visual-invariant-anchor-schema-fit-probe-plan-sku-driven-furniture-v1.md](generated-visual-invariant-anchor-schema-fit-probe-plan-sku-driven-furniture-v1.md): D2 schema-fit probe plan // second image input observation only
 
 Current state:
 
@@ -176,6 +177,7 @@ Current state:
 - Pre-composed shared invariant prompt probe completed as Partial success: slot roles held and set coherence materially improved, but HERO background / studio-plane drift remained; higher-layer invariant representation is more strongly earned but not yet chosen.
 - Visual-invariant-anchor option space has been refined: external reference anchoring and generated invariant anchoring are now distinguished, but no direction has been chosen.
 - Generated visual invariant anchor has been chosen as the next probe direction only; the next load-bearing question is whether Airtable AI field-agent generation can consume a second image input alongside the product-truth image.
+- D2 schema-fit probe plan defines how to observe whether Airtable AI field-agent generation can consume a second image input; no Airtable mutation, AI field-agent configuration, or generation is authorized.
 - `generated_assets` capture mechanics from raw slot attachments remain unresolved.
 - SKU-driven Furniture v1 doctrine should not be generalized across all modes without further evidence.
 
