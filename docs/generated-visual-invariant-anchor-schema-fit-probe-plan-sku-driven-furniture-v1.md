@@ -53,6 +53,8 @@ For this schema-fit probe, the anchor source should be:
 
 - one manually selected or generated environment / studio-world image supplied by ASK in the control-surface thread or Airtable UI
 
+This probe assumes the visual invariant anchor is created externally or uploaded directly, not generated through an Airtable AI field-agent inside this probe.
+
 The anchor should represent:
 
 - shared studio world
@@ -158,6 +160,7 @@ This probe plan does not authorize:
 - field deletion
 - lookup creation
 - AI field-agent configuration
+- anchor generation via Airtable AI field-agent at packet scope; if eventually pursued, that requires separate authorization
 - generation invocation
 - full HERO / PROFILE / DETAIL generation pass
 - `generated_assets` creation
