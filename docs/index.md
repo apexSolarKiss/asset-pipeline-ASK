@@ -164,6 +164,7 @@ Slot-level generation and current decisions:
 - [docs/generated-visual-invariant-anchor-schema-fit-probe-plan-sku-driven-furniture-v1.md](generated-visual-invariant-anchor-schema-fit-probe-plan-sku-driven-furniture-v1.md): D2 schema-fit probe plan // second image input observation only
 - [docs/generated-visual-invariant-anchor-schema-fit-findings-sku-driven-furniture-v1.md](generated-visual-invariant-anchor-schema-fit-findings-sku-driven-furniture-v1.md): D2 schema-fit findings // Reference-surface blocked
 - [docs/url-reference-visual-anchor-schema-fit-findings-sku-driven-furniture-v1.md](url-reference-visual-anchor-schema-fit-findings-sku-driven-furniture-v1.md): D1 URL-reference schema-fit findings // Not supported
+- [docs/multi-image-visual-reference-input-structural-decision-note-sku-driven-furniture-v1.md](multi-image-visual-reference-input-structural-decision-note-sku-driven-furniture-v1.md): multi-image / visual-reference input structural decision // schema mutation planning earned, not authorized
 
 Current state:
 
@@ -182,6 +183,7 @@ Current state:
 - D2 schema-fit probe plan defines how to observe whether Airtable AI field-agent generation can consume a second image input; no Airtable mutation, AI field-agent configuration, or generation is authorized.
 - D2 schema-fit observation completed as Reference-surface blocked: current `reference_assets` / `output_slots` shape lacks a second image-bearing path, so D2 cannot be tested without schema mutation.
 - D1 URL-reference schema-fit observation completed as Not supported: Airtable AI field-agent input picker did not offer `workflow_packets.approved_reference_keys` or `reference_assets.asset_uri` as usable inputs.
+- Multi-image / visual-reference input has been judged first-class enough to justify a bounded schema mutation plan; no schema mutation is authorized yet.
 - `generated_assets` capture mechanics from raw slot attachments remain unresolved.
 - SKU-driven Furniture v1 doctrine should not be generalized across all modes without further evidence.
 
