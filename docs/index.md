@@ -168,6 +168,7 @@ Slot-level generation and current decisions:
 - [docs/visual-reference-input-schema-mutation-plan-sku-driven-furniture-v1.md](visual-reference-input-schema-mutation-plan-sku-driven-furniture-v1.md): visual-reference input schema mutation plan // staged URL lookup before image-bearing path
 - [docs/url-visual-reference-set-generation-findings-sku-driven-furniture-v1.md](url-visual-reference-set-generation-findings-sku-driven-furniture-v1.md): URL visual-reference set generation findings // Supported
 - [docs/url-visual-reference-recurrence-findings-pkt-sku-009.md](url-visual-reference-recurrence-findings-pkt-sku-009.md): URL visual-reference recurrence findings // PKT-SKU-009 Partial, not Supported
+- [docs/visual-reference-binding-diagnostic-order-structural-decision-note-sku-driven-furniture-v1.md](visual-reference-binding-diagnostic-order-structural-decision-note-sku-driven-furniture-v1.md): visual-reference binding diagnostic-order decision // cheaper diagnostics before Gate 2
 
 Current state:
 
@@ -190,6 +191,7 @@ Current state:
 - Visual-reference input schema mutation plan stages the cheapest surfaced URL lookup test before any image-bearing reference path; no schema mutation is authorized yet.
 - URL visual-reference set generation completed as Supported: surfaced URL reference input materially improved HERO / PROFILE / DETAIL set coherence; Gate 2 image-bearing reference path is deferred.
 - PKT-SKU-009 URL visual-reference recurrence completed as Partial, not Supported: explicit input hierarchy improved role separation and set coherence, but visual-reference fidelity remained weak and product-truth drift stayed visible; Gate 2 is more strongly earned as a decision surface, not authorized.
+- Visual-reference binding diagnostic-order decision chooses cheaper diagnostic discrimination before Gate 2: reference-image specificity first, field-agent configuration / input weighting second, Gate 2 only if those do not resolve binding, with product-truth drift held as an orthogonal probe.
 - `generated_assets` capture mechanics from raw slot attachments remain unresolved.
 - SKU-driven Furniture v1 doctrine should not be generalized across all modes without further evidence.
 
