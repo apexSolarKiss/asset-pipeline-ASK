@@ -167,6 +167,7 @@ Slot-level generation and current decisions:
 - [docs/multi-image-visual-reference-input-structural-decision-note-sku-driven-furniture-v1.md](multi-image-visual-reference-input-structural-decision-note-sku-driven-furniture-v1.md): multi-image / visual-reference input structural decision // schema mutation planning earned, not authorized
 - [docs/visual-reference-input-schema-mutation-plan-sku-driven-furniture-v1.md](visual-reference-input-schema-mutation-plan-sku-driven-furniture-v1.md): visual-reference input schema mutation plan // staged URL lookup before image-bearing path
 - [docs/url-visual-reference-set-generation-findings-sku-driven-furniture-v1.md](url-visual-reference-set-generation-findings-sku-driven-furniture-v1.md): URL visual-reference set generation findings // Supported
+- [docs/url-visual-reference-recurrence-findings-pkt-sku-009.md](url-visual-reference-recurrence-findings-pkt-sku-009.md): URL visual-reference recurrence findings // PKT-SKU-009 Partial, not Supported
 
 Current state:
 
@@ -188,6 +189,7 @@ Current state:
 - Multi-image / visual-reference input has been judged first-class enough to justify a bounded schema mutation plan; no schema mutation is authorized yet.
 - Visual-reference input schema mutation plan stages the cheapest surfaced URL lookup test before any image-bearing reference path; no schema mutation is authorized yet.
 - URL visual-reference set generation completed as Supported: surfaced URL reference input materially improved HERO / PROFILE / DETAIL set coherence; Gate 2 image-bearing reference path is deferred.
+- PKT-SKU-009 URL visual-reference recurrence completed as Partial, not Supported: explicit input hierarchy improved role separation and set coherence, but visual-reference fidelity remained weak and product-truth drift stayed visible; Gate 2 is more strongly earned as a decision surface, not authorized.
 - `generated_assets` capture mechanics from raw slot attachments remain unresolved.
 - SKU-driven Furniture v1 doctrine should not be generalized across all modes without further evidence.
 
