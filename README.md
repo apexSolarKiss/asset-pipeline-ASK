@@ -30,14 +30,18 @@ At this stage, the ontology remains open. The repository exists to create a disc
 - [`docs/problem-and-approach.md`](docs/problem-and-approach.md): concise statement of the workflow-structure problem and the repo's current approach
 - [`docs/method.md`](docs/method.md): concise explanation of the repo's method, layers, and working sequence
 - [`docs/architecture.md`](docs/architecture.md): current ontology and architectural direction
+- [`docs/index.md`](docs/index.md): reading-order and navigation map across current, historical, and trigger-based docs
 - [`docs/application/README.md`](docs/application/README.md): entry point for application artifacts
 
 ### Start Here
 
 - [`docs/airtable-base-spec-sku-driven-furniture-v1.md`](docs/airtable-base-spec-sku-driven-furniture-v1.md): narrow Airtable execution proof for the SKU-driven furniture track as a first schema-pressure test
 - [`Airtable base // SKU-Driven Furniture v1`](https://airtable.com/appoqJ25B6w4vSuX9/shrGGnxr3uvLRkEU4): live Airtable base corresponding to the current narrow SKU-driven furniture v1 proof
-- [`docs/multi-output-slot-generation-execution-record-sku-driven-furniture-v1.md`](docs/multi-output-slot-generation-execution-record-sku-driven-furniture-v1.md): completed Gate 6 execution record for the SKU-driven Furniture v1 output-slot generation evidence chain
-- [`docs/multi-output-slot-generation-findings-sku-driven-furniture-v1.md`](docs/multi-output-slot-generation-findings-sku-driven-furniture-v1.md): bounded findings from the `PKT-SKU-007` Gate 6 output-slot generation execution
+- [`docs/multi-output-slot-generation-execution-record-sku-driven-furniture-v1.md`](docs/multi-output-slot-generation-execution-record-sku-driven-furniture-v1.md): historical Gate 6 execution record for the `PKT-SKU-007` output-side evidence chain
+- [`docs/multi-output-slot-generation-findings-sku-driven-furniture-v1.md`](docs/multi-output-slot-generation-findings-sku-driven-furniture-v1.md): historical bounded findings from the `PKT-SKU-007` Gate 6 output-slot generation execution
+- [`docs/gate-2-image-bearing-reference-path-findings-pkt-sku-009.md`](docs/gate-2-image-bearing-reference-path-findings-pkt-sku-009.md): current visual-reference binding findings for `PKT-SKU-009`
+- [`docs/capture-mechanics-thin-bridge-findings-pkt-sku-009.md`](docs/capture-mechanics-thin-bridge-findings-pkt-sku-009.md): current capture-mechanics thin-bridge findings for `PKT-SKU-009`
+- [`docs/capture-mechanics-pause-and-document-structural-decision-note-sku-driven-furniture-v1.md`](docs/capture-mechanics-pause-and-document-structural-decision-note-sku-driven-furniture-v1.md): current decision accepting the thin bridge and pausing further capture mechanics until reopen trigger
 - [`docs/four-mode-truth-and-constraint-pressure-note.md`](docs/four-mode-truth-and-constraint-pressure-note.md): current four-mode comparison across single-item truth, relational truth, message-bearing discipline, and campaign coherence
 - [`docs/shared-vs-mode-weighted-pressure-note.md`](docs/shared-vs-mode-weighted-pressure-note.md): current comparison of shared pressures, mode-weighted pressures, and still-unearned claims across the four worked-example modes
 - [`docs/review-artifacts-optional-vs-load-bearing-note.md`](docs/review-artifacts-optional-vs-load-bearing-note.md): current comparison of where review artifacts appear optional versus structurally load-bearing across the four worked-example modes
@@ -45,8 +49,9 @@ At this stage, the ontology remains open. The repository exists to create a disc
 - [`docs/verification-record-carrying-clarification.md`](docs/verification-record-carrying-clarification.md): current clarification on what seam records must carry across the chain
 - [`docs/seam-local-verification-boundary-note.md`](docs/seam-local-verification-boundary-note.md): current clarification on later-seam verification responsibility
 
-The SKU-driven Furniture v1 thread now includes a completed output-side planning-through-live-execution evidence chain for `PKT-SKU-007`.
-That chain remains bounded evidence only; it does not establish production readiness, generalized output doctrine, or a cross-mode conclusion.
+The SKU-driven Furniture v1 thread includes `PKT-SKU-007` as historical output-side evidence and later `PKT-SKU-009` visual-reference / capture-governance evidence.
+Current routing for that thread should start with `docs/index.md`, then the Gate 2 image-bearing reference path findings, the capture-mechanics thin-bridge findings, and the capture-mechanics pause decision.
+Together those docs mark a layered v1 prototype plateau, not production readiness, generalized output doctrine, or a cross-mode conclusion.
 
 ### Worked Examples
 

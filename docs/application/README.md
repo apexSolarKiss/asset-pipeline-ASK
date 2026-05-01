@@ -9,3 +9,15 @@ These documents are provisional application-layer artifacts derived from the rep
 ## Examples
 
 - [`examples/README.md`](examples/README.md): compact application example sets that pressure-test the discovery -> diagnosis -> redesign sequence against abstract workflow modes
+
+## Workflow Bridges
+
+- [`placeholder-furniture-style-spec-to-seam-chain-map.md`](placeholder-furniture-style-spec-to-seam-chain-map.md): SKU-driven furniture style-spec bridge into the seam chain
+- [`placeholder-collection-merchandising-packet-to-seam-chain-map.md`](placeholder-collection-merchandising-packet-to-seam-chain-map.md): collection / merchandising packet bridge into the seam chain
+- [`placeholder-marketing-message-driven-packet-to-seam-chain-map.md`](placeholder-marketing-message-driven-packet-to-seam-chain-map.md): marketing / message-driven packet bridge into the seam chain
+- [`placeholder-campaign-packet-to-seam-chain-map.md`](placeholder-campaign-packet-to-seam-chain-map.md): campaign / editorial packet bridge into the seam chain
+
+## Constraint Layering Notes
+
+- [`placeholder-furniture-constraint-layering-note.md`](placeholder-furniture-constraint-layering-note.md): provisional SKU-driven furniture constraint-layering note
+- [`placeholder-collection-merchandising-constraint-layering-note.md`](placeholder-collection-merchandising-constraint-layering-note.md): provisional collection / merchandising constraint-layering note
