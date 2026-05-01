@@ -176,6 +176,7 @@ Slot-level generation and current decisions:
 - [docs/gate-2-image-bearing-reference-path-findings-pkt-sku-009.md](gate-2-image-bearing-reference-path-findings-pkt-sku-009.md): Gate 2 image-bearing reference path findings // Supported
 - [docs/capture-governance-next-path-structural-decision-note-sku-driven-furniture-v1.md](capture-governance-next-path-structural-decision-note-sku-driven-furniture-v1.md): capture / governance next-path decision // primary repo chain chosen, no Airtable mutation authorized
 - [docs/capture-mechanics-plan-sku-driven-furniture-v1.md](capture-mechanics-plan-sku-driven-furniture-v1.md): capture-mechanics plan // raw slot output to governed asset identity, no Airtable mutation authorized
+- [docs/capture-mechanics-thin-bridge-findings-pkt-sku-009.md](capture-mechanics-thin-bridge-findings-pkt-sku-009.md): capture-mechanics thin-bridge findings // PKT-SKU-009 Partial with tool-layer blocker
 
 Current state:
 
@@ -206,6 +207,7 @@ Current state:
 - Gate 2 image-bearing reference path findings landed as Supported for `PKT-SKU-009`: the attachment lookup materially improved visual binding; `generated_assets` creation / linking and `slot_status` mutation remain unresolved and unauthorized.
 - Capture / governance mechanics has been chosen as the next primary repo chain; `generated_assets` capture mechanics from raw slot attachments remain unresolved and no Airtable mutation is authorized.
 - Capture-mechanics planning now defines the proposed raw slot output -> review / capture action -> `generated_assets` record -> `slot_status` relationship bridge; execution still requires separate authorization.
+- PKT-SKU-009 capture-mechanics thin-bridge proof landed as Partial with a specific tool-layer blocker: minimal governed asset identity was created, while raw Airtable attachment URL write to `asset_uri` was blocked by the connector / safety layer.
 - SKU-driven Furniture v1 doctrine should not be generalized across all modes without further evidence.
 
 ## Templates / Worksheets / Workshops
