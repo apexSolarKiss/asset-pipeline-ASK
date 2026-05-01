@@ -170,6 +170,7 @@ Slot-level generation and current decisions:
 - [docs/url-visual-reference-recurrence-findings-pkt-sku-009.md](url-visual-reference-recurrence-findings-pkt-sku-009.md): URL visual-reference recurrence findings // PKT-SKU-009 Partial, not Supported
 - [docs/visual-reference-binding-diagnostic-order-structural-decision-note-sku-driven-furniture-v1.md](visual-reference-binding-diagnostic-order-structural-decision-note-sku-driven-furniture-v1.md): visual-reference binding diagnostic-order decision // cheaper diagnostics before Gate 2
 - [docs/reference-image-specificity-c-test-findings-pkt-sku-009.md](reference-image-specificity-c-test-findings-pkt-sku-009.md): reference-image specificity C-test findings // Not supported
+- [docs/field-agent-configuration-b-test-findings-pkt-sku-009.md](field-agent-configuration-b-test-findings-pkt-sku-009.md): field-agent configuration B-test findings // Not supported
 
 Current state:
 
@@ -194,6 +195,7 @@ Current state:
 - PKT-SKU-009 URL visual-reference recurrence completed as Partial, not Supported: explicit input hierarchy improved role separation and set coherence, but visual-reference fidelity remained weak and product-truth drift stayed visible; Gate 2 is more strongly earned as a decision surface, not authorized.
 - Visual-reference binding diagnostic-order decision chooses cheaper diagnostic discrimination before Gate 2: reference-image specificity first, field-agent configuration / input weighting second, Gate 2 only if those do not resolve binding, with product-truth drift held as an orthogonal probe.
 - Reference-image specificity C-test completed as Not supported: a stronger spatial URL reference surfaced correctly but did not materially improve visual-reference binding, making field-agent configuration / input weighting the next diagnostic direction.
+- Field-agent configuration B-test completed as Not supported: instruction-canvas hierarchy and model-sensitivity diagnostics did not make the surfaced URL lookup behave as a binding visual input; Gate 2 and pause are now decision candidates, with product-truth drift still orthogonal.
 - `generated_assets` capture mechanics from raw slot attachments remain unresolved.
 - SKU-driven Furniture v1 doctrine should not be generalized across all modes without further evidence.
 
