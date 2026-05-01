@@ -174,6 +174,7 @@ Slot-level generation and current decisions:
 - [docs/gate-2-image-bearing-reference-path-structural-decision-note-sku-driven-furniture-v1.md](gate-2-image-bearing-reference-path-structural-decision-note-sku-driven-furniture-v1.md): Gate 2 image-bearing reference path decision // next test chosen, not executed
 - [docs/gate-2-image-bearing-reference-path-probe-plan-sku-driven-furniture-v1.md](gate-2-image-bearing-reference-path-probe-plan-sku-driven-furniture-v1.md): Gate 2 image-bearing reference path probe plan // schema mutation / probe plan only
 - [docs/gate-2-image-bearing-reference-path-findings-pkt-sku-009.md](gate-2-image-bearing-reference-path-findings-pkt-sku-009.md): Gate 2 image-bearing reference path findings // Supported
+- [docs/capture-governance-next-path-structural-decision-note-sku-driven-furniture-v1.md](capture-governance-next-path-structural-decision-note-sku-driven-furniture-v1.md): capture / governance next-path decision // primary repo chain chosen, no Airtable mutation authorized
 
 Current state:
 
@@ -202,7 +203,7 @@ Current state:
 - Gate 2 image-bearing reference path has been chosen as the next visual-reference binding test; it has not been executed and requires a separate schema mutation / probe plan before any Airtable mutation or generation.
 - Gate 2 image-bearing reference path probe plan now defines the minimum Airtable structure, gate sequence, stop points, and outcome classes; it has not been executed.
 - Gate 2 image-bearing reference path findings landed as Supported for `PKT-SKU-009`: the attachment lookup materially improved visual binding; `generated_assets` creation / linking and `slot_status` mutation remain unresolved and unauthorized.
-- `generated_assets` capture mechanics from raw slot attachments remain unresolved.
+- Capture / governance mechanics has been chosen as the next primary repo chain; `generated_assets` capture mechanics from raw slot attachments remain unresolved and no Airtable mutation is authorized.
 - SKU-driven Furniture v1 doctrine should not be generalized across all modes without further evidence.
 
 ## Templates / Worksheets / Workshops
