@@ -51,6 +51,9 @@ These docs cover deterministic validation and verification boundaries. They are 
 - [docs/seam-local-verification-boundary-note.md](seam-local-verification-boundary-note.md): verification responsibility at local boundaries
 - [docs/first-deterministic-seam-baseline-plateau-note.md](first-deterministic-seam-baseline-plateau-note.md): first deterministic baseline plateau
 - [docs/milestones/milestone-1-baseline.md](milestones/milestone-1-baseline.md): baseline milestone
+- [docs/milestones/milestone-2-four-mode-cross-mode-pressure-plateau.md](milestones/milestone-2-four-mode-cross-mode-pressure-plateau.md): four-mode cross-mode pressure plateau milestone
+- [docs/milestones/milestone-3-airtable-sku-driven-furniture-v1-proof-plateau.md](milestones/milestone-3-airtable-sku-driven-furniture-v1-proof-plateau.md): Airtable SKU-driven Furniture v1 proof plateau milestone
+- [docs/milestones/milestone-4-output-slot-prototype-plateau.md](milestones/milestone-4-output-slot-prototype-plateau.md): output-slot prototype plateau milestone
 - [docs/ingest-validation-plan.md](ingest-validation-plan.md): ingest validation plan
 - [docs/transformation-check-plan.md](transformation-check-plan.md): transformation check plan
 - [docs/output-validation-plan.md](output-validation-plan.md): output validation plan
@@ -120,6 +123,13 @@ These docs cover live-run invocation evidence and boundaries.
 ## SKU-Driven Furniture v1 // Multi-Output And Output-Slot Chain
 
 This is the most important current active chain for output-side evidence.
+
+Note on "Gate" terminology: two unrelated local gate systems appear in this cluster's artifacts.
+
+- **Gate 6** refers to the earlier multi-output-slot generation execution gate sequence: Gates 1-6 of a single execution plan, where Gate 6 is the post-execution boundary.
+- **Gate 2** refers to the later visual-reference input schema mutation gate sequence: Gate 1 is the URL probe, and Gate 2 is the image-bearing attachment probe.
+
+These should not be conflated.
 
 Fresh-run predecessor evidence:
 
@@ -203,8 +213,8 @@ Current state:
 - Visual-reference binding diagnostic-order decision chooses cheaper diagnostic discrimination before Gate 2: reference-image specificity first, field-agent configuration / input weighting second, Gate 2 only if those do not resolve binding, with product-truth drift held as an orthogonal probe.
 - Reference-image specificity C-test completed as Not supported: a stronger spatial URL reference surfaced correctly but did not materially improve visual-reference binding, making field-agent configuration / input weighting the next diagnostic direction.
 - Field-agent configuration B-test completed as Not supported: instruction-canvas hierarchy and model-sensitivity diagnostics did not make the surfaced URL lookup behave as a binding visual input; Gate 2 and pause are now decision candidates, with product-truth drift still orthogonal.
-- Gate 2 image-bearing reference path has been chosen as the next visual-reference binding test; it has not been executed and requires a separate schema mutation / probe plan before any Airtable mutation or generation.
-- Gate 2 image-bearing reference path probe plan now defines the minimum Airtable structure, gate sequence, stop points, and outcome classes; it has not been executed.
+- Gate 2 image-bearing reference path was chosen as the next visual-reference binding test after URL-reference diagnostics were exhausted.
+- Gate 2 image-bearing reference path probe plan defined the minimum Airtable structure, gate sequence, stop points, and outcome classes before execution.
 - Gate 2 image-bearing reference path findings landed as Supported for `PKT-SKU-009`: the attachment lookup materially improved visual binding; `generated_assets` creation / linking and `slot_status` mutation remain unresolved and unauthorized.
 - Capture / governance mechanics has been chosen as the next primary repo chain; `generated_assets` capture mechanics from raw slot attachments remain unresolved and no Airtable mutation is authorized.
 - Capture-mechanics planning now defines the proposed raw slot output -> review / capture action -> `generated_assets` record -> `slot_status` relationship bridge; execution still requires separate authorization.
@@ -243,9 +253,11 @@ Completed-for-now chains should not be reopened casually, but they are not neces
 
 ## Current Active Next Steps
 
-Current repo-polish path is navigation first, then light architecture update, then possible milestone notes.
+Navigation / map-polish should no longer be treated as the pending first repo-polish path from this index.
 
-This is guidance, not a pre-approved sequence.
+Future repo work should be chosen deliberately among milestone work, product-truth D-probe, cross-mode work, or remaining small polish.
+
+This is guidance, not a pre-approved sequence, and no next path is authorized from this index alone.
 
 Do not perform an architecture rewrite from this index.
 

@@ -104,6 +104,21 @@ These are bounded SKU-driven Furniture v1 findings and decisions, not generalize
 - [`docs/generated-assets-promotion-boundary-structural-decision-note-sku-driven-furniture-v1.md`](generated-assets-promotion-boundary-structural-decision-note-sku-driven-furniture-v1.md): bounded generated-assets promotion-boundary decision
 - [`docs/output-slot-status-lifecycle-structural-decision-note-sku-driven-furniture-v1.md`](output-slot-status-lifecycle-structural-decision-note-sku-driven-furniture-v1.md): bounded output-slot status lifecycle decision
 - [`docs/asset-family-coherence-and-reuse-pressure-note-sku-driven-furniture-v1.md`](asset-family-coherence-and-reuse-pressure-note-sku-driven-furniture-v1.md): bounded asset-family coherence, reuse, derivative, and capture-mechanics pressure
+- [`docs/visual-invariant-anchor-refinement-note-sku-driven-furniture-v1.md`](visual-invariant-anchor-refinement-note-sku-driven-furniture-v1.md): visual invariant anchor refinement
+- [`docs/multi-image-visual-reference-input-structural-decision-note-sku-driven-furniture-v1.md`](multi-image-visual-reference-input-structural-decision-note-sku-driven-furniture-v1.md): bounded multi-image / visual-reference input structural decision
+- [`docs/visual-reference-input-schema-mutation-plan-sku-driven-furniture-v1.md`](visual-reference-input-schema-mutation-plan-sku-driven-furniture-v1.md): visual-reference input schema mutation plan
+- [`docs/url-visual-reference-set-generation-findings-sku-driven-furniture-v1.md`](url-visual-reference-set-generation-findings-sku-driven-furniture-v1.md): URL visual-reference set generation findings
+- [`docs/url-visual-reference-recurrence-findings-pkt-sku-009.md`](url-visual-reference-recurrence-findings-pkt-sku-009.md): `PKT-SKU-009` URL visual-reference recurrence findings
+- [`docs/visual-reference-binding-diagnostic-order-structural-decision-note-sku-driven-furniture-v1.md`](visual-reference-binding-diagnostic-order-structural-decision-note-sku-driven-furniture-v1.md): visual-reference binding diagnostic-order decision
+- [`docs/reference-image-specificity-c-test-findings-pkt-sku-009.md`](reference-image-specificity-c-test-findings-pkt-sku-009.md): `PKT-SKU-009` reference-image specificity C-test findings
+- [`docs/field-agent-configuration-b-test-findings-pkt-sku-009.md`](field-agent-configuration-b-test-findings-pkt-sku-009.md): `PKT-SKU-009` field-agent configuration B-test findings
+- [`docs/gate-2-image-bearing-reference-path-structural-decision-note-sku-driven-furniture-v1.md`](gate-2-image-bearing-reference-path-structural-decision-note-sku-driven-furniture-v1.md): Gate 2 image-bearing reference path structural decision
+- [`docs/gate-2-image-bearing-reference-path-probe-plan-sku-driven-furniture-v1.md`](gate-2-image-bearing-reference-path-probe-plan-sku-driven-furniture-v1.md): Gate 2 image-bearing reference path probe plan
+- [`docs/gate-2-image-bearing-reference-path-findings-pkt-sku-009.md`](gate-2-image-bearing-reference-path-findings-pkt-sku-009.md): `PKT-SKU-009` Gate 2 image-bearing reference path findings
+- [`docs/capture-governance-next-path-structural-decision-note-sku-driven-furniture-v1.md`](capture-governance-next-path-structural-decision-note-sku-driven-furniture-v1.md): capture / governance next-path structural decision
+- [`docs/capture-mechanics-plan-sku-driven-furniture-v1.md`](capture-mechanics-plan-sku-driven-furniture-v1.md): capture-mechanics plan
+- [`docs/capture-mechanics-thin-bridge-findings-pkt-sku-009.md`](capture-mechanics-thin-bridge-findings-pkt-sku-009.md): `PKT-SKU-009` capture-mechanics thin-bridge findings
+- [`docs/capture-mechanics-pause-and-document-structural-decision-note-sku-driven-furniture-v1.md`](capture-mechanics-pause-and-document-structural-decision-note-sku-driven-furniture-v1.md): capture-mechanics pause decision
 - [`docs/verification-record-carrying-clarification.md`](verification-record-carrying-clarification.md): current clarification on what seam records must carry across the chain
 - [`docs/seam-local-verification-boundary-note.md`](seam-local-verification-boundary-note.md): current clarification on later-seam verification responsibility
 - [`docs/application/examples/placeholder-furniture-workflow-packet-example.md`](application/examples/placeholder-furniture-workflow-packet-example.md): current SKU-driven packet example
