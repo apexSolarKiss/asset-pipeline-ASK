@@ -172,6 +172,7 @@ Slot-level generation and current decisions:
 - [docs/reference-image-specificity-c-test-findings-pkt-sku-009.md](reference-image-specificity-c-test-findings-pkt-sku-009.md): reference-image specificity C-test findings // Not supported
 - [docs/field-agent-configuration-b-test-findings-pkt-sku-009.md](field-agent-configuration-b-test-findings-pkt-sku-009.md): field-agent configuration B-test findings // Not supported
 - [docs/gate-2-image-bearing-reference-path-structural-decision-note-sku-driven-furniture-v1.md](gate-2-image-bearing-reference-path-structural-decision-note-sku-driven-furniture-v1.md): Gate 2 image-bearing reference path decision // next test chosen, not executed
+- [docs/gate-2-image-bearing-reference-path-probe-plan-sku-driven-furniture-v1.md](gate-2-image-bearing-reference-path-probe-plan-sku-driven-furniture-v1.md): Gate 2 image-bearing reference path probe plan // schema mutation / probe plan only
 
 Current state:
 
@@ -198,6 +199,7 @@ Current state:
 - Reference-image specificity C-test completed as Not supported: a stronger spatial URL reference surfaced correctly but did not materially improve visual-reference binding, making field-agent configuration / input weighting the next diagnostic direction.
 - Field-agent configuration B-test completed as Not supported: instruction-canvas hierarchy and model-sensitivity diagnostics did not make the surfaced URL lookup behave as a binding visual input; Gate 2 and pause are now decision candidates, with product-truth drift still orthogonal.
 - Gate 2 image-bearing reference path has been chosen as the next visual-reference binding test; it has not been executed and requires a separate schema mutation / probe plan before any Airtable mutation or generation.
+- Gate 2 image-bearing reference path probe plan now defines the minimum Airtable structure, gate sequence, stop points, and outcome classes; it has not been executed.
 - `generated_assets` capture mechanics from raw slot attachments remain unresolved.
 - SKU-driven Furniture v1 doctrine should not be generalized across all modes without further evidence.
 
