@@ -1,43 +1,417 @@
 # AGENTS.md
 
-This file defines repo-local execution guidance only.
+This file defines repo-local workflow rules for whoever executes work on this repository.
 
-## Scope
+It applies to both supported operating models:
 
-Keep work inside the repository boundary. Do not treat this repository as the place where external orchestration policy, prompt compilation behavior, or control-surface strategy is defined.
+- **Model A:** ChatGPT compiles prompts, Codex executes inside the repo, Claude Code is optional advisor.
+- **Model B:** Claude Code is the single control surface and executor, GPT is optional advisor.
 
-Prefer the smallest honest change set that advances the current repository state. Avoid inventing project structure, implementation detail, or workflow specificity that has not yet been decided.
+The same rules apply regardless of which agent does the executing.
 
-## Branch And PR Discipline
+For repo-external context (project intent, audience, philosophy, foundational premises, loose threads), read the grounding note.
 
-Work from clear branches and open focused pull requests.
+For project state (artifacts, decisions, milestones, current navigation), read the repo itself.
 
-Keep each branch scoped to one coherent change.
+This file owns workflow rules. It does not track project state, current direction, or recommended next paths.
 
-Do not mix bootstrap documentation work with implementation work.
+---
 
-Exact scoped diff review is the mandatory approval checkpoint before meaningful write actions complete. That approval may be given inside Codex after the scoped diff is reviewed, and once given, Codex may complete the remaining git workflow steps without requiring separate manual GitHub UI actions. Manual GitHub UI ceremony is optional; it is not the review boundary itself.
+## Source-of-Truth Boundaries
 
-Meaningful changes also require a structured change summary covering:
+- **Repo** = project truth: artifacts, decisions, findings, architecture docs, milestones, navigation.
+- **`AGENTS.md`** (this file) = workflow rules for repo execution.
+- **Grounding note** (external) = repo-external context: intent, audience, philosophy, foundational premises, loose threads.
+- **Airtable** = live prototype truth when inspected directly.
+- **Direct visual evidence** = image-fidelity truth.
+
+If a statement would become stale when a PR lands, a chain closes, or a next path changes, it does not belong in this file.
+
+---
+
+## Required Reading Before Meaningful Work
+
+Before any meaningful repo work, read:
+
+- `README.md`
+- `AGENTS.md` (this file)
+- `docs/architecture.md`
+- `docs/index.md`
+
+Then read the latest milestone in `docs/milestones/` and any artifacts relevant to the task.
+
+For external context, read the grounding note.
+
+---
+
+## Repo Workflow Discipline
+
+### Branch Freshness
+
+For repo implementation work, follow this sequence:
+
+1. verify local repo attachment
+2. verify clean working tree
+3. `git fetch origin --prune`
+4. `git checkout main`
+5. `git pull --ff-only origin main`
+6. create task branch from refreshed `main`
+7. stop if any verification fails
+
+Do not start meaningful repo work from a stale, dirty, detached, or ambiguous branch.
+
+### Default Verification
+
+Before meaningful work, verify:
+
+```text
+pwd
+git rev-parse --show-toplevel
+git remote get-url origin
+git branch --show-current
+git status --short
+```
+
+Stop if repo root, remote, branch, or working tree does not match the task requirements.
+
+### Terminal-State Discipline
+
+Do not conflate:
+
+- local edits
+- exact scoped diff
+- local commit
+- pushed branch
+- PR created
+- merged PR
+- branch cleanup
+
+Use explicit terminal states:
+
+```text
+exact scoped diff ready for approval
+committed locally only
+pushed branch only
+PR created
+merged
+merged branches cleaned up
+```
+
+### Exact Scoped Diff Gate
+
+Stop at exact scoped diff unless ASK has already approved commit / push / PR.
+
+The default implementation terminal state is:
+
+```text
+exact scoped diff ready for approval
+```
+
+Exact scoped diff review is the mandatory approval checkpoint before meaningful write actions complete. Approval may be given inside the executor session after the diff is reviewed; once given, the executor may complete the remaining git workflow without separate manual GitHub UI ceremony.
+
+### Structured Change Summary
+
+Meaningful changes require a structured change summary covering:
 
 - why this change exists
 - what changed
 - what did not change
 - what remains out of scope
 
-If a pull request is used, that summary belongs in the PR description. If no pull request is used, the same summary must still be produced in the Codex handoff or approval record before meaningful write actions complete.
+If a PR is used, this belongs in the PR description. If no PR is used, the same summary must be produced in the executor handoff or approval record before write actions complete.
 
-Branch plus PR remains the default path for meaningful architecture, ontology, or repo-structure changes. Narrow low-risk edits or explicitly scoped bootstrap tasks may allow direct push to `main` when that scope is made explicit and approved.
+### PR Creation
+
+When creating a PR, report:
+
+- branch name
+- commit SHA
+- PR number
+- PR URL
+- actual base branch
+- actual head branch
+- validation performed
+- terminal state: `PR created`
+
+### Post-Merge Cleanup
+
+After merge, verify `main`, delete merged task branches where safe, verify remote branch state, and report:
+
+- current main HEAD
+- whether merge commit is present
+- whether expected changes are present
+- local branch cleanup
+- remote branch cleanup
+- final branches
+- final working tree status
+- terminal state: `merged branches cleaned up`
+
+### Direct Push to Main
+
+Branch plus PR is the default for meaningful architecture, ontology, or repo-structure changes. Narrow low-risk edits or explicitly scoped bootstrap tasks may allow direct push to `main` when scope is made explicit and approved.
+
+---
 
 ## Scope Discipline
 
+Match the unit of work to the level of the question.
+
+For implementation and repo hygiene, prefer the smallest honest unit. Small bounded PRs are usually best. Avoid bundling, widening, or design-in-advance.
+
+For conceptual architecture, prefer the largest tractable structural question. The smallest honest unit at the architecture layer is often a structural question or a model attempt against a concrete example, not another local prototype probe.
+
+Do not let "smallest unit" become a rule that prevents zooming out to the right scale. A series of small honest units at the wrong layer can add up to ceremony without architectural progress.
+
+Do not bundle unrelated work.
+
+Do not widen from docs to schema, Airtable mutation, architecture rewrite, or production claims unless explicitly chosen.
+
+Do not create artifacts merely because a process pattern exists.
+
 When the repository is in an early design phase, prefer documenting constraints, boundaries, and open questions over prematurely defining systems that may later need to be undone.
 
-Do not add implementation scaffolding unless that work is explicitly in scope.
+---
 
-Do not add repo-local artifacts that belong to an external control surface.
+## Architecture-Before-Prototype Rule
 
-## Comments, Docs, And PR Roles
+When ASK is trying to define conceptual information architecture, do not default to Airtable probes or repo evidence chains.
+
+First identify:
+
+- the architectural question
+- the candidate model
+- the scale of example needed to pressure-test it
+- what uncertainty the prototype would resolve
+- what the result would change about the architecture
+
+Use prototypes to test architecture.
+
+Do not let the prototype become the object of study instead of the pressure surface for studying the information architecture.
+
+If the architectural question is not clear, do not open a prototype chain.
+
+---
+
+## Prototype-as-Pressure-Surface Rule
+
+A prototype is a pressure surface, not the project center.
+
+A prototype is justified when it exposes, tests, or falsifies a structural distinction in the information architecture.
+
+A prototype is not justified merely because a tool behavior is available to test.
+
+Before proposing prototype work, state:
+
+```text
+What architectural question does this prototype pressure?
+What distinction would become clearer?
+What would we know after the prototype that we do not know now?
+```
+
+If the answer is only "whether the tool can do X," stop unless that tool capability is strategically load-bearing.
+
+---
+
+## Attempt-Model-Before-Plan Rule
+
+When the work is architectural, prefer attempting a rough model on a concrete example before creating a broad planning artifact.
+
+Do not produce a planning document that only enumerates layers, questions, or future artifacts without attempting the model.
+
+A useful architecture artifact should do at least one of these:
+
+- apply a candidate model to a concrete example
+- show inheritance / override behavior
+- reveal where a model breaks
+- compare how one structure behaves across workflow modes
+- surface real architecture questions from collision with an example
+
+Permission to be wrong is part of the method.
+
+A sketch can be more valuable than a comprehensive plan.
+
+---
+
+## Self-Evident-Premise Stop Rule
+
+If a prototype chain is mainly proving a premise ASK already treats as foundational, stop.
+
+Consult the grounding note for current foundational premises.
+
+Ask whether the finding is worth documenting, or whether the project should move to the next structural layer.
+
+Do not keep proving accepted premises unless the new work materially refines the architecture.
+
+---
+
+## Ceremony Budget Rule
+
+Before opening an options / decision / probe / findings chain, state what architectural uncertainty the chain resolves.
+
+If the answer is only "whether Airtable can do X," do not proceed unless Airtable capability itself is strategically load-bearing.
+
+Avoid artifact chains that document local friction without advancing the information architecture.
+
+Repo artifacts are justified when they preserve:
+
+- a durable structural decision
+- a schema-relevant finding
+- a proof outcome that changes the model
+- a reopen trigger being acted on
+- live prototype state that needs repo-visible explanation
+
+Otherwise, continue in-thread or stop.
+
+---
+
+## Plan-Before-Execute Rule
+
+Before executing a meaningful repo change, state the plan: what files will change, what scope is in vs out, what non-actions apply, what terminal state is expected.
+
+This applies whether the executor is a separate process (Codex) or the same agent doing the planning (Claude Code).
+
+The plan-before-execute step preserves the explicit reasoning surface that prompt-compilation provided in Model A. Do not collapse plan and execution into a single opaque step in Model B.
+
+---
+
+## Airtable Operating Rule
+
+Airtable work uses the Airtable connector.
+
+Use the connector for record / schema truth.
+
+Use direct visual evidence in chat for image-fidelity judgment.
+
+Do not speculate about Airtable record contents when the connector can answer directly.
+
+### Generation State Model
+
+Distinguish:
+
+1. storage exists
+2. AI field-agent behavior is configured
+3. generation has been invoked
+4. generated output has been captured / mapped
+
+Do not collapse these states.
+
+Examples:
+
+- a connector-created attachment field means storage exists, not that AI field-agent behavior is configured
+- a generated image on a raw output field means raw output exists, not that a governed asset exists
+- a generated asset record means capture / governance has been invoked, not merely that generation happened
+
+---
+
+## Airtable Protected-Action Gates
+
+The following require explicit ASK authorization before execution:
+
+- schema changes
+- field creation
+- field deletion
+- lookup-field creation
+- Airtable AI field-agent configuration
+- generation invocation
+- generated-asset creation
+- output-slot linking
+- slot-status changes
+
+Authorization may be plain assent: proceed, agreed, yes, ok, do it, go.
+
+Obvious assent is sufficient only after a clear proposal that includes:
+
+- exact target
+- exact intended action
+- exact non-actions
+- terminal stop point
+
+Do not use opt-out phrasing.
+
+Executable does not mean authorized.
+
+---
+
+## Bounded Airtable Record / Text Updates
+
+When ASK clearly names:
+
+- the record or record family
+- the field
+- the intended content or action
+
+bounded record / text updates may execute directly if the action does not touch protected classes.
+
+Prompt-bearing fields may be updated as bounded work when record, field, role, and purpose are clear.
+
+Materially widened generation intent should be reviewed before writing.
+
+If a bounded update reveals unexpected state, stop and re-propose.
+
+---
+
+## Airtable Schema-Fit Rule
+
+Before authoring or approving a probe plan for any Airtable schema-fit question, perform the cheapest available live schema inspection when the connector can answer it.
+
+```text
+check possibility first
+design second
+document last
+```
+
+If the current schema cannot express the proposed test, report the blocker directly.
+
+Do not route an impossible schema-fit probe through a multi-artifact chain.
+
+---
+
+## Prototype-Bounded vs Doctrine-Touching Mutation
+
+Distinguish:
+
+- prototype-bounded schema mutation (cheap, reversible, affects only active prototype surface)
+- doctrine-touching schema mutation (defines shared concepts, cross-mode framing, or long-term schema structure)
+
+Prototype-bounded mutations may compress to a bounded probe-and-do path when authorized.
+
+Doctrine-touching mutations require heavier discipline.
+
+When in doubt, prefer the heavier path, but do not over-fit heavy ceremony to tiny prototype work.
+
+---
+
+## Artifact Discipline
+
+Repo artifacts should be narrow, citable, and explicit about posture.
+
+### Evidence-Chain Artifacts
+
+Evidence-chain artifacts record historical claims about what was decided, observed, or executed at a specific point.
+
+Do not retrofit evidence-chain artifacts.
+
+When framing changes, add a new artifact that supersedes or refines.
+
+### Navigation / Summary Artifacts
+
+Navigation and summary artifacts help readers navigate the repo. These may receive additive retrofits when alignment is purely navigational.
+
+Examples: README routing, `docs/index.md`, milestone notes, application README maps.
+
+Do not rename established files unless explicitly chosen.
+
+### Outcome-Class Reconciliation
+
+When a findings note pre-registers outcome classes, reconcile observed outcomes to those classes, or explicitly state why a narrower label is being used.
+
+### Visual-Evidence Attribution
+
+When a repo artifact records role-fit, fidelity, or image-quality claims, attribute those claims to direct visual evidence, not Airtable metadata alone.
+
+---
+
+## Comments, Docs, and PR Roles
 
 Use code comments only for local clarification inside implementation artifacts when implementation exists.
 
@@ -45,10 +419,50 @@ Use repository docs for durable repo-local truth, boundary definitions, architec
 
 Use pull requests for change-specific explanation, reviewer guidance, tradeoffs, and temporary decision context that does not belong in long-lived documentation.
 
-Keep repo-local documentation separate from change-specific explanation. Repository docs hold durable repo-local truth. Structured change summaries and PR descriptions explain the specific change being reviewed or approved.
+Keep repo-local documentation separate from change-specific explanation.
 
-## Early-Stage Discipline
+---
 
-Keep guidance minimal and structural.
+## Refresh Cadences
 
-Avoid over-specifying workflow classes, ontology, approval models, or execution systems that are still under design.
+### Grounding Note
+
+Refresh the grounding note only when external handoff context changes:
+
+- new strategic direction
+- philosophical reframing
+- audience or positioning shift
+- foundational premises change
+- operating model changes
+
+Do not refresh for routine repo chronology.
+
+Possible future directions belong in the grounding note only as non-binding loose threads, not as recommended next paths.
+
+### `AGENTS.md`
+
+Refresh this file only when a workflow rule is added, removed, or materially revised.
+
+Do not refresh because project state changed.
+Do not refresh because a PR landed.
+Do not refresh because a chain closed.
+Do not refresh because the next project direction changed.
+
+If a proposed update says "the project currently should do X," it does not belong in this file.
+
+---
+
+## Short Version
+
+- Verify repo state before meaningful work.
+- Read repo-local truth and grounding note before responding.
+- Stop at exact scoped diff before commit.
+- State the plan before executing.
+- Match the unit of work to the level of the question; do not let "smallest unit" prevent zooming out to architecture scale.
+- Treat protected Airtable actions as default-deny.
+- Attempt architecture models before opening planning chains.
+- Consult the grounding note for foundational premises.
+- Do not keep proving accepted premises.
+- Do not open ceremony-heavy artifact chains unless they resolve architectural uncertainty.
+- Use the prototype as a pressure surface, not as the project center.
+- Keep this file workflow-only. Repo holds project state. Grounding note holds external context.
