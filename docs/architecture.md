@@ -120,6 +120,7 @@ These are bounded SKU-driven Furniture v1 findings and decisions, not generalize
 - [`docs/capture-mechanics-plan-sku-driven-furniture-v1.md`](capture-mechanics-plan-sku-driven-furniture-v1.md): capture-mechanics plan
 - [`docs/capture-mechanics-thin-bridge-findings-pkt-sku-009.md`](capture-mechanics-thin-bridge-findings-pkt-sku-009.md): `PKT-SKU-009` capture-mechanics thin-bridge findings
 - [`docs/capture-mechanics-pause-and-document-structural-decision-note-sku-driven-furniture-v1.md`](capture-mechanics-pause-and-document-structural-decision-note-sku-driven-furniture-v1.md): capture-mechanics pause decision
+- [`docs/curation-event-schema-mutation-sku-driven-furniture-v1.md`](curation-event-schema-mutation-sku-driven-furniture-v1.md): bounded schema mutation enriching `generated_assets` with curation-event provenance fields, anchored to the cross-mode v3 finding
 - [`docs/verification-record-carrying-clarification.md`](verification-record-carrying-clarification.md): current clarification on what seam records must carry across the chain
 - [`docs/seam-local-verification-boundary-note.md`](seam-local-verification-boundary-note.md): current clarification on later-seam verification responsibility
 - [`docs/application/examples/placeholder-furniture-workflow-packet-example.md`](application/examples/placeholder-furniture-workflow-packet-example.md): current SKU-driven packet example

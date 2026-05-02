@@ -189,6 +189,7 @@ Slot-level generation and current decisions:
 - [docs/capture-mechanics-plan-sku-driven-furniture-v1.md](capture-mechanics-plan-sku-driven-furniture-v1.md): capture-mechanics plan // raw slot output to governed asset identity, no Airtable mutation authorized
 - [docs/capture-mechanics-thin-bridge-findings-pkt-sku-009.md](capture-mechanics-thin-bridge-findings-pkt-sku-009.md): capture-mechanics thin-bridge findings // PKT-SKU-009 Partial with tool-layer blocker
 - [docs/capture-mechanics-pause-and-document-structural-decision-note-sku-driven-furniture-v1.md](capture-mechanics-pause-and-document-structural-decision-note-sku-driven-furniture-v1.md): capture-mechanics pause decision // thin bridge accepted and capture mechanics paused until reopen trigger
+- [docs/curation-event-schema-mutation-sku-driven-furniture-v1.md](curation-event-schema-mutation-sku-driven-furniture-v1.md): curation-event schema mutation // four provenance fields added to `generated_assets`, anchored to the cross-mode v3 finding
 
 Current state:
 
