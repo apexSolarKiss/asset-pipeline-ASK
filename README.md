@@ -69,8 +69,8 @@ Together those docs mark a layered v1 prototype plateau, not production readines
 
 ### Governance
 
-- [`docs/workflow-boundary.md`](docs/workflow-boundary.md): repo-local versus external control-surface boundary
 - [`AGENTS.md`](AGENTS.md): repo-local execution guidance
+- [`docs/historical/workflow-boundary.md`](docs/historical/workflow-boundary.md): historical — prior repo-local versus external control-surface boundary, superseded by current AGENTS.md model
 
 ## License
 

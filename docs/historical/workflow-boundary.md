@@ -1,4 +1,10 @@
-# Workflow Boundary
+# Workflow Boundary (historical / superseded)
+
+This document describes the project's prior operating model, in which the workflow lived externally as a separate ChatGPT control-surface document and the repository held only execution guidance. Under the current operating model, workflow rules live inside the repository in `AGENTS.md`, and the boundary this document describes no longer applies.
+
+This file is retained as evidence of project evolution. Do not treat it as current guidance. For current workflow rules, read `AGENTS.md`.
+
+---
 
 This repository assumes a boundary between external orchestration and repo-local execution.
 
