@@ -38,6 +38,7 @@ These are conceptual pressure notes for comparing workflow modes, constraint bur
 - [docs/four-mode-truth-and-constraint-pressure-note.md](four-mode-truth-and-constraint-pressure-note.md): current four-mode comparison across single-item truth, relational truth, message-bearing discipline, and campaign coherence
 - [docs/shared-vs-mode-weighted-pressure-note.md](shared-vs-mode-weighted-pressure-note.md): shared versus mode-weighted pressure comparison
 - [docs/cross-mode-constraint-layering-note.md](cross-mode-constraint-layering-note.md): planning-level comparison of universal, workflow-mode, and brand-overlay constraint layering
+- [docs/cross-mode-layered-input-model-and-curation-event-note.md](cross-mode-layered-input-model-and-curation-event-note.md): working layered-input model attempt across the four modes, anchored to the curation event as a first-class governance act
 - [docs/review-artifact-placement-note.md](review-artifact-placement-note.md): review-artifact placement pressure
 - [docs/review-artifacts-optional-vs-load-bearing-note.md](review-artifacts-optional-vs-load-bearing-note.md): where review artifacts appear optional versus structurally load-bearing
 
