@@ -55,6 +55,7 @@ These docs cover deterministic validation and verification boundaries. They are 
 - [docs/milestones/milestone-3-airtable-sku-driven-furniture-v1-proof-plateau.md](milestones/milestone-3-airtable-sku-driven-furniture-v1-proof-plateau.md): Airtable SKU-driven Furniture v1 proof plateau milestone
 - [docs/milestones/milestone-4-output-slot-prototype-plateau.md](milestones/milestone-4-output-slot-prototype-plateau.md): output-slot prototype plateau milestone
 - [docs/milestones/milestone-5-sku-driven-furniture-v1-prototype-plateau.md](milestones/milestone-5-sku-driven-furniture-v1-prototype-plateau.md): SKU-driven Furniture v1 prototype plateau milestone
+- [docs/milestones/milestone-6-curation-event-first-class-plateau.md](milestones/milestone-6-curation-event-first-class-plateau.md): curation event first-class plateau milestone
 - [docs/ingest-validation-plan.md](ingest-validation-plan.md): ingest validation plan
 - [docs/transformation-check-plan.md](transformation-check-plan.md): transformation check plan
 - [docs/output-validation-plan.md](output-validation-plan.md): output validation plan
