@@ -303,50 +303,22 @@ Examples:
 
 ---
 
-## Airtable Protected-Action Gates
+## Airtable Mutation Discipline
 
-The following require explicit ASK authorization before execution:
+Airtable is a disposable prototype surface. The repo is the durable asset.
 
-- schema changes
-- field creation
-- field deletion
-- lookup-field creation
-- Airtable AI field-agent configuration
-- generation invocation
-- generated-asset creation
-- output-slot linking
-- slot-status changes
+Airtable mutations rely on:
 
-Authorization may be plain assent: proceed, agreed, yes, ok, do it, go.
+- **Plan-Before-Execute Rule** — state exact target, intended action, non-actions, and terminal stop point before mutation.
+- **Structured Change Summary** — after mutation, capture why the change exists, what changed, what did not, and what remains out of scope.
 
-Obvious assent is sufficient only after a clear proposal that includes:
+This applies uniformly across schema mutation, field creation, field deletion, lookup-field creation, Airtable AI field-agent configuration, generation invocation, generated-asset creation, output-slot linking, and slot-status changes.
 
-- exact target
-- exact intended action
-- exact non-actions
-- terminal stop point
+Per-action ASK authorization is not required when plan and change summary discipline is observed.
 
-Do not use opt-out phrasing.
+If a mutation reveals unexpected state, stop and re-propose.
 
-Executable does not mean authorized.
-
----
-
-## Bounded Airtable Record / Text Updates
-
-When ASK clearly names:
-
-- the record or record family
-- the field
-- the intended content or action
-
-bounded record / text updates may execute directly if the action does not touch protected classes.
-
-Prompt-bearing fields may be updated as bounded work when record, field, role, and purpose are clear.
-
-Materially widened generation intent should be reviewed before writing.
-
-If a bounded update reveals unexpected state, stop and re-propose.
+Doctrine-touching mutations still warrant heavier care; see Prototype-Bounded vs Doctrine-Touching Mutation.
 
 ---
 
@@ -459,7 +431,7 @@ If a proposed update says "the project currently should do X," it does not belon
 - Stop at exact scoped diff before commit.
 - State the plan before executing.
 - Match the unit of work to the level of the question; do not let "smallest unit" prevent zooming out to architecture scale.
-- Treat protected Airtable actions as default-deny.
+- State the plan before Airtable mutation; capture a structured change summary after.
 - Attempt architecture models before opening planning chains.
 - Consult the grounding note for foundational premises.
 - Do not keep proving accepted premises.
