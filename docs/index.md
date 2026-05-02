@@ -16,7 +16,6 @@ Screenshots and generated images are not committed evidence unless a future evid
 
 - [README.md](../README.md): entry points and current repo framing
 - [AGENTS.md](../AGENTS.md): repo-local execution guidance for Codex work inside this repository
-- [docs/workflow-boundary.md](workflow-boundary.md): boundary between repo-local truth and external control-surface behavior
 - [docs/architecture.md](architecture.md): high-level architecture stance and current ontology direction
 - [docs/problem-and-approach.md](problem-and-approach.md): concise statement of the workflow-structure problem and repo approach
 - [docs/method.md](method.md): current method, ontology / application split, and discovery / diagnosis / redesign sequence
@@ -237,6 +236,10 @@ These are reusable scaffolds rather than current evidence-chain artifacts.
 
 ## Historical / Held / Trigger-Based Work
 
+Superseded foundational docs:
+
+- [docs/historical/workflow-boundary.md](historical/workflow-boundary.md): historical — prior repo-local versus external control-surface boundary, superseded by current `AGENTS.md` model
+
 Trigger-based held chains:
 
 - attachment-input comparison and robustness chain
@@ -251,6 +254,8 @@ Completed-for-now chains:
 Held work should only reopen when its trigger fires or ASK explicitly chooses a narrow reopen.
 
 Completed-for-now chains should not be reopened casually, but they are not necessarily held by formal reopen triggers.
+
+Superseded foundational docs are retained as evidence of project evolution; do not treat them as current guidance.
 
 ## Current Active Next Steps
 
