@@ -200,6 +200,7 @@ Slot-level generation and current decisions:
 - [docs/curation-event-vision-based-agentic-test-findings-pkt-sku-009.md](curation-event-vision-based-agentic-test-findings-pkt-sku-009.md): vision-based agentic curation test // reference-grounded family-coherent selection on PKT-SKU-009; REF-002 binding Supported (most recent iteration); converges with metadata-based pick after methodology correction
 - [docs/full-flow-evidence-synthesis-pkt-sku-009.md](full-flow-evidence-synthesis-pkt-sku-009.md): full-flow evidence synthesis // Path C of three; documents the already-executed end-to-end flow on PKT-SKU-009 and the human/agent surface boundary
 - [docs/full-flow-path-a-findings-pkt-sku-009.md](full-flow-path-a-findings-pkt-sku-009.md): full-flow Path A findings // coordinated fresh-generation full-flow on PKT-SKU-009; implementation-vs-conceptual goal distinction for family coherence; fifth curation_pattern value introduced
+- [docs/full-flow-path-b-findings-pkt-sku-010.md](full-flow-path-b-findings-pkt-sku-010.md): full-flow Path B findings // coordinated fresh-generation full-flow on brand-new PKT-SKU-010; adds asset_attachment field; resolves milestone-5 thin-bridge limitation; closes v1 sweep's full-flow item
 
 Current state:
 
