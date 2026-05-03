@@ -199,6 +199,7 @@ Slot-level generation and current decisions:
 - [docs/curator-field-and-backfill-sku-driven-furniture-v1.md](curator-field-and-backfill-sku-driven-furniture-v1.md): curator field + backfill // adds curator field on generated_assets, populates four rows, closes the *by whom* axis of curation event provenance
 - [docs/curation-event-vision-based-agentic-test-findings-pkt-sku-009.md](curation-event-vision-based-agentic-test-findings-pkt-sku-009.md): vision-based agentic curation test // reference-grounded family-coherent selection on PKT-SKU-009; REF-002 binding Supported (most recent iteration); converges with metadata-based pick after methodology correction
 - [docs/full-flow-evidence-synthesis-pkt-sku-009.md](full-flow-evidence-synthesis-pkt-sku-009.md): full-flow evidence synthesis // Path C of three; documents the already-executed end-to-end flow on PKT-SKU-009 and the human/agent surface boundary
+- [docs/full-flow-path-a-findings-pkt-sku-009.md](full-flow-path-a-findings-pkt-sku-009.md): full-flow Path A findings // coordinated fresh-generation full-flow on PKT-SKU-009; implementation-vs-conceptual goal distinction for family coherence; fifth curation_pattern value introduced
 
 Current state:
 
