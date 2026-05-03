@@ -194,6 +194,7 @@ Slot-level generation and current decisions:
 - [docs/curation-event-population-findings-pkt-sku-009.md](curation-event-population-findings-pkt-sku-009.md): curation-event population findings // PKT-SKU-009 HERO row backfilled, source_attachment_id writeback Supported, milestone-5 blocker scope narrowed
 - [docs/curation-event-population-findings-pkt-sku-007.md](curation-event-population-findings-pkt-sku-007.md): curation-event population findings // PKT-SKU-007 Gate 6 rows backfilled, cross-packet enum-readiness analysis recommends capture_reason stay as text
 - [docs/curation-event-agentic-test-findings-pkt-sku-009.md](curation-event-agentic-test-findings-pkt-sku-009.md): curation-event agentic test findings // first agentic-first curation event for PKT-SKU-009 HERO/PROFILE/DETAIL, forward provenance population Supported, agentic delegation pattern articulated
+- [docs/governed-output-promotion-and-curation-pattern-findings-pkt-sku-009.md](governed-output-promotion-and-curation-pattern-findings-pkt-sku-009.md): governed-output promotion and curation_pattern field // three agentic rows promoted, multiple-rows-per-slot semantics resolved by honoring review_artifact_flag, curation_pattern field added
 
 Current state:
 
