@@ -198,6 +198,7 @@ Slot-level generation and current decisions:
 - [docs/governed-output-promotion-findings-pkt-sku-007.md](governed-output-promotion-findings-pkt-sku-007.md): PKT-SKU-007 promotion // two Gate 6 rows promoted to governed_output, third curation_pattern value surfaced (batch-output-no-curator-selection)
 - [docs/curator-field-and-backfill-sku-driven-furniture-v1.md](curator-field-and-backfill-sku-driven-furniture-v1.md): curator field + backfill // adds curator field on generated_assets, populates four rows, closes the *by whom* axis of curation event provenance
 - [docs/curation-event-vision-based-agentic-test-findings-pkt-sku-009.md](curation-event-vision-based-agentic-test-findings-pkt-sku-009.md): vision-based agentic curation test // reference-grounded family-coherent selection on PKT-SKU-009; REF-002 binding Supported (most recent iteration); converges with metadata-based pick after methodology correction
+- [docs/full-flow-evidence-synthesis-pkt-sku-009.md](full-flow-evidence-synthesis-pkt-sku-009.md): full-flow evidence synthesis // Path C of three; documents the already-executed end-to-end flow on PKT-SKU-009 and the human/agent surface boundary
 
 Current state:
 
