@@ -201,6 +201,7 @@ Slot-level generation and current decisions:
 - [docs/full-flow-evidence-synthesis-pkt-sku-009.md](full-flow-evidence-synthesis-pkt-sku-009.md): full-flow evidence synthesis // Path C of three; documents the already-executed end-to-end flow on PKT-SKU-009 and the human/agent surface boundary
 - [docs/full-flow-path-a-findings-pkt-sku-009.md](full-flow-path-a-findings-pkt-sku-009.md): full-flow Path A findings // coordinated fresh-generation full-flow on PKT-SKU-009; implementation-vs-conceptual goal distinction for family coherence; fifth curation_pattern value introduced
 - [docs/full-flow-path-b-findings-pkt-sku-010.md](full-flow-path-b-findings-pkt-sku-010.md): full-flow Path B findings // coordinated fresh-generation full-flow on brand-new PKT-SKU-010; adds asset_attachment field; resolves milestone-5 thin-bridge limitation; closes v1 sweep's full-flow item
+- [docs/asset-attachment-backfill-findings-sku-driven-furniture-v1.md](asset-attachment-backfill-findings-sku-driven-furniture-v1.md): asset_attachment backfill // 9 of 11 prior governed-asset rows backfilled (PKT-SKU-009); 2 unrecoverable (PKT-SKU-007 — sources gone); surfaces real architectural cost of the thin-bridge limitation
 
 Current state:
 
