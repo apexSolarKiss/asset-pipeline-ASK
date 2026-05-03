@@ -15,6 +15,8 @@ Can layered creative / production intent be represented in a shape that survives
 
 This is the architecturally-relevant direction at the current plateau, after the SKU-driven Furniture v1 prototype reached its layered prototype state at milestone 5.
 
+The architectural framing this sketch builds on is articulated in two external pieces. [From Brand Rules to Creative Discretion](https://atomicspacekitten.substack.com/p/from-brand-rules-to-creative-discretion) establishes the upstream framing — *creative discretion as the bounded zone of allowed variation inside a governed system* — and names five structural categories (product / business inputs, creative / technical constraints, creative discretion, required outputs, decision ownership). [The Creative Act of Selection](https://atomicspacekitten.substack.com/p/the-creative-act-of-selection) extends that framing to the curation seam where bounded creative discretion becomes operationally recordable as a governance act. The cross-mode model below assumes both pieces as background.
+
 ## The Layered Model
 
 The sketch identifies six layers and one transition seam. The seam between layers 5 and 6 is the **curation event** — the moment where bounded creative discretion is exercised and a candidate is elevated to a governed asset with provenance.
