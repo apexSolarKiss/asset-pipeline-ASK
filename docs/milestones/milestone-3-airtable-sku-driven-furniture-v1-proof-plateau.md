@@ -2,6 +2,8 @@
 
 This note records the plateau where the repo moved from conceptual architecture into bounded Airtable proofing.
 
+The article [From Normative Structure to Execution](https://atomicspacekitten.substack.com/p/from-normative-structure-to-execution) frames the move from abstract architecture to v1 prototype that this plateau records.
+
 ## What This Milestone Established
 
 - Airtable became an early prototype surface, not the final system
