@@ -193,6 +193,7 @@ Slot-level generation and current decisions:
 - [docs/curation-event-schema-mutation-sku-driven-furniture-v1.md](curation-event-schema-mutation-sku-driven-furniture-v1.md): curation-event schema mutation // four provenance fields added to `generated_assets`, anchored to the cross-mode v3 finding
 - [docs/curation-event-population-findings-pkt-sku-009.md](curation-event-population-findings-pkt-sku-009.md): curation-event population findings // PKT-SKU-009 HERO row backfilled, source_attachment_id writeback Supported, milestone-5 blocker scope narrowed
 - [docs/curation-event-population-findings-pkt-sku-007.md](curation-event-population-findings-pkt-sku-007.md): curation-event population findings // PKT-SKU-007 Gate 6 rows backfilled, cross-packet enum-readiness analysis recommends capture_reason stay as text
+- [docs/curation-event-agentic-test-findings-pkt-sku-009.md](curation-event-agentic-test-findings-pkt-sku-009.md): curation-event agentic test findings // first agentic-first curation event for PKT-SKU-009 HERO/PROFILE/DETAIL, forward provenance population Supported, agentic delegation pattern articulated
 
 Current state:
 
