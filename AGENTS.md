@@ -2,12 +2,11 @@
 
 This file defines repo-local workflow rules for whoever executes work on this repository.
 
-It applies to both supported operating models:
+The operating model is single-node: Claude Code is both control surface and executor.
 
-- **Model A:** ChatGPT compiles prompts, Codex executes inside the repo, Claude Code is optional advisor.
-- **Model B:** Claude Code is the single control surface and executor, GPT is optional advisor.
+Earlier in this project's history, work also flowed through a split-execution model — ChatGPT as prompt compiler, Codex as executor, Claude Code as optional advisor (referred to historically as **Model A**). That model has been retired here. The single-node model produced ~50x less ceremony, faster iteration, and direct ASK-to-Claude conversation in place of operator-as-go-between.
 
-The same rules apply regardless of which agent does the executing.
+The rules below are agent-agnostic — they apply to whoever is executing.
 
 For repo-external context (project intent, audience, philosophy, foundational premises, loose threads), read the grounding note.
 
@@ -268,9 +267,7 @@ Otherwise, continue in-thread or stop.
 
 Before executing a meaningful repo change, state the plan: what files will change, what scope is in vs out, what non-actions apply, what terminal state is expected.
 
-This applies whether the executor is a separate process (Codex) or the same agent doing the planning (Claude Code).
-
-The plan-before-execute step preserves the explicit reasoning surface that prompt-compilation provided in Model A. Do not collapse plan and execution into a single opaque step in Model B.
+The plan-before-execute step preserves the explicit reasoning surface that prompt-compilation provides when execution is split across a prompt-compiler and an executor. In a single-node model, plan-before-execute is the rule that restores it. Do not collapse plan and execution into a single opaque step.
 
 ---
 
