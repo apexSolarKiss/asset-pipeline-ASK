@@ -25,6 +25,11 @@ At this stage, the ontology remains open. The repository exists to create a disc
 
 ## Entry Points
 
+### Background Reading
+
+- [From Brand Rules to Creative Discretion](https://atomicspacekitten.substack.com/p/from-brand-rules-to-creative-discretion): establishes *creative discretion as the bounded zone of allowed variation inside a governed system* and names the five structural categories (product / business inputs, creative / technical constraints, creative discretion, required outputs, decision ownership) that the repo's architecture work builds on
+- [The Creative Act of Selection](https://atomicspacekitten.substack.com/p/the-creative-act-of-selection): extends the framing to the curation seam where bounded creative discretion becomes operationally recordable as a governance act
+
 ### Substance / Payload
 
 - [`docs/problem-and-approach.md`](docs/problem-and-approach.md): concise statement of the workflow-structure problem and the repo's current approach
@@ -49,6 +54,7 @@ At this stage, the ontology remains open. The repository exists to create a disc
 - [`docs/governed-output-promotion-and-curation-pattern-findings-pkt-sku-009.md`](docs/governed-output-promotion-and-curation-pattern-findings-pkt-sku-009.md): bundled multiple-rows-per-slot resolution and `curation_pattern` field addition on PKT-SKU-009 (three agentic rows promoted to governed_output); forward promotion path Supported
 - [`docs/governed-output-promotion-findings-pkt-sku-007.md`](docs/governed-output-promotion-findings-pkt-sku-007.md): PKT-SKU-007 promotion completing the v1 evidence chain transition; surfaces `batch-output-no-curator-selection` as a third curation pattern beyond authorship-bearing and confirmation-bearing
 - [`docs/curator-field-and-backfill-sku-driven-furniture-v1.md`](docs/curator-field-and-backfill-sku-driven-furniture-v1.md): adds `curator` field on `generated_assets` and backfills four rows; closes the *by whom* axis of the curation event's structural provenance
+- [`docs/curation-event-vision-based-agentic-test-findings-pkt-sku-009.md`](docs/curation-event-vision-based-agentic-test-findings-pkt-sku-009.md): vision-based agentic curation test on PKT-SKU-009 with reference grounding and family coherence; REF-002 binding Supported in the most recent iteration; vision-based proper test converges with the metadata-based pick from #149; documents three vision-based delegation failure modes that required in-flight methodology correction
 - [`docs/four-mode-truth-and-constraint-pressure-note.md`](docs/four-mode-truth-and-constraint-pressure-note.md): current four-mode comparison across single-item truth, relational truth, message-bearing discipline, and campaign coherence
 - [`docs/shared-vs-mode-weighted-pressure-note.md`](docs/shared-vs-mode-weighted-pressure-note.md): current comparison of shared pressures, mode-weighted pressures, and still-unearned claims across the four worked-example modes
 - [`docs/cross-mode-layered-input-model-and-curation-event-note.md`](docs/cross-mode-layered-input-model-and-curation-event-note.md): current working layered-input model attempt across the four modes, anchored to the curation event as a first-class governance act

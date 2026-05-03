@@ -11,7 +11,7 @@ Outcome: **Supported** for the addition and backfill. The move surfaces a struct
 
 ## Architectural Anchor
 
-The article [`The Creative Act of Selection`](../../ASK%20Dropbox/studio/studio%20ASK/2026%20studioASK/asset-pipeline-ASK-ZZZ/articles/The%20Creative%20Act%20of%20Selection.md) names five things the curation event has to record: what, why, when, by whom, and under what pattern of delegation. The schema landed in [#145](https://github.com/apexSolarKiss/asset-pipeline-ASK/pull/145) covered four of the five (what / why / when / how). The fifth — *by whom* — has been recorded only in `capture_notes` free text, not as a structured field.
+The article [The Creative Act of Selection](https://atomicspacekitten.substack.com/p/the-creative-act-of-selection) names five things the curation event has to record: what, why, when, by whom, and under what pattern of delegation. The schema landed in [#145](https://github.com/apexSolarKiss/asset-pipeline-ASK/pull/145) covered four of the five (what / why / when / how). The fifth — *by whom* — has been recorded only in `capture_notes` free text, not as a structured field.
 
 This move closes that gap.
 

@@ -60,7 +60,7 @@ The dataset now contains three distinct `curation_pattern` values across three s
 | `agent-proposed-human-ratified` | Confirmation-bearing approval: an algorithmic process narrowed N candidates to one, the curator approved. | 3 PKT-SKU-009 agentic rows |
 | `batch-output-no-curator-selection` | Neither authorship-bearing nor confirmation-bearing: no per-slot curator selection event occurred; the system's batch output became the candidate directly. | 2 PKT-SKU-007 Gate 6 rows |
 
-The third pattern is genuinely new conceptually relative to the article's framing in [`The Creative Act of Selection`](../../ASK%20Dropbox/studio/studio%20ASK/2026%20studioASK/asset-pipeline-ASK-ZZZ/articles/The%20Creative%20Act%20of%20Selection.md). The article's binary distinction (authorship-bearing vs confirmation-bearing) implicitly assumed a curation event occurred. `PKT-SKU-007` reveals a third class: assets whose governed status comes from the *absence* of curation, not from curation.
+The third pattern is genuinely new conceptually relative to the article's framing in [The Creative Act of Selection](https://atomicspacekitten.substack.com/p/the-creative-act-of-selection). The article's binary distinction (authorship-bearing vs confirmation-bearing) implicitly assumed a curation event occurred. `PKT-SKU-007` reveals a third class: assets whose governed status comes from the *absence* of curation, not from curation.
 
 This is a meaningful refinement. It does not contradict the article's argument — it sharpens it. The architecture's ability to distinguish "no curation event happened" from "curation event happened, in this delegation pattern" is part of the legibility the article argues is required.
 
