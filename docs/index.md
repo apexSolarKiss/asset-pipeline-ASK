@@ -203,6 +203,7 @@ Slot-level generation and current decisions:
 - [docs/full-flow-path-b-findings-pkt-sku-010.md](full-flow-path-b-findings-pkt-sku-010.md): full-flow Path B findings // coordinated fresh-generation full-flow on brand-new PKT-SKU-010; adds asset_attachment field; resolves milestone-5 thin-bridge limitation; closes v1 sweep's full-flow item
 - [docs/asset-attachment-backfill-findings-sku-driven-furniture-v1.md](asset-attachment-backfill-findings-sku-driven-furniture-v1.md): asset_attachment backfill // 9 of 11 prior governed-asset rows backfilled (PKT-SKU-009); 2 unrecoverable (PKT-SKU-007 — sources gone); surfaces real architectural cost of the thin-bridge limitation
 - [docs/cross-mode-probe-marketing-message-driven-v1.md](cross-mode-probe-marketing-message-driven-v1.md): cross-mode probe // marketing / message-driven mode v1 — paper-only sketch pressuring SKU-driven schema against a concrete marketing scenario; architecture survives without mutation; three strain points surfaced under concrete pressure but not earned operationally
+- [docs/cross-mode-probe-collection-merchandising-v1.md](cross-mode-probe-collection-merchandising-v1.md): cross-mode probe // collection / merchandising mode v1 — paper-only sketch pressuring SKU-driven schema against a concrete capsule wardrobe edit; slot-input plurality strain is sharpest here across the probe series; not earned operationally
 
 Current state:
 
