@@ -59,6 +59,23 @@ Each slot's `slot_prompt` encodes the collection-mode workaround explicitly:
 
 The DETAIL_ADJACENCY slot is the sharpest single test case: it asks the slot to feature 2 of the 4 constituents while acknowledging the other 2 may appear at frame edges. That subset-of-grouping pattern is what the cross-mode probe predicted would strain the most.
 
+## Adjustment // SKU swap on lead constituent (post-initial-setup)
+
+After initial Phase 1 setup, the packet's lead-chair constituent was swapped from SKU-CHAIR-002 (Placeholder Walnut Dining Chair, spindle-back) to SKU-CHAIR-003 (Placeholder Sculpted Upholstered Dining Chair). The original PKT-COLL-001 packet was created on 2026-04-22 with SKU-CHAIR-002; ASK reviewed the operational-test setup before any generation ran and called for the swap because SKU-CHAIR-003's silhouette (softly curved upholstered back, slim tapered legs) better fits the calm-living-room grouping the packet describes.
+
+Mutations made:
+
+- PKT-COLL-001 `sku_key`: removed SKU-CHAIR-002, added SKU-CHAIR-003 (other 3 constituents — table, lamp, bench — unchanged)
+- PKT-COLL-001 `business_intent`: updated SKU-CHAIR-002 reference to SKU-CHAIR-003
+- All 3 output_slots `slot_prompt` text: updated chair identifying-detail prose from SKU-CHAIR-002's description (warm walnut frame, upholstered seat pad, exposed joinery at rear legs) to SKU-CHAIR-003's description (softly curved upholstered back, slim seat cushion, refined slim tapered legs, warm neutral upholstery with subtle woven texture)
+- HERO_GROUP `expected_output_description`: "walnut dining chair" → "sculpted upholstered dining chair"
+- DETAIL_ADJACENCY's tonal-coordination phrasing: adjusted from "warm walnut finishes" pairing logic to "upholstered chair with warm walnut side-table finish" pairing logic
+- Slot prototype-aesthetic line in HERO_GROUP: "warm walnut tones; refined upholstery" → "warm walnut tones with refined upholstery accent" (the chair brings upholstery; the table, lamp, and bench remain walnut/walnut-toned)
+
+The survey findings section above is preserved as-written — it accurately records the state of the base at survey time (SKU-CHAIR-002 was the lead chair). This section records the adjustment that came after.
+
+No other packets, products, slots, or schema were touched.
+
 ## What This Phase 1 Setup Did Not Do
 
 - **No mutation of existing PKT-COLL-001 packet** — its packet-level config from 2026-04-22 stands as it was
