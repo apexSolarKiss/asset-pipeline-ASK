@@ -104,6 +104,37 @@ Mutations made:
 - All 3 output_slots `slot_prompt`: tightened per the issues above; HERO_GROUP_ALT also gets an explicit tooling-limitation note
 - No mutation of products, references, packet, schema, or any other table
 
+## Adjustment // round 2 review + HERO_GROUP round 3 prep
+
+ASK ran round 2 on all three slots. Visual review of round 2 candidates:
+
+- **HERO_GROUP_ALT (round 2)**: clean composition; all four constituents fully visible; family coherence with HERO_GROUP intact. Ratifiable as the governed asset for this slot.
+- **DETAIL_ADJACENCY (round 2)**: exactly what the tightened prompt asked for; chair + side table cleanly framed; lamp and bench fully excluded from frame. Ratifiable as the governed asset for this slot.
+- **HERO_GROUP (round 2)**: the bench-cropping issue persists despite the round-2 tightening. The agent rendered the bench as a naturally elongated horizontal piece that extends past the right edge of the frame even with "all four constituents must be fully within the frame" instruction.
+
+For HERO_GROUP, ASK chose to do one more regen attempt under even stronger framing language before accepting the cropping as a documented generation-tooling limitation. The slot_prompt was updated with a load-bearing FRAMING REQUIREMENT block specifying:
+
+- All four constituents must end fully inside the frame with visible margin from every edge
+- The bench is the widest, most horizontally elongated constituent and must not be cropped
+- Resolution options (camera pullback, overall scale reduction, more compact arrangement) are spelled out
+- Mental-verification step: "from leftmost edge of leftmost item to rightmost edge of rightmost item, all inside the frame with margin"
+
+If round 3 still crops, the cropping is accepted as a documented generation-tooling limitation: text-to-image generation does not reliably respect "all items fully in frame" when one constituent is naturally elongated relative to others, even under explicit framing instructions. Round 2's HERO_GROUP candidate would then be ratified, and the limitation recorded in the eventual findings artifact.
+
+### Sub-finding for the findings artifact: cross-slot consistency for prose-only constituents
+
+ASK observed that the lamp shows surprising consistency *within* each slot's two rounds, but variation *across* slots. The structural reason: when a constituent has no `product_image` attachment (as the table, lamp, and bench do not), the only thing carrying that constituent's identity is the prose in each slot's `slot_prompt`. The agent has no memory of prior slot generations. Cross-slot consistency therefore requires verbatim prose repetition.
+
+In this test, HERO_GROUP_ALT's slot_prompt abbreviated constituent descriptions ("the same four constituents are present" with bullets carrying only SKU + name, no inline identifying_details) on the assumption it could build on HERO_GROUP's establishment. That assumption is structurally wrong — abbreviation gave the agent more interpretive latitude and contributed to cross-slot variation. SKU mode's `product_image_lookup_lookup` provides cross-slot consistency automatically when product_image attachments exist; collection mode without product_image attachments must replicate the prose verbatim.
+
+This is a content-discipline finding, not a schema-mutation finding. Implication for real-pipeline operation: for product-truth fidelity, every constituent SKU should have a product_image attachment, just as in SKU mode. Prose-only fidelity is an interesting incidental capability surfaced by this test, not a target operational mode.
+
+Mutations made:
+
+- HERO_GROUP slot_prompt: added load-bearing FRAMING REQUIREMENT block targeted at the bench-cropping pattern
+- No mutation of HERO_GROUP_ALT, DETAIL_ADJACENCY, products, packet, references, or schema
+- First-round and second-round candidates kept on slot_generated_image_v1 per ASK's direction
+
 ## What This Phase 1 Setup Did Not Do
 
 - **No mutation of existing PKT-COLL-001 packet** — its packet-level config from 2026-04-22 stands as it was
