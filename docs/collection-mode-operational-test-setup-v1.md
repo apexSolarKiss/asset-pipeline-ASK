@@ -76,6 +76,19 @@ The survey findings section above is preserved as-written — it accurately reco
 
 No other packets, products, slots, or schema were touched.
 
+## Adjustment // packet-level studio-world reference wired (post-initial-setup)
+
+The initial Phase 1 setup left `approved_reference_keys` empty on PKT-COLL-001, deliberately, with the option flagged for Phase 2 to address. ASK chose to wire it in before any generation runs to give collection-mode slots the same studio-world anchor the SKU-mode slots get — isolating the test variable to pure mode pressure rather than confounding mode pressure with reference-quality variance.
+
+Choice of reference: **`REF-PKT-SKU-009-VISUAL-INVARIANT-002`** — the warm-neutral architectural studio-world reference that PKT-SKU-009 and PKT-SKU-010 generated against. It is the only reference_asset in the base with an actual studio-world image attached, and using the same studio world that worked for SKU-mode generation directly tests the mode-independence claim. The reference's name retains its original lineage (it was created for PKT-SKU-009) but its content (the studio-world image) is what generation actually consumes; multi-packet references are normal in this base.
+
+Mutations made:
+
+- PKT-COLL-001 `approved_reference_keys`: was empty → `[REF-PKT-SKU-009-VISUAL-INVARIANT-002]`
+- All 3 output_slots `slot_prompt`: added a `packet_reference_image_lookup` section before the `product_image_lookup_lookup` section, matching the PKT-SKU-009/010 pattern. The added text: "Use packet_reference_image_lookup as the studio-world visual reference image. Prioritize it for background, floor/wall plane, cove transition, lighting direction, and shadow behavior. Use product_image_lookup_lookup as the fidelity anchor for each constituent's identity, proportions, material, and finish (for all four SKUs listed above), but do not copy any product-image background."
+
+The reference asset itself was not mutated. Its name, role, image attachment, and existing PKT-SKU-009/PKT-SKU-010 links are unchanged. Adding PKT-COLL-001 to its workflow_packets link is a one-sided addition.
+
 ## What This Phase 1 Setup Did Not Do
 
 - **No mutation of existing PKT-COLL-001 packet** — its packet-level config from 2026-04-22 stands as it was
