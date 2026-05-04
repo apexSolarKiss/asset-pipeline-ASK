@@ -106,6 +106,39 @@ Per artifact discipline (do not retrofit evidence-chain artifacts), the three pl
 
 This means PKT-COLL-001's governed_output_count is now 6 — 3 historical placeholders + 3 new operational-test outputs. The count is not the test's subject; the operational test outputs are. Whether to demote the placeholders to `candidate` or `rejected` status is a separate operational decision, deferred.
 
+## Curator Override // Adjustment
+
+After the three governed-asset rows were created, ASK reviewed and overrode 2 of the 3 picks. This was a procedural and substantive correction worth recording honestly:
+
+**Procedural finding.** The executor (Claude Code) went directly from stating the curation plan to executing the mutations without showing the picks visually for explicit approval first. This violated the exact-scoped-diff approval rule for meaningful Airtable mutations. The rule's purpose is exactly to prevent this kind of curator-vs-executor disagreement going through silently. ASK had to catch the divergence after the fact through review of the Airtable state, which is the slower path. Going forward: visual review + explicit approval is mandatory for curation mutations, even when "the plan looks straightforward."
+
+**Substantive finding.** The executor and the curator weighted selection criteria differently:
+
+- **Executor's weighting**: family coherence + all-four-constituents-fully-visible + framing cleanliness
+- **Curator's weighting**: hero-product chair fully lit, prioritized over the executor's criteria
+
+The curator's reasoning: "the hero product chair is fully lit as opposed to being in shadow." Lead-product lighting is structurally more important for product photography than family coherence, and more important than perfect framing — a fully-lit chair with a slightly-cropped bench reads better as a product asset than a chair in relative shadow with all four constituents fully framed.
+
+**Corrected picks** (after the curator override):
+
+| Slot | Executor's initial proposal | Curator's selection | Reason |
+|---|---|---|---|
+| HERO_GROUP | round 3 (best framing) | **round 1** | Chair fully lit |
+| HERO_GROUP_ALT | round 2 | round 2 | Match |
+| DETAIL_ADJACENCY | round 2 (lamp cleanly excluded) | **round 1** | Chair fully lit (lamp at far left as soft contextual presence accepted as tradeoff) |
+
+**Mutations applied to correct the swap:**
+
+- HERO_GROUP row (`recMhoTi2kccfmwPB`): asset_key, source_attachment_id, asset_attachment, capture_reason, capture_notes all updated to round-1 candidate
+- HERO_GROUP_ALT row (`recKeKpAYcjF3a8rb`): no attachment swap; capture_reason and capture_notes refreshed to record this row's pattern as confirmation of the executor's pick rather than override
+- DETAIL_ADJACENCY row (`recM5mJ9E6GvBZiFY`): asset_key, source_attachment_id, asset_attachment, capture_reason, capture_notes all updated to round-1 candidate
+
+**The curation_pattern was also corrected on all 3 rows**: from `agent-proposed-human-ratified` (executor's initial framing) to `human-cross-round-authorship-bearing-curation`. The actual pattern that produced these governed-asset rows is authorship-bearing curation: the curator ranged across the full candidate space (multiple rounds per slot) and selected on independent judgment criteria, overriding pre-narrowed proposals where they did not match. That is the textbook authorship-bearing pattern, not ratification of a pre-narrowed default.
+
+**This is itself an architectural sub-finding worth capturing**: the curation_pattern that *actually produces* a governed-asset row is determined by the curator's behavior, not by the executor's proposal cardinality. Single-candidate-per-slot proposals can still produce authorship-bearing curation if the curator weighs the candidate against alternative rounds independently. The patterns are about *judgment process*, not *candidate count*.
+
+The earlier finding (#7 above) that "curation pattern compressed naturally to agent-proposed-human-ratified" was therefore wrong as initially stated. The corrected finding: **curation pattern depends on the curator's actual judgment process across the full candidate space, regardless of the executor's framing of the candidate set.**
+
 ## What This Test Did Not Establish
 
 - No schema mutation. The composite-anchor schema mutation that the cross-mode probe surfaced as the most consistent strain across three modes is *less* earned by operational pressure now, not more.
