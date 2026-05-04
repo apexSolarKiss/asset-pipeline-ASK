@@ -204,6 +204,7 @@ Slot-level generation and current decisions:
 - [docs/asset-attachment-backfill-findings-sku-driven-furniture-v1.md](asset-attachment-backfill-findings-sku-driven-furniture-v1.md): asset_attachment backfill // 9 of 11 prior governed-asset rows backfilled (PKT-SKU-009); 2 unrecoverable (PKT-SKU-007 — sources gone); surfaces real architectural cost of the thin-bridge limitation
 - [docs/cross-mode-probe-marketing-message-driven-v1.md](cross-mode-probe-marketing-message-driven-v1.md): cross-mode probe // marketing / message-driven mode v1 — paper-only sketch pressuring SKU-driven schema against a concrete marketing scenario; architecture survives without mutation; three strain points surfaced under concrete pressure but not earned operationally
 - [docs/cross-mode-probe-collection-merchandising-v1.md](cross-mode-probe-collection-merchandising-v1.md): cross-mode probe // collection / merchandising mode v1 — paper-only sketch pressuring SKU-driven schema against a concrete capsule wardrobe edit; slot-input plurality strain is sharpest here across the probe series; not earned operationally
+- [docs/cross-mode-probe-brand-campaign-editorial-v1.md](cross-mode-probe-brand-campaign-editorial-v1.md): cross-mode probe // brand campaign / editorial mode v1 — paper-only sketch pressuring SKU-driven schema against a five-slot heritage campaign; surfaces that `products` becomes peripheral and that Layer 2's composite-anchor representation is the most consistent strain across all three probes; closes the cross-mode application sweep at probe-depth
 
 Current state:
 
