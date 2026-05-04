@@ -89,6 +89,21 @@ Mutations made:
 
 The reference asset itself was not mutated. Its name, role, image attachment, and existing PKT-SKU-009/PKT-SKU-010 links are unchanged. Adding PKT-COLL-001 to its workflow_packets link is a one-sided addition.
 
+## Adjustment // first round + slot_prompt tightening for round 2
+
+After the reference wire-up, ASK ran one generation pass per slot. The first-round candidates surfaced two prompt issues that called for a second round under tightened slot_prompts:
+
+- **HERO_GROUP first-round candidate**: cropped the bench at the right edge of the frame. The original slot_prompt said "all four items are visible" but did not require them fully within frame. Tightening: added "All four constituents must be fully within the frame — do not crop any constituent at the edges of the composition. Pull the camera back or adjust the framing as needed to ensure all four items are fully present."
+- **DETAIL_ADJACENCY first-round candidate**: the lamp appeared at the far left edge as a faint partial presence. The original slot_prompt allowed this ("MAY appear at the edge of frame as soft contextual presence"), but the cropped lamp read awkwardly. Tightening: changed to "The other two constituents (SKU-LAMP-001, SKU-BENCH-001) should NOT appear in frame at all. This is a clean two-item pairing detail focused exclusively on the chair + side table relationship. Do not include the lamp or the bench, even at the edges."
+- **HERO_GROUP_ALT first-round candidate**: produced a fresh composition with the same constituents rather than the same arrangement viewed from a different angle. This is not a prompt-fixable issue — text-to-image generation cannot preserve spatial arrangement exactly across independent generations. Reframing: rewrote the slot_prompt to be honest about what the tooling does ("a second view of the same calm living-room grouping concept ... with a different camera position") rather than asking for arrangement preservation that the tooling cannot provide. Added an explicit note on the tooling limitation in the slot_prompt itself.
+
+The first-round candidates also surfaced an unexpected sub-finding worth recording for the eventual findings artifact: **prose alone carried fidelity for three of four constituents.** Of the four PKT-COLL-001 SKUs, only SKU-CHAIR-003 has a `product_image` attachment; SKU-TABLE-001, SKU-LAMP-001, and SKU-BENCH-001 each have no product image. The agent rendered all four constituents credibly in the first round, meaning the table, lamp, and bench were generated from `material_notes` / `finish_notes` / `identifying_details` text fields surfaced via slot_prompt prose alone, with no visual reference. This is a stronger finding than the cross-mode probe predicted: not only does prose-naming carry the 1:N slot-product cardinality, prose-only descriptions of supporting constituents (without product images) carry visual fidelity adequately for a calm-living-room collection-mode composition.
+
+Mutations made:
+
+- All 3 output_slots `slot_prompt`: tightened per the issues above; HERO_GROUP_ALT also gets an explicit tooling-limitation note
+- No mutation of products, references, packet, schema, or any other table
+
 ## What This Phase 1 Setup Did Not Do
 
 - **No mutation of existing PKT-COLL-001 packet** — its packet-level config from 2026-04-22 stands as it was
