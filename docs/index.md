@@ -57,6 +57,7 @@ These docs cover deterministic validation and verification boundaries. They are 
 - [docs/milestones/milestone-5-sku-driven-furniture-v1-prototype-plateau.md](milestones/milestone-5-sku-driven-furniture-v1-prototype-plateau.md): SKU-driven Furniture v1 prototype plateau milestone
 - [docs/milestones/milestone-6-curation-event-first-class-plateau.md](milestones/milestone-6-curation-event-first-class-plateau.md): curation event first-class plateau milestone
 - [docs/milestones/milestone-7-v1-sweep-closure-plateau.md](milestones/milestone-7-v1-sweep-closure-plateau.md): v1 sweep closure plateau // SKU-driven mode operationalized + three non-SKU modes probed at probe-depth + split-execution operating model retired + asset_attachment closes milestone-5 thin-bridge + cross-mode sweep closed at probe-depth
+- [docs/collection-mode-operational-test-setup-v1.md](collection-mode-operational-test-setup-v1.md): collection-mode operational test // Phase 1 setup — 3 net-new output_slots on PKT-COLL-001; pressure-tests whether collection mode's 1:N slot-product strain becomes operational blocker; runs in the existing SKU-driven base to test mode-independence directly; Phase 2 deferred
 - [docs/ingest-validation-plan.md](ingest-validation-plan.md): ingest validation plan
 - [docs/transformation-check-plan.md](transformation-check-plan.md): transformation check plan
 - [docs/output-validation-plan.md](output-validation-plan.md): output validation plan
