@@ -16,6 +16,10 @@ The test was deliberately scoped to **isolate the mode variable** by running ins
 
 The composite-anchor schema mutation is *less* earned by operational pressure now than it was after the paper probe. What looked like sharp strain on paper turned out to be content-discipline navigable in practice.
 
+## Reading Note
+
+The "What Was Produced" section and Finding 7 below reflect the executor's first curation pass. They are superseded for final-state interpretation by the "Curator Override // Adjustment" section, which corrects the selected candidates and the `curation_pattern` reading.
+
 ## What Was Produced
 
 Three governed-asset rows on PKT-COLL-001:
