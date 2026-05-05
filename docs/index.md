@@ -28,6 +28,17 @@ Screenshots and generated images are not committed evidence unless a future evid
 - [docs/pipeline-verification.md](pipeline-verification.md): verification stance across ingest, transformation, output validation, and release boundary
 - [docs/deterministic-vs-agent-boundary.md](deterministic-vs-agent-boundary.md): deterministic default and bounded agent-assisted exception
 
+## Architectural Pass Series
+
+These are the current architectural passes anchoring the repo's definition-layer work. Read in order:
+
+- [docs/architecture-bounded-modeling-pass-v1.md](architecture-bounded-modeling-pass-v1.md): bounded modeling pass — three-tier schema organization × layered operational flow matrix; reconciles three-layer schema model with layered operational model
+- [docs/architecture-vocabulary-pass-v1.md](architecture-vocabulary-pass-v1.md): vocabulary precision pass — five carrier-and-discretion distinctions (runtime curation vs upstream setup; prose vs structural representation; visual inputs vs prose fallback; scoped mode-independence; approximate layer count vs load-bearing inheritance); Partial exit criterion
+- [docs/architecture-aesthetic-layering-pass-v1.md](architecture-aesthetic-layering-pass-v1.md): aesthetic-layering pass — layer-shape sketch of where aesthetic lives across the architecture; Model A (implicit-additive) vs Model B (layered precedence with explicit override) characterized; Partial-with-aesthetic-sketched exit criterion
+- [docs/architecture-apex-definition-layer-v1.md](architecture-apex-definition-layer-v1.md): **v1 apex definition-layer artifact at SKU + same-category-collection scope** — synthesis of the three predecessor passes; three named limitations held explicitly (specific aesthetic carriers; inheritance/override precedence; marketing/campaign + cross-base evidence)
+
+The predecessor passes remain authoritative for their subject matter; the apex artifact synthesizes without re-deriving.
+
 ## Conceptual Ontology And Cross-Mode Pressure
 
 These are conceptual pressure notes for comparing workflow modes, constraint burden, and review artifact placement. They are not direct implementation plans.
