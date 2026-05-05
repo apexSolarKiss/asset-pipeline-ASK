@@ -39,6 +39,10 @@ The repo's architecture work tracks a four-article arc, listed in the chronologi
 - [`docs/problem-and-approach.md`](docs/problem-and-approach.md): concise statement of the workflow-structure problem and the repo's current approach
 - [`docs/method.md`](docs/method.md): concise explanation of the repo's method, layers, and working sequence
 - [`docs/architecture.md`](docs/architecture.md): current ontology and architectural direction
+- [`docs/architecture-apex-definition-layer-v1.md`](docs/architecture-apex-definition-layer-v1.md): **v1 apex definition-layer artifact at SKU + same-category-collection scope** — synthesis of the architectural pass series; three named limitations held explicitly (specific aesthetic carriers; inheritance/override precedence; marketing/campaign + cross-base evidence)
+- [`docs/architecture-bounded-modeling-pass-v1.md`](docs/architecture-bounded-modeling-pass-v1.md): bounded modeling pass — three-tier schema organization × layered operational flow matrix (architectural pass predecessor)
+- [`docs/architecture-vocabulary-pass-v1.md`](docs/architecture-vocabulary-pass-v1.md): vocabulary precision pass — five carrier-and-discretion distinctions (architectural pass predecessor)
+- [`docs/architecture-aesthetic-layering-pass-v1.md`](docs/architecture-aesthetic-layering-pass-v1.md): aesthetic-layering pass — layer-shape sketch and Model A vs Model B inheritance/override (architectural pass predecessor)
 - [`docs/index.md`](docs/index.md): reading-order and navigation map across current, historical, and trigger-based docs
 - [`docs/application/README.md`](docs/application/README.md): entry point for application artifacts
 
