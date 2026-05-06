@@ -29,7 +29,10 @@ The diagnostic caveat from the setup-decision artifact is carried forward. Brand
 
 ## Reading Note
 
-This Phase 1 structural plan is narrowed by [`docs/campaign-mode-base-setup-phase-1-preflight-discrepancy-amendment-v1.md`](campaign-mode-base-setup-phase-1-preflight-discrepancy-amendment-v1.md), which corrects the treatment of accidental singleSelect option pollution in `constraint_rules.scope_type` and `constraint_rules.rule_type`. For those two fields, use the amendment's clean intentional mirror option sets rather than raw polluted live SKU-base options.
+This Phase 1 structural plan is narrowed by two amendments:
+
+1. [`docs/campaign-mode-base-setup-phase-1-preflight-discrepancy-amendment-v1.md`](campaign-mode-base-setup-phase-1-preflight-discrepancy-amendment-v1.md) — corrects the treatment of accidental singleSelect option pollution in `constraint_rules.scope_type` and `constraint_rules.rule_type`. For those two fields, use the amendment's clean intentional mirror option sets rather than raw polluted live SKU-base options.
+2. [`docs/campaign-mode-base-setup-phase-1-tool-capability-amendment-v1.md`](campaign-mode-base-setup-phase-1-tool-capability-amendment-v1.md) — adopts hybrid (connector + manual Airtable UI) execution because the connector tool cannot create 10 fields of unsupported types (`multipleLookupValues`, `rollup`, `createdTime`) present in the source schema. See [`docs/airtable-connector-tool-capability-limitations-v1.md`](airtable-connector-tool-capability-limitations-v1.md) for the durable connector-limitations reference.
 
 ## ASK Direction Recap
 
