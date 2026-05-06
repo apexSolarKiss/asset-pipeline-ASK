@@ -27,6 +27,10 @@ no authorization for Phase 1 mutation itself
 
 The diagnostic caveat from the setup-decision artifact is carried forward. Brand names stay operator-side per grounding-note rule.
 
+## Reading Note
+
+This Phase 1 structural plan is narrowed by [`docs/campaign-mode-base-setup-phase-1-preflight-discrepancy-amendment-v1.md`](campaign-mode-base-setup-phase-1-preflight-discrepancy-amendment-v1.md), which corrects the treatment of accidental singleSelect option pollution in `constraint_rules.scope_type` and `constraint_rules.rule_type`. For those two fields, use the amendment's clean intentional mirror option sets rather than raw polluted live SKU-base options.
+
 ## ASK Direction Recap
 
 ASK has confirmed **Option 1B** — two-phase split:
