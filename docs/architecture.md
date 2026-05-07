@@ -18,6 +18,8 @@ The repository is expected to support still-image workflows first. Video should 
 
 The architectural task ahead is to define a model that can express normative intent and workflow governance without collapsing operational, creative, and approval concerns into a single undifferentiated layer.
 
+*Reading note: the current v1 architectural synthesis lives in [`docs/architecture-apex-definition-layer-v1.md`](architecture-apex-definition-layer-v1.md). This file remains the project's high-level stance and earlier working model; it is not the current synthesis.*
+
 ## Current Working Model
 
 Current working structure:
@@ -88,6 +90,8 @@ Current `main` now pressure-tests the shared model across four worked-example wo
 For reading order across current, historical, and trigger-based docs, see [`docs/index.md`](index.md). That index is a navigation artifact, not architecture doctrine; linked docs remain authoritative for their subject matter.
 
 The active SKU-driven Furniture v1 Airtable prototype has surfaced bounded concrete schema pressure around multi-output generation and capture. In that bounded prototype, `output_slots` now function as first-class expected output obligations, and slot-level generation has proven cleaner than packet-level generation for role-specific output production. `generated_assets` has been bounded as a promoted / captured review / governance / delivery layer, not as raw generation storage, and `slot_status` lifecycle has been decided for SKU-driven Furniture v1. Asset-family coherence / reuse / derivative pressure and `generated_assets` capture mechanics from raw slot attachments have been captured but remain unresolved.
+
+*Reading note: the unresolved-capture-mechanics phrasing above predates milestone-7's `asset_attachment` resolution of milestone-5's thin-bridge limitation; governed-asset rows now carry the asset itself self-contained, per [milestone-7](milestones/milestone-7-v1-sweep-closure-plateau.md).*
 
 These are bounded SKU-driven Furniture v1 findings and decisions, not generalized cross-mode doctrine. They do not establish production readiness, final schema doctrine, an asset-family or asset-applications schema, solved capture mechanics, or Airtable as the final system.
 
