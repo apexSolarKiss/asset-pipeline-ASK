@@ -22,12 +22,18 @@ no authorization for the base setup itself
 
 Brand names stay operator-side per the grounding-note brand-name-avoidance section. Abstract qualities are what go in repo. The diagnostic caveat from the setup-decision artifact is carried forward: any failure outcome requires diagnostic review before being interpreted as architecture pressure.
 
+## Reading Notes
+
+**Concept rename.** An earlier draft of this artifact named the campaign concept after a compressed external design dictum. That phrasing is renamed here to **Warm Restraint** — a repo-native label that carries the same architectural tension (restraint must remain warm; restraint that drifts into austerity is failure) without invoking the design-canon shorthand the earlier phrasing borrowed. Compressed external aesthetic dicta stay operator-side for the same reason brand references do.
+
+**Prototype-aesthetic instance.** The D2C everyday-quality home-goods archetype committed below is a **prototype-aesthetic instance for the cross-brand pressure test**, paired with the SKU base's implicit luxury-mid-century-modern context (per the grounding-note prototype-aesthetic placeholder). It is an operational-test instance, not aesthetic doctrine. The repo remains aesthetic-agnostic; the grounding note holds the placeholder-aesthetic rule across instances.
+
 ## ASK Direction Recap
 
 Within the setup-decision artifact's directional fork (D2-Campaign + cross-base + cross-brand, category controlled to broad furniture / home-goods), ASK has committed to the following content:
 
 - **Brand archetype:** D2C everyday-quality home-goods archetype (operator-side reference held in memory, not in repo)
-- **Campaign concept:** "Less, but Better"
+- **Campaign concept:** Warm Restraint
 - **Packet trio:** bedroom / table / bath
 - **Slot role inventory per packet:** HERO_WORLD / LIFE_IN_USE / OBJECT_VIGNETTE
 - **Product range:** ~6–8 products total across the campaign, intentionally minimal per concept
@@ -43,13 +49,13 @@ This archetype differs meaningfully from the SKU-driven Furniture v1 base's impl
 
 Per the grounding-note brand-name-avoidance section: the archetype is described by its abstract qualities. It is informed by public-reference brands in the D2C home-goods space without naming them in this artifact. The operator-side brand-archetype reference is held in operator memory, not in repo.
 
-## Campaign Concept // "Less, but Better"
+## Campaign Concept // Warm Restraint
 
-**Concept anchor:** *fewer things, better things, room to breathe.*
+**Concept anchor:** *restraint that stays warm — fewer considered things, breathing room around them, warmth carried by material and light rather than by ornament or quantity.*
 
 The campaign foregrounds what the brand chooses NOT to include as much as what it does. Restraint discipline is visible in every packet, every slot, every composition. The concept is the Layer 2 fidelity anchor — what the family must remain faithful to. Products are peripheral to the concept; the same concept could be carried by many product mixes if restraint discipline is held.
 
-**Why this concept fits the brand archetype:** restraint IS the brand's value proposition. The D2C everyday-quality archetype's transparent-value pricing and material honesty rest on the discipline of choosing fewer, better things. The campaign concept makes that brand-value proposition the explicit subject of the campaign work.
+**Why this concept fits the brand archetype:** restraint IS the brand's value proposition. The D2C everyday-quality archetype's transparent-value pricing and material honesty rest on the discipline of selecting carefully and showing only what matters. The campaign concept makes that brand-value proposition the explicit subject of the campaign work.
 
 **Why this concept is architecturally sharp:** restraint is hard to fake. The brand-system aesthetic envelope must *embody* restraint at every layer, not just feature restraint as a topic. This sharpens the brand-system aesthetic-emergence pressure (setup-decision Q2) more than a less-discipline-dependent concept would.
 
@@ -105,18 +111,18 @@ Total: ~6–8 products across the campaign. Restraint discipline enforced at the
 
 ## Restraint As The Architectural Mechanism
 
-"Less, but Better" is not just a campaign topic. Restraint is the load-bearing architectural mechanism the test uses to pressure the setup-decision's primary questions, operating at four layers simultaneously:
+Warm Restraint is not just a campaign topic. Restraint is the load-bearing architectural mechanism the test uses to pressure the setup-decision's primary questions, operating at four layers simultaneously:
 
 - **Product-selection layer.** Few products per packet, deliberate omissions. The product list is intentionally minimal so that the campaign's discipline is enforced at the input layer, not just the rendering layer.
 - **Packet layer.** Bedroom, table, and bath each interpret restraint differently — bedding restraint differs from place-setting restraint differs from surface restraint — but all three share the brand-system-level "warm-restraint" envelope. Cross-packet continuity is carried by the discipline being recognizably the same across surfaces.
 - **Slot layer.** Compositional restraint per role. HERO_WORLD foregrounds negative space; LIFE_IN_USE foregrounds minimal gesture; OBJECT_VIGNETTE foregrounds single subject. Each role enforces restraint in a different register.
 - **Curation layer.** The curator's judgment criteria reject *both* clutter and sterile coldness. A candidate that violates restraint by including too much fails curation; a candidate that interprets restraint as sterile-minimalism (cold, austere, museum-grade) also fails curation. The curator's task is to enforce the warm-restraint envelope at the seam — restraint is the *positive* discipline, not the negation of warmth.
 
-Restraint operating at all four layers simultaneously is what makes the test sharp on the setup-decision's primary questions — Q2 (brand-system aesthetic emergence) and Q3 (Model A vs Model B inheritance/override). If restraint were only campaign copy, the test would be much weaker; it would be possible to satisfy "Less, but Better" through visual-layer styling alone, and the architecture's layered carriers would not be pressured. Because restraint is the mechanism *across* layers, the architecture has to actually carry it through all of them coherently — which is what stresses the brand-system carrier need and the inheritance/override behavior.
+Restraint operating at all four layers simultaneously is what makes the test sharp on the setup-decision's primary questions — Q2 (brand-system aesthetic emergence) and Q3 (Model A vs Model B inheritance/override). If restraint were only campaign copy, the test would be much weaker; it would be possible to satisfy Warm Restraint through visual-layer styling alone, and the architecture's layered carriers would not be pressured. Because restraint is the mechanism *across* layers, the architecture has to actually carry it through all of them coherently — which is what stresses the brand-system carrier need and the inheritance/override behavior.
 
 ## Inter-Layer Aesthetic Tension Surface
 
-The setup-decision artifact's minimum operational depth requires at least one *controlled* inter-layer aesthetic tension surfaced. With "Less, but Better," the natural tension surface is sharp because *restraint* is the cross-cutting constraint that every layer has to interpret:
+The setup-decision artifact's minimum operational depth requires at least one *controlled* inter-layer aesthetic tension surfaced. With Warm Restraint, the natural tension surface is sharp because *restraint* is the cross-cutting constraint that every layer has to interpret:
 
 - **Brand-system context (operator-side):** restraint as *accessible and warm* — not aspirational coldness, not sterile minimalism, not museum-grade austerity. Material visibility, natural light, human presence.
 - **Packet-level reference / creative intent:** restraint as breathing room *in this specific space* — bedroom restraint differs in feel from table restraint differs from bath restraint, but all three share the brand-system-level "warm-restraint" envelope.
@@ -132,7 +138,7 @@ Cross-walk to the setup-decision artifact's framing:
 
 ### Architectural questions the test pressures (from setup-decision §Architectural Uncertainty The Test Pressures)
 
-| Question | How "Less, but Better" pressures it |
+| Question | How Warm Restraint pressures it |
 |---|---|
 | **Q1 (Primary):** Does v1 apex layered shape carry to cross-base + cross-brand for campaign mode? | Pressured by the operational test running in a new base, with the new brand archetype, executing the campaign concept end-to-end through generation → curation → governed asset writeback for each of three packets |
 | **Q2 (Primary):** Does brand-system aesthetic emerge as a load-bearing first-class concern? | Pressured sharply by the restraint discipline — restraint IS the brand-system signature, hard to absorb implicitly through packet-level prose alone, may earn explicit brand-system carrier need |
@@ -156,7 +162,7 @@ Cross-walk to the setup-decision artifact's framing:
 
 The setup-decision's outcome framing carries forward unchanged. Each outcome is conditioned on diagnostic review ruling out tooling limitation, under-specified setup, weak references, and insufficient operational depth.
 
-For "Less, but Better" specifically:
+For Warm Restraint specifically:
 
 - **Success** would mean the layered shape carries the restraint discipline to cross-base + cross-brand without structural mutation; brand-system aesthetic stays content-discipline navigable through packet-level restraint articulation; Model A holds operationally; the warm-restraint signal carries by additive accumulation
 - **Partial** would mean specific axes carry while others fail — e.g., restraint discipline holds within packets but cross-packet continuity drifts; or warmth signal is preserved at packet level but slot-level compositional restraint drifts cold without explicit override
