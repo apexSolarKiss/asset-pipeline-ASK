@@ -44,15 +44,32 @@ Also absent from the current connector-supported field-type union, but not prese
 
 **Affects:** any Airtable prototype that requires lookup fields, rollups, or auto-populated time/identity fields. Lookup fields are particularly load-bearing because they are how the architecture's "additive accumulation" Model A surfaces packet-level reference data onto slots — without them, cross-layer data flow breaks.
 
-### 2. Field type conversion gap
+### 2. AI field-agent (image / text generation) field creation gap
+
+**The connector cannot programmatically create AI field-agent fields** (Image type, Text type, or any other AI-generation field-agent variant). The accepted field-type union for `create_field` (enumerated under Limitation #1) does not include AI field-agent types.
+
+**The practical implication is the same posture as Limitation #1:** when using the connector to build out base fields, AI field-agent fields must be built manually upfront in the Airtable UI, in the same hybrid-execution pattern as `multipleLookupValues` and `rollup` fields. The connector cannot stand them up programmatically; the operator must.
+
+**UI mechanics caveat:** the Airtable UI does not offer a type-conversion path from a static field type (e.g., `multipleAttachments`) to an AI field-agent field. This means an existing connector-created placeholder field cannot be promoted in place — the operator must delete the placeholder and create a fresh AI field-agent field. (This is distinct from Limitation #3, which describes connector-side type-conversion gaps; here the gap is that even the UI conversion path does not reach AI field-agent types.)
+
+**Surfaced during:**
+
+- SKU-driven Furniture v1 prototype (initial setup of `slot_generated_image_v1` AI field-agent on `output_slots`); the AI field-agent was created manually in the Airtable UI from inception, and the prior limitation was treated as known background rather than documented as a tool-capability gap in its own artifact.
+- Campaign-mode base setup Phase 2B (May 2026). Phase 1 connector setup created `slot_generated_image_v1` as a static `multipleAttachments` placeholder (the closest connector-supported type). At Phase 2B, the operator must replace that placeholder with an AI field-agent Image field manually in the UI to enable image generation. This is the encounter that surfaced the limitation as worth consolidating into this doc.
+
+**Workaround:** connector creates a placeholder static field of the closest supported type (or skips the field entirely) during base setup; operator creates the AI field-agent field manually in the Airtable UI as part of hybrid execution. Operator must use fresh field creation rather than UI type conversion. Configuration details (model, toggles, inputs, prose wrapper) live in their own per-prototype configuration artifacts.
+
+**Affects:** any Airtable prototype that uses AI field-agent fields for image generation, text generation, or other AI-driven content production. The image-generation use case is the primary load-bearing one for prototype work in this project — AI field-agent image fields are the actual generation step in the slot-level prompt → image flow.
+
+### 3. Field type conversion gap
 
 **The connector cannot programmatically convert one field type to another.** The `update_field` tool can only update name, description, and (for formula fields) the formula expression. It cannot mutate field type.
 
 **Surfaced during:** prior schema-fit work where converting a field's type would have been the cheapest path. The work-around was to add a new field of the desired type and migrate values manually.
 
-**Workaround:** in the Airtable UI, field type conversion is supported with built-in data migration. For programmatic work, the workaround is to add a new field, migrate values via record-update calls, then optionally delete the old field via UI.
+**Workaround:** in the Airtable UI, field type conversion is supported with built-in data migration **for the field types Airtable's UI exposes in its conversion menu**. AI field-agent types (see Limitation #2) are NOT reachable via UI conversion — the operator must delete the existing field and create a fresh AI field-agent field. For programmatic work, the workaround is to add a new field, migrate values via record-update calls, then optionally delete the old field via UI.
 
-### 3. Attachment URL writeback gap (milestone-5 thin-bridge limitation)
+### 4. Attachment URL writeback gap (milestone-5 thin-bridge limitation)
 
 **The connector cannot write a raw Airtable attachment URL into a `url` field on a different record.** This was the limitation that forced the milestone-5 thin-bridge governance design.
 
@@ -62,7 +79,7 @@ Also absent from the current connector-supported field-type union, but not prese
 
 **Affects:** any prototype that wants to programmatically reference Airtable-internal attachment URLs by URL rather than by attachment object copy or attachment ID.
 
-### 4. Local file upload gap
+### 5. Local file upload gap
 
 **The connector cannot upload a local file as an attachment directly.** No multipart-upload endpoint is exposed; attachment fields (`multipleAttachments`) accept values only as `[{url, filename}]` arrays where the URL is fetched at write time by Airtable's backend.
 
@@ -112,17 +129,19 @@ Naming the tool-capability constraint up front in the plan is what AGENTS.md sch
 
 ### Per-finding documentation of limitations encountered (chronological)
 
-- [`docs/capture-mechanics-thin-bridge-findings-pkt-sku-009.md`](capture-mechanics-thin-bridge-findings-pkt-sku-009.md): documents the attachment URL writeback gap (Limitation #3); milestone-5 finding
+- [`docs/capture-mechanics-thin-bridge-findings-pkt-sku-009.md`](capture-mechanics-thin-bridge-findings-pkt-sku-009.md): documents the attachment URL writeback gap (Limitation #4); milestone-5 finding
 - [`docs/capture-mechanics-pause-and-document-structural-decision-note-sku-driven-furniture-v1.md`](capture-mechanics-pause-and-document-structural-decision-note-sku-driven-furniture-v1.md): the pause-and-document decision that responded to the thin-bridge limitation
 - [`docs/full-flow-path-b-findings-pkt-sku-010.md`](full-flow-path-b-findings-pkt-sku-010.md): documents the asset_attachment field that resolved the broader thin-bridge limitation via attachment-copy writeback
-- [`docs/campaign-mode-base-setup-phase-2a-i-structured-change-summary-v1.md`](campaign-mode-base-setup-phase-2a-i-structured-change-summary-v1.md): documents the local file upload gap (Limitation #4) — Phase 2A-i mutation; 16 imagery attachments via Dropbox-shared-URL fetch + Airtable CDN caching; Dropbox API token + team-namespace header pattern
+- [`docs/campaign-mode-base-setup-phase-2a-i-structured-change-summary-v1.md`](campaign-mode-base-setup-phase-2a-i-structured-change-summary-v1.md): documents the local file upload gap (Limitation #5) — Phase 2A-i mutation; 16 imagery attachments via Dropbox-shared-URL fetch + Airtable CDN caching; Dropbox API token + team-namespace header pattern
+- [`docs/campaign-mode-base-setup-phase-2b-plan-v1.md`](campaign-mode-base-setup-phase-2b-plan-v1.md): plan-before-execute artifact that surfaces the AI field-agent field creation gap (Limitation #2) as the operative tool-capability constraint at Phase 2B; the Phase 2B SCS (forthcoming) will record the verbatim AI field-agent configuration applied in the campaign base
 
 ### Workflow rules referenced
 
 - `AGENTS.md` Airtable Schema-Fit Rule
 - `AGENTS.md` Airtable Mutation Discipline rule (Plan-Before-Execute + Structured Change Summary)
 
-### Active work where Limitation #1 surfaced
+### Active work where Limitations #1 and #2 surfaced
 
 - [`docs/campaign-mode-base-setup-phase-1-structural-plan-v1.md`](campaign-mode-base-setup-phase-1-structural-plan-v1.md): merged Phase 1 plan that called for exact-mirror schema replication
 - [`docs/campaign-mode-base-setup-phase-1-tool-capability-amendment-v1.md`](campaign-mode-base-setup-phase-1-tool-capability-amendment-v1.md): Phase 1 plan amendment adopting hybrid (connector + manual UI) execution per Limitation #1
+- [`docs/campaign-mode-base-setup-phase-2b-plan-v1.md`](campaign-mode-base-setup-phase-2b-plan-v1.md): Phase 2B plan-before-execute artifact that operationalizes the Limitation #2 hybrid-execution workaround for the AI field-agent image-generation field
