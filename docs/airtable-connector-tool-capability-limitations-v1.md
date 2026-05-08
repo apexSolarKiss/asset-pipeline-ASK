@@ -62,6 +62,30 @@ Also absent from the current connector-supported field-type union, but not prese
 
 **Affects:** any prototype that wants to programmatically reference Airtable-internal attachment URLs by URL rather than by attachment object copy or attachment ID.
 
+### 4. Local file upload gap
+
+**The connector cannot upload a local file as an attachment directly.** No multipart-upload endpoint is exposed; attachment fields (`multipleAttachments`) accept values only as `[{url, filename}]` arrays where the URL is fetched at write time by Airtable's backend.
+
+**Surfaced during:** Phase 2A-i mutation ([`docs/campaign-mode-base-setup-phase-2a-i-structured-change-summary-v1.md`](campaign-mode-base-setup-phase-2a-i-structured-change-summary-v1.md), May 2026). 16 imagery attachments needed to land on `products.product_image` and `reference_assets.reference_image` from local Dropbox-synced files; the connector accepted only URL-based attachment values.
+
+**Workaround: external URL fetch + Airtable CDN caching.** Make each file publicly accessible at a fetchable URL, then pass `[{url, filename}]` to `create_records_for_table` / `update_records_for_table`. Airtable's backend fetches and caches the file on its CDN (`airtableusercontent.com`); the source URL is no longer load-bearing after caching and can be revoked. The Path B `asset_attachment` pattern (copying an existing Airtable attachment object via attachment-copy writeback) sidesteps this gap for governed-asset captures from raw slot attachments, but the gap stands for fresh uploads from outside Airtable.
+
+For Dropbox-synced files, a one-time programmatic batch via the Dropbox API:
+
+1. **Generate a short-lived Dropbox API access token.** In the Dropbox developer portal (`https://www.dropbox.com/developers/apps`), create a Scoped-access app with `sharing.write` and `files.metadata.read` permissions (Full Dropbox access type when the files live outside an app-scoped folder). Generate a session access token; the default 4-hour expiration is sufficient for one-time batch use; revoke the token or delete the app immediately after the batch.
+
+2. **For Dropbox Business / team workspaces, use the team namespace header on every API call.** The default user namespace does not see team-shared content. Set `Dropbox-API-Path-Root: {".tag": "namespace_id", "namespace_id": "<TEAM_NS_ID>"}` on every request. Retrieve the team `namespace_id` from `POST /2/users/get_current_account` → `root_info.root_namespace_id`.
+
+3. **Batch-generate share links per file.** `POST /2/sharing/create_shared_link_with_settings` with `{"path": "/team/path/to/file", "settings": {"audience": "public", "access": "viewer", "allow_download": true}}`. Convert each returned URL to raw-fetch form by replacing `?dl=0` with `?raw=1` (or appending `&raw=1` if no `dl=0` query string). If a share link already exists for a file, the API returns 409 conflict; fall back to `POST /2/sharing/list_shared_links` with `{"path": "...", "direct_only": true}` to retrieve the existing link.
+
+4. **Verify one URL** by curl-fetching the first 16 bytes and confirming the file's magic bytes (e.g., `ffd8 ffe0` for JPEG). Cheap catch for the case where Dropbox serves an HTML preview page instead of raw file bytes due to mis-set link settings.
+
+5. **Pass the URLs to the connector** as `[{url, filename}]` per attachment field. Airtable fetches each one synchronously during the record write and caches.
+
+6. **Revoke the Dropbox token** in the developer portal after the batch completes (or delete the app entirely). Airtable's cached copies are durable and do not depend on the source URL.
+
+**Affects:** any Airtable mutation that uploads attachments from outside Airtable — `products.product_image`, `reference_assets.reference_image`, fresh uploads to `generated_assets.asset_attachment`, and any other `multipleAttachments` writes where the source is a local file or a non-Airtable-cached URL.
+
 ## Implications For Future Airtable Prototype Building
 
 When planning Airtable mutation work, the plan-before-execute step should include a **tool-capability check** in addition to the schema-fit check:
@@ -91,6 +115,7 @@ Naming the tool-capability constraint up front in the plan is what AGENTS.md sch
 - [`docs/capture-mechanics-thin-bridge-findings-pkt-sku-009.md`](capture-mechanics-thin-bridge-findings-pkt-sku-009.md): documents the attachment URL writeback gap (Limitation #3); milestone-5 finding
 - [`docs/capture-mechanics-pause-and-document-structural-decision-note-sku-driven-furniture-v1.md`](capture-mechanics-pause-and-document-structural-decision-note-sku-driven-furniture-v1.md): the pause-and-document decision that responded to the thin-bridge limitation
 - [`docs/full-flow-path-b-findings-pkt-sku-010.md`](full-flow-path-b-findings-pkt-sku-010.md): documents the asset_attachment field that resolved the broader thin-bridge limitation via attachment-copy writeback
+- [`docs/campaign-mode-base-setup-phase-2a-i-structured-change-summary-v1.md`](campaign-mode-base-setup-phase-2a-i-structured-change-summary-v1.md): documents the local file upload gap (Limitation #4) — Phase 2A-i mutation; 16 imagery attachments via Dropbox-shared-URL fetch + Airtable CDN caching; Dropbox API token + team-namespace header pattern
 
 ### Workflow rules referenced
 
