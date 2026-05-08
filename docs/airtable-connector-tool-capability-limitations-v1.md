@@ -103,6 +103,16 @@ For Dropbox-synced files, a one-time programmatic batch via the Dropbox API:
 
 **Affects:** any Airtable mutation that uploads attachments from outside Airtable — `products.product_image`, `reference_assets.reference_image`, fresh uploads to `generated_assets.asset_attachment`, and any other `multipleAttachments` writes where the source is a local file or a non-Airtable-cached URL.
 
+### 6. AI field-agent automatic first generation on field creation
+
+**On AI field-agent field creation, the field automatically triggers a first generation run for all existing rows, regardless of whether "Automatic generation" is set to OFF.** The OFF setting governs subsequent generation triggers (e.g., input-field updates do not re-trigger generation); it does not suppress the initial run at the moment of field creation.
+
+**Surfaced during:** SKU-driven Furniture v1 prototype (operator's prior encounter of this behavior, treated as known background) and reconfirmed at campaign-mode base setup Phase 2B (May 2026), where creating the AI field-agent Image field on `output_slots.slot_generated_image_v1` triggered an automatic first generation run on all 9 slot rows despite "Automatic generation" being configured OFF. The Phase 2B SCS records the empirical confirmation.
+
+**Workaround:** none for suppressing the first run. Treat the auto-first-run output as a v0 batch the operator may discard or use as a baseline. Subsequent runs are operator-triggered per row. Plan implication: ensure all input data (slot prompts, lookup-resolved attachments, product images) is clean and stable before AI field-agent field creation, since the first run consumes a generation cycle per existing row at the moment of creation.
+
+**Affects:** any AI field-agent field creation moment in a base with pre-existing rows. Cost implications at scale — one auto-run per existing row, charged at field-creation time. Content-discipline implication — input cleanliness should be settled before field creation, not after, because the operator cannot opt out of the first run.
+
 ## Implications For Future Airtable Prototype Building
 
 When planning Airtable mutation work, the plan-before-execute step should include a **tool-capability check** in addition to the schema-fit check:
@@ -133,15 +143,15 @@ Naming the tool-capability constraint up front in the plan is what AGENTS.md sch
 - [`docs/capture-mechanics-pause-and-document-structural-decision-note-sku-driven-furniture-v1.md`](capture-mechanics-pause-and-document-structural-decision-note-sku-driven-furniture-v1.md): the pause-and-document decision that responded to the thin-bridge limitation
 - [`docs/full-flow-path-b-findings-pkt-sku-010.md`](full-flow-path-b-findings-pkt-sku-010.md): documents the asset_attachment field that resolved the broader thin-bridge limitation via attachment-copy writeback
 - [`docs/campaign-mode-base-setup-phase-2a-i-structured-change-summary-v1.md`](campaign-mode-base-setup-phase-2a-i-structured-change-summary-v1.md): documents the local file upload gap (Limitation #5) — Phase 2A-i mutation; 16 imagery attachments via Dropbox-shared-URL fetch + Airtable CDN caching; Dropbox API token + team-namespace header pattern
-- [`docs/campaign-mode-base-setup-phase-2b-plan-v1.md`](campaign-mode-base-setup-phase-2b-plan-v1.md): plan-before-execute artifact that surfaces the AI field-agent field creation gap (Limitation #2) as the operative tool-capability constraint at Phase 2B; the Phase 2B SCS (forthcoming) will record the verbatim AI field-agent configuration applied in the campaign base
+- [`docs/campaign-mode-base-setup-phase-2b-plan-v1.md`](campaign-mode-base-setup-phase-2b-plan-v1.md): plan-before-execute artifact that surfaces the AI field-agent field creation gap (Limitation #2) as the operative tool-capability constraint at Phase 2B; Phase 2B execution (operator-side UI configuration of the AI field-agent Image field on `output_slots.slot_generated_image_v1`) also empirically reconfirmed Limitation #6 — the automatic first generation run on field creation despite "Automatic generation" set to OFF. The Phase 2B SCS (forthcoming) will record the verbatim AI field-agent configuration applied and the auto-first-run outcomes.
 
 ### Workflow rules referenced
 
 - `AGENTS.md` Airtable Schema-Fit Rule
 - `AGENTS.md` Airtable Mutation Discipline rule (Plan-Before-Execute + Structured Change Summary)
 
-### Active work where Limitations #1 and #2 surfaced
+### Active work where Limitations #1, #2, and #6 surfaced
 
 - [`docs/campaign-mode-base-setup-phase-1-structural-plan-v1.md`](campaign-mode-base-setup-phase-1-structural-plan-v1.md): merged Phase 1 plan that called for exact-mirror schema replication
 - [`docs/campaign-mode-base-setup-phase-1-tool-capability-amendment-v1.md`](campaign-mode-base-setup-phase-1-tool-capability-amendment-v1.md): Phase 1 plan amendment adopting hybrid (connector + manual UI) execution per Limitation #1
-- [`docs/campaign-mode-base-setup-phase-2b-plan-v1.md`](campaign-mode-base-setup-phase-2b-plan-v1.md): Phase 2B plan-before-execute artifact that operationalizes the Limitation #2 hybrid-execution workaround for the AI field-agent image-generation field
+- [`docs/campaign-mode-base-setup-phase-2b-plan-v1.md`](campaign-mode-base-setup-phase-2b-plan-v1.md): Phase 2B plan-before-execute artifact that operationalizes the Limitation #2 hybrid-execution workaround for the AI field-agent image-generation field; Phase 2B execution surfaced Limitation #6 empirically
