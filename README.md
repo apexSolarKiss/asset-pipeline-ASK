@@ -27,12 +27,13 @@ At this stage, the ontology remains open. The repository exists to create a disc
 
 ### Background Reading
 
-The repo's architecture work tracks a four-article arc, listed in the chronological order they pertain to the project's evolution:
+The repo's architecture work tracks a five-article arc, listed in the chronological order they pertain to the project's evolution:
 
 - [From Brand Rules to Creative Discretion](https://atomicspacekitten.substack.com/p/from-brand-rules-to-creative-discretion): establishes *creative discretion as the bounded zone of allowed variation inside a governed system* and names the five structural categories (product / business inputs, creative / technical constraints, creative discretion, required outputs, decision ownership) that the repo's architecture work builds on
 - [From Normative Structure to Execution](https://atomicspacekitten.substack.com/p/from-normative-structure-to-execution): records the move from abstract framework to standing up the v1 Airtable prototype as a concrete pressure surface
 - [The Beautiful Picture is Not the…](https://atomicspacekitten.substack.com/p/the-beautiful-picture-is-not-the): records the realization mid-prototype that slot outputs were inconsistent without higher-level inputs aligning the slots across a packet — the family-coherence pressure that the cross-mode layered model directly addresses
 - [The Creative Act of Selection](https://atomicspacekitten.substack.com/p/the-creative-act-of-selection): extends the framing to the curation seam where bounded creative discretion becomes operationally recordable as a governance act
+- [From Execution Proof Back to Normative Structure](https://atomicspacekitten.substack.com/p/from-execution-proof-back-to-normative): records the swing back from prototype work to abstract architectural-content work, naming the *pendulum* between abstraction and implementation as the project's underlying method and *adversarial iteration* as the single-project temporal counterpart to *adversarial collaboration*
 
 ### Substance / Payload
 
