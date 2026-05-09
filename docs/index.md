@@ -306,7 +306,9 @@ The Phase 1 cross-mode synthesis — [docs/ia-layered-content-cross-mode-synthes
 
 ### Phase 2 (next active surface) // Brand Discovery / Digestion Architecture
 
-Brand discovery / digestion architecture — the structured intake from a brand system into the layered IA before any tool implementation begins — is the next active direction per the redirection note. Phase 2 articulates how an existing brand system's content gets resolved into the layered IA that Phase 1 articulated. Not yet opened.
+Brand discovery / digestion architecture — the structured intake from a brand system into the layered IA before any tool implementation begins — is the next active direction per the redirection note. Phase 2 articulates how an existing brand system's content gets resolved into the layered IA that Phase 1 articulated.
+
+The first Phase 2 artifact — [docs/brand-discovery-digestion-architecture-sketch-v1.md](brand-discovery-digestion-architecture-sketch-v1.md) — is an opening sketch articulating brand-system input categories, intake-to-IA mapping, discovery sequence, and fallback model at sketch depth.
 
 ### Downstream / Held
 
