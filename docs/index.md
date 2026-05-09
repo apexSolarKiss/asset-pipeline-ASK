@@ -318,6 +318,8 @@ The third Phase 2 deepening artifact — [docs/brand-system-input-brand-platform
 
 The first Phase 2 fallback-pressure artifact — [docs/brand-discovery-sparse-articulation-fallback-pressure-v1.md](brand-discovery-sparse-articulation-fallback-pressure-v1.md) — pressure-tests the Phase 2 fallback model under sparse / contradictory / absent input across the three deepened categories. Five test conditions; layered fallback chain (asset library → photography style guide → brand platform → intra-category recency / specificity → Phase 1 worked-example defaults → operator-marked inferred-not-stated). The model holds; operator-judgment burden scales under stress conditions. Surfaces five new structural-carrier candidates (none earned) and reframes structured IA model timing from "now or later" to "what shape, given operator-judgment burden in stress conditions."
 
+The structured IA model options note — [docs/structured-ia-model-options-note-v1.md](structured-ia-model-options-note-v1.md) — evaluates whether and how a structured IA model should be authored after Phase 1 + Phase 2 pressure. Five options compared (custom YAML / JSON; Pydantic; JSON Schema; hybrid prose + structured appendix; defer until milestone-8) across seven evaluation criteria. Recommendation: hybrid prose + structured appendix at this evidence depth; defer is honestly defensible. Authoring not yet authorized — note's job is the shape decision, not implementation.
+
 ### Downstream / Held
 
 - **Milestone-8** — held until Phase 2 produces sufficient material; will absorb the redirection alongside Phase 1 + Phase 2 outputs and the collection-mode operational deflation evidence.
