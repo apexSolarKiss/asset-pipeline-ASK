@@ -310,6 +310,8 @@ Brand discovery / digestion architecture — the structured intake from a brand 
 
 The first Phase 2 artifact — [docs/brand-discovery-digestion-architecture-sketch-v1.md](brand-discovery-digestion-architecture-sketch-v1.md) — is an opening sketch articulating brand-system input categories, intake-to-IA mapping, discovery sequence, and fallback model at sketch depth.
 
+The first Phase 2 deepening artifact — [docs/brand-system-input-photography-style-guide-to-ia-mapping-v1.md](brand-system-input-photography-style-guide-to-ia-mapping-v1.md) — deepens the photography / image style guide input category into an IA mapping. Articulates ten style dimensions; maps each to the IA layers; covers cross-mode implications across the four modes; carries forward the visual-as-fidelity-strategy / prose-as-fallback claim from the apex aesthetic-layering pass for prose-vs-asset-library conflict handling.
+
 ### Downstream / Held
 
 - **Milestone-8** — held until Phase 2 produces sufficient material; will absorb the redirection alongside Phase 1 + Phase 2 outputs and the collection-mode operational deflation evidence.
