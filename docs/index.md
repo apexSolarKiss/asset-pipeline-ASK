@@ -290,6 +290,8 @@ Superseded foundational docs are retained as evidence of project evolution; do n
 
 ## Current Active Next Steps
 
+The active frontier is the IA layered-content redirection: see [docs/ia-layered-content-redirection-note-v1.md](ia-layered-content-redirection-note-v1.md). Further Airtable prototype mutation is paused; on-paper IA layered-content work across the four worked-example modes plus brand discovery / digestion architecture is the next direction. The older candidate paths described below remain durable possibilities, deferred behind the redirection.
+
 Navigation / map-polish should no longer be treated as the pending first repo-polish path from this index.
 
 Future repo work should be chosen deliberately among milestone work, product-truth D-probe, cross-mode work, or remaining small polish.
