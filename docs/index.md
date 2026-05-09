@@ -290,7 +290,9 @@ Superseded foundational docs are retained as evidence of project evolution; do n
 
 ## Current Active Next Steps
 
-The active frontier is the IA layered-content redirection: see [docs/ia-layered-content-redirection-note-v1.md](ia-layered-content-redirection-note-v1.md). Further Airtable prototype mutation is paused; on-paper IA layered-content work across the four worked-example modes plus brand discovery / digestion architecture is the next direction. The older candidate paths described below remain durable possibilities, deferred behind the redirection.
+The active frontier is the IA layered-content redirection: see [docs/ia-layered-content-redirection-note-v1.md](ia-layered-content-redirection-note-v1.md). Phase 1 (on-paper IA layered-content work across the four worked-example modes, plus the cross-mode synthesis) is closed on main. Phase 2 (brand discovery / digestion architecture) is the next active surface and has not yet opened. Further Airtable prototype mutation remains paused. The older candidate paths described below remain durable possibilities, deferred behind the redirection.
+
+### Phase 1 (closed on main) // IA Layered-Content Articulation
 
 The first Phase 1 mode sketch — [docs/ia-layered-content-sketch-sku-driven-mode-v1.md](ia-layered-content-sketch-sku-driven-mode-v1.md) — articulates the SKU-driven mode IA content anchored against PKT-SKU-009 and PKT-SKU-010.
 
@@ -301,6 +303,19 @@ The third Phase 1 mode sketch — [docs/ia-layered-content-sketch-marketing-mode
 The fourth and final Phase 1 mode sketch — [docs/ia-layered-content-sketch-campaign-mode-v1.md](ia-layered-content-sketch-campaign-mode-v1.md) — articulates the brand campaign / editorial mode IA content anchored against PKT-CAMP-001 (cycle 1 rerun), the Phase 1 base-setup schema mirror, and the cross-mode probe. Evidence depth sits between collection-mode and marketing-mode; paper-probe strain points stay held more strongly than collection's deflated strain. Surfaces the curation-premise pressure question (campaign-concept selection vs the foundational singular runtime creative-discretionary act premise) for cross-mode synthesis to address.
 
 The Phase 1 cross-mode synthesis — [docs/ia-layered-content-cross-mode-synthesis-v1.md](ia-layered-content-cross-mode-synthesis-v1.md) — compares the four mode sketches against each other. Identifies stable shared layers, mode-specific layers, and a carrier-status matrix distinguishing prose-carried, structurally explicit, structurally suggested but not earned, operationally deflated, and operationally untested content. Surfaces the cross-mode composite-anchor finding (collection deflated; marketing and campaign held; campaign sharper) and prepares for milestone-8, the eventual `docs/architecture.md` rewrite, and Phase 2 brand discovery / digestion architecture. Closes Phase 1 of the redirection.
+
+### Phase 2 (next active surface) // Brand Discovery / Digestion Architecture
+
+Brand discovery / digestion architecture — the structured intake from a brand system into the layered IA before any tool implementation begins — is the next active direction per the redirection note. Phase 2 articulates how an existing brand system's content gets resolved into the layered IA that Phase 1 articulated. Not yet opened.
+
+### Downstream / Held
+
+- **Milestone-8** — held until Phase 2 produces sufficient material; will absorb the redirection alongside Phase 1 + Phase 2 outputs and the collection-mode operational deflation evidence.
+- **`docs/architecture.md` rewrite** — held until milestone-8 lands; will consolidate the apex artifact and the Phase 1 sketches into a single current-architecture document.
+- **Phase 3** (all-four-workflow Airtable demonstration after the IA model is understood) — held per the redirection note's three-phase plan.
+- **Grounding-note v52** — held; separate hygiene track.
+
+### Older Candidate Paths (Deferred Behind the Redirection)
 
 Navigation / map-polish should no longer be treated as the pending first repo-polish path from this index.
 
