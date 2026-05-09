@@ -312,6 +312,8 @@ The first Phase 2 artifact — [docs/brand-discovery-digestion-architecture-sket
 
 The first Phase 2 deepening artifact — [docs/brand-system-input-photography-style-guide-to-ia-mapping-v1.md](brand-system-input-photography-style-guide-to-ia-mapping-v1.md) — deepens the photography / image style guide input category into an IA mapping. Articulates ten style dimensions; maps each to the IA layers; covers cross-mode implications across the four modes; carries forward the visual-as-fidelity-strategy / prose-as-fallback claim from the apex aesthetic-layering pass for prose-vs-asset-library conflict handling.
 
+The second Phase 2 deepening artifact — [docs/brand-system-input-asset-library-to-ia-mapping-v1.md](brand-system-input-asset-library-to-ia-mapping-v1.md) — deepens the asset library input category into an IA mapping. Closes the load-bearing relationship the photography artifact set up by articulating the visual-evidence side of intake. Surfaces the architectural finding that asset library content is the input category most directly served by existing structural carriers (`reference_assets`, packet-level reference linkage, slot-level lookup chain, `asset_attachment`) — a meaningful contrast against photography style guide content's predominantly prose-carried distribution.
+
 ### Downstream / Held
 
 - **Milestone-8** — held until Phase 2 produces sufficient material; will absorb the redirection alongside Phase 1 + Phase 2 outputs and the collection-mode operational deflation evidence.
