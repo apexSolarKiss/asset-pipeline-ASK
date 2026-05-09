@@ -294,7 +294,9 @@ The active frontier is the IA layered-content redirection: see [docs/ia-layered-
 
 The first Phase 1 mode sketch — [docs/ia-layered-content-sketch-sku-driven-mode-v1.md](ia-layered-content-sketch-sku-driven-mode-v1.md) — articulates the SKU-driven mode IA content anchored against PKT-SKU-009 and PKT-SKU-010.
 
-The second Phase 1 mode sketch — [docs/ia-layered-content-sketch-collection-mode-v1.md](ia-layered-content-sketch-collection-mode-v1.md) — articulates the collection / merchandising mode IA content anchored against PKT-COLL-001, with the SKU-driven sketch as contrast baseline. Two more mode sketches (marketing, campaign) plus a cross-mode synthesis sketch remain to follow.
+The second Phase 1 mode sketch — [docs/ia-layered-content-sketch-collection-mode-v1.md](ia-layered-content-sketch-collection-mode-v1.md) — articulates the collection / merchandising mode IA content anchored against PKT-COLL-001, with the SKU-driven sketch as contrast baseline.
+
+The third Phase 1 mode sketch — [docs/ia-layered-content-sketch-marketing-mode-v1.md](ia-layered-content-sketch-marketing-mode-v1.md) — articulates the marketing / message-driven mode IA content anchored against PKT-MSG-001 (structural shape proof) plus the cross-mode probe (paper-content). Evidence depth is operationally weaker than SKU-driven and collection-mode and is held as such in the sketch; paper-probe strain points remain held more strongly than collection's analogous strain. The campaign-mode sketch plus the cross-mode synthesis sketch remain to follow.
 
 Navigation / map-polish should no longer be treated as the pending first repo-polish path from this index.
 
