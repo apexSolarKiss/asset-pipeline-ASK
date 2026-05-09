@@ -34,14 +34,14 @@ The clarification has two layers:
 Named at one-line depth only. Phase detail lives in the source-of-intent file; this note does not expand it.
 
 - **Phase 1.** On-paper IA layered-content work across the four worked-example workflow modes.
-- **Phase 2.** Brand discovery / digestion architecture — the structured intake from a real client brand system into the layered IA.
+- **Phase 2.** Brand discovery / digestion architecture — the structured intake from a brand system into the layered IA.
 - **Phase 3.** All-four-workflow Airtable demonstration after the IA model is understood.
 
 Campaign / editorial mode is also the strongest pressure point for whether "curation as the singular runtime creative-discretionary act" remains sufficient, because campaign-concept selection may prove to be upstream setup, a different runtime creative-discretionary act, or a premise that needs refinement.
 
-## Brand Discovery / Digestion as Consulting-Facing Surface
+## Brand Discovery / Digestion as Implementation Entry Surface
 
-Brand discovery / digestion is also the strongest consulting-facing surface of the architecture: it translates a client's existing brand system into the layered IA before any tool implementation begins.
+Brand discovery / digestion is the implementation entry surface where brand-system input enters the layered IA before any tool implementation begins.
 
 ## What Is Paused
 
