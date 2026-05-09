@@ -292,7 +292,9 @@ Superseded foundational docs are retained as evidence of project evolution; do n
 
 The active frontier is the IA layered-content redirection: see [docs/ia-layered-content-redirection-note-v1.md](ia-layered-content-redirection-note-v1.md). Further Airtable prototype mutation is paused; on-paper IA layered-content work across the four worked-example modes plus brand discovery / digestion architecture is the next direction. The older candidate paths described below remain durable possibilities, deferred behind the redirection.
 
-The first Phase 1 mode sketch — [docs/ia-layered-content-sketch-sku-driven-mode-v1.md](ia-layered-content-sketch-sku-driven-mode-v1.md) — articulates the SKU-driven mode IA content anchored against PKT-SKU-009 and PKT-SKU-010. Three more mode sketches (collection, marketing, campaign) plus a cross-mode synthesis sketch remain to follow.
+The first Phase 1 mode sketch — [docs/ia-layered-content-sketch-sku-driven-mode-v1.md](ia-layered-content-sketch-sku-driven-mode-v1.md) — articulates the SKU-driven mode IA content anchored against PKT-SKU-009 and PKT-SKU-010.
+
+The second Phase 1 mode sketch — [docs/ia-layered-content-sketch-collection-mode-v1.md](ia-layered-content-sketch-collection-mode-v1.md) — articulates the collection / merchandising mode IA content anchored against PKT-COLL-001, with the SKU-driven sketch as contrast baseline. Two more mode sketches (marketing, campaign) plus a cross-mode synthesis sketch remain to follow.
 
 Navigation / map-polish should no longer be treated as the pending first repo-polish path from this index.
 
