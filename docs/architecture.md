@@ -1,6 +1,6 @@
 # Architecture
 
-The goal of this repository is to define a structured information architecture for scalable visual asset production systems, with particular emphasis on how style guides, creative rules, and other governing constraints can become machine-usable normative structure for AI-native workflows.
+The goal of this repository is to define a structured information architecture for scalable visual asset production systems, with particular emphasis on how style guides, creative rules, and other governing constraints can become machine-usable normative structure for production workflows that include AI generation.
 
 At this stage, the correct architecture is the smallest honest architecture: enough structure to support disciplined design, but not so much structure that it hardens assumptions that have not yet earned permanence.
 
@@ -11,144 +11,105 @@ The architecture is intentionally high-level and leaves major design questions o
 - where creative discretion enters
 - where constraints bound that discretion
 - where approvals and override points live
+- whether campaign-concept selection pressures the foundational premise that curation is the singular runtime creative-discretionary act
 - how the system extends from still image to video
 - how deterministic layers relate to agent-assisted layers
 
 The repository is expected to support still-image workflows first. Video should be treated as an extension path, not as a reason to prematurely over-generalize the initial architecture.
 
-The architectural task ahead is to define a model that can express normative intent and workflow governance without collapsing operational, creative, and approval concerns into a single undifferentiated layer.
+## Where This File Sits
 
-*Reading note: the current v1 architectural synthesis lives in [`docs/architecture-apex-definition-layer-v1.md`](architecture-apex-definition-layer-v1.md). This file remains the project's high-level stance and earlier working model; it is not the current synthesis.*
+This file is the **current-architecture front door**: a concise statement of where the architecture currently sits, what it has earned, and where the substantive content lives. It is intentionally compact and routes to depth rather than reproducing detail.
 
-## Current Working Model
+Source-of-truth relationships across the load-bearing artifacts:
 
-Current working structure:
+- **`docs/architecture.md` (this file)** — current front-door synthesis; the architecture's current shape, evidence depth, and held questions at orientation depth
+- **`docs/milestones/milestone-8-phase-2-structured-model-plateau.md`** — the current plateau marker; absorbs the trajectory since milestone 7
+- **`docs/structured-ia-model-v1.md`** — the stable structured enumeration of the IA layered-content model (hybrid prose + YAML appendix); the canonical machine-readable form
+- **`docs/architecture-apex-definition-layer-v1.md`** — the v1 apex definition-layer artifact at SKU + same-category-collection scope; depth-authority for synthesis-pass content and the three Named Limitations carried forward
+- **`docs/index.md`** — full navigation across all repo artifacts; this file does not replicate that navigation
+- **Source artifacts (Phase 1 sketches, Phase 2 deepenings, operational findings, cross-mode probes)** — depth-authority for content; this file does not duplicate them
 
-- three-layer model
-  - universal schema
-  - workflow-stream variants
-  - brand-specific policy overlays
+A returning reader landing here gets the architecture's current state and routes to depth. A reader needing per-mode IA content reads the Phase 1 mode sketches; per-input-category mapping reads the Phase 2 deepenings; per-packet operational findings reads the corresponding finding artifact; full repo navigation reads `docs/index.md`.
 
-- universal schema
-  - intent
-    - business intent
-    - creative intent
-  - inputs
-  - constraints
-  - orchestration
-  - outputs
-  - governance
+## Current Architecture Shape
 
-- tentative second-level directions
-  - inputs -> source materials, supplied parameters, contextual instructions, and reference artifacts when they function as inputs
-  - constraints -> hard requirements, constraint-bounded creative discretion, exclusion rules, and reference artifacts when they function as constraint carriers
-  - governance -> validation, approval, override
+The architecture's current shape, abbreviated:
 
-This is the current working model, not a finalized ontology specification.
+**Layers.** Eight IA layers carry across the four worked-example modes:
 
-One useful way to keep that model small and legible is to treat the repository as a three-layer system:
+- brand-system layer (currently unmodeled in IA; concretized as a real architectural gap by the brand platform deepening — Named Limitation #1)
+- category / product-class layer (signaled-only; not first-class)
+- mode-specific layer (varies by mode; see below)
+- packet layer (strongest current carrier)
+- slot layer (role-specific narrowing)
+- candidate generation layer (transient attachments)
+- curation seam (singular runtime creative-discretionary act per the foundational premise; carries five-axis provenance + curator + curation_pattern)
+- governed asset layer (durable terminal output; carries `asset_attachment` self-contained writeback)
 
-- universal schema
-- workflow-stream variants
-- brand-specific policy overlays
+**Modes.** Four worked-example modes, each with a mode-specific layer between category and packet (SKU-driven mode has none; brand campaign / editorial mode has two):
 
-The universal schema should define the stable conceptual structure shared across workflows. Workflow-stream variants should describe recurring differences in how that structure is realized across classes of work. Brand-specific policy overlays should remain a later layer for local policy and governance, not a replacement for the shared model.
+- SKU-driven product imagery — no mode-specific layer; SKU is the anchor
+- collection / merchandising — collection / grouping layer
+- marketing / message-driven — message / offer / communication layer
+- brand campaign / editorial — campaign concept layer + review-context / campaign-world coherence layer
 
-Within that structure, the current universal schema recommendation is:
+**Carriers.** Five carrier types observed across the architecture: prose carriers; structural carriers; visual reference carriers; governance carriers; held candidates (paper-pressed but not earned). Carrier distribution varies by content category — prose-heavy for some inputs, structurally-explicit-heavy for others, almost entirely prose-carried with structural void for non-visual brand-system content.
 
-- intent
-  - business intent
-  - creative intent
-- inputs
-- constraints
-- orchestration
-- outputs
-- governance
+**Implementation entry surface.** Brand discovery / digestion architecture is the surface where brand-system input enters the layered IA before any tool implementation begins. Six brand-system input categories named in the Phase 2 opening sketch; three deepened to date (photography / image style guide; asset library; brand platform); three remaining unprobed at deepening depth (visual identity system; application guidelines; past campaigns).
 
-Business intent defines what the asset is meant to achieve. Creative intent defines how that purpose is meant to be expressed. Creative discretion should remain legible within the model, but as constraint-bounded creative discretion: scoped freedom shaped by intent, bounded by constraints, exercised through orchestration, and validated through governance rather than treated as unbounded free-form behavior. The framing of *constraint-bounded creative discretion* is developed in [From Brand Rules to Creative Discretion](https://atomicspacekitten.substack.com/p/from-brand-rules-to-creative-discretion); [The Creative Act of Selection](https://atomicspacekitten.substack.com/p/the-creative-act-of-selection) extends it to the curation seam where bounded creative discretion becomes operationally recordable.
-The ordering of business intent and creative intent is descriptive, not yet a formal precedence rule, and any explicit tradeoff rule between them remains an open design question.
-Partial second-level nesting is likely to emerge first under inputs, constraints, and governance. Orchestration and outputs remain intentionally flat for now. This is a tentative structural direction, not yet a finalized ontology specification.
-Within that direction, inputs are currently trending toward source materials, supplied parameters, contextual instructions, and reference artifacts when those artifacts function mainly as inputs to later work, though that substructure also remains tentative rather than finalized.
-Constraints are currently trending toward hard requirements, constraint-bounded creative discretion, exclusion rules, and reference artifacts when those artifacts function mainly as carriers of governing bounds, though that substructure also remains tentative rather than finalized.
-Governance is currently trending toward validation, approval, and override, though that substructure also remains tentative rather than finalized.
+**Fallback chain.** When brand-system input is sparse, contradictory, or absent, the architecture falls back through an ordered six-layer chain: asset library → photography style guide → brand platform → intra-category recency / specificity → Phase 1 worked-example defaults → operator-marked inferred-not-stated. Operator judgment becomes load-bearing under stress; the architecture surfaces options at each conflict point but does not auto-resolve.
 
-That means the repository will need to clarify:
+**Structured form.** The structured IA model v1 carries the stable enumeration above as a machine-readable YAML appendix alongside prose for unresolved content. The YAML is intentionally small; held questions are encoded as markers, not as structural representations of question content. Held schema candidates remain in prose, not encoded.
 
-- what the system is intended to achieve
-- what enters the system as an input
-- what is treated as a governing constraint
-- what is interpreted by deterministic orchestration
-- what is delegated to agent-assisted interpretation or generation
-- what exits the system as a governed output
-- what governance applies at each decision boundary
+The structured IA model v1 is the canonical form for stable enumeration. Anything not in its YAML appendix is either held in prose or earned only at synthesis-pass depth in the apex artifact and the Phase 1 / Phase 2 sketches.
 
-Those decisions are not yet finalized. For now, the repository should preserve enough structure to make those questions explicit and debatable without implying that they are already solved.
-Current `main` now pressure-tests the shared model across four worked-example workflow modes without hardening those modes into schema or taxonomy.
+## Evidence Depth
 
-## Bounded Prototype State
+What's been earned at the current plateau:
 
-For reading order across current, historical, and trigger-based docs, see [`docs/index.md`](index.md). That index is a navigation artifact, not architecture doctrine; linked docs remain authoritative for their subject matter.
+**Operationally grounded (full-flow generation → curation → governance).** SKU-driven mode at PKT-SKU-007 / 009 / 010 (five-axis provenance + curator + curation_pattern + asset_attachment carries cleanly); collection / merchandising mode at PKT-COLL-001 (paper-strain composite-anchor mutation operationally deflated; prose discipline carried 1:N constituent enumeration + exclusion-by-name + cross-axis curation tradeoffs cleanly).
 
-The active SKU-driven Furniture v1 Airtable prototype has surfaced bounded concrete schema pressure around multi-output generation and capture. In that bounded prototype, `output_slots` now function as first-class expected output obligations, and slot-level generation has proven cleaner than packet-level generation for role-specific output production. `generated_assets` has been bounded as a promoted / captured review / governance / delivery layer, not as raw generation storage, and `slot_status` lifecycle has been decided for SKU-driven Furniture v1. Asset-family coherence / reuse / derivative pressure and `generated_assets` capture mechanics from raw slot attachments have been captured but remain unresolved.
+**Structurally proven; not full-flow operationally pressured.** Marketing / message-driven mode at PKT-MSG-001 (cycle 1, `findings-only`); brand campaign / editorial mode at PKT-CAMP-001 (cycle 1 rerun; review-board context functioned as load-bearing for the bounded mini-family proof) plus the Phase 1 Campaign-Driven D2C Home-Goods v1 base setup (95-field schema mirror in a separate base; Phase 2 paused per redirection).
 
-*Reading note: the unresolved-capture-mechanics phrasing above predates milestone-7's `asset_attachment` resolution of milestone-5's thin-bridge limitation; governed-asset rows now carry the asset itself self-contained, per [milestone-7](milestones/milestone-7-v1-sweep-closure-plateau.md).*
+**Paper-pressed; not yet operationally tested.** Cross-mode composite-anchor candidates (collection deflated; marketing held; campaign held + sharper); structured slot-message-element fields; selection-axis enum classification; reference-type tag (with two divergent category proposals from the visual pair); brand-platform first-class entity; approval-state metadata; rejected-assets entity; articulation-state flag; derivation-basis field; fallback-chain-position annotation; worked-example-defaults carrier; contradiction-log entity; aspect-ratio-as-attribute; per-mode role-typical aesthetic constraints. None earned by operational pressure.
 
-These are bounded SKU-driven Furniture v1 findings and decisions, not generalized cross-mode doctrine. They do not establish production readiness, final schema doctrine, an asset-family or asset-applications schema, solved capture mechanics, or Airtable as the final system.
+**Schema is mode-independent at structural level.** The same packet-and-seam schema carried SKU-driven, collection / merchandising, marketing / message-driven, and brand campaign / editorial workloads at first-pass depth (varying further-flow operational depth per the rows above).
 
-## Related Documents
+The visual-as-fidelity-strategy claim from the apex aesthetic-layering pass holds operationally (SKU + collection) and is reciprocally established on paper by the Phase 2 visual-input pair (photography style guide articulates conventions; asset library demonstrates them; when they diverge, the library carries).
 
-- [`docs/index.md`](index.md): current reading-order map and docs navigation artifact
-- [`docs/four-mode-truth-and-constraint-pressure-note.md`](four-mode-truth-and-constraint-pressure-note.md): current four-mode comparison across the repo's worked-example pressure surfaces
-- [`docs/shared-vs-mode-weighted-pressure-note.md`](shared-vs-mode-weighted-pressure-note.md): current comparison of shared pressures, mode-weighted pressures, and still-unearned claims across the four worked-example modes
-- [`docs/review-artifacts-optional-vs-load-bearing-note.md`](review-artifacts-optional-vs-load-bearing-note.md): current comparison of where review artifacts appear optional versus structurally load-bearing across the four worked-example modes
-- [`docs/cross-mode-constraint-layering-note.md`](cross-mode-constraint-layering-note.md): current planning-level comparison of universal, workflow-mode, and brand-overlay constraint layering
-- [`docs/cross-mode-layered-input-model-and-curation-event-note.md`](cross-mode-layered-input-model-and-curation-event-note.md): current working layered-input model attempt across the four modes, anchored to the curation event as a first-class governance act
-- [`docs/truth-pressure-across-workflow-modes-note.md`](truth-pressure-across-workflow-modes-note.md): current cross-mode comparison of the repo's strongest worked-example pressures
-- [`docs/multi-output-slot-representation-structural-decision-note-sku-driven-furniture-v1.md`](multi-output-slot-representation-structural-decision-note-sku-driven-furniture-v1.md): bounded structural decision choosing first-class expected output slots
-- [`docs/airtable-slot-level-generation-schema-fit-note-sku-driven-furniture-v1.md`](airtable-slot-level-generation-schema-fit-note-sku-driven-furniture-v1.md): bounded slot-level generation schema-fit and prototype finding
-- [`docs/generated-assets-promotion-boundary-structural-decision-note-sku-driven-furniture-v1.md`](generated-assets-promotion-boundary-structural-decision-note-sku-driven-furniture-v1.md): bounded generated-assets promotion-boundary decision
-- [`docs/output-slot-status-lifecycle-structural-decision-note-sku-driven-furniture-v1.md`](output-slot-status-lifecycle-structural-decision-note-sku-driven-furniture-v1.md): bounded output-slot status lifecycle decision
-- [`docs/asset-family-coherence-and-reuse-pressure-note-sku-driven-furniture-v1.md`](asset-family-coherence-and-reuse-pressure-note-sku-driven-furniture-v1.md): bounded asset-family coherence, reuse, derivative, and capture-mechanics pressure
-- [`docs/visual-invariant-anchor-refinement-note-sku-driven-furniture-v1.md`](visual-invariant-anchor-refinement-note-sku-driven-furniture-v1.md): visual invariant anchor refinement
-- [`docs/multi-image-visual-reference-input-structural-decision-note-sku-driven-furniture-v1.md`](multi-image-visual-reference-input-structural-decision-note-sku-driven-furniture-v1.md): bounded multi-image / visual-reference input structural decision
-- [`docs/visual-reference-input-schema-mutation-plan-sku-driven-furniture-v1.md`](visual-reference-input-schema-mutation-plan-sku-driven-furniture-v1.md): visual-reference input schema mutation plan
-- [`docs/url-visual-reference-set-generation-findings-sku-driven-furniture-v1.md`](url-visual-reference-set-generation-findings-sku-driven-furniture-v1.md): URL visual-reference set generation findings
-- [`docs/url-visual-reference-recurrence-findings-pkt-sku-009.md`](url-visual-reference-recurrence-findings-pkt-sku-009.md): `PKT-SKU-009` URL visual-reference recurrence findings
-- [`docs/visual-reference-binding-diagnostic-order-structural-decision-note-sku-driven-furniture-v1.md`](visual-reference-binding-diagnostic-order-structural-decision-note-sku-driven-furniture-v1.md): visual-reference binding diagnostic-order decision
-- [`docs/reference-image-specificity-c-test-findings-pkt-sku-009.md`](reference-image-specificity-c-test-findings-pkt-sku-009.md): `PKT-SKU-009` reference-image specificity C-test findings
-- [`docs/field-agent-configuration-b-test-findings-pkt-sku-009.md`](field-agent-configuration-b-test-findings-pkt-sku-009.md): `PKT-SKU-009` field-agent configuration B-test findings
-- [`docs/gate-2-image-bearing-reference-path-structural-decision-note-sku-driven-furniture-v1.md`](gate-2-image-bearing-reference-path-structural-decision-note-sku-driven-furniture-v1.md): Gate 2 image-bearing reference path structural decision
-- [`docs/gate-2-image-bearing-reference-path-probe-plan-sku-driven-furniture-v1.md`](gate-2-image-bearing-reference-path-probe-plan-sku-driven-furniture-v1.md): Gate 2 image-bearing reference path probe plan
-- [`docs/gate-2-image-bearing-reference-path-findings-pkt-sku-009.md`](gate-2-image-bearing-reference-path-findings-pkt-sku-009.md): `PKT-SKU-009` Gate 2 image-bearing reference path findings
-- [`docs/capture-governance-next-path-structural-decision-note-sku-driven-furniture-v1.md`](capture-governance-next-path-structural-decision-note-sku-driven-furniture-v1.md): capture / governance next-path structural decision
-- [`docs/capture-mechanics-plan-sku-driven-furniture-v1.md`](capture-mechanics-plan-sku-driven-furniture-v1.md): capture-mechanics plan
-- [`docs/capture-mechanics-thin-bridge-findings-pkt-sku-009.md`](capture-mechanics-thin-bridge-findings-pkt-sku-009.md): `PKT-SKU-009` capture-mechanics thin-bridge findings
-- [`docs/capture-mechanics-pause-and-document-structural-decision-note-sku-driven-furniture-v1.md`](capture-mechanics-pause-and-document-structural-decision-note-sku-driven-furniture-v1.md): capture-mechanics pause decision
-- [`docs/curation-event-schema-mutation-sku-driven-furniture-v1.md`](curation-event-schema-mutation-sku-driven-furniture-v1.md): bounded schema mutation enriching `generated_assets` with curation-event provenance fields, anchored to the cross-mode v3 finding
-- [`docs/curation-event-population-findings-pkt-sku-009.md`](curation-event-population-findings-pkt-sku-009.md): bounded backfill populating the four provenance fields on the PKT-SKU-009 HERO governed-asset record; resolves `source_attachment_id` writeback as Supported and narrows the milestone-5 blocker's scope
-- [`docs/curation-event-population-findings-pkt-sku-007.md`](curation-event-population-findings-pkt-sku-007.md): parallel backfill on the two PKT-SKU-007 Gate 6 governed-asset rows; first cross-packet `capture_reason` enum-readiness analysis (recommends staying as text)
-- [`docs/curation-event-agentic-test-findings-pkt-sku-009.md`](curation-event-agentic-test-findings-pkt-sku-009.md): first agentic-first curation event test on PKT-SKU-009 (HERO, PROFILE, DETAIL); forward provenance population Supported; meta-test articulates agentic curation as a delegation pattern
-- [`docs/governed-output-promotion-and-curation-pattern-findings-pkt-sku-009.md`](governed-output-promotion-and-curation-pattern-findings-pkt-sku-009.md): bundled multiple-rows-per-slot resolution and `curation_pattern` field addition on PKT-SKU-009 (three agentic rows promoted to governed_output); forward promotion path Supported
-- [`docs/governed-output-promotion-findings-pkt-sku-007.md`](governed-output-promotion-findings-pkt-sku-007.md): PKT-SKU-007 promotion completing the v1 evidence chain transition; surfaces `batch-output-no-curator-selection` as a third curation pattern beyond authorship-bearing and confirmation-bearing
-- [`docs/curator-field-and-backfill-sku-driven-furniture-v1.md`](curator-field-and-backfill-sku-driven-furniture-v1.md): adds `curator` field on `generated_assets` and backfills four rows; closes the *by whom* axis of the curation event's structural provenance
-- [`docs/curation-event-vision-based-agentic-test-findings-pkt-sku-009.md`](curation-event-vision-based-agentic-test-findings-pkt-sku-009.md): vision-based agentic curation test on PKT-SKU-009 with reference grounding and family coherence; REF-002 binding Supported in the most recent iteration; vision-based proper test converges with the metadata-based pick from #149; documents three vision-based delegation failure modes that required in-flight methodology correction
-- [`docs/full-flow-evidence-synthesis-pkt-sku-009.md`](full-flow-evidence-synthesis-pkt-sku-009.md): full-flow architectural surface synthesis (Path C of three) — documents the already-executed end-to-end flow on PKT-SKU-009 and surfaces the human/agent surface boundary as load-bearing finding
-- [`docs/full-flow-path-a-findings-pkt-sku-009.md`](full-flow-path-a-findings-pkt-sku-009.md): coordinated fresh-generation full-flow on PKT-SKU-009 (Path A of three) — surfaces the implementation-vs-conceptual goal distinction for family coherence, refines the cross-mode model's family-coherence framing, introduces fifth `curation_pattern` value (`human-cross-round-authorship-bearing-curation`), reframes Path C's generation-invocation question as a tooling limitation
-- [`docs/full-flow-path-b-findings-pkt-sku-010.md`](full-flow-path-b-findings-pkt-sku-010.md): coordinated fresh-generation full-flow on a brand-new packet PKT-SKU-010 (Path B of three) — adds `asset_attachment` field, validates attachment-copy writeback, resolves milestone-5 thin-bridge limitation; closes the v1 sweep's full-flow item
-- [`docs/asset-attachment-backfill-findings-sku-driven-furniture-v1.md`](asset-attachment-backfill-findings-sku-driven-furniture-v1.md): bounded backfill of `asset_attachment` on prior 11 governed-asset rows; 9 backfilled cleanly (PKT-SKU-009), 2 unrecoverable (PKT-SKU-007 — source attachments no longer on slot); surfaces the architectural cost of the thin-bridge limitation
-- [`docs/cross-mode-probe-marketing-message-driven-v1.md`](cross-mode-probe-marketing-message-driven-v1.md): first cross-mode application probe (paper-only sketch) — pressures the SKU-driven schema against a concrete marketing/message-driven scenario; architecture survives without mutation; three strain points (slot-input plurality, composite fidelity-anchor, selection-axis classification) confirmed under concrete pressure but not earned by current operational load
-- [`docs/cross-mode-probe-collection-merchandising-v1.md`](cross-mode-probe-collection-merchandising-v1.md): second cross-mode application probe (paper-only sketch) — pressures the SKU-driven schema against a concrete collection / merchandising scenario; architecture survives without mutation, but slot-input plurality strain is sharpest in this mode (1:N slot-product cardinality vs. SKU-mode 1:1)
-- [`docs/cross-mode-probe-brand-campaign-editorial-v1.md`](cross-mode-probe-brand-campaign-editorial-v1.md): third and final cross-mode application probe in the v1 sweep (paper-only sketch) — pressures the SKU-driven schema against a five-slot heritage campaign; architecture survives without mutation; `products` becomes peripheral; surfaces that **Layer 2's composite-anchor representation is the most consistent strain across all three cross-mode probes**, in three mode-specific shapes (messages / grouping archetype / campaign concept); closes the sweep at probe-depth
-- [`docs/milestones/milestone-7-v1-sweep-closure-plateau.md`](milestones/milestone-7-v1-sweep-closure-plateau.md): v1 sweep closure plateau — SKU-driven mode operationalized + cross-mode application sweep closed at probe-depth across all three non-SKU modes + split-execution operating model retired + asset_attachment resolves milestone-5 thin-bridge + the architecture has held under each pressure point
-- [`docs/collection-mode-operational-test-setup-v1.md`](collection-mode-operational-test-setup-v1.md): collection-mode operational test Phase 1 setup — 3 net-new output_slots on PKT-COLL-001 in the existing SKU-driven base; pressure-tests slot-input plurality strain operationally
-- [`docs/collection-mode-operational-test-findings-v1.md`](collection-mode-operational-test-findings-v1.md): collection-mode operational test Phase 2 findings — verdict that the existing schema carries collection-mode operational pressure cleanly without structural mutation; composite-anchor schema mutation is *less* earned by operational pressure now than after the paper probe; 10 operational findings including prose-only-fidelity, exclusion-by-name, generation-tooling limitations on elongated constituents, cross-slot consistency mechanism, and family coherence without arrangement preservation
-- [`docs/verification-record-carrying-clarification.md`](verification-record-carrying-clarification.md): current clarification on what seam records must carry across the chain
-- [`docs/seam-local-verification-boundary-note.md`](seam-local-verification-boundary-note.md): current clarification on later-seam verification responsibility
-- [`docs/application/examples/placeholder-furniture-workflow-packet-example.md`](application/examples/placeholder-furniture-workflow-packet-example.md): current SKU-driven packet example
-- [`docs/application/examples/placeholder-collection-merchandising-workflow-packet-example.md`](application/examples/placeholder-collection-merchandising-workflow-packet-example.md): current collection / merchandising packet example
-- [`docs/application/examples/placeholder-marketing-message-driven-workflow-packet-example.md`](application/examples/placeholder-marketing-message-driven-workflow-packet-example.md): current marketing / message-driven packet example
-- [`docs/application/examples/placeholder-campaign-workflow-packet-example.md`](application/examples/placeholder-campaign-workflow-packet-example.md): current campaign / editorial packet example
-- [`docs/application/placeholder-furniture-style-spec-to-seam-chain-map.md`](application/placeholder-furniture-style-spec-to-seam-chain-map.md): current furniture bridge into the seam chain
-- [`docs/application/placeholder-collection-merchandising-packet-to-seam-chain-map.md`](application/placeholder-collection-merchandising-packet-to-seam-chain-map.md): current collection / merchandising bridge into the seam chain
-- [`docs/application/placeholder-marketing-message-driven-packet-to-seam-chain-map.md`](application/placeholder-marketing-message-driven-packet-to-seam-chain-map.md): current marketing / message-driven bridge into the seam chain
-- [`docs/application/placeholder-campaign-packet-to-seam-chain-map.md`](application/placeholder-campaign-packet-to-seam-chain-map.md): current campaign / editorial bridge into the seam chain
+## Held Questions
+
+Carried forward unresolved at this plateau. The architecture does not pretend to have settled them:
+
+- **Apex Named Limitations.** Three carried forward from `docs/architecture-apex-definition-layer-v1.md`: (#1) specific aesthetic-carrier schema for brand-system, mode / category, or product-class; (#2) precedence rule for inheritance and override (implicit-additive Model A holds where tested but no formal precedence rule earned); (#3) cross-base / cross-category / cross-brand pressure plus marketing-mode and campaign-mode operational evidence at full-flow depth.
+- **Curation-premise pressure question.** Surfaced in the brand campaign / editorial mode sketch and the cross-mode synthesis. Campaign-concept selection happens upstream of generation but is the dominant creative act in campaign mode. Three operational outcomes named (premise holds; refines; fragments); resolution requires campaign-mode operational testing that has been paused per the redirection.
+- **Composite-anchor structure.** Operationally deflated for collection mode; held for marketing and campaign modes; the unified `composite_anchor` polymorphic-entity question is unearned across the three non-SKU modes.
+- **Inferred-not-stated structural representation.** Currently a prose discipline; surfaced by the sparse-articulation pressure note as a paper-pressed structural-carrier candidate (`derivation_basis` field; `articulation_state` flag); not earned.
+- **Fallback-chain-position structural representation.** Chain order encoded in the structured IA model v1 YAML; chain semantics carried in prose; structural representation of operator-resolved chain position is paper-pressed but not earned.
+- **Operator-judgment representation.** Procedural content; not data; not modeled in the structured form. Carried in prose throughout Phase 1 + Phase 2 work.
+- **Validator integration.** The structured IA model v1's YAML appendix could be derived as Pydantic models for `src/asset_pipeline_ask/` consumption when an operational consumer surfaces the need; not earned by current pressure.
+- **Remaining input-category deepenings.** Three of six brand-system input categories remain unprobed at deepening depth (visual identity system; application guidelines; past campaigns); held as candidates for future Phase 2 work.
+- **Phase 3 demonstration.** All-four-workflow Airtable demonstration after the IA model is understood; held per the redirection's three-phase plan.
+
+These boundaries are load-bearing. Any reading of the current architecture that elides them mis-reads it.
+
+## Depth Documents
+
+Entry points for content depth. Full repo navigation lives in `docs/index.md`; this list is the focused entry-point set.
+
+- [`docs/index.md`](index.md): full navigation across all repo artifacts
+- [`docs/milestones/milestone-8-phase-2-structured-model-plateau.md`](milestones/milestone-8-phase-2-structured-model-plateau.md): current plateau marker
+- [`docs/structured-ia-model-v1.md`](structured-ia-model-v1.md): stable structured enumeration of the IA layered-content model (hybrid prose + YAML appendix)
+- [`docs/architecture-apex-definition-layer-v1.md`](architecture-apex-definition-layer-v1.md): v1 apex definition-layer artifact; three Named Limitations
+- [`docs/ia-layered-content-redirection-note-v1.md`](ia-layered-content-redirection-note-v1.md): the IA layered-content redirection that opened the trajectory milestone 8 marks
+- [`docs/ia-layered-content-cross-mode-synthesis-v1.md`](ia-layered-content-cross-mode-synthesis-v1.md): Phase 1 cross-mode synthesis; carrier-status matrix; cross-mode layer map
+- [`docs/brand-discovery-digestion-architecture-sketch-v1.md`](brand-discovery-digestion-architecture-sketch-v1.md): Phase 2 opening sketch; brand-system input categories; intake-to-IA mapping
+- [`docs/brand-discovery-sparse-articulation-fallback-pressure-v1.md`](brand-discovery-sparse-articulation-fallback-pressure-v1.md): sparse-articulation fallback pressure; six-layer fallback chain
+- [`docs/collection-mode-operational-test-findings-v1.md`](collection-mode-operational-test-findings-v1.md): collection-mode operational deflation evidence; the load-bearing operational claim that paper-strain hypothesis was carried by prose discipline
+- [`docs/milestones/milestone-7-v1-sweep-closure-plateau.md`](milestones/milestone-7-v1-sweep-closure-plateau.md): the prior plateau marker; v1 sweep closure
+- [`AGENTS.md`](../AGENTS.md): single-node operating model + agent-agnostic workflow rules
+
+The four Phase 1 mode sketches (B1–B4), the three Phase 2 input-category deepenings (photography / image style guide; asset library; brand platform), the structured IA model options note, the cross-mode probe series, the four-mode truth-and-constraint pressure note, and the full operational findings chain all live in `docs/index.md` for navigation.
+
+This file is current as of milestone 8. It will need to be revised when the next architectural plateau is reached, when Phase 3 produces operational evidence, when one of the held questions earns resolution, or when a subsequent milestone marks a new plateau.
