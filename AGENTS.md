@@ -132,6 +132,18 @@ When creating a PR, report:
 - validation performed
 - terminal state: `PR created`
 
+### Default: Hold or Carry Through Per Adversarial-Collaboration Preconditions
+
+When ASK has approved the scoped diff, the workflow continues through commit and push to PR creation.
+
+If the project meets the preconditions for adversarial collaboration (per [*Adversarial Collaboration*](https://atomicspacekitten.substack.com/p/adversarial-collaboration)) — hardened backbone, active architectural uncertainty, configured advisor surface — hold at `PR created` until the advisor relay returns approval, then continue to merge. The pushed-not-merged PR is the advisor's structural review window.
+
+ASK forwarding an advisor approval to the executor is the relay. Forwarding may be done by pasting the advisor's approval, summary, or equivalent review result. No additional approval phrase is required after the forwarding act.
+
+Forwarding advisor notes that contain required fixes, blocking concerns, or open questions is not approval relay; it is fix-direction or question-forwarding.
+
+If no advisor surface is configured, carry through to merged + cleanup once diff approval is given. The pattern is proportional to architectural uncertainty live at any moment.
+
 ### Post-Merge Cleanup
 
 After merge, verify `main`, delete merged task branches where safe, verify remote branch state, and report:
