@@ -380,6 +380,18 @@ When a repo artifact records role-fit, fidelity, or image-quality claims, attrib
 
 ---
 
+## Repo Content and Visual Discipline
+
+This repo is primarily read by agents, operators, and future maintainers. Repo content should therefore remain machine-readable, diffable, grep-able, and durable as plain text.
+
+Do not replace semantic repo content with binary visual assets ad-hoc. Diagrams, rendered maps, and other visual assets may supplement plain-text artifacts, but they are not substitutes for the canonical textual representation unless the work is explicitly scoped as a systematic presentation pass.
+
+Content visuals belong only when they clarify a repo-local artifact without weakening inspectability. Human-facing presentation layers may be developed separately when the project reaches a show-don't-tell stage.
+
+Existing repo identity imagery is out of scope; this rule concerns content visuals such as architectural diagrams, flow maps, matrices, and rendered explanatory graphics.
+
+---
+
 ## Comments, Docs, and PR Roles
 
 Use code comments only for local clarification inside implementation artifacts when implementation exists.
