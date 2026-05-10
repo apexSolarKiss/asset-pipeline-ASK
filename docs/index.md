@@ -313,13 +313,15 @@ Brand discovery / digestion architecture — the structured intake from a brand 
 
 The first Phase 2 artifact — [docs/brand-discovery-digestion-architecture-sketch-v1.md](brand-discovery-digestion-architecture-sketch-v1.md) — is an opening sketch articulating brand-system input categories, intake-to-IA mapping, discovery sequence, and fallback model at sketch depth.
 
-#### Input-category deepenings (3 of 6 landed)
+#### Input-category deepenings (4 of 6 landed)
 
 The first Phase 2 deepening artifact — [docs/brand-system-input-photography-style-guide-to-ia-mapping-v1.md](brand-system-input-photography-style-guide-to-ia-mapping-v1.md) — deepens the photography / image style guide input category into an IA mapping. Articulates ten style dimensions; maps each to the IA layers; covers cross-mode implications across the four modes; carries forward the visual-as-fidelity-strategy / prose-as-fallback claim from the apex aesthetic-layering pass for prose-vs-asset-library conflict handling.
 
 The second Phase 2 deepening artifact — [docs/brand-system-input-asset-library-to-ia-mapping-v1.md](brand-system-input-asset-library-to-ia-mapping-v1.md) — deepens the asset library input category into an IA mapping. Closes the load-bearing relationship the photography artifact set up by articulating the visual-evidence side of intake. Surfaces the architectural finding that asset library content is the input category most directly served by existing structural carriers (`reference_assets`, packet-level reference linkage, slot-level lookup chain, `asset_attachment`) — a meaningful contrast against photography style guide content's predominantly prose-carried distribution.
 
 The third Phase 2 deepening artifact — [docs/brand-system-input-brand-platform-to-ia-mapping-v1.md](brand-system-input-brand-platform-to-ia-mapping-v1.md) — deepens the brand platform input category into an IA mapping. Cross-domain generalization test: non-visual, articulation-only, abstraction-heavy. Surfaces the architectural finding that brand platform content concretizes Named Limitation #1 — the IA has nowhere structural for brand-system-layer content to live, so brand platform content distributes asymmetrically (concentrated at the unmodeled brand-system layer; flowing downstream as operator-interpretive guidance into prose carriers). Sharpens the campaign-mode curation-premise pressure question by clarifying brand platform as the upstream source material the question's resolution implicates.
+
+The fourth Phase 2 deepening artifact — [docs/brand-system-input-visual-identity-system-to-ia-mapping-v1.md](brand-system-input-visual-identity-system-to-ia-mapping-v1.md) — deepens the visual identity system input category into an IA mapping. Hybrid-shape generalization test: articulated visual *constants* (logo, typography, color, grid) plus applied conventions, distinct from photography (articulated conventions), asset library (demonstrated evidence), and brand platform (pure articulation). Pressures Named Limitation #1 from the concrete-constants angle, complementary to brand platform's pressure from the abstraction angle: brand-wide constants (color codes, typeface assignments, logo references) have no first-class home in the current IA. The two-angle pressure makes the gap harder to ignore but no easier to resolve without operational evidence.
 
 #### Fallback pressure
 
@@ -336,7 +338,7 @@ The structured IA model v1 — [docs/structured-ia-model-v1.md](structured-ia-mo
 - **Milestone-8** — landed; see [docs/milestones/milestone-8-phase-2-structured-model-plateau.md](milestones/milestone-8-phase-2-structured-model-plateau.md). Marks the Phase 2 + structured IA model plateau; absorbs the redirection, Phase 1 + Phase 2 outputs (including the structured IA model v1), and the collection-mode operational deflation evidence.
 - **`docs/architecture.md` rewrite** — landed as the current-architecture front door; see [docs/architecture.md](architecture.md). Hybrid current-architecture synthesis + routing to depth; depth-authority remains in the apex artifact, milestone-8, the structured IA model v1, and the source artifacts.
 - **Validator integration** — held; the structured IA model v1's YAML appendix could be derived as Pydantic models for `src/asset_pipeline_ask/` consumption when an operational consumer surfaces the need; not earned by current pressure.
-- **Remaining input-category deepenings** — three of six brand-system input categories remain unprobed at deepening depth (visual identity system; application guidelines; past campaigns); held as candidates for future Phase 2 work or for milestone-8 to absorb at partial coverage.
+- **Remaining input-category deepenings** — two of six brand-system input categories remain unprobed at deepening depth (application guidelines; past campaigns); held as candidates for future Phase 2 work or for milestone-8 to absorb at partial coverage.
 - **Phase 3** (all-four-workflow Airtable demonstration after the IA model is understood) — held per the redirection note's three-phase plan.
 - **Grounding-note v52** — held; separate hygiene track.
 
