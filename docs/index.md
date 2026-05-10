@@ -320,6 +320,8 @@ The first Phase 2 fallback-pressure artifact — [docs/brand-discovery-sparse-ar
 
 The structured IA model options note — [docs/structured-ia-model-options-note-v1.md](structured-ia-model-options-note-v1.md) — evaluates whether and how a structured IA model should be authored after Phase 1 + Phase 2 pressure. Five options compared (custom YAML / JSON; Pydantic; JSON Schema; hybrid prose + structured appendix; defer until milestone-8) across seven evaluation criteria. Recommendation: hybrid prose + structured appendix at this evidence depth; defer is honestly defensible. Authoring not yet authorized — note's job is the shape decision, not implementation.
 
+The structured IA model v1 — [docs/structured-ia-model-v1.md](structured-ia-model-v1.md) — is the hybrid prose + structured-YAML-appendix artifact authored per the options note's recommendation. The prose carries the layer-by-layer narrative, operator-judgment paths, held candidates with reasoning, the curation-premise pressure question, and apex Named Limitations. The structured appendix carries only stable / earned-enough enumeration: IA layers, worked-example modes, mode-specific layer mapping, carrier types, brand-system input categories, deepened input categories, fallback chain (ordered), carrier-status values, and held-question markers. Intentionally small. Not validator-integrated; not Pydantic; not JSON Schema; held candidates not encoded structurally.
+
 ### Downstream / Held
 
 - **Milestone-8** — held until Phase 2 produces sufficient material; will absorb the redirection alongside Phase 1 + Phase 2 outputs and the collection-mode operational deflation evidence.
