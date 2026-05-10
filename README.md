@@ -48,6 +48,11 @@ The cleanest layered IA case is the SKU-driven mode, anchored against `PKT-SKU-0
 - [`docs/milestones/`](docs/milestones/) — plateau markers
 - [`AGENTS.md`](AGENTS.md) — repo-local execution guidance
 
+Live prototype bases:
+
+- [`Airtable base // SKU-Driven Furniture v1`](https://airtable.com/appoqJ25B6w4vSuX9/shrGGnxr3uvLRkEU4) — original prototype base for SKU-driven Furniture v1 and early cross-mode pressure work
+- [`Airtable base // Campaign-Driven D2C Home-Goods v1`](https://airtable.com/appCAcRuA82SWj5h5) — separate campaign-mode prototype base for cross-base / cross-brand pressure work
+
 Background article series, in chronological order:
 
 - [From Brand Rules to Creative Discretion](https://atomicspacekitten.substack.com/p/from-brand-rules-to-creative-discretion)
