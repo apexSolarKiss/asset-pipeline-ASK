@@ -337,6 +337,10 @@ The structured IA model v1 — [docs/structured-ia-model-v1.md](structured-ia-mo
 
 The first Phase 2 operator-judgment artifact — [docs/operator-judgment-protocol-sketch-v1.md](operator-judgment-protocol-sketch-v1.md) — is an example-anchored sketch articulating a candidate protocol shape for the operator's translation work between upstream brand-system inputs and downstream constraints. Eight-step skeleton (source condition → conflict / sparsity type → fallback-chain position → operator inference → evidence basis → confidence / articulation state → downstream constraint → later review trigger), pressured against three concrete cases (sparse VIS articulation; brand-platform divergence from asset library; conflicting VIS documents). Sharpens the `operator_judgment_representation` held question by naming a protocol-shape candidate currently prose-carried across existing artifacts and not represented as a first-class protocol shape; does not resolve the held question or earn structural representation.
 
+#### Campaign-mode fork-resolver test
+
+The first campaign-mode operational test artifact since the IA layered-content redirection's Airtable mutation pause — [docs/campaign-mode-fork-resolver-test-setup-v1.md](campaign-mode-fork-resolver-test-setup-v1.md) — pre-registers a one-packet fork-resolver test inside the existing Campaign-Driven D2C Home-Goods v1 base. Uses fresh PKT-CAMP-004-KITCHEN_PREP within the existing Warm Restraint envelope. Pressures the curation-premise architectural fork, Named Limitation #1, Named Limitation #3, and the operator-judgment protocol sketch. Explicitly distinct from the prior three-packet campaign operationalization, which remains paused but separately available. Phase A pre-registration only; Phase B / C / D mutation phases held.
+
 ### Downstream / Held
 
 - **Milestone-8** — landed; see [docs/milestones/milestone-8-phase-2-structured-model-plateau.md](milestones/milestone-8-phase-2-structured-model-plateau.md). Marks the Phase 2 + structured IA model plateau; absorbs the redirection, Phase 1 + Phase 2 outputs (including the structured IA model v1), and the collection-mode operational deflation evidence.
