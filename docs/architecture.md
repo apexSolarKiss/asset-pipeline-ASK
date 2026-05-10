@@ -80,10 +80,23 @@ The visual-as-fidelity-strategy claim from the apex aesthetic-layering pass hold
 
 ## Held Questions
 
-Carried forward unresolved at this plateau. The architecture does not pretend to have settled them:
+Carried forward unresolved at this plateau. The architecture does not pretend to have settled them. The most architecturally consequential is treated below as a named fork; the remaining held questions are inventoried.
+
+### Curation-Premise Architectural Fork
+
+The foundational premise that curation is the singular runtime creative-discretionary act and generation is mechanical is load-bearing across the architecture. The brand campaign / editorial mode sketch and the cross-mode synthesis surfaced an unresolved pressure on this premise: campaign-concept selection happens upstream of generation but is the dominant creative act in campaign mode. The brand-platform Phase 2 deepening sharpened the question — brand platform articulation is the upstream source material campaign-concept selection draws on.
+
+This is an architectural fork, not a footnote. Three operational outcomes are named; only operational pressure can decide between them.
+
+- **Premise holds // terminal curation event.** Campaign-concept selection is upstream setup, not authorship-bearing. The runtime creative-discretionary act remains singular at the curation seam. Current IA layer model and governance seam unchanged.
+- **Premise refines // layered discretionary chain.** Campaign-concept selection is itself authorship-bearing, co-existing with the curation seam as an upstream discretionary act. Implicates: an upstream creative-discretion seam becomes first-class in the **IA layer model**; the **governance seam** generalizes to record which earlier discretionary act(s) the curation event ratifies versus contradicts.
+- **Premise fragments // multiple authorship-bearing seams.** Campaign-concept selection, reference selection, generation-direction-setting, and curation are each authorship-bearing in different proportions across modes. Implicates: multiple authorship-bearing layers earn first-class structural treatment in the **IA layer model**; the singular curation seam in the **governance seam** fragments into a per-mode chain of discretionary events, each with its own provenance shape.
+
+This fork is unresolved. No operational evidence has earned a resolution; the campaign-mode operationalization that would test it remains paused per the IA layered-content redirection. Elsewhere in this file, the current architecture continues to use the singular curation-seam framing because that is the premise held at this plateau. That framing is provisional wherever campaign-mode authorship pressure is implicated.
+
+### Inventory
 
 - **Apex Named Limitations.** Three carried forward from `docs/architecture-apex-definition-layer-v1.md`: (#1) specific aesthetic-carrier schema for brand-system, mode / category, or product-class; (#2) precedence rule for inheritance and override (implicit-additive Model A holds where tested but no formal precedence rule earned); (#3) cross-base / cross-category / cross-brand pressure plus marketing-mode and campaign-mode operational evidence at full-flow depth.
-- **Curation-premise pressure question.** Surfaced in the brand campaign / editorial mode sketch and the cross-mode synthesis. Campaign-concept selection happens upstream of generation but is the dominant creative act in campaign mode. Three operational outcomes named (premise holds; refines; fragments); resolution requires campaign-mode operational testing that has been paused per the redirection.
 - **Composite-anchor structure.** Operationally deflated for collection mode; held for marketing and campaign modes; the unified `composite_anchor` polymorphic-entity question is unearned across the three non-SKU modes.
 - **Inferred-not-stated structural representation.** Currently a prose discipline; surfaced by the sparse-articulation pressure note as a paper-pressed structural-carrier candidate (`derivation_basis` field; `articulation_state` flag); not earned.
 - **Fallback-chain-position structural representation.** Chain order encoded in the structured IA model v1 YAML; chain semantics carried in prose; structural representation of operator-resolved chain position is paper-pressed but not earned.
