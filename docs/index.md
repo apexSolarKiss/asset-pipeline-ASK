@@ -290,7 +290,7 @@ Superseded foundational docs are retained as evidence of project evolution; do n
 
 ## Current Active Next Steps
 
-The active frontier is the IA layered-content redirection: see [docs/ia-layered-content-redirection-note-v1.md](ia-layered-content-redirection-note-v1.md). Phase 1 (on-paper IA layered-content work across the four worked-example modes, plus the cross-mode synthesis) is closed on main. Phase 2 (brand discovery / digestion architecture) is the next active surface and has not yet opened. Further Airtable prototype mutation remains paused. The older candidate paths described below remain durable possibilities, deferred behind the redirection.
+The active frontier is the IA layered-content redirection: see [docs/ia-layered-content-redirection-note-v1.md](ia-layered-content-redirection-note-v1.md). Phase 1 (on-paper IA layered-content work across the four worked-example modes, plus the cross-mode synthesis) is closed on main. Phase 2 (brand discovery / digestion architecture) is in flight on main. Milestone-8 is the next plausible substantive synthesis. Further Airtable prototype mutation remains paused. The older candidate paths described below remain durable possibilities, deferred behind the redirection.
 
 ### Phase 1 (closed on main) // IA Layered-Content Articulation
 
@@ -304,11 +304,15 @@ The fourth and final Phase 1 mode sketch — [docs/ia-layered-content-sketch-cam
 
 The Phase 1 cross-mode synthesis — [docs/ia-layered-content-cross-mode-synthesis-v1.md](ia-layered-content-cross-mode-synthesis-v1.md) — compares the four mode sketches against each other. Identifies stable shared layers, mode-specific layers, and a carrier-status matrix distinguishing prose-carried, structurally explicit, structurally suggested but not earned, operationally deflated, and operationally untested content. Surfaces the cross-mode composite-anchor finding (collection deflated; marketing and campaign held; campaign sharper) and prepares for milestone-8, the eventual `docs/architecture.md` rewrite, and Phase 2 brand discovery / digestion architecture. Closes Phase 1 of the redirection.
 
-### Phase 2 (next active surface) // Brand Discovery / Digestion Architecture
+### Phase 2 (in flight) // Brand Discovery / Digestion Architecture
 
 Brand discovery / digestion architecture — the structured intake from a brand system into the layered IA before any tool implementation begins — is the next active direction per the redirection note. Phase 2 articulates how an existing brand system's content gets resolved into the layered IA that Phase 1 articulated.
 
+#### Opening sketch
+
 The first Phase 2 artifact — [docs/brand-discovery-digestion-architecture-sketch-v1.md](brand-discovery-digestion-architecture-sketch-v1.md) — is an opening sketch articulating brand-system input categories, intake-to-IA mapping, discovery sequence, and fallback model at sketch depth.
+
+#### Input-category deepenings (3 of 6 landed)
 
 The first Phase 2 deepening artifact — [docs/brand-system-input-photography-style-guide-to-ia-mapping-v1.md](brand-system-input-photography-style-guide-to-ia-mapping-v1.md) — deepens the photography / image style guide input category into an IA mapping. Articulates ten style dimensions; maps each to the IA layers; covers cross-mode implications across the four modes; carries forward the visual-as-fidelity-strategy / prose-as-fallback claim from the apex aesthetic-layering pass for prose-vs-asset-library conflict handling.
 
@@ -316,7 +320,11 @@ The second Phase 2 deepening artifact — [docs/brand-system-input-asset-library
 
 The third Phase 2 deepening artifact — [docs/brand-system-input-brand-platform-to-ia-mapping-v1.md](brand-system-input-brand-platform-to-ia-mapping-v1.md) — deepens the brand platform input category into an IA mapping. Cross-domain generalization test: non-visual, articulation-only, abstraction-heavy. Surfaces the architectural finding that brand platform content concretizes Named Limitation #1 — the IA has nowhere structural for brand-system-layer content to live, so brand platform content distributes asymmetrically (concentrated at the unmodeled brand-system layer; flowing downstream as operator-interpretive guidance into prose carriers). Sharpens the campaign-mode curation-premise pressure question by clarifying brand platform as the upstream source material the question's resolution implicates.
 
+#### Fallback pressure
+
 The first Phase 2 fallback-pressure artifact — [docs/brand-discovery-sparse-articulation-fallback-pressure-v1.md](brand-discovery-sparse-articulation-fallback-pressure-v1.md) — pressure-tests the Phase 2 fallback model under sparse / contradictory / absent input across the three deepened categories. Five test conditions; layered fallback chain (asset library → photography style guide → brand platform → intra-category recency / specificity → Phase 1 worked-example defaults → operator-marked inferred-not-stated). The model holds; operator-judgment burden scales under stress conditions. Surfaces five new structural-carrier candidates (none earned) and reframes structured IA model timing from "now or later" to "what shape, given operator-judgment burden in stress conditions."
+
+#### Structured form
 
 The structured IA model options note — [docs/structured-ia-model-options-note-v1.md](structured-ia-model-options-note-v1.md) — evaluates whether and how a structured IA model should be authored after Phase 1 + Phase 2 pressure. Five options compared (custom YAML / JSON; Pydantic; JSON Schema; hybrid prose + structured appendix; defer until milestone-8) across seven evaluation criteria. Recommendation: hybrid prose + structured appendix at this evidence depth; defer is honestly defensible. Authoring not yet authorized — note's job is the shape decision, not implementation.
 
@@ -324,8 +332,10 @@ The structured IA model v1 — [docs/structured-ia-model-v1.md](structured-ia-mo
 
 ### Downstream / Held
 
-- **Milestone-8** — held until Phase 2 produces sufficient material; will absorb the redirection alongside Phase 1 + Phase 2 outputs and the collection-mode operational deflation evidence.
-- **`docs/architecture.md` rewrite** — held until milestone-8 lands; will consolidate the apex artifact and the Phase 1 sketches into a single current-architecture document.
+- **Milestone-8** — now plausible as the next substantive synthesis; will absorb the redirection alongside Phase 1 + Phase 2 outputs (including the structured IA model v1) and the collection-mode operational deflation evidence.
+- **`docs/architecture.md` rewrite** — held until milestone-8 lands; will consolidate the apex artifact, the Phase 1 sketches, and the Phase 2 artifacts into a single current-architecture document.
+- **Validator integration** — held; the structured IA model v1's YAML appendix could be derived as Pydantic models for `src/asset_pipeline_ask/` consumption when an operational consumer surfaces the need; not earned by current pressure.
+- **Remaining input-category deepenings** — three of six brand-system input categories remain unprobed at deepening depth (visual identity system; application guidelines; past campaigns); held as candidates for future Phase 2 work or for milestone-8 to absorb at partial coverage.
 - **Phase 3** (all-four-workflow Airtable demonstration after the IA model is understood) — held per the redirection note's three-phase plan.
 - **Grounding-note v52** — held; separate hygiene track.
 
