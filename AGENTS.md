@@ -45,6 +45,17 @@ For external context, read the grounding note.
 
 ## Repo Workflow Discipline
 
+### Session-Start Discipline
+
+Before any new repo work in a session:
+
+1. Confirm the working directory is the session-owned worktree. Cross-worktree absolute paths are a known failure surface; verify before any edit, write, or cross-root `git -C` command.
+2. Verify `HEAD` is attached to a named branch. Detached `HEAD` is a stop condition.
+3. Verify the working tree is clean.
+4. If the working tree is not clean, stop. Identify whether the changes belong to the current thread before touching anything. Inheriting another thread's uncommitted state is a stop condition until provenance is established.
+
+This does not replace Branch Freshness or Default Verification. It is the session-entry gate before meaningful repo work begins.
+
 ### Branch Freshness
 
 For repo implementation work, follow this sequence:
