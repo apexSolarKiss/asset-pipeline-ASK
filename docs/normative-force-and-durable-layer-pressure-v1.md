@@ -210,7 +210,7 @@ The model offers the following criterion answer to the artifact's exit question.
 - Aspect-ratio-as-attribute on slots
 - Per-mode role-typical aesthetic constraints attached to `slot_role`
 
-The third row above gives the held-candidate inventory a force-kind criterion set. The Phase 3 adjudication map ([`docs/held-candidate-adjudication-map-v1.md`](held-candidate-adjudication-map-v1.md), held; not authored) would use that criterion set to classify each held candidate. This artifact does not produce the map.
+The third row above gives the held-candidate inventory a force-kind criterion set. A future held-candidate adjudication map, if earned, would use that criterion set to classify each held candidate. This artifact does not produce the map.
 
 ## Implications for Held Items (Named, Not Adjudicated)
 
@@ -230,7 +230,7 @@ The bounded `refines` reading at PKT-CAMP-004 scope, held for further pressure-t
 
 ### Held-candidate inventory
 
-The conversion-criteria third row gives a force-kind criterion set for the milestone-9 held inventory. Each held candidate maps to a force kind; adjudication asks whether that kind currently carries cleanly elsewhere, more honestly via prose, or requires operational pressure before promotion. The artifact for that adjudication ([`docs/held-candidate-adjudication-map-v1.md`](held-candidate-adjudication-map-v1.md)) is held — not authored, not authorized — and would be Phase 3 work if earned.
+The conversion-criteria third row gives a force-kind criterion set for the milestone-9 held inventory. Each held candidate maps to a force kind; adjudication asks whether that kind currently carries cleanly elsewhere, more honestly via prose, or requires operational pressure before promotion. A held-candidate adjudication map remains held — not authored, not authorized — and would be Phase 3 work if earned.
 
 ## Marketing-Mode Boundary
 
