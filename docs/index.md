@@ -39,6 +39,16 @@ These are the current architectural passes anchoring the repo's definition-layer
 
 The predecessor passes remain authoritative for their subject matter; the apex artifact synthesizes without re-deriving.
 
+## Post-Milestone-9 Pressure Sequence
+
+Three artifacts landed as a coherent pressure sequence after milestone 9 absorbed the curation semantic split and named the brand-system layer as a structural decision. They are not deepenings; they are pass-shaped, surface-shaped, and operational-pressure-shaped moves above the Phase 1 + Phase 2 deepening work, building on but not superseding the Phase 1 mode sketches, Phase 2 deepenings, structured IA model v1, or apex definition-layer artifact.
+
+- [docs/normative-force-and-durable-layer-pressure-v1.md](normative-force-and-durable-layer-pressure-v1.md): normative-force pass v1 — attempts a six-kind force model (descriptive / directive / constraint / reference / judgment / governance) pressured against PKT-SKU-009, PKT-COLL-001, PKT-CAMP-004; produces a conversion-criteria answer scoped to current evidence depth (carry cleanly / more honestly prose-procedural / require operational pressure). Supplies the criterion set the architecture didn't have at milestone 9.
+- [docs/brand-system-hybrid-carrier-decision-surface-v1.md](brand-system-hybrid-carrier-decision-surface-v1.md): brand-system hybrid carrier decision surface v1 — applies the Phase 1 criterion set to brand-system content from the four landed Phase 2 deepenings + sparse-articulation fallback pressure conditions; tests the three milestone-9 live shapes (first-class structural / terminal operator-mediated / hybrid); no single shape carries the criterion set cleanly; surfaces three-zone implication if hybrid is the surviving shape.
+- [docs/brand-intake-judgment-trace-dry-run-v1.md](brand-intake-judgment-trace-dry-run-v1.md): brand intake judgment-trace dry run v1 — walks a fresh synthetic home-goods brand-system stack through the sparse-articulation fallback chain; surfaces five trace dimensions; Outcome class 2 (prose discipline sufficient under one-operator continuous context) carries at current evidence depth; Outcome class 1 (intake-trace candidates load-bearing) remains a conditional pressure path bound to a scale condition untested; Outcome class 3 surfaces presence-of-inspection trace as a candidate unmodeled dimension.
+
+The three artifacts surfaced the Scale-of-Operation Held Question now named in [docs/architecture.md](architecture.md).
+
 ## Conceptual Ontology And Cross-Mode Pressure
 
 These are conceptual pressure notes for comparing workflow modes, constraint burden, and review artifact placement. They are not direct implementation plans.
@@ -292,7 +302,9 @@ Superseded foundational docs are retained as evidence of project evolution; do n
 
 ## Current Active Next Steps
 
-The active frontier is the IA layered-content redirection: see [docs/ia-layered-content-redirection-note-v1.md](ia-layered-content-redirection-note-v1.md). Phase 1 (on-paper IA layered-content work across the four worked-example modes, plus the cross-mode synthesis) is closed on main. Phase 2 (brand discovery / digestion architecture) is at four of six deepenings. Milestone-8 marked the Phase 2 + structured IA model plateau; milestone-9 has since absorbed the VIS deepening, the campaign-mode fork-resolver bounded `refines` reading, the curation semantic split (authorship-bearing discretion vs governance-bearing curation), and the brand-system layer's status as a named unresolved structural decision into `docs/architecture.md` as the current-architecture front door. Further Airtable prototype mutation remains paused. The older candidate paths described below remain durable possibilities, deferred behind the redirection.
+The IA layered-content redirection's Phase 1 (four mode sketches + cross-mode synthesis) is closed on main. Phase 2 (brand discovery / digestion architecture) is at four-of-six deepenings plus the structured IA model v1, the operator-judgment protocol sketch, and the campaign-mode fork-resolver test arc. Milestone-8 marked the Phase 2 + structured IA model plateau; milestone-9 absorbed the VIS deepening + curation semantic split + bounded `refines` reading + brand-system layer named-decision status into `docs/architecture.md`.
+
+Post-milestone-9, three further artifacts landed as a coherent pressure sequence — see the Post-Milestone-9 Pressure Sequence section above — and this absorption pass routes them into the front door + this index. The Scale-of-Operation Held Question added to `docs/architecture.md` names the architectural question the sequence surfaced. Further Airtable prototype mutation remains paused per the redirection.
 
 ### Phase 1 (closed on main) // IA Layered-Content Articulation
 
@@ -351,14 +363,21 @@ The arc is closed end-to-end. Recommendation: bounded `refines` reading from one
 - [docs/campaign-mode-fork-resolver-test-phase-d-plan-v1.md](campaign-mode-fork-resolver-test-phase-d-plan-v1.md) — Phase D plan; durable plan artifact defining the synthesis method, the central refines-vs-fragments chain test, and the durable-home decision criteria for the Layer 1 and Layer 2 findings
 - [docs/campaign-mode-fork-resolver-test-phase-d-findings-v1.md](campaign-mode-fork-resolver-test-phase-d-findings-v1.md) — Phase D findings; per-resolution evaluation; bounded `refines` recommendation earned through the chain test; Layer 1 durable-home deferred (with conditions for promotion subject to a separate plan-before-execute step); Layer 2 no further durable change earned (with recurrence-trigger conditions); connector limitations doc explicitly not broadened
 
-### Downstream / Held
+### Held / Not Authorized
 
-- **Milestone-8** — landed; see [docs/milestones/milestone-8-phase-2-structured-model-plateau.md](milestones/milestone-8-phase-2-structured-model-plateau.md). Marks the Phase 2 + structured IA model plateau; absorbs the redirection, Phase 1 + Phase 2 outputs (including the structured IA model v1), and the collection-mode operational deflation evidence.
-- **`docs/architecture.md` rewrite** — landed as the current-architecture front door; see [docs/architecture.md](architecture.md). Hybrid current-architecture synthesis + routing to depth; depth-authority remains in the apex artifact, milestone-8, the structured IA model v1, and the source artifacts.
-- **Validator integration** — held; the structured IA model v1's YAML appendix could be derived as Pydantic models for `src/asset_pipeline_ask/` consumption when an operational consumer surfaces the need; not earned by current pressure.
-- **Remaining input-category deepenings** — two of six brand-system input categories remain unprobed at deepening depth (application guidelines; past campaigns); held as candidates for future Phase 2 work or for milestone-8 to absorb at partial coverage.
-- **Phase 3** (all-four-workflow Airtable demonstration after the IA model is understood) — held per the redirection note's three-phase plan.
-- **Grounding-note v52** — held; separate hygiene track.
+These items are held; none is authorized work. Listed here only because each was discussed during the post-milestone-9 sequence and the project may revisit any of them on operator decision.
+
+- **Simulated continuity-break test** — the clean first pressure candidate if the project chooses to pressure beyond one-operator continuous-context scale; would isolate whether downstream readers can reconstruct enough trace from current carriers without intake-session memory. Per the Scale-of-Operation Held Question framing in [docs/architecture.md](architecture.md).
+- **Held-candidate adjudication map** — would apply the Phase 1 force-kind criterion set to the milestone-9 held inventory.
+- **Harder non-Airtable extraction at PKT-CAMP-004** — would test consumer-readiness beyond the SKU slice the [non-Airtable extraction attempt v1](non-airtable-extraction-attempt-v1.md) covered.
+- **README + `docs/method.md` entry-surface updates** — held until the Scale-of-Operation Held Question reaches plateau depth.
+- **Remaining Phase 2 input-category deepenings** — application guidelines; past campaigns; held as candidates for future Phase 2 work.
+- **Phase 3 all-four-workflow Airtable demonstration** — held per the IA layered-content redirection's three-phase plan.
+- **Validator integration** — Pydantic models for the structured IA model v1's YAML appendix; held until an operational consumer surfaces the need.
+- **Agentic intake test** — held; the continuity-break test above would be the cleaner first pressure surface.
+- **Grounding-note refresh** — separate operator-side hygiene track.
+
+No next path is authorized from this index alone.
 
 ### Older Candidate Paths (Deferred Behind the Redirection)
 

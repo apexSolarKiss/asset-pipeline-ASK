@@ -31,6 +31,9 @@ Source-of-truth relationships across the load-bearing artifacts:
 - **`docs/structured-ia-model-v1.md`** — the stable structured enumeration of the IA layered-content model (hybrid prose + YAML appendix); the canonical machine-readable form
 - **`docs/architecture-apex-definition-layer-v1.md`** — the v1 apex definition-layer artifact at SKU + same-category-collection scope; depth-authority for synthesis-pass content and the three Named Limitations carried forward
 - **`docs/campaign-mode-fork-resolver-test-phase-d-findings-v1.md`** — Phase D bounded `refines` reading at PKT-CAMP-004 scope; depth-authority for the curation-premise fork's current status and the curation semantic split
+- **`docs/normative-force-and-durable-layer-pressure-v1.md`** — post-milestone-9 normative-force pass v1; depth-authority for the six-kind force-kind criterion set at current evidence depth
+- **`docs/brand-system-hybrid-carrier-decision-surface-v1.md`** — post-milestone-9 brand-system hybrid carrier decision surface v1; depth-authority for the three-shape comparison and the three-zone implication
+- **`docs/brand-intake-judgment-trace-dry-run-v1.md`** — post-milestone-9 brand intake judgment-trace dry run v1; depth-authority for the sparse-articulation walk + Outcome read + the Scale-of-Operation Held Question that resulted
 - **`docs/index.md`** — full navigation across all repo artifacts; this file does not replicate that navigation
 - **Source artifacts (Phase 1 sketches, Phase 2 deepenings, operational findings, cross-mode probes)** — depth-authority for content; this file does not duplicate them
 
@@ -41,7 +44,7 @@ A returning reader landing here gets the architecture's current state and routes
 This file scopes its own current-state claims to evidence depth, distinct from the project's target layer.
 
 - **Target layer**: machine-usable normative structure / durable spec and orchestration layer above changing tools and models. This is the project's intent (see `README.md`).
-- **Current state**: structured IA model v1 (hybrid prose + YAML appendix) plus drift detection equals a machine-*readable* enumeration with documentation-drift coverage. It is not yet a machine-*usable* orchestration spec — no code path or workflow currently consumes the YAML appendix as orchestration input.
+- **Current state**: structured IA model v1 (hybrid prose + YAML appendix) plus drift detection equals a machine-*readable* enumeration with documentation-drift coverage, with a force-kind criterion set added post-milestone-9 (the normative-force pass v1's six candidate kinds of normative force — descriptive / directive / constraint / reference / judgment / governance — pressured against PKT-SKU-009, PKT-COLL-001, PKT-CAMP-004). It is not yet a machine-*usable* orchestration spec — no code path or workflow currently consumes the YAML appendix or the force-kind vocabulary as orchestration input.
 
 The architecture's current-state claims below are scoped accordingly.
 
@@ -51,7 +54,7 @@ The architecture's current shape, abbreviated:
 
 **Layers.** Eight IA layers carry across the four worked-example modes:
 
-- brand-system layer (currently unmodeled in IA; the brand platform and visual identity system deepenings concretize this as a real architectural gap — see Brand-System Layer Status below)
+- brand-system layer (currently unmodeled in IA; the brand platform and visual identity system deepenings concretize this as a real architectural gap; the brand-system hybrid carrier decision surface v1 tests the three live shapes against the Phase 1 criterion set without resolving the decision — see Brand-System Layer Status below)
 - category / product-class layer (signaled-only; not first-class)
 - mode-specific layer (varies by mode; see below)
 - packet layer (strongest current carrier)
@@ -60,7 +63,7 @@ The architecture's current shape, abbreviated:
 - curation seam — two distinct senses observed:
   - **authorship-bearing discretion** (where creative judgment actually happens; site varies by mode and packet; appears concentrated at the seam in SKU-mode evidence; surfaced upstream at prompt-authoring and prompt-remediation in PKT-CAMP-004 campaign-mode evidence)
   - **governance-bearing curation** (where output becomes governed asset; always at the seam; carries five-axis provenance + curator + `curation_pattern`)
-  - These may co-locate (SKU evidence appears to) or separate (campaign at PKT-CAMP-004 did). The architecture had been collapsing the two senses.
+  - These may co-locate (SKU evidence appears to) or separate (campaign at PKT-CAMP-004 did). The architecture had been collapsing the two senses. The normative-force pass v1 articulates this further as judgment-force-kind at multiple sites of authorship-bearing form, with governance-force-kind always at the seam.
 - governed asset layer (durable terminal output; carries `asset_attachment` self-contained writeback)
 
 **Modes.** Four worked-example modes, each with a mode-specific layer between category and packet (SKU-driven mode has none; brand campaign / editorial mode has two):
@@ -72,9 +75,11 @@ The architecture's current shape, abbreviated:
 
 **Carriers.** Five carrier types observed across the architecture: prose carriers; structural carriers; visual reference carriers; governance carriers; held candidates (paper-pressed but not earned). Carrier distribution varies by content category — prose-heavy for some inputs, structurally-explicit-heavy for others, almost entirely prose-carried with structural void for non-visual brand-system content.
 
+**Normative-force vocabulary.** Six candidate kinds of normative force articulate what kind of authority each piece of information carries across the architecture: **descriptive** (what is true); **directive** (what should happen); **constraint** (what must not be violated); **reference** (what visually anchors interpretation); **judgment** (what was resolved by a human, operator, or agent); **governance** (what elevates output into governed asset identity). At current evidence depth across PKT-SKU-009, PKT-COLL-001, and PKT-CAMP-004: descriptive (product scope), reference, governance, and seam-level judgment-trace carry cleanly via structural carriers; packet-level directive and constraint share carrier (multilineText) without structural distinction; intake-time judgment trace has no current carrier (see Scale-of-Operation Held Question below). The vocabulary is depth-authority in `docs/normative-force-and-durable-layer-pressure-v1.md`.
+
 **Implementation entry surface.** Brand discovery / digestion architecture is the surface where brand-system input enters the layered IA before any tool implementation begins. Six brand-system input categories named in the Phase 2 opening sketch; four deepened to date (photography / image style guide; asset library; brand platform; visual identity system); two remain unprobed at deepening depth (application guidelines; past campaigns).
 
-**Fallback chain.** When brand-system input is sparse, contradictory, or absent, the architecture falls back through an ordered six-layer chain: asset library → photography style guide → brand platform → intra-category recency / specificity → Phase 1 worked-example defaults → operator-marked inferred-not-stated. Operator judgment becomes load-bearing under stress; the architecture surfaces options at each conflict point but does not auto-resolve.
+**Fallback chain.** When brand-system input is sparse, contradictory, or absent, the architecture falls back through an ordered six-layer chain: asset library → photography style guide → brand platform → intra-category recency / specificity → Phase 1 worked-example defaults → operator-marked inferred-not-stated. Operator judgment becomes load-bearing under stress; the architecture surfaces options at each conflict point but does not auto-resolve. The brand intake judgment-trace dry run v1 pressured this chain operationally under sparse articulation on one synthetic stack — see Scale-of-Operation Held Question below.
 
 **Structured form.** The structured IA model v1 carries the stable enumeration above as a machine-readable YAML appendix alongside prose for unresolved content. The YAML is intentionally small; held questions are encoded as markers, not as structural representations of question content. Held schema candidates remain in prose, not encoded.
 
@@ -93,6 +98,8 @@ What's been earned at the current plateau:
 **Schema is mode-independent at structural level.** The same packet-and-seam schema carried SKU-driven, collection / merchandising, marketing / message-driven, and brand campaign / editorial workloads at first-pass depth, with further-flow operational depth varying per the rows above.
 
 The visual-as-fidelity-strategy claim from the apex aesthetic-layering pass holds operationally (SKU + collection) and is reciprocally established on paper by the Phase 2 visual-input pair (photography style guide articulates conventions; asset library demonstrates them; when they diverge, the library carries); the VIS deepening adds that brand-wide visual *constants* (logo, typography, color, grid) carry articulated structure of their own that the IA has no first-class carrier for.
+
+**Post-milestone-9 absorption.** Three artifacts landed as a coherent post-milestone-9 pressure sequence and are now reflected in the front-door framing above: the normative-force pass v1 supplied the six-kind force-kind vocabulary; the brand-system hybrid carrier decision surface v1 tested the three milestone-9 live shapes for the brand-system layer against the criterion set without resolving the decision (no single shape carries the criterion set cleanly; if hybrid is the surviving shape, the surface implies three zones — structural carriers for stable constants + approved references; operator-mediated translation for prose-rich directive content; an unresolved third zone of intake-time judgment trace); the brand intake judgment-trace dry run v1 pressured the third zone via a sparse-articulation walk and produced an Outcome read that current carriers carry under one-operator continuous-context scale while three intake-trace held candidates plus a fourth surfaced dimension (presence-of-inspection trace) remain on a conditional pressure path bound to a scale condition untested. The architectural question the sequence surfaced is named below as the Scale-of-Operation Held Question.
 
 ## Held Questions
 
@@ -117,6 +124,8 @@ The substantive vocabulary refinement the bounded reading forces is the curation
 
 The architecture-wide framing is provisional. The singular-curation framing remains useful in SKU + collection scope where the two senses appear to co-locate; it is mode-weighted, not globally dispositive. The fork is not closed; the bounded `refines` read is held for further pressure-testing per Phase D §9.
 
+The normative-force pass v1 articulates the semantic split as judgment-force-kind appearing at multiple sites of authorship-bearing form, with governance-force-kind always at the seam. The fork's resolution can be read as a mode-weighted question about which sites of judgment force become load-bearing in a given mode.
+
 ### Brand-System Layer Status (Named Structural Decision)
 
 The brand-system layer's unmodeled status is reframed at this plateau from "limitation" to "named unresolved structural decision."
@@ -130,6 +139,20 @@ The decision the architecture must eventually take is *not* binary. Three shapes
 - **Hybrid (most likely on current evidence).** Structural carriers for stable brand-wide constants (logo references; typography assignments; color codes; grid systems; demonstrated reference imagery — much of which the IA already partially carries via `reference_assets` and related lookup chains); operator-mediated judgment for abstraction, conflict, sparsity, override, and application.
 
 The decision is not pre-resolved at this plateau. It is named.
+
+The brand-system hybrid carrier decision surface v1 tests the three live shapes against the Phase 1 force-kind criterion set on the four landed Phase 2 deepenings plus the sparse-articulation fallback pressure conditions. No single shape carries the criterion set cleanly. If hybrid is the surviving shape, the surface implies three zones — structural carriers for stable brand-wide constants + approved references; operator-mediated translation for prose-rich directive content; an unresolved third zone of intake-time judgment trace currently uncovered. The decision remains held; the surface is laid.
+
+### Scale-of-Operation Held Question
+
+At current evidence depth, prose discipline carries the intake-time judgment trace under one-operator continuous-context scale: operator continuity provides the bridge that structural carriers would otherwise have to provide. The brand intake judgment-trace dry run v1 surfaced this state honestly via a bounded sparse-articulation walk on one synthetic stack.
+
+Held: whether the architecture must support multi-operator / agentic / continuity-breaking operation. The grounding note's stated purpose includes scalable production pipelines and addresses creative-operations / DAM / retail-and-ecommerce production / AI-workflow audiences; current evidence depth is single-operator continuous context. The gap between current evidence depth and target scope is named, not resolved.
+
+Scale implication: if yes, the dry run surfaced three milestone-9 held candidates (`articulation_state`, `fallback_chain_position`, `derivation_basis`) plus a fourth surfaced dimension (presence-of-inspection trace) as conditionally load-bearing. None are operationally earned because the multi-operator / continuity-breaking scale condition was not tested directly.
+
+The question is currently surfaced most sharply through intake-time judgment trace, but the scale issue is broader. The same operator-continuity-vs-structural-trace pattern may apply at curation seam (currently appears to hold structurally via the five-axis provenance + curator + `curation_pattern` carriers), at packet authorship (the upstream judgment-trace gap Phase D surfaced for PKT-CAMP-004 prompt-authoring and prompt-remediation moments), and at any judgment site where operator continuity has been the load-bearing carrier.
+
+Posture: named, not resolved. Not committing to single-operator continuity as terminal scope. Not authorizing intake-trace carriers or any held candidate. Not deciding sequence — a simulated continuity-break test is the clean first pressure candidate if the project chooses to pressure beyond one-operator continuity (agentic intake would follow if the continuity-break test shows signal); the decision to pressure remains operator's.
 
 ### Inventory
 
@@ -154,6 +177,9 @@ Entry points for content depth. Full repo navigation lives in `docs/index.md`; t
 - [`docs/structured-ia-model-v1.md`](structured-ia-model-v1.md): stable structured enumeration of the IA layered-content model (hybrid prose + YAML appendix)
 - [`docs/architecture-apex-definition-layer-v1.md`](architecture-apex-definition-layer-v1.md): v1 apex definition-layer artifact; three Named Limitations
 - [`docs/campaign-mode-fork-resolver-test-phase-d-findings-v1.md`](campaign-mode-fork-resolver-test-phase-d-findings-v1.md): Phase D bounded `refines` reading; depth-authority for the curation-premise fork's current status and the curation semantic split
+- [`docs/normative-force-and-durable-layer-pressure-v1.md`](normative-force-and-durable-layer-pressure-v1.md): normative-force pass v1; depth-authority for the six-kind force-kind criterion set
+- [`docs/brand-system-hybrid-carrier-decision-surface-v1.md`](brand-system-hybrid-carrier-decision-surface-v1.md): brand-system hybrid carrier decision surface v1; depth-authority for the three-shape comparison and three-zone implication
+- [`docs/brand-intake-judgment-trace-dry-run-v1.md`](brand-intake-judgment-trace-dry-run-v1.md): brand intake judgment-trace dry run v1; depth-authority for the sparse-articulation walk + Outcome read + Scale-of-Operation Held Question pressure
 - [`docs/brand-system-input-visual-identity-system-to-ia-mapping-v1.md`](brand-system-input-visual-identity-system-to-ia-mapping-v1.md): VIS deepening; depth-authority for the brand-wide-constants angle of the brand-system layer structural decision
 - [`docs/brand-system-input-brand-platform-to-ia-mapping-v1.md`](brand-system-input-brand-platform-to-ia-mapping-v1.md): brand platform deepening; depth-authority for the abstraction angle of the brand-system layer structural decision
 - [`docs/ia-layered-content-redirection-note-v1.md`](ia-layered-content-redirection-note-v1.md): the IA layered-content redirection that opened the trajectory milestones 8 and 9 mark
@@ -166,4 +192,4 @@ Entry points for content depth. Full repo navigation lives in `docs/index.md`; t
 
 The four Phase 1 mode sketches (B1–B4), the four Phase 2 input-category deepenings (photography / image style guide; asset library; brand platform; visual identity system), the structured IA model options note, the cross-mode probe series, the four-mode truth-and-constraint pressure note, the campaign-mode fork-resolver Phase A–D arc, and the full operational findings chain all live in `docs/index.md` for navigation.
 
-This file is current as of milestone 9. It will need to be revised when the next architectural plateau is reached, when Phase 3 produces operational evidence, when one of the held questions earns resolution beyond bounded scope, or when a subsequent milestone marks a new plateau.
+This file is current as of milestone 9, with post-milestone-9 absorption of the normative-force pass v1, the brand-system hybrid carrier decision surface v1, and the brand intake judgment-trace dry run v1, plus the Scale-of-Operation Held Question those artifacts surfaced. It will need to be revised when the next architectural plateau is reached, when Phase 3 produces operational evidence, when one of the held questions earns resolution beyond bounded scope, or when a subsequent milestone marks a new plateau.
