@@ -49,6 +49,12 @@ Three artifacts landed as a coherent pressure sequence after milestone 9 absorbe
 
 The three artifacts surfaced the Scale-of-Operation Held Question now named in [docs/architecture.md](architecture.md).
 
+## Layered Reference and Discretion Architecture
+
+The first direct architecture-attempt artifact after the post-milestone-9 pressure sequence. Rather than naming or surfacing held questions, this artifact attempts the conceptual model directly: reference functions, normative hierarchy, and creative-discretion sites pressured against PKT-SKU-009, PKT-COLL-001, PKT-CAMP-004, PKT-MSG-001, plus a dining-vs-bedroom cross-category conceptual contrast.
+
+- [docs/layered-reference-and-discretion-architecture-v1.md](layered-reference-and-discretion-architecture-v1.md): layered reference and discretion architecture v1 — nine-fold reference-function taxonomy (brand-system / category-product-class / collection-family-coherence / campaign-world / marketing-message / product-truth / slot-level composition / negative-avoid / governed-output continuity); eight-layer normative hierarchy with inheritance / override / combination / conflict cases; nine-site creative-discretion decomposition with per-site trace-gap analysis (brand digestion / reference selection / layer translation / packet authorship / slot authorship / prompt remediation / candidate selection / governance-bearing curation / override-exception handling); earned conceptual claims (references must be typed by function before carrier modeling; creative discretion must be decomposed by site before curation / governance semantics can be generalized); scale beyond operator continuity treated as architectural premise with scale-legibility as test criterion. Landed via [PR #239](https://github.com/apexSolarKiss/asset-pipeline-ASK/pull/239) (2026-05-13).
+
 ## Conceptual Ontology And Cross-Mode Pressure
 
 These are conceptual pressure notes for comparing workflow modes, constraint burden, and review artifact placement. They are not direct implementation plans.
@@ -305,6 +311,8 @@ Superseded foundational docs are retained as evidence of project evolution; do n
 The IA layered-content redirection's Phase 1 (four mode sketches + cross-mode synthesis) is closed on main. Phase 2 (brand discovery / digestion architecture) is at four-of-six deepenings plus the structured IA model v1, the operator-judgment protocol sketch, and the campaign-mode fork-resolver test arc. Milestone-8 marked the Phase 2 + structured IA model plateau; milestone-9 absorbed the VIS deepening + curation semantic split + bounded `refines` reading + brand-system layer named-decision status into `docs/architecture.md`.
 
 Post-milestone-9, three further artifacts landed as a coherent pressure sequence — see the Post-Milestone-9 Pressure Sequence section above — and this absorption pass routes them into the front door + this index. The Scale-of-Operation Held Question added to `docs/architecture.md` names the architectural question the sequence surfaced. Further Airtable prototype mutation remains paused per the redirection.
+
+Following the pressure sequence, PR #239 (2026-05-13) landed the layered reference and discretion architecture v1 — the first direct architecture-attempt artifact after the pressure sequence (see the Layered Reference and Discretion Architecture section above). `docs/architecture.md` has lightly absorbed PR #239's high-level conceptual implications: the layered IA is a normative hierarchy; references must be typed by function before carrier modeling; creative discretion must be decomposed by site before curation / governance semantics can be generalized; category-layer inheritance is partial; and the Scale-of-Operation Held Question is reframed — scale beyond operator continuity is treated as an architectural premise of the project (consistent with grounding-note v58), with scale legibility as a test criterion at each layer and site rather than a strategic fork.
 
 ### Phase 1 (closed on main) // IA Layered-Content Articulation
 

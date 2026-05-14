@@ -35,6 +35,7 @@ The strategic reader path:
 2. [`docs/method.md`](docs/method.md) — ontology / application split and working sequence
 3. [`docs/architecture.md`](docs/architecture.md) — current architecture front door
 4. [`docs/structured-ia-model-v1.md`](docs/structured-ia-model-v1.md) — first machine-readable canonical IA representation (hybrid prose + YAML appendix)
+5. [`docs/layered-reference-and-discretion-architecture-v1.md`](docs/layered-reference-and-discretion-architecture-v1.md) — nine-fold reference-function taxonomy, normative hierarchy across the eight IA layers, and nine-site creative-discretion decomposition across the four workflow modes
 
 ## One concrete example
 
