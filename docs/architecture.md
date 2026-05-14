@@ -34,6 +34,7 @@ Source-of-truth relationships across the load-bearing artifacts:
 - **`docs/normative-force-and-durable-layer-pressure-v1.md`** — post-milestone-9 normative-force pass v1; depth-authority for the six-kind force-kind criterion set at current evidence depth
 - **`docs/brand-system-hybrid-carrier-decision-surface-v1.md`** — post-milestone-9 brand-system hybrid carrier decision surface v1; depth-authority for the three-shape comparison and the three-zone implication
 - **`docs/brand-intake-judgment-trace-dry-run-v1.md`** — post-milestone-9 brand intake judgment-trace dry run v1; depth-authority for the sparse-articulation walk + Outcome read + the Scale-of-Operation Held Question that resulted
+- **`docs/layered-reference-and-discretion-architecture-v1.md`** — post-milestone-9 layered reference and discretion architecture v1; depth-authority for the nine-fold reference-function taxonomy, the normative hierarchy framing across the eight IA layers, and the nine-site creative-discretion decomposition with per-site trace-gap analysis
 - **`docs/index.md`** — full navigation across all repo artifacts; this file does not replicate that navigation
 - **Source artifacts (Phase 1 sketches, Phase 2 deepenings, operational findings, cross-mode probes)** — depth-authority for content; this file does not duplicate them
 
@@ -45,6 +46,7 @@ This file scopes its own current-state claims to evidence depth, distinct from t
 
 - **Target layer**: machine-usable normative structure / durable spec and orchestration layer above changing tools and models. This is the project's intent (see `README.md`).
 - **Current state**: structured IA model v1 (hybrid prose + YAML appendix) plus drift detection equals a machine-*readable* enumeration with documentation-drift coverage, with a force-kind criterion set added post-milestone-9 (the normative-force pass v1's six candidate kinds of normative force — descriptive / directive / constraint / reference / judgment / governance — pressured against PKT-SKU-009, PKT-COLL-001, PKT-CAMP-004). It is not yet a machine-*usable* orchestration spec — no code path or workflow currently consumes the YAML appendix or the force-kind vocabulary as orchestration input.
+- **Conceptual claims newly earned post-milestone-9 (PR #239)**: (a) the layered IA is a normative hierarchy — each layer carries normative authority over downstream layers; (b) references must be typed by function before they can be modeled by carrier; (c) creative discretion must be decomposed by site before curation / governance semantics can be generalized; (d) category-layer inheritance is partial — some content (e.g., lighting register) plausibly inherits cross-category under shared brand-system aesthetic, while environment composition and product-class proportions are category-local; (e) scale beyond operator continuity is treated as an architectural premise of the project, with scale legibility as a test criterion at each layer and site. Depth-authority: `docs/layered-reference-and-discretion-architecture-v1.md`.
 
 The architecture's current-state claims below are scoped accordingly.
 
@@ -52,10 +54,10 @@ The architecture's current-state claims below are scoped accordingly.
 
 The architecture's current shape, abbreviated:
 
-**Layers.** Eight IA layers carry across the four worked-example modes:
+**Layers.** Eight IA layers carry across the four worked-example modes. The layered IA is a normative hierarchy: each layer carries normative authority over downstream layers, and the inheritance / override / combination / conflict behavior between layers is the normative-hierarchy mechanism the architecture implements (depth-authority: `docs/layered-reference-and-discretion-architecture-v1.md`).
 
 - brand-system layer (currently unmodeled in IA; the brand platform and visual identity system deepenings concretize this as a real architectural gap; the brand-system hybrid carrier decision surface v1 tests the three live shapes against the Phase 1 criterion set without resolving the decision — see Brand-System Layer Status below)
-- category / product-class layer (signaled-only; not first-class)
+- category / product-class layer (signaled-only; not first-class; inheritance from brand-system is partial — lighting register plausibly inherits cross-category under shared brand-system aesthetic, while environment composition and product-class proportions are category-local)
 - mode-specific layer (varies by mode; see below)
 - packet layer (strongest current carrier)
 - slot layer (role-specific narrowing)
@@ -146,7 +148,7 @@ The brand-system hybrid carrier decision surface v1 tests the three live shapes 
 
 At current evidence depth, prose discipline carries the intake-time judgment trace under one-operator continuous-context scale: operator continuity provides the bridge that structural carriers would otherwise have to provide. The brand intake judgment-trace dry run v1 surfaced this state honestly via a bounded sparse-articulation walk on one synthetic stack.
 
-Held: whether the architecture must support multi-operator / agentic / continuity-breaking operation. The grounding note's stated purpose includes scalable production pipelines and addresses creative-operations / DAM / retail-and-ecommerce production / AI-workflow audiences; current evidence depth is single-operator continuous context. The gap between current evidence depth and target scope is named, not resolved.
+**Reframe (post-PR #239 + grounding-note v58):** Scale beyond operator continuity is an architectural premise of the project, not a strategic fork. The grounding note's stated purpose (scalable production pipelines for commercial visual assets; creative-operations / DAM / retail-ecommerce production / AI-workflow audiences) commits the architecture to that scope. The held question is therefore what trace and layer structure makes that generalization legible — not whether scale matters. Scale legibility is now a test criterion applied per layer and per discretion site (see the per-site trace-gap analysis in `docs/layered-reference-and-discretion-architecture-v1.md`), not a separate held fork. The gap between current evidence depth (single-operator continuous context) and target scope (operator-independent legibility) is named as scope of work.
 
 Scale implication: if yes, the dry run surfaced three milestone-9 held candidates (`articulation_state`, `fallback_chain_position`, `derivation_basis`) plus a fourth surfaced dimension (presence-of-inspection trace) as conditionally load-bearing. None are operationally earned because the multi-operator / continuity-breaking scale condition was not tested directly.
 
@@ -180,6 +182,7 @@ Entry points for content depth. Full repo navigation lives in `docs/index.md`; t
 - [`docs/normative-force-and-durable-layer-pressure-v1.md`](normative-force-and-durable-layer-pressure-v1.md): normative-force pass v1; depth-authority for the six-kind force-kind criterion set
 - [`docs/brand-system-hybrid-carrier-decision-surface-v1.md`](brand-system-hybrid-carrier-decision-surface-v1.md): brand-system hybrid carrier decision surface v1; depth-authority for the three-shape comparison and three-zone implication
 - [`docs/brand-intake-judgment-trace-dry-run-v1.md`](brand-intake-judgment-trace-dry-run-v1.md): brand intake judgment-trace dry run v1; depth-authority for the sparse-articulation walk + Outcome read + Scale-of-Operation Held Question pressure
+- [`docs/layered-reference-and-discretion-architecture-v1.md`](layered-reference-and-discretion-architecture-v1.md): layered reference and discretion architecture v1; depth-authority for the nine-fold reference-function taxonomy, the normative-hierarchy framing across the eight IA layers, the nine-site creative-discretion decomposition with per-site trace-gap analysis, and the dining-vs-bedroom cross-category conceptual pressure
 - [`docs/brand-system-input-visual-identity-system-to-ia-mapping-v1.md`](brand-system-input-visual-identity-system-to-ia-mapping-v1.md): VIS deepening; depth-authority for the brand-wide-constants angle of the brand-system layer structural decision
 - [`docs/brand-system-input-brand-platform-to-ia-mapping-v1.md`](brand-system-input-brand-platform-to-ia-mapping-v1.md): brand platform deepening; depth-authority for the abstraction angle of the brand-system layer structural decision
 - [`docs/ia-layered-content-redirection-note-v1.md`](ia-layered-content-redirection-note-v1.md): the IA layered-content redirection that opened the trajectory milestones 8 and 9 mark
@@ -192,4 +195,4 @@ Entry points for content depth. Full repo navigation lives in `docs/index.md`; t
 
 The four Phase 1 mode sketches (B1–B4), the four Phase 2 input-category deepenings (photography / image style guide; asset library; brand platform; visual identity system), the structured IA model options note, the cross-mode probe series, the four-mode truth-and-constraint pressure note, the campaign-mode fork-resolver Phase A–D arc, and the full operational findings chain all live in `docs/index.md` for navigation.
 
-This file is current as of milestone 9, with post-milestone-9 absorption of the normative-force pass v1, the brand-system hybrid carrier decision surface v1, and the brand intake judgment-trace dry run v1, plus the Scale-of-Operation Held Question those artifacts surfaced. It will need to be revised when the next architectural plateau is reached, when Phase 3 produces operational evidence, when one of the held questions earns resolution beyond bounded scope, or when a subsequent milestone marks a new plateau.
+This file is current as of milestone 9, with post-milestone-9 absorption of the normative-force pass v1, the brand-system hybrid carrier decision surface v1, the brand intake judgment-trace dry run v1, and the layered reference and discretion architecture v1 (PR #239), plus the Scale-of-Operation reframe and the five conceptual claims newly earned at PR #239. It will need to be revised when the next architectural plateau is reached, when Phase 3 produces operational evidence, when one of the held questions earns resolution beyond bounded scope, or when a subsequent milestone marks a new plateau.
