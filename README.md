@@ -34,7 +34,7 @@ The strategic reader path:
 1. [`docs/problem-and-approach.md`](docs/problem-and-approach.md) — the workflow-structure problem and the repo's approach
 2. [`docs/method.md`](docs/method.md) — ontology / application split and working sequence
 3. [`docs/architecture.md`](docs/architecture.md) — current architecture front door
-4. [`docs/structured-ia-model-v1.md`](docs/structured-ia-model-v1.md) — first machine-readable canonical IA representation (hybrid prose + YAML appendix)
+4. [`docs/structured-ia-model-v2.md`](docs/structured-ia-model-v2.md) — current canonical machine-readable IA representation (hybrid prose + YAML appendix; v1 preserved as predecessor)
 5. [`docs/layered-reference-and-discretion-architecture-v1.md`](docs/layered-reference-and-discretion-architecture-v1.md) — nine-fold reference-function taxonomy, normative hierarchy across the eight IA layers, and nine-site creative-discretion decomposition across the four workflow modes
 6. [`docs/brand-system-input-cross-category-synthesis-v1.md`](docs/brand-system-input-cross-category-synthesis-v1.md) — Phase 2 six-category cross-category synthesis: six-category comparison matrix, nine-relation cross-category vocabulary, refined extraction sequence (default graph with conditional jump-points), and the five-or-six-zone hybrid implication for the brand-system layer
 
