@@ -49,6 +49,7 @@ The cleanest layered IA case is the SKU-driven mode, anchored against `PKT-SKU-0
 - [`docs/index.md`](docs/index.md) — full navigation across all repo artifacts
 - [`docs/milestones/`](docs/milestones/) — plateau markers
 - [`AGENTS.md`](AGENTS.md) — repo-local execution guidance
+- [`docs/diagrams/asset-pipeline-ASK_architecture-tree.html`](docs/diagrams/asset-pipeline-ASK_architecture-tree.html) — visual architecture tree at orientation depth; regenerated when a milestone plateau marker lands, so its update cadence is slower than the prose docs; the prose docs are authoritative if the two diverge
 
 Live prototype bases:
 

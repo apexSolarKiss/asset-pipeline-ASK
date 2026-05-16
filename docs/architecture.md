@@ -213,6 +213,7 @@ These boundaries are load-bearing. Any reading of the current architecture that 
 Entry points for content depth. Full repo navigation lives in `docs/index.md`; this list is the focused entry-point set.
 
 - [`docs/index.md`](index.md): full navigation across all repo artifacts
+- [`docs/diagrams/asset-pipeline-ASK_architecture-tree.html`](diagrams/asset-pipeline-ASK_architecture-tree.html): visual architecture tree at orientation depth; regenerated when a plateau milestone marker lands; slower update cadence than the prose docs; the prose docs are authoritative if the two diverge
 - [`docs/milestones/milestone-11-zone-6-option-f-carrier-shape-plateau.md`](milestones/milestone-11-zone-6-option-f-carrier-shape-plateau.md): current plateau marker (Zone 6 / Option F trace carrier shape plateau)
 - [`docs/milestones/milestone-10-phase-2-six-category-synthesis-plateau.md`](milestones/milestone-10-phase-2-six-category-synthesis-plateau.md): prior plateau marker (Phase 2 six-category synthesis plateau)
 - [`docs/milestones/milestone-9-curation-semantic-split-brand-system-decision-surface-plateau.md`](milestones/milestone-9-curation-semantic-split-brand-system-decision-surface-plateau.md): milestone-9 plateau marker
