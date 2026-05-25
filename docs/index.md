@@ -359,6 +359,7 @@ These are reusable scaffolds rather than current evidence-chain artifacts.
 - [docs/application/workflow-discovery-worksheet.md](application/workflow-discovery-worksheet.md): workflow discovery worksheet
 - [docs/application/workflow-diagnosis-memo-template.md](application/workflow-diagnosis-memo-template.md): workflow diagnosis memo template
 - [docs/application/workflow-redesign-brief-template.md](application/workflow-redesign-brief-template.md): workflow redesign brief template
+- [docs/application/implementation-roadmap-system-map-artifact-grammar-v1.md](application/implementation-roadmap-system-map-artifact-grammar-v1.md): implementation roadmap + system map artifact grammar v1 — first applied-output grammar derived from the layered IA; fixes a ten-section skeleton plus per-section content rules, source-to-section mapping, repo-concept consumption map, translation rules, provenance / confidence grammar, system-map grammar, roadmap grammar, substrate-recommendation grammar, and application-consumer-distance guidance for held repository content
 - [docs/application/examples/README.md](application/examples/README.md): compact example-set index
 
 ## Historical / Held / Trigger-Based Work
