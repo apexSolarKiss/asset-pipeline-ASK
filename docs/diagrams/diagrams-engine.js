@@ -1,0 +1,295 @@
+/* diagrams-engine.js
+   Shared diagram engine for control-surface architecture-tree,
+   method-ASK topology, and ecology-ASK topology. Layout is
+   horizontal, top-aligned cascade. Pan + zoom on the canvas.
+
+   Usage from page:
+     window.DIAGRAMS.render(TREE);
+   The page is expected to expose `.canvas-wrap`, `.stage > svg#svg`,
+   and `.hud` with #zoomIn, #zoomOut, #zoomPct, #zoomFit. Style comes
+   from diagrams.css (theme-aware via [data-theme]).
+*/
+(function () {
+  /* ---------- layout constants ---------- */
+  const ROW_H = 44;
+  const GAP_COL = 36;
+  const BOX_PAD_X = 14;
+  const BOX_H = 26;
+  const BOX_H_NOTE = 44;
+  const ROOT_BOX_H = 50;
+  const ROOT_PAD_X = 22;
+  const PAGE_PAD_X = 64;
+  const PAGE_PAD_Y = 48;
+
+  const FONT_LABEL       = '400 13px "Inter", system-ui, sans-serif';
+  const FONT_LABEL_LIGHT = '300 13px "Inter", system-ui, sans-serif';
+  const FONT_LABEL_ROOT  = '500 14px "Inter", system-ui, sans-serif';
+  const FONT_NOTE        = '300 10px "JetBrains Mono", monospace';
+  const FONT_SECTION     = '500 10px "JetBrains Mono", monospace';
+
+  const measureCtx = document.createElement('canvas').getContext('2d');
+  function measure(text, font) {
+    measureCtx.font = font;
+    return measureCtx.measureText(text).width;
+  }
+
+  function fontFor(node) {
+    const status = node.status || 'earned';
+    const kind = node.kind || 'node';
+    if (kind === 'root') return FONT_LABEL_ROOT;
+    if (kind === 'section') return FONT_SECTION;
+    if (status === 'held' || status === 'legacy') return FONT_LABEL_LIGHT;
+    return FONT_LABEL;
+  }
+
+  function countLeafRows(node) {
+    if (!node.children || node.children.length === 0) return 1;
+    return node.children.reduce((s, c) => s + countLeafRows(c), 0);
+  }
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  function el(name, attrs = {}, children = []) {
+    const e = document.createElementNS(svgNS, name);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (v !== null && v !== undefined) e.setAttribute(k, v);
+    }
+    for (const c of children) {
+      if (typeof c === 'string') e.appendChild(document.createTextNode(c));
+      else if (c) e.appendChild(c);
+    }
+    return e;
+  }
+
+  function render(TREE) {
+    /* ---------- pre-measure per-depth widths ---------- */
+    const colMaxW = {};
+    function preMeasure(node, depth) {
+      const kind = node.kind || 'node';
+      const padX = kind === 'root' ? ROOT_PAD_X : BOX_PAD_X;
+      const displayLabel = kind === 'section' ? '/ ' + node.label.toUpperCase() : node.label;
+      const labelW = measure(displayLabel, fontFor(node));
+      let noteW = node.note ? measure(node.note, FONT_NOTE) : 0;
+      if (kind === 'section' && node.tag) {
+        noteW = Math.max(noteW, measure('// ' + node.tag, FONT_NOTE));
+      }
+      const contentW = Math.max(labelW, noteW);
+      const totalW = contentW + padX * 2;
+      colMaxW[depth] = Math.max(colMaxW[depth] || 0, totalW);
+      for (const c of (node.children || [])) preMeasure(c, depth + 1);
+    }
+    preMeasure(TREE, 0);
+
+    const maxDepth = Math.max(...Object.keys(colMaxW).map(Number));
+    const colX = {};
+    let xCursor = PAGE_PAD_X;
+    for (let d = 0; d <= maxDepth; d++) {
+      colX[d] = xCursor;
+      xCursor += colMaxW[d] + GAP_COL;
+    }
+    const width  = xCursor + PAGE_PAD_X - GAP_COL;
+    const totalRows = countLeafRows(TREE);
+    const height = totalRows * ROW_H + PAGE_PAD_Y * 2;
+
+    /* ---------- place nodes (top-aligned cascade) ---------- */
+    const nodes = [];
+    const edges = [];
+    function place(node, depth, topRow, parent) {
+      const kind = node.kind || 'node';
+      const status = node.status || 'earned';
+      const centerY = PAGE_PAD_Y + (topRow + 0.5) * ROW_H;
+      const hasNote = !!(node.note || (kind === 'section' && node.tag));
+      const boxH = kind === 'root' ? ROOT_BOX_H : (hasNote ? BOX_H_NOTE : BOX_H);
+      const boxW = colMaxW[depth];
+      const x = colX[depth];
+      const y = centerY - boxH / 2;
+
+      const idx = nodes.length;
+      nodes.push({
+        ...node, depth, x, y, boxW, boxH, centerY, hasNote,
+        status, kind, childIndices: [],
+      });
+      if (parent !== null && parent !== undefined) {
+        edges.push({ from: parent, to: idx });
+        nodes[parent].childIndices.push(idx);
+      }
+      if (node.children) {
+        let r = topRow;
+        for (const c of node.children) {
+          place(c, depth + 1, r, idx);
+          r += countLeafRows(c);
+        }
+      }
+    }
+    place(TREE, 0, 0, null);
+
+    /* ---------- render ---------- */
+    const svg = document.getElementById('svg');
+    svg.setAttribute('width', width);
+    svg.setAttribute('height', height);
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+    const edgeLayer = el('g', { class: 'edges' });
+    const nodeLayer = el('g', { class: 'nodes' });
+    svg.appendChild(edgeLayer);
+    svg.appendChild(nodeLayer);
+
+    for (const e of edges) {
+      const p = nodes[e.from];
+      const c = nodes[e.to];
+      const pX = p.x + p.boxW;
+      const pY = p.centerY;
+      const cX = c.x;
+      const cY = c.centerY;
+      const midX = (pX + cX) / 2;
+      const cls = c.status === 'held' ? 'edge held'
+                : c.status === 'legacy' ? 'edge legacy'
+                : 'edge';
+      edgeLayer.appendChild(el('path', {
+        d: `M ${pX} ${pY} L ${midX} ${pY} L ${midX} ${cY} L ${cX} ${cY}`,
+        class: cls,
+      }));
+    }
+
+    for (const n of nodes) {
+      if (n.kind === 'section') {
+        nodeLayer.appendChild(el('text', {
+          x: n.x + BOX_PAD_X,
+          y: n.hasNote ? n.y + 14 : n.centerY,
+          class: 'node-label section',
+        }, ['/ ' + n.label.toUpperCase()]));
+        if (n.tag) {
+          nodeLayer.appendChild(el('text', {
+            x: n.x + BOX_PAD_X,
+            y: n.y + n.boxH - 12,
+            class: 'section-tag',
+          }, ['// ' + n.tag]));
+        }
+        nodeLayer.appendChild(el('line', {
+          x1: n.x, y1: n.y + n.boxH,
+          x2: n.x + n.boxW, y2: n.y + n.boxH,
+          class: 'section-rule',
+          'stroke-opacity': 0.4,
+        }));
+        continue;
+      }
+
+      if (n.kind === 'root') {
+        nodeLayer.appendChild(el('rect', {
+          x: n.x, y: n.y,
+          width: n.boxW, height: n.boxH,
+          rx: 4, ry: 4,
+          class: 'node-box root',
+        }));
+        nodeLayer.appendChild(el('text', {
+          x: n.x + ROOT_PAD_X,
+          y: n.hasNote ? n.y + 19 : n.centerY,
+          class: 'node-label root',
+        }, [n.label]));
+        if (n.note) {
+          nodeLayer.appendChild(el('text', {
+            x: n.x + ROOT_PAD_X,
+            y: n.y + n.boxH - 12,
+            class: 'node-note',
+          }, [n.note]));
+        }
+        continue;
+      }
+
+      if (n.kind === 'group') {
+        nodeLayer.appendChild(el('rect', {
+          x: n.x, y: n.y,
+          width: n.boxW, height: n.boxH,
+          rx: 4, ry: 4,
+          class: 'node-box',
+          'fill-opacity': 0.5,
+        }));
+        nodeLayer.appendChild(el('text', {
+          x: n.x + BOX_PAD_X, y: n.centerY,
+          class: 'node-label',
+        }, [n.label]));
+        continue;
+      }
+
+      const boxClass   = 'node-box'   + (n.status === 'held' ? ' held' : n.status === 'legacy' ? ' legacy' : '');
+      const labelClass = 'node-label' + (n.status === 'held' ? ' held' : n.status === 'legacy' ? ' legacy' : '');
+      nodeLayer.appendChild(el('rect', {
+        x: n.x, y: n.y,
+        width: n.boxW, height: n.boxH,
+        rx: 4, ry: 4,
+        class: boxClass,
+      }));
+      nodeLayer.appendChild(el('text', {
+        x: n.x + BOX_PAD_X,
+        y: n.hasNote ? n.y + 16 : n.centerY,
+        class: labelClass,
+      }, [n.label]));
+      if (n.note) {
+        const noteClass = 'node-note' + (n.status === 'legacy' ? ' legacy' : '');
+        nodeLayer.appendChild(el('text', {
+          x: n.x + BOX_PAD_X,
+          y: n.y + n.boxH - 10,
+          class: noteClass,
+        }, [n.note]));
+      }
+    }
+
+    /* ---------- pan / zoom ---------- */
+    const canvasWrap = document.getElementById('canvasWrap');
+    const stage = document.getElementById('stage');
+    const zoomPct = document.getElementById('zoomPct');
+    let tx = 0, ty = 0, scale = 1;
+    function apply() {
+      stage.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+      zoomPct.textContent = Math.round(scale * 100) + '%';
+    }
+    function fit() {
+      const rect = canvasWrap.getBoundingClientRect();
+      const padding = 80;
+      const sx = (rect.width - padding) / width;
+      const sy = (rect.height - padding) / height;
+      scale = Math.min(sx, sy, 1.2);
+      tx = (rect.width - width * scale) / 2;
+      ty = (rect.height - height * scale) / 2;
+      apply();
+    }
+    fit();
+    window.addEventListener('resize', fit);
+
+    document.getElementById('zoomIn').onclick  = () => { scale = Math.min(scale * 1.2, 4); apply(); };
+    document.getElementById('zoomOut').onclick = () => { scale = Math.max(scale / 1.2, 0.15); apply(); };
+    document.getElementById('zoomFit').onclick = fit;
+
+    let dragging = false, sx0, sy0, tx0, ty0;
+    canvasWrap.addEventListener('pointerdown', (ev) => {
+      if (ev.target.closest('.hud, .legend, .caption')) return;
+      dragging = true;
+      canvasWrap.classList.add('dragging');
+      canvasWrap.setPointerCapture(ev.pointerId);
+      sx0 = ev.clientX; sy0 = ev.clientY; tx0 = tx; ty0 = ty;
+    });
+    canvasWrap.addEventListener('pointermove', (ev) => {
+      if (!dragging) return;
+      tx = tx0 + (ev.clientX - sx0);
+      ty = ty0 + (ev.clientY - sy0);
+      apply();
+    });
+    canvasWrap.addEventListener('pointerup', () => {
+      dragging = false;
+      canvasWrap.classList.remove('dragging');
+    });
+    canvasWrap.addEventListener('wheel', (ev) => {
+      ev.preventDefault();
+      const rect = canvasWrap.getBoundingClientRect();
+      const mx = ev.clientX - rect.left, my = ev.clientY - rect.top;
+      const factor = ev.deltaY > 0 ? 1 / 1.1 : 1.1;
+      const newScale = Math.max(0.15, Math.min(4, scale * factor));
+      const k = newScale / scale;
+      tx = mx - (mx - tx) * k;
+      ty = my - (my - ty) * k;
+      scale = newScale;
+      apply();
+    }, { passive: false });
+  }
+
+  window.DIAGRAMS = { render };
+})();

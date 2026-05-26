@@ -1,0 +1,311 @@
+/* =========================================================================
+   diagrams.css — theme-aware
+   Compiled Tier 1 + Tier 2 slice conformed to apexSolarKiss/design-system-ASK
+   by reference at generation time. Not the identity source of truth.
+   design-system-ASK remains the visual authority.
+
+   Theme model:
+   - `data-theme="dark"` on <html> forces dark
+   - `data-theme="light"` on <html> forces light (default styling)
+   - no `data-theme` attribute  → follows `prefers-color-scheme` (auto)
+   ========================================================================= */
+
+:root {
+  /* ---------- Core 5 ---------- */
+  --ask-white:          #FFFFFF;
+  --ask-lavender-light: #E2D3F0;
+  --ask-lavender-dark:  #D4C6E1;
+  --ask-ink-light:      #201D26;
+  --ask-ink-dark:       #0A090C;
+
+  --ask-surface:        #BFB3D4;
+  --ask-surface-hover:  #C9BCDE;
+
+  /* ---------- Light semantic (default) ---------- */
+  --bg-from: var(--ask-lavender-dark);
+  --bg-to:   var(--ask-lavender-light);
+  --bg-gradient: linear-gradient(45deg, var(--bg-from) 0%, var(--bg-to) 100%);
+
+  --fg-1: #FFFFFF;
+  --fg-2: rgba(255, 255, 255, 0.78);
+  --fg-3: rgba(255, 255, 255, 0.55);
+
+  --line-1: rgba(255, 255, 255, 0.45);
+  --line-2: rgba(255, 255, 255, 0.22);
+  --line-strong: rgba(255, 255, 255, 0.65);
+
+  --surface-glass:   rgba(255, 255, 255, 0.14);
+  --surface-glass-2: rgba(255, 255, 255, 0.24);
+
+  /* Node fill on the light gradient — solid surface */
+  --node-fill: var(--ask-surface);
+
+  /* ---------- Type ---------- */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* ---------- Radii ---------- */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+}
+
+/* ---------- Dark semantic (explicit `data-theme="dark"`) ---------- */
+:root[data-theme="dark"] {
+  --bg-from: var(--ask-ink-light);
+  --bg-to:   var(--ask-ink-dark);
+  --bg-gradient: linear-gradient(45deg, var(--bg-from) 0%, var(--bg-to) 100%);
+
+  --fg-1: var(--ask-lavender-dark);
+  --fg-2: rgba(212, 198, 225, 0.72);
+  --fg-3: rgba(212, 198, 225, 0.48);
+
+  --line-1: rgba(212, 198, 225, 0.22);
+  --line-2: rgba(212, 198, 225, 0.10);
+  --line-strong: rgba(212, 198, 225, 0.40);
+
+  --surface-glass:   rgba(212, 198, 225, 0.06);
+  --surface-glass-2: rgba(212, 198, 225, 0.10);
+
+  /* Node fill on the dark gradient — faint lavender wash */
+  --node-fill: rgba(212, 198, 225, 0.06);
+}
+
+/* ---------- Auto via prefers-color-scheme (no `data-theme` attribute) ---------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    --bg-from: var(--ask-ink-light);
+    --bg-to:   var(--ask-ink-dark);
+    --bg-gradient: linear-gradient(45deg, var(--bg-from) 0%, var(--bg-to) 100%);
+
+    --fg-1: var(--ask-lavender-dark);
+    --fg-2: rgba(212, 198, 225, 0.72);
+    --fg-3: rgba(212, 198, 225, 0.48);
+
+    --line-1: rgba(212, 198, 225, 0.22);
+    --line-2: rgba(212, 198, 225, 0.10);
+    --line-strong: rgba(212, 198, 225, 0.40);
+
+    --surface-glass:   rgba(212, 198, 225, 0.06);
+    --surface-glass-2: rgba(212, 198, 225, 0.10);
+
+    --node-fill: rgba(212, 198, 225, 0.06);
+  }
+}
+
+/* =========================================================================
+   Page chrome
+   ========================================================================= */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
+
+body {
+  font-family: var(--font-sans);
+  font-weight: 200;
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--fg-1);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.shell { position: fixed; inset: 0; display: grid; grid-template-rows: auto 1fr; }
+
+/* ---------- Top bar (glass) ---------- */
+.bar {
+  display: flex; align-items: center; gap: 24px;
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--line-1);
+  background: var(--surface-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: relative; z-index: 5;
+}
+.bar .mark {
+  font-weight: 500; font-size: 15px; letter-spacing: -0.01em; color: var(--fg-1);
+}
+.bar .mark .sep { color: var(--fg-3); font-weight: 200; padding: 0 6px; }
+.bar .title-block { display: flex; flex-direction: column; gap: 2px; margin-left: 8px; }
+.bar .title-block .t {
+  font-size: 15px; font-weight: 400; letter-spacing: -0.01em;
+}
+.bar .title-block .s {
+  font-family: var(--font-mono); font-size: 10px; color: var(--fg-2);
+  letter-spacing: 0.08em; text-transform: uppercase; font-weight: 300;
+}
+.bar .spacer { flex: 1; }
+.bar .stamp {
+  display: flex; gap: 16px;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-2);
+  font-weight: 300;
+}
+.bar .stamp .k { color: var(--fg-1); font-weight: 500; }
+.bar .theme-tag {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--fg-2); font-weight: 400;
+  padding: 4px 10px;
+  border: 1px solid var(--line-1);
+  border-radius: var(--radius-sm);
+}
+
+/* ---------- Canvas region ---------- */
+.canvas-wrap {
+  position: relative; overflow: hidden;
+  cursor: grab;
+}
+.canvas-wrap.dragging { cursor: grabbing; }
+.canvas-wrap.dragging * { user-select: none; }
+
+.stage { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; }
+.stage svg { display: block; }
+
+/* ---------- Corner ticks ---------- */
+.corner-tick {
+  position: absolute; width: 14px; height: 14px;
+  border: 1px solid var(--line-strong); pointer-events: none; z-index: 3;
+}
+.corner-tick.tl { top: 12px; left: 12px; border-right: none; border-bottom: none; }
+.corner-tick.tr { top: 12px; right: 12px; border-left: none; border-bottom: none; }
+.corner-tick.bl { bottom: 12px; left: 12px; border-right: none; border-top: none; }
+.corner-tick.br { bottom: 12px; right: 12px; border-left: none; border-top: none; }
+
+/* ---------- Glass panel base ---------- */
+.glass {
+  background: var(--surface-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--line-1);
+  border-radius: var(--radius-lg);
+}
+
+/* ---------- Legend ---------- */
+.legend {
+  position: absolute; top: 18px; right: 18px;
+  padding: 16px 18px 14px; font-size: 11px; color: var(--fg-1);
+  z-index: 4; min-width: 248px;
+  font-weight: 300;
+}
+.legend .h {
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-2);
+  margin-bottom: 12px; display: flex; justify-content: space-between;
+  font-weight: 400;
+}
+.legend .h .fig { color: var(--fg-1); font-weight: 500; }
+.legend .row {
+  display: grid; grid-template-columns: 28px 1fr; gap: 10px;
+  align-items: center; padding: 4px 0;
+}
+.legend .row .lbl { color: var(--fg-1); }
+.legend .row .sub {
+  color: var(--fg-2); font-family: var(--font-mono);
+  font-size: 9px; margin-left: 6px; letter-spacing: 0.04em;
+  font-weight: 300;
+}
+.legend .sw {
+  width: 24px; height: 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+.legend .sw .box-solid {
+  width: 22px; height: 12px;
+  border: 1px solid var(--fg-1); background: var(--node-fill);
+  border-radius: 2px;
+}
+.legend .sw .box-dashed {
+  width: 22px; height: 12px;
+  border: 1px dashed var(--fg-2); background: transparent;
+  border-radius: 2px;
+}
+.legend .sw .legacy-txt {
+  font-style: italic; color: var(--fg-2);
+  font-size: 11px; font-weight: 200;
+}
+
+/* ---------- Zoom HUD ---------- */
+.hud {
+  position: absolute; bottom: 18px; left: 18px;
+  display: flex; align-items: center;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.04em; color: var(--fg-1);
+  z-index: 4;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.hud button {
+  appearance: none; background: transparent; border: none;
+  border-right: 1px solid var(--line-1);
+  color: var(--fg-1); font-family: inherit; font-size: 13px;
+  width: 32px; height: 32px; cursor: pointer;
+  transition: background 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hud button:hover { background: var(--surface-glass-2); }
+.hud button:last-child { border-right: none; }
+.hud .pct {
+  padding: 0 12px; height: 32px;
+  display: flex; align-items: center;
+  border-right: 1px solid var(--line-1);
+  min-width: 56px; justify-content: center;
+  color: var(--fg-2); font-weight: 400;
+}
+
+/* ---------- Caption ---------- */
+.caption {
+  position: absolute; top: 18px; left: 18px;
+  padding: 14px 18px; font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.06em; color: var(--fg-2);
+  z-index: 4; max-width: 360px; line-height: 1.55;
+  font-weight: 300;
+}
+.caption b {
+  color: var(--fg-1); font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  font-size: 11px;
+}
+
+/* =========================================================================
+   SVG node + edge styles — driven by CSS variables so theme flips
+   ========================================================================= */
+
+.node-box {
+  fill: var(--node-fill);
+  stroke: var(--fg-1);
+  stroke-width: 1;
+}
+.node-box.held { stroke: var(--fg-2); stroke-dasharray: 4 3; fill: transparent; }
+.node-box.legacy { fill: transparent; stroke: var(--fg-2); }
+.node-box.section { fill: transparent; stroke: none; }
+
+.node-label {
+  font-family: var(--font-sans); font-weight: 400; font-size: 13px;
+  fill: var(--fg-1); dominant-baseline: middle;
+}
+.node-label.held { fill: var(--fg-2); font-weight: 300; }
+.node-label.legacy { fill: var(--fg-2); font-weight: 300; font-style: italic; }
+.node-label.root { font-weight: 500; font-size: 14px; }
+.node-label.section {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  fill: var(--fg-1); font-weight: 500;
+}
+
+.node-note {
+  font-family: var(--font-mono); font-size: 10px;
+  fill: var(--fg-2); letter-spacing: 0.02em;
+  dominant-baseline: middle; font-weight: 300;
+}
+.node-note.legacy { font-style: italic; }
+
+.section-rule { stroke: var(--fg-1); stroke-width: 1; }
+.section-tag {
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  fill: var(--fg-2); dominant-baseline: middle; font-weight: 300;
+}
+
+.edge { fill: none; stroke: var(--fg-1); stroke-width: 1; }
+.edge.held { stroke: var(--fg-2); stroke-dasharray: 4 3; }
+.edge.legacy { stroke: var(--fg-2); }
