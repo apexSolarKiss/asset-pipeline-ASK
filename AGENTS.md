@@ -458,19 +458,26 @@ If a proposed update says "the project currently should do X," it does not belon
 
 The architecture tree diagram at `docs/diagrams/asset-pipeline-ASK_architecture-tree.html` is a visual orientation artifact, not a depth artifact. The prose docs are authoritative if the two diverge.
 
-Refresh trigger: a plateau milestone marker landing on main. Other PRs do not refresh the diagram.
+Refresh trigger: a plateau milestone marker landing on main, or an equivalent architecture-front-door shift (e.g., a substantive compression or reorganization of `docs/architecture.md`) that makes the diagram materially stale. Other PRs do not refresh the diagram.
 
-Pattern on milestone-marker landing:
+Pattern on refresh:
 
-1. After the milestone-marker PR merges, prepare a brief for the current approved diagram-generation surface: prompt + ASCII tree showing the new architectural state + delta from prior version + style notes preserved
-2. The diagram-generation surface renders an updated version (saved to operator-side scratch external to the repo with a `_vN.html` version suffix; the external scratch location retains version history)
-3. Bounded absorption PR ships the rendered HTML to the repo as `docs/diagrams/asset-pipeline-ASK_architecture-tree.html` (no version suffix; overwrite-in-place), updates the README pointer and `docs/architecture.md` cross-reference if needed, and updates this file only if the cadence itself changes
+1. Prepare a brief for the current approved rendering surface: prompt + ASCII tree showing the new architectural state + delta from prior version + style notes preserved
+2. The rendering surface produces an updated diagram (operator-side scratch external to the repo retains any version history)
+3. Bounded absorption PR ships the rendered diagram into `docs/diagrams/`, updates the README pointer and `docs/architecture.md` cross-reference if needed, and updates this file only if the cadence itself changes
 
 Do not refresh the diagram between milestones. Do not refresh for routine PRs. Do not maintain in-repo version history (the operator-side scratch external to the repo retains version history).
 
-The specific diagram-generation surface in current use is operator-side context and is not encoded here. Tool / vendor identity belongs in operator memory, not in repo workflow rules. This rule encodes the cadence and authority boundary; the rendering surface may be substituted without revising this file.
+The specific rendering surface in current use is operator-side context and is not encoded here. Tool / vendor identity belongs in operator memory, not in repo workflow rules. This rule encodes the cadence and authority boundary; the rendering surface may be substituted without revising this file.
 
-The file is typically large (~1.7MB at first absorption) because diagram-generation surfaces often bundle fonts and assets as base64 inside the HTML. The size is an acknowledged tradeoff for visual fidelity and self-contained portability. Git diffs on the HTML body are not meaningful; treat the file as a binary asset and check the rendered output rather than the diff.
+The diagram may be hosted in the repo as either a single self-contained HTML file or a repo-native diagram bundle (thin HTML shell + per-repo source-data file + shared engine / CSS / export files + a `docs/diagrams/README.md` that carries the source-truth-vs-illustrative-snapshot boundary). The bundle pattern's shared files are typically byte-identical across repos that adopt the same template; review should treat them as substitutable rather than per-repo content.
+
+Review guidance per rendering substrate:
+
+- **Bundle pattern** (current substrate for the architecture-tree diagram): inspect the source-data file for content changes; inspect the README or HTML shell for routing or authority-boundary changes; inspect the shared engine / CSS / export files only when they are intentionally updated; check the rendered output when practical. Bundle files are diffable text and produce meaningful git diffs.
+- **Self-contained HTML** (the prior substrate; may recur if a different rendering surface is later substituted): the file is typically large (~1.7 MB at first absorption) because diagram-generation surfaces often bundle fonts and assets as base64 inside the HTML. Git diffs on the body are not meaningful; treat the file as a binary asset and check the rendered output rather than the diff.
+
+Either substrate is acceptable. The cadence rule above does not change with substrate.
 
 ---
 
