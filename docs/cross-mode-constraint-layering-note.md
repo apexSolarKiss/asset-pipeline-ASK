@@ -4,7 +4,7 @@
 
 This note provides a planning-level comparison of constraint layering across `SKU-driven product imagery` and the looser `brand campaign / editorial` creative stream.
 
-Its purpose is to clarify which constraint categories currently appear universal across workflow modes, which appear mode-specific, and which belong more properly to brand or client overlays.
+Its purpose is to clarify which constraint categories currently appear universal across workflow modes, which appear mode-specific, and which belong more properly to brand-system overlays.
 
 This note does not propose schema, field systems, or runtime behavior. It is a narrow architectural note meant to keep the current repo-local model legible while the examples remain provisional.
 
@@ -17,7 +17,7 @@ The repo now has a first deterministic four-seam baseline:
 - output validation
 - release-readiness
 
-At the same time, workflow-mode variation is already established in the current repo-local framing, and recent placeholder-furniture work now applies direct pressure to the question of how constraints should layer without being collapsed into one undifferentiated bucket.
+At the same time, workflow-mode variation is already established in the current repo-local framing, and recent SKU-driven furniture work now applies direct pressure to the question of how constraints should layer without being collapsed into one undifferentiated bucket.
 
 That makes this comparison timely. The next honest question is not whether the repo needs a new seam or broader machinery, but how current constraint behavior should be understood across modes while preserving the distinction between universal structure, workflow-stream variation, and brand-specific overlays.
 
@@ -57,15 +57,15 @@ In `brand campaign / editorial`, constraints appear to center more heavily on co
 
 This suggests that workflow-mode rules are currently about governing pressure and allowed range, not about replacing the shared top-level structure. SKU mode tightens the acceptable range around repeatability and fidelity. Campaign mode allows a wider expressive range, but only within continuity, clarity, and governance limits.
 
-## Constraint Categories That Belong To Brand / Client Overlays
+## Constraint Categories That Belong To Brand-System Overlays
 
-Some constraints appear better understood as brand or client overlays than as workflow-mode rules.
+Some constraints appear better understood as brand-system overlays than as workflow-mode rules.
 
-These include the tonal world, styling posture, scene restraint, class-specific shot expectations, and SKU-specific fidelity facts that arise from a particular client or brand context. They do not seem universal to a mode in the same way that repeatability pressure or campaign coherence pressure do.
+These include the tonal world, styling posture, scene restraint, class-specific shot expectations, and SKU-specific fidelity facts that arise from a particular brand-system or deployment context. They do not seem universal to a mode in the same way that repeatability pressure or campaign coherence pressure do.
 
-The placeholder-furniture artifacts provide the current concrete evidence for this layer. The Northline House example introduces a quiet, architectural visual world, specific scene-restraint expectations, product-class shot guidance, and SKU-specific fidelity facts. Those pressures are real and useful, but they do not by themselves define SKU mode as a whole. They are better understood as overlay constraints applied within one brand-specific context.
+The SKU-driven furniture artifacts provide the current concrete evidence for this layer. The Northline House example introduces a quiet, architectural visual world, specific scene-restraint expectations, product-class shot guidance, and SKU-specific fidelity facts. Those pressures are real and useful, but they do not by themselves define SKU mode as a whole. They are better understood as overlay constraints applied within one brand-specific context.
 
-This distinction matters because a workflow mode should not be defined by one placeholder client's tone or visual system. Brand and client overlays can sharpen or intensify the working constraints, but they should not be mistaken for the universal or mode-level structure of the repo.
+This distinction matters because a workflow mode should not be defined by one synthetic deployment's tone or visual system. Brand-system overlays can sharpen or intensify the working constraints, but they should not be mistaken for the universal or mode-level structure of the repo.
 
 ## Conceptual Influence On The Four Seam Records
 
@@ -73,7 +73,7 @@ These distinctions should influence the current four seam records conceptually, 
 
 ### Ingest
 
-At ingest, workflow-mode constraints and brand or client overlays may enter as context, references, and declared boundaries. This is where source materials, supplied parameters, contextual instructions, approved references, and stated fidelity expectations can become legible as what later work must remain within.
+At ingest, workflow-mode constraints and brand-system overlays may enter as context, references, and declared boundaries. This is where source materials, supplied parameters, contextual instructions, approved references, and stated fidelity expectations can become legible as what later work must remain within.
 
 That does not mean ingest formalizes a full constraint schema. It means ingest is the natural place where the repo can carry forward the information that later stages must respect.
 
@@ -91,7 +91,7 @@ This keeps output evaluation tied to governed sufficiency rather than turning it
 
 ### Release-Readiness
 
-At release-readiness, the question is whether the candidate is ready to be presented for approval within its governing bounds, not whether approval itself has been automated. Universal constraints, workflow-mode pressures, and brand or client overlays may all help determine whether the candidate is within bounds to advance.
+At release-readiness, the question is whether the candidate is ready to be presented for approval within its governing bounds, not whether approval itself has been automated. Universal constraints, workflow-mode pressures, and brand-system overlays may all help determine whether the candidate is within bounds to advance.
 
 That is still narrower than saying release-readiness owns approval policy. It tests bounded readiness for approval, while preserving the repo's current distinction between validation and human approval.
 

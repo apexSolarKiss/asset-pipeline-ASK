@@ -1,6 +1,6 @@
-# Placeholder Collection Merchandising Workflow Packet Example
+# Collection Merchandising Workflow Packet Example
 
-This is a single provisional workflow packet example for one `collection / merchandising context` still-image set inside the existing placeholder furniture brand context.
+This is a single provisional workflow packet example for one `collection / merchandising context` still-image set inside the existing example furniture brand context.
 
 ## Collection Context
 
@@ -11,7 +11,7 @@ This is a single provisional workflow packet example for one `collection / merch
 
 ## Brand And Merchandising Context
 
-This packet assumes the Example Furniture Brand placeholder premise: calm, architectural product presentation for ecommerce and catalog use. In this case the governing pressure is not one SKU alone, but how multiple products belong together in one restrained merchandising set.
+This packet assumes the Example Furniture Brand premise: calm, architectural product presentation for ecommerce and catalog use. In this case the governing pressure is not one SKU alone, but how multiple products belong together in one restrained merchandising set.
 
 The grouped set should read as intentionally paired rather than incidentally colocated. Merchandising coherence matters here, but strict sameness across the three items is not the goal. The important pressure is relational legibility across the set: scale, spacing, adjacency, and positional emphasis should make the grouping feel credible, usable, and governed.
 

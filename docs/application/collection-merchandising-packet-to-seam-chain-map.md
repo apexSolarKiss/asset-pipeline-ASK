@@ -1,8 +1,8 @@
-# Placeholder Collection Merchandising Packet To Seam Chain Map
+# Collection Merchandising Packet To Seam Chain Map
 
 ## Purpose
 
-This note is a conceptual bridge between the placeholder collection / merchandising workflow packet artifact and the current deterministic seam chain.
+This note is a conceptual bridge between the collection / merchandising workflow packet artifact and the current deterministic seam chain.
 
 Its purpose is to pressure-test whether grouped merchandising context can remain structurally legible across the current seams without collapsing back into one-SKU logic, drifting forward into campaign looseness, or expanding into schema, taxonomy, or runtime language.
 

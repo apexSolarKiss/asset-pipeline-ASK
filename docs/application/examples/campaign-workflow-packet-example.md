@@ -1,4 +1,4 @@
-# Placeholder Campaign Workflow Packet Example
+# Campaign Workflow Packet Example
 
 This is a single provisional workflow packet example for one seasonal still-image campaign inside the `brand campaign / editorial` creative stream.
 
@@ -11,7 +11,7 @@ This is a single provisional workflow packet example for one seasonal still-imag
 
 ## Brand And Directional Context
 
-This packet assumes `Example Lifestyle Brand` as an obviously placeholder brand label rather than a real brand system. The directional context is warm, pared back, and contemporary, with enough seasonal character to feel campaign-specific but not so much aesthetic specificity that the packet becomes a hidden style guide.
+This packet assumes `Example Lifestyle Brand` as an obviously synthetic brand label rather than a deployment-context brand system. The directional context is warm, pared back, and contemporary, with enough seasonal character to feel campaign-specific but not so much aesthetic specificity that the packet becomes a hidden style guide.
 
 The campaign should read as recognizably part of one brief-shaped family. Directional consistency matters, but strict visual sameness is not the goal. The governing pressure is campaign coherence across a small output set rather than SKU-level comparability across many assets.
 

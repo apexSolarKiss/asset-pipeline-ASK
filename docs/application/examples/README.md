@@ -16,17 +16,17 @@ These examples are compact, abstract application case sets used to test the disc
 - [`single-asset-example-chain.md`](single-asset-example-chain.md): compact worked example of the current deterministic verification chain
 - [`single-asset-no-review-artifacts-chain.md`](single-asset-no-review-artifacts-chain.md): compact worked example of the same chain with optional review artifacts omitted
 
-## Placeholder Workflow Packet Examples
+## Workflow Packet Examples
 
-These examples are provisional, brand agnostic, and advisory rather than implementation plans.
+These examples are provisional, brand-agnostic, and structural rather than implementation plans.
 
-- [`placeholder-furniture-workflow-packet-example.md`](placeholder-furniture-workflow-packet-example.md): SKU-driven furniture workflow packet example
-- [`placeholder-collection-merchandising-workflow-packet-example.md`](placeholder-collection-merchandising-workflow-packet-example.md): collection / merchandising workflow packet example
-- [`placeholder-marketing-message-driven-workflow-packet-example.md`](placeholder-marketing-message-driven-workflow-packet-example.md): marketing / message-driven workflow packet example
-- [`placeholder-campaign-workflow-packet-example.md`](placeholder-campaign-workflow-packet-example.md): campaign / editorial workflow packet example
+- [`sku-furniture-workflow-packet-example.md`](sku-furniture-workflow-packet-example.md): SKU-driven furniture workflow packet example
+- [`collection-merchandising-workflow-packet-example.md`](collection-merchandising-workflow-packet-example.md): collection / merchandising workflow packet example
+- [`marketing-message-driven-workflow-packet-example.md`](marketing-message-driven-workflow-packet-example.md): marketing / message-driven workflow packet example
+- [`campaign-workflow-packet-example.md`](campaign-workflow-packet-example.md): campaign / editorial workflow packet example
 
-## Placeholder Supporting Notes
+## Supporting Notes
 
-- [`placeholder-furniture-brand-style-spec.md`](placeholder-furniture-brand-style-spec.md): provisional furniture brand / style specification used by placeholder examples
-- [`placeholder-collection-merchandising-transformation-pass-output-fail-note.md`](placeholder-collection-merchandising-transformation-pass-output-fail-note.md): collection / merchandising transformation-pass / output-fail note
-- [`placeholder-marketing-message-driven-transformation-pass-output-fail-note.md`](placeholder-marketing-message-driven-transformation-pass-output-fail-note.md): marketing / message-driven transformation-pass / output-fail note
+- [`sku-furniture-brand-style-spec-example.md`](sku-furniture-brand-style-spec-example.md): provisional furniture brand / style specification used by the packet examples
+- [`collection-merchandising-transformation-pass-output-fail-note.md`](collection-merchandising-transformation-pass-output-fail-note.md): collection / merchandising transformation-pass / output-fail note
+- [`marketing-message-driven-transformation-pass-output-fail-note.md`](marketing-message-driven-transformation-pass-output-fail-note.md): marketing / message-driven transformation-pass / output-fail note

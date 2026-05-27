@@ -1,6 +1,6 @@
-# Placeholder Marketing Message-Driven Workflow Packet Example
+# Marketing Message-Driven Workflow Packet Example
 
-This is a single provisional workflow packet example for one `marketing / message-driven` still-image set inside the existing placeholder furniture brand context.
+This is a single provisional workflow packet example for one `marketing / message-driven` still-image set inside the existing example furniture brand context.
 
 ## Message Context
 
@@ -11,7 +11,7 @@ This is a single provisional workflow packet example for one `marketing / messag
 
 ## Brand And Communication Context
 
-This packet assumes the Example Furniture Brand placeholder premise: calm, architectural product presentation for ecommerce and catalog use. In this case the governing pressure is not single-SKU comparability alone and not broader campaign-world coherence. The stronger burden is whether a targeted communication purpose survives cleanly across a small promotional set.
+This packet assumes the Example Furniture Brand premise: calm, architectural product presentation for ecommerce and catalog use. In this case the governing pressure is not single-SKU comparability alone and not broader campaign-world coherence. The stronger burden is whether a targeted communication purpose survives cleanly across a small promotional set.
 
 The asset family should read as one controlled marketing message set rather than as a product-detail record or an editorial story. Communication discipline matters here, but loud promotional treatment is not the goal. The important pressure is that the offer, the brand identifier, and the bounded promotional emphasis remain legible enough to support governed downstream use.
 

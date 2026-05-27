@@ -73,7 +73,7 @@ The repo has not yet earned stronger claims that every currently visible differe
 
 The current examples make the three-layer read more useful, but they do not yet settle it.
 
-The repo now has better support for saying that some pressures appear broadly shared, some appear workflow-stream-weighted, and some appear more likely to belong to brand or client overlays. Even so, the current evidence still does not justify a stronger claim that those layer boundaries are now crisp, settled, or universally assignable.
+The repo now has better support for saying that some pressures appear broadly shared, some appear workflow-stream-weighted, and some appear more likely to belong to brand-system overlays. Even so, the current evidence still does not justify a stronger claim that those layer boundaries are now crisp, settled, or universally assignable.
 
 That matters because the visible distinctions are still being read from provisional worked examples rather than from a hardened ontology. The four-mode comparison sharpens the planning question, but it does not yet close it.
 

@@ -8,7 +8,7 @@ one sparse-articulation walk on one synthetic brand-system stack
 fresh synthetic stack used as contained test fixture
 not brand doctrine
 not prototype-aesthetic instance
-not reusable client model
+not reusable brand-system model
 not repo aesthetic direction
 not architecture rewrite
 not schema mutation
@@ -52,7 +52,7 @@ The walk uses a fresh synthetic home-goods brand-system stack, deliberately spar
 contained test fixture
 not brand doctrine
 not prototype-aesthetic instance
-not reusable client model
+not reusable brand-system model
 not repo aesthetic direction
 only enough content to pressure the sparse-articulation fallback chain
 ```

@@ -15,7 +15,7 @@ The ontology defines the shared categories used across workflows, while the appl
 - `Diagnosis`: interprets the current state
 - `Redesign`: proposes a better target-state shape
 
-This sequence is advisory and structural, not an implementation plan.
+This sequence is directional and structural, not an implementation plan.
 
 ## How To Read This Repo
 

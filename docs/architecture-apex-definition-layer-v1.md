@@ -224,7 +224,7 @@ Per [`docs/architecture-aesthetic-layering-pass-v1.md`](architecture-aesthetic-l
 
 **Model A: Implicit-additive accumulation.** Each layer's content (prose, references) is supplied to generation as input. Conflicts are resolved by the agent's interpretation, supported by prose discipline at the lower layers. No formal precedence; everything available is used. **This is approximately the current model in current evidence.**
 
-**Model B: Layered precedence with explicit override.** Higher layers set bounds; lower layers add specificity. In a conflict, an explicit override must state which inherited carrier is being narrowed, varied, or suppressed. A possible authority order could be `brand > mode > product-class > packet > slot`, but current evidence has not earned that order. **This model is closer to how style-guide / brand-overlay systems typically work in real client implementations.**
+**Model B: Layered precedence with explicit override.** Higher layers set bounds; lower layers add specificity. In a conflict, an explicit override must state which inherited carrier is being narrowed, varied, or suppressed. A possible authority order could be `brand > mode > product-class > packet > slot`, but current evidence has not earned that order. **This model is closer to how style-guide / brand-overlay systems typically work in deployment-context implementations.**
 
 Current evidence is consistent with Model A. The model has not been pressure-tested where layers would actually disagree. The architecture currently delegates conflict resolution to agent interpretation; whether this scales beyond the same-base same-category evidence available is unknown.
 

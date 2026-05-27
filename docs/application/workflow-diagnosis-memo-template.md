@@ -1,6 +1,6 @@
 # Workflow Diagnosis Memo Template
 
-This memo is a provisional advisory synthesis derived from discovery using the repository's current working ontology. It is intended to interpret current-state findings without implying a full audit framework.
+This memo is a provisional structured synthesis derived from discovery using the repository's current working ontology. It is intended to interpret current-state findings without implying a full audit framework.
 
 ## Workflow Snapshot
 
@@ -51,7 +51,7 @@ This memo is a provisional advisory synthesis derived from discovery using the r
 - [What seems structurally sound]
 - [What seems mismatched, unstable, or under-defined]
 
-## Advisory Priorities
+## Follow-Up Priorities
 
 - [Priority area for further clarification or redesign]
 - [Priority area for further clarification or redesign]

@@ -257,7 +257,7 @@ If those conditions are met and the model still drifts cold without explicit pro
 
 ### What this does not require
 
-- Comprehensive brand-system documentation comparable to a real client style guide. The procedural minimum is enough to rule out underbuilt setup; richer brand-system articulation belongs to a future iteration if Phase 2 earns it.
+- Comprehensive brand-system documentation comparable to a deployment-context style guide. The procedural minimum is enough to rule out underbuilt setup; richer brand-system articulation belongs to a future iteration if Phase 2 earns it.
 - A first-class `brand_system_references` schema field. The procedural reference path uses existing carriers (`reference_assets` + `approved_reference_keys` + lookup chain). Whether brand-system aesthetic earns a first-class carrier is the architectural question Phase 2 pressures, not a Phase 2 prerequisite.
 
 ## Open Questions Carried Forward From Phase 1

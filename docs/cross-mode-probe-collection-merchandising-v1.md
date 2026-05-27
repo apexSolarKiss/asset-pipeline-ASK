@@ -22,7 +22,7 @@ The cross-mode layered-input model ([`docs/cross-mode-layered-input-model-and-cu
 
 The on-paper analysis identified a possible schema implication: **plural slot-input fields**. The current `output_slots.product_image_lookup_lookup` is singular — and that singularity is most directly pressured in collection mode, where a single slot's fidelity anchor genuinely needs to point at multiple products.
 
-The placeholder collection packet ([`docs/application/examples/placeholder-collection-merchandising-workflow-packet-example.md`](application/examples/placeholder-collection-merchandising-workflow-packet-example.md)) gives a furniture-brand instance (sofa + coffee table + accent chair). This probe pivots the brand context — to a direct-to-consumer everyday-essentials apparel brand archetype — to surface what changes when the *category* shifts away from where the placeholder lives, and what's left when only the *grouping mechanism* is doing the work.
+The collection packet example ([`docs/application/examples/collection-merchandising-workflow-packet-example.md`](application/examples/collection-merchandising-workflow-packet-example.md)) gives a furniture-brand instance (sofa + coffee table + accent chair). This probe pivots the brand context — to a direct-to-consumer everyday-essentials apparel brand archetype — to surface what changes when the *category* shifts away from where the example lives, and what's left when only the *grouping mechanism* is doing the work.
 
 ## Probe Setup
 
@@ -220,7 +220,7 @@ If a future cross-mode application stands up an Airtable base, collection mode i
 
 - [`docs/cross-mode-probe-marketing-message-driven-v1.md`](cross-mode-probe-marketing-message-driven-v1.md): the first cross-mode probe (marketing / message-driven)
 - [`docs/cross-mode-layered-input-model-and-curation-event-note.md`](cross-mode-layered-input-model-and-curation-event-note.md): on-paper four-mode pressure-test that the probe series concretizes
-- [`docs/application/examples/placeholder-collection-merchandising-workflow-packet-example.md`](application/examples/placeholder-collection-merchandising-workflow-packet-example.md): existing furniture-brand collection-packet placeholder
+- [`docs/application/examples/collection-merchandising-workflow-packet-example.md`](application/examples/collection-merchandising-workflow-packet-example.md): existing furniture-brand collection-packet example
 - [`docs/full-flow-path-a-findings-pkt-sku-009.md`](full-flow-path-a-findings-pkt-sku-009.md): introduced the implementation-vs-conceptual goal distinction (carries fully cross-mode)
 - [`docs/full-flow-path-b-findings-pkt-sku-010.md`](full-flow-path-b-findings-pkt-sku-010.md): introduced asset_attachment field (carries fully cross-mode)
 - [`docs/curation-event-schema-mutation-sku-driven-furniture-v1.md`](curation-event-schema-mutation-sku-driven-furniture-v1.md): original four-axis provenance schema move

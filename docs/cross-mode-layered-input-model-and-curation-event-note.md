@@ -38,10 +38,10 @@ Lower layers inherit from upper layers. Lower layers may override an upper-layer
 
 The model was pressure-tested against the four worked-example packets on current `main`:
 
-- [`docs/application/examples/placeholder-furniture-workflow-packet-example.md`](application/examples/placeholder-furniture-workflow-packet-example.md) — SKU-driven product imagery
-- [`docs/application/examples/placeholder-collection-merchandising-workflow-packet-example.md`](application/examples/placeholder-collection-merchandising-workflow-packet-example.md) — collection / merchandising
-- [`docs/application/examples/placeholder-marketing-message-driven-workflow-packet-example.md`](application/examples/placeholder-marketing-message-driven-workflow-packet-example.md) — marketing / message-driven
-- [`docs/application/examples/placeholder-campaign-workflow-packet-example.md`](application/examples/placeholder-campaign-workflow-packet-example.md) — brand campaign / editorial
+- [`docs/application/examples/sku-furniture-workflow-packet-example.md`](application/examples/sku-furniture-workflow-packet-example.md) — SKU-driven product imagery
+- [`docs/application/examples/collection-merchandising-workflow-packet-example.md`](application/examples/collection-merchandising-workflow-packet-example.md) — collection / merchandising
+- [`docs/application/examples/marketing-message-driven-workflow-packet-example.md`](application/examples/marketing-message-driven-workflow-packet-example.md) — marketing / message-driven
+- [`docs/application/examples/campaign-workflow-packet-example.md`](application/examples/campaign-workflow-packet-example.md) — brand campaign / editorial
 
 | Layer | SKU | Collection | Marketing | Campaign |
 |---|---|---|---|---|

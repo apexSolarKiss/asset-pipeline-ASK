@@ -1,4 +1,4 @@
-# Placeholder Collection Merchandising Transformation-Pass Output-Fail Note
+# Collection Merchandising Transformation-Pass Output-Fail Note
 
 ## Purpose
 

@@ -86,7 +86,7 @@ The capability is real even when (as in the thin-test pass) the agent does not e
 
 ### 4. Failure mode: agent anchoring on the wrong reference truth
 
-The agent's initial pass anchored on the placeholder example file (`docs/application/examples/placeholder-furniture-workflow-packet-example.md`, which describes `EFB-SF-214-OAT` as a sofa) instead of verifying the live SKU record (`SKU-CHAIR-004`, a sculpted dining chair). ASK caught the error. The agent corrected by fetching the live SKU and product records.
+The agent's initial pass anchored on the SKU furniture example file (`docs/application/examples/sku-furniture-workflow-packet-example.md`, which describes `EFB-SF-214-OAT` as a sofa) instead of verifying the live SKU record (`SKU-CHAIR-004`, a sculpted dining chair). ASK caught the error. The agent corrected by fetching the live SKU and product records.
 
 The architecture's standing discipline — *verify repo claims directly before acting* — exists for this class of error. The lesson parallels grounding note v42's anchoring framing at a different layer: not anchoring on an algorithmic narrowing, but anchoring on the wrong reference truth.
 
