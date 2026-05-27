@@ -15,7 +15,7 @@ Screenshots and generated images are not committed evidence unless a future evid
 ## Start Here / Foundation
 
 - [README.md](../README.md): entry points and current repo framing
-- [AGENTS.md](../AGENTS.md): repo-local execution guidance for Codex work inside this repository
+- [AGENTS.md](../AGENTS.md): repo-local workflow rules; single-node operating model (Claude Code as control surface and executor); rules are agent-agnostic and apply to whoever is executing
 - [docs/architecture.md](architecture.md): high-level architecture stance and current ontology direction
 - [docs/problem-and-approach.md](problem-and-approach.md): concise statement of the workflow-structure problem and repo approach
 - [docs/method.md](method.md): current method, ontology / application split, and discovery / diagnosis / redesign sequence
