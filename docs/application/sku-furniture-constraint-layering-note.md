@@ -1,14 +1,14 @@
-# Placeholder Furniture Constraint Layering Note
+# SKU Furniture Constraint Layering Note
 
-This note clarifies current constraint scope within the placeholder furniture SKU-driven context and remains provisional.
+This note clarifies current constraint scope within the SKU-driven furniture context and remains provisional.
 
 ## Brand-Wide Constraints
 
-Brand-wide constraints are the stable visual and behavioral constraints that apply across the placeholder brand as a whole. In the current placeholder furniture example for Example Furniture Brand, these include calm presentation, scene restraint, material-led clarity, proportion credibility, and the expectation that outputs stay usable for controlled ecommerce and catalog contexts.
+Brand-wide constraints are the stable visual and behavioral constraints that apply across the example brand as a whole. In the current SKU furniture example for Example Furniture Brand, these include calm presentation, scene restraint, material-led clarity, proportion credibility, and the expectation that outputs stay usable for controlled ecommerce and catalog contexts.
 
 ## Category-Level Constraints
 
-Category-level constraints apply across a broader grouping before class-specific details matter. In the current placeholder furniture context, these constraints hold across furniture generally: products should remain legible, environments should stay secondary to the product, and fidelity should remain high enough that materials, construction, and scale are not casually reinterpreted.
+Category-level constraints apply across a broader grouping before class-specific details matter. In the current SKU-driven furniture context, these constraints hold across furniture generally: products should remain legible, environments should stay secondary to the product, and fidelity should remain high enough that materials, construction, and scale are not casually reinterpreted.
 
 ## Product-Class-Level Constraints
 
@@ -24,4 +24,4 @@ These constraint scopes are not the same as product context input, style referen
 
 ## Working Rule
 
-The repo should currently treat these scopes as conceptual layers inside the SKU-driven placeholder furniture context without turning them into formal schema or inheritance logic yet.
+The repo should currently treat these scopes as conceptual layers inside the SKU-driven furniture context without turning them into formal schema or inheritance logic yet.

@@ -1,4 +1,4 @@
-# Placeholder Marketing Message-Driven Transformation-Pass Output-Fail Note
+# Marketing Message-Driven Transformation-Pass Output-Fail Note
 
 ## Purpose
 

@@ -1,6 +1,6 @@
-# Placeholder Furniture Style Spec To Seam Chain Map
+# SKU Furniture Style Spec To Seam Chain Map
 
-This note is a conceptual bridge between the placeholder furniture style-spec artifact and the current deterministic seam chain.
+This note is a conceptual bridge between the SKU furniture style-spec artifact and the current deterministic seam chain.
 
 ## Ingest
 

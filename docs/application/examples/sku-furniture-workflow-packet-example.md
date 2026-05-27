@@ -1,6 +1,6 @@
-# Placeholder Furniture Workflow Packet Example
+# SKU Furniture Workflow Packet Example
 
-This is a single provisional workflow packet example for one SKU-driven furniture item inside the existing placeholder brand context.
+This is a single provisional workflow packet example for one SKU-driven furniture item inside the existing example brand context.
 
 ## Product Context
 
@@ -12,7 +12,7 @@ This is a single provisional workflow packet example for one SKU-driven furnitur
 
 ## Brand And Style Context
 
-This packet assumes the Example Furniture Brand placeholder premise: calm, architectural product presentation for ecommerce and catalog use. Style direction should stay bright, restrained, material-led, and quiet rather than editorial, decorative, or narrative-heavy.
+This packet assumes the Example Furniture Brand premise: calm, architectural product presentation for ecommerce and catalog use. Style direction should stay bright, restrained, material-led, and quiet rather than editorial, decorative, or narrative-heavy.
 
 ## Bounded Creative Discretion
 

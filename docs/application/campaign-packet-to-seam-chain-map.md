@@ -1,8 +1,8 @@
-# Placeholder Campaign Packet To Seam Chain Map
+# Campaign Packet To Seam Chain Map
 
 ## Purpose
 
-This note is a conceptual bridge between the placeholder campaign workflow packet artifact and the current deterministic seam chain.
+This note is a conceptual bridge between the campaign workflow packet artifact and the current deterministic seam chain.
 
 Its purpose is to test whether a looser `brand campaign / editorial` creative stream can still be made structurally legible across the current seams without collapsing into vague prose, premature schema, or runtime language.
 

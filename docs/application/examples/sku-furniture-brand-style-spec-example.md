@@ -1,10 +1,10 @@
-# Placeholder Furniture Brand Style Spec
+# SKU Furniture Brand Style Spec Example
 
 This is a fictive SKU-driven furniture-brand style spec meant to test normative information structure for future AI-native asset workflows.
 
 ## Brand Premise
 
-Example Furniture Brand is a placeholder contemporary furniture brand focused on calm, architectural product presentation for ecommerce and catalog use. The visual direction is quiet, material-led, and bright without becoming lifestyle-editorial or decorative for its own sake.
+Example Furniture Brand is a synthetic contemporary furniture brand focused on calm, architectural product presentation for ecommerce and catalog use. The visual direction is quiet, material-led, and bright without becoming lifestyle-editorial or decorative for its own sake.
 
 ## Input Categories
 
