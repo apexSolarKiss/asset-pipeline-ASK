@@ -51,7 +51,7 @@ This example applies the workflow diagnosis memo to the abstract campaign workfl
 - The workflow is structurally strong where it separates expressive campaign intent from non-negotiable release conditions
 - It is less stable where interpretive freedom, review authority, and exception handling rely on practice more than explicit structure
 
-## Advisory Priorities
+## Follow-Up Priorities
 
 - Make the boundary between contextual guidance and bounded discretion more explicit
 - Clarify where campaign-direction approval ends and final-output approval begins

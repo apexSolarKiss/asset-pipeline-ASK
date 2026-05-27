@@ -6,7 +6,7 @@ This is a bounded aesthetic-layering modeling pass. Its narrow goal is to attemp
 
 It is not the apex definition-layer artifact. It is not a rewrite of [`docs/architecture.md`](architecture.md), [`docs/cross-mode-layered-input-model-and-curation-event-note.md`](cross-mode-layered-input-model-and-curation-event-note.md), [`docs/architecture-bounded-modeling-pass-v1.md`](architecture-bounded-modeling-pass-v1.md), or [`docs/architecture-vocabulary-pass-v1.md`](architecture-vocabulary-pass-v1.md). Those remain authoritative for their subject matter.
 
-The repo is aesthetic-agnostic by design. This pass models the *shape* of aesthetic representation, not aesthetic content. The grounding note's prototype-aesthetic guidance is repo-external and does not appear here. Each client implementation supplies its own visual system through whatever architectural slots this pass and its successors specify.
+The repo is aesthetic-agnostic by design. This pass models the *shape* of aesthetic representation, not aesthetic content. The grounding note's prototype-aesthetic guidance is repo-external and does not appear here. Each deployment supplies its own visual system through whatever architectural slots this pass and its successors specify.
 
 ## Posture
 
@@ -52,13 +52,13 @@ This pass treats aesthetic as a separate concern from product-truth, even where 
 
 ### What aesthetic could live here
 
-The overarching visual system that defines a client's aesthetic identity, independent of any specific mode or product. This is what a brand style guide encodes: photography style, lighting language, palette conventions, compositional principles, material vocabulary, surface-treatment conventions, image-quality standards, exclusion language ("the brand never does X"), bounded creative discretion ("within these limits, vary freely").
+The overarching visual system that defines a brand-system aesthetic identity, independent of any specific mode or product. This is what a brand style guide encodes: photography style, lighting language, palette conventions, compositional principles, material vocabulary, surface-treatment conventions, image-quality standards, exclusion language ("the brand never does X"), bounded creative discretion ("within these limits, vary freely").
 
 In the grounding note's *creative discretion as bounded zone* framing, this layer carries the outer envelope of allowed variation for the entire system.
 
 ### Carriers in current schema
 
-**None at this layer.** The grounding note's prototype aesthetic lives external to the repo by design, but in a real client implementation, brand-system aesthetic would need first-class carriers. The repo does not currently model:
+**None at this layer.** The grounding note's prototype aesthetic lives external to the repo by design, but in a deployment-context implementation, brand-system aesthetic would need first-class carriers. The repo does not currently model:
 
 - a brand entity with aesthetic-relevant fields
 - brand-level approved-reference imagery
@@ -162,7 +162,7 @@ These are real, durable, used in evidence chains. They do most of the aesthetic-
 
 The packet layer is currently *over-loaded* with aesthetic responsibility. Brand-system aesthetic, mode/category aesthetic, and product-class aesthetic all currently flow through packet-level carriers because no higher-layer carriers exist. This compresses the layered model into "everything aesthetic happens at the packet."
 
-That compression is operationally workable for SKU-driven Furniture v1 evidence (where the brand context is implicit and uniform) but would not generalize cleanly to a real client implementation with multiple modes, multiple product classes, and explicit brand-system aesthetic.
+That compression is operationally workable for SKU-driven Furniture v1 evidence (where the brand context is implicit and uniform) but would not generalize cleanly to a deployment-context implementation with multiple modes, multiple product classes, and explicit brand-system aesthetic.
 
 ### Inheritance role
 
@@ -247,7 +247,7 @@ This is approximately the current model in the SKU-driven Furniture v1 base.
 
 **Model B: Layered precedence with explicit override.** Higher layers set bounds; lower layers add specificity. In a conflict, an explicit override must state which inherited carrier is being narrowed, varied, or suppressed. A possible authority order could be brand > mode > product-class > packet > slot, but current evidence has not earned that order.
 
-This model is closer to how style-guide / brand-overlay systems typically work in real client implementations.
+This model is closer to how style-guide / brand-overlay systems typically work in deployment-context implementations.
 
 ### What the evidence says
 

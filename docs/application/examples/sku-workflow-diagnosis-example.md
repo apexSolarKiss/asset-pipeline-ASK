@@ -51,7 +51,7 @@ This example applies the workflow diagnosis memo to the abstract SKU workflow di
 - The workflow is structurally strong where repeatable presentation, coverage rules, and validation criteria are explicit
 - It becomes less stable where recurring exceptions expose unmodeled variation or where narrow discretion is handled informally rather than structurally
 
-## Advisory Priorities
+## Follow-Up Priorities
 
 - Clarify which supplied parameters are true inputs versus effectively mandatory constraints
 - Strengthen the boundary between normal batch validation and formal exception handling

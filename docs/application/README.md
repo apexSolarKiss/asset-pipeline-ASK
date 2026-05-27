@@ -3,7 +3,7 @@
 These documents are provisional application-layer artifacts derived from the repository's current working ontology.
 
 - [`workflow-discovery-worksheet.md`](workflow-discovery-worksheet.md): structured discovery aid for mapping a current-state workflow
-- [`workflow-diagnosis-memo-template.md`](workflow-diagnosis-memo-template.md): structured advisory synthesis derived from discovery
+- [`workflow-diagnosis-memo-template.md`](workflow-diagnosis-memo-template.md): structured synthesis derived from discovery
 - [`workflow-redesign-brief-template.md`](workflow-redesign-brief-template.md): structured target-state proposal derived from diagnosis
 
 ## Generated-Output Artifact Grammars
@@ -19,12 +19,12 @@ Application-layer grammars for generated-output substrates produced by applying 
 
 ## Workflow Bridges
 
-- [`placeholder-furniture-style-spec-to-seam-chain-map.md`](placeholder-furniture-style-spec-to-seam-chain-map.md): SKU-driven furniture style-spec bridge into the seam chain
-- [`placeholder-collection-merchandising-packet-to-seam-chain-map.md`](placeholder-collection-merchandising-packet-to-seam-chain-map.md): collection / merchandising packet bridge into the seam chain
-- [`placeholder-marketing-message-driven-packet-to-seam-chain-map.md`](placeholder-marketing-message-driven-packet-to-seam-chain-map.md): marketing / message-driven packet bridge into the seam chain
-- [`placeholder-campaign-packet-to-seam-chain-map.md`](placeholder-campaign-packet-to-seam-chain-map.md): campaign / editorial packet bridge into the seam chain
+- [`sku-furniture-style-spec-to-seam-chain-map.md`](sku-furniture-style-spec-to-seam-chain-map.md): SKU-driven furniture style-spec bridge into the seam chain
+- [`collection-merchandising-packet-to-seam-chain-map.md`](collection-merchandising-packet-to-seam-chain-map.md): collection / merchandising packet bridge into the seam chain
+- [`marketing-message-driven-packet-to-seam-chain-map.md`](marketing-message-driven-packet-to-seam-chain-map.md): marketing / message-driven packet bridge into the seam chain
+- [`campaign-packet-to-seam-chain-map.md`](campaign-packet-to-seam-chain-map.md): campaign / editorial packet bridge into the seam chain
 
 ## Constraint Layering Notes
 
-- [`placeholder-furniture-constraint-layering-note.md`](placeholder-furniture-constraint-layering-note.md): provisional SKU-driven furniture constraint-layering note
-- [`placeholder-collection-merchandising-constraint-layering-note.md`](placeholder-collection-merchandising-constraint-layering-note.md): provisional collection / merchandising constraint-layering note
+- [`sku-furniture-constraint-layering-note.md`](sku-furniture-constraint-layering-note.md): provisional SKU-driven furniture constraint-layering note
+- [`collection-merchandising-constraint-layering-note.md`](collection-merchandising-constraint-layering-note.md): provisional collection / merchandising constraint-layering note

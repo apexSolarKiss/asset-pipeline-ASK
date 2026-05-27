@@ -20,7 +20,7 @@ The cross-mode layered-input model ([`docs/cross-mode-layered-input-model-and-cu
 - Curation: per-slot plus **heaviest** coherence verification
 - Governed asset subject identity: **scene or moment in family**
 
-The placeholder campaign packet ([`docs/application/examples/placeholder-campaign-workflow-packet-example.md`](application/examples/placeholder-campaign-workflow-packet-example.md)) gives a generic "Example Lifestyle Brand / Early Autumn Reset" instance. This probe pivots both the brand context and the category — to a heritage refined-living brand archetype with a spring 2026 campaign — to test whether campaign coherence holds when the brand has an explicit editorial voice and the campaign scope is more elaborate than the placeholder's three-asset set.
+The campaign packet example ([`docs/application/examples/campaign-workflow-packet-example.md`](application/examples/campaign-workflow-packet-example.md)) gives a generic "Example Lifestyle Brand / Early Autumn Reset" instance. This probe pivots both the brand context and the category — to a heritage refined-living brand archetype with a spring 2026 campaign — to test whether campaign coherence holds when the brand has an explicit editorial voice and the campaign scope is more elaborate than the example's three-asset set.
 
 ## Probe Setup
 
@@ -252,7 +252,7 @@ The probe used a heritage refined-living brand archetype, different from the D2C
 - [`docs/cross-mode-probe-marketing-message-driven-v1.md`](cross-mode-probe-marketing-message-driven-v1.md): first cross-mode probe (marketing / message-driven)
 - [`docs/cross-mode-probe-collection-merchandising-v1.md`](cross-mode-probe-collection-merchandising-v1.md): second cross-mode probe (collection / merchandising)
 - [`docs/cross-mode-layered-input-model-and-curation-event-note.md`](cross-mode-layered-input-model-and-curation-event-note.md): on-paper four-mode pressure-test that the probe series concretizes
-- [`docs/application/examples/placeholder-campaign-workflow-packet-example.md`](application/examples/placeholder-campaign-workflow-packet-example.md): existing generic campaign-packet placeholder
+- [`docs/application/examples/campaign-workflow-packet-example.md`](application/examples/campaign-workflow-packet-example.md): existing generic campaign-packet example
 - [`docs/full-flow-path-a-findings-pkt-sku-009.md`](full-flow-path-a-findings-pkt-sku-009.md): introduced the implementation-vs-conceptual goal distinction (carries fully cross-mode; sharpest in campaign mode)
 - [`docs/full-flow-path-b-findings-pkt-sku-010.md`](full-flow-path-b-findings-pkt-sku-010.md): introduced asset_attachment field (carries fully cross-mode)
 - [`docs/curation-event-schema-mutation-sku-driven-furniture-v1.md`](curation-event-schema-mutation-sku-driven-furniture-v1.md): original four-axis provenance schema move

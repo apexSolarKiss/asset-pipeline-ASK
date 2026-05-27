@@ -18,12 +18,12 @@ Product and SKU data integration is expected, but it is not the wedge. The wedge
 
 ## What layer it operates at
 
-The repo defines a durable spec / orchestration layer that sits above changing tools and models, not the generation interface. It articulates a layered information architecture across brand-system, category, mode-specific, packet, slot, candidate-generation, curation-seam, and governed-asset layers, and pressure-tests it against four worked-example workflow modes:
+The repo is building a durable definition layer above changing tools and models, not a generation interface or runtime orchestration layer. It articulates a layered information architecture across brand-system, category, mode-specific, packet, slot, candidate-generation, curation-seam, and governed-asset layers, and pressures that architecture against four worked-example workflow modes at uneven evidence depth:
 
-- SKU-driven product imagery
-- collection / merchandising
-- marketing / message-driven
-- brand campaign / editorial
+- SKU-driven product imagery — operationally grounded at full-flow depth
+- collection / merchandising — operationally grounded at full-flow depth
+- brand campaign / editorial — bounded full-flow plus structural-proof depth
+- marketing / message-driven — structural-proof depth only; full-flow operationally unearned
 
 Still-image first; video extension is downstream of the layered model stabilizing.
 
@@ -51,7 +51,7 @@ The cleanest layered IA case is the SKU-driven mode, anchored against `PKT-SKU-0
 - [`AGENTS.md`](AGENTS.md) — repo-local execution guidance
 - [`docs/diagrams/asset-pipeline-ASK_architecture-tree.html`](docs/diagrams/asset-pipeline-ASK_architecture-tree.html) — visual architecture tree at orientation depth; regenerated when a plateau milestone marker lands or an equivalent architecture-front-door shift makes the diagram materially stale, so its update cadence is slower than the prose docs; the prose docs are authoritative if the two diverge
 
-Live prototype bases:
+Prototype test bases:
 
 - [`Airtable base // SKU-Driven Furniture v1`](https://airtable.com/appoqJ25B6w4vSuX9/shrGGnxr3uvLRkEU4) — original prototype base for SKU-driven Furniture v1 and early cross-mode pressure work
 - [`Airtable base // Campaign-Driven D2C Home-Goods v1`](https://airtable.com/appCAcRuA82SWj5h5) — separate campaign-mode prototype base for cross-base / cross-brand pressure work

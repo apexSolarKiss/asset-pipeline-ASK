@@ -21,7 +21,7 @@ The cross-mode layered-input model ([`docs/cross-mode-layered-input-model-and-cu
 - uniform curation event mechanism with mode-specific coherence-pressure weight
 - a possible schema implication: **named message-bearing element fields** at the slot level
 
-The placeholder marketing packet ([`docs/application/examples/placeholder-marketing-message-driven-workflow-packet-example.md`](application/examples/placeholder-marketing-message-driven-workflow-packet-example.md)) gave a furniture-brand instance of marketing mode. This probe pivots the brand context — to a direct-to-consumer everyday-essentials archetype, drawn abstractly from public-reference brands — to surface what changes when both the *mode* and the *category* shift away from where the schema was implemented.
+The marketing packet example ([`docs/application/examples/marketing-message-driven-workflow-packet-example.md`](application/examples/marketing-message-driven-workflow-packet-example.md)) gave a furniture-brand instance of marketing mode. This probe pivots the brand context — to a direct-to-consumer everyday-essentials archetype, drawn abstractly from public-reference brands — to surface what changes when both the *mode* and the *category* shift away from where the schema was implemented.
 
 ## Probe Setup
 
@@ -221,7 +221,7 @@ All findings from the layered-input model held. The probe did not surface any ar
 ## Anchor Documents
 
 - [`docs/cross-mode-layered-input-model-and-curation-event-note.md`](cross-mode-layered-input-model-and-curation-event-note.md): on-paper four-mode pressure-test that this probe concretizes
-- [`docs/application/examples/placeholder-marketing-message-driven-workflow-packet-example.md`](application/examples/placeholder-marketing-message-driven-workflow-packet-example.md): existing furniture-brand marketing-packet placeholder
+- [`docs/application/examples/marketing-message-driven-workflow-packet-example.md`](application/examples/marketing-message-driven-workflow-packet-example.md): existing furniture-brand marketing-packet example
 - [`docs/full-flow-path-a-findings-pkt-sku-009.md`](full-flow-path-a-findings-pkt-sku-009.md): introduced the implementation-vs-conceptual goal distinction
 - [`docs/full-flow-path-b-findings-pkt-sku-010.md`](full-flow-path-b-findings-pkt-sku-010.md): introduced asset_attachment field and resolved the milestone-5 thin-bridge
 - [`docs/curation-event-schema-mutation-sku-driven-furniture-v1.md`](curation-event-schema-mutation-sku-driven-furniture-v1.md): original four-axis provenance schema move

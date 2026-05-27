@@ -175,7 +175,7 @@ If the answer to all four is "yes, the workaround carries cleanly" — the schem
 
 - [`docs/cross-mode-probe-collection-merchandising-v1.md`](cross-mode-probe-collection-merchandising-v1.md): the paper-only probe whose strain hypothesis this operational test pressures
 - [`docs/cross-mode-layered-input-model-and-curation-event-note.md`](cross-mode-layered-input-model-and-curation-event-note.md): on-paper layered-input model that the probe series concretized
-- [`docs/application/examples/placeholder-collection-merchandising-workflow-packet-example.md`](application/examples/placeholder-collection-merchandising-workflow-packet-example.md): existing furniture-brand collection-packet placeholder (the conceptual blueprint that PKT-COLL-001 instantiates)
+- [`docs/application/examples/collection-merchandising-workflow-packet-example.md`](application/examples/collection-merchandising-workflow-packet-example.md): existing furniture-brand collection-packet example (the conceptual blueprint that PKT-COLL-001 instantiates)
 - [`docs/full-flow-path-a-findings-pkt-sku-009.md`](full-flow-path-a-findings-pkt-sku-009.md): Path A pattern (coordinated fresh-gen on existing packet) that Phase 2 will mirror for collection mode
 - [`docs/full-flow-path-b-findings-pkt-sku-010.md`](full-flow-path-b-findings-pkt-sku-010.md): Path B pattern + asset_attachment field that Phase 2 will use for self-contained governed assets
 - [`docs/milestones/milestone-7-v1-sweep-closure-plateau.md`](milestones/milestone-7-v1-sweep-closure-plateau.md): plateau marker that this operational test is the first move past
