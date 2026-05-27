@@ -43,6 +43,14 @@ For external context, read the grounding note.
 
 ---
 
+## Inbound Handoff TBI Marker
+
+When an inbound handoff memo in `asset-pipeline-ASK-EXTERNAL/sources of intent/` carries the `-TBI.md` suffix, treat the suffix as ASK ingestion-state only: to be ingested, not to be absorbed. When ASK feeds that memo into the active surface, the first action is to rename the file in place to remove `-TBI`; do not edit the memo body. Then classify the memo and record any absorption / hold / rejection in a separate scratch derivative. Copy + suffix do not authorize implementation.
+
+Method-altitude articulation: `method-ASK/docs/source-of-intent.md` §Inbound handoff TBI marker.
+
+---
+
 ## Repo Workflow Discipline
 
 ### Session-Start Discipline
