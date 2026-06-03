@@ -1,0 +1,333 @@
+/* =========================================================================
+   ASK Design System — Foundational tokens
+
+   Source of truth: ASK's canonical `visual-identity-system.md`.
+   This file is a downstream implementation of that spec. When the two
+   disagree, the canonical file wins.
+
+   Type: Inter for interface + display; JetBrains Mono for code, technical
+   and tabular data. Contrast is weight, not size.
+   Color: two diagonal gradients, five-color core, with sanctioned surface,
+   UI accents (2) and emphasis accents (3, sparing).
+   ========================================================================= */
+
+/* =========================================================================
+   Tier model (internal organization)
+
+   Tokens below are organized into three internally-demarcated zones so
+   future ASK-family instances can extract cleanly:
+
+     TIER 1 — Foundation (identity-free, reusable)
+       spacing, type scale, motion, radii, semantic role tokens, the
+       light/dark gradient mechanism. Reusable beyond ASK; no identity bound.
+
+     TIER 2 — ASK design language (family DNA, inheritable)
+       palette values, lavender-ASK (#D4C6E1) named color, the two specific
+       45deg gradient stops, Inter + JetBrains Mono type choices. Inheritable
+       by ASK-family child instances.
+
+     TIER 3 — ASK instance identity (NOT inherited by children)
+       the --ask-* variable prefix as instance naming; the file header above
+       naming "ASK Design System"; the logo-ASK wordmark (in assets/, not
+       this file). Child ASK-family instances supply their own Tier 3.
+
+   Section comments below mark which tier each block belongs to. Do not fuse
+   Tier 2 values into Tier 1 primitives or bleed Tier 3 into Tier 2.
+   ========================================================================= */
+
+/* ==== TIER 2 — Type choices (Inter, JetBrains Mono) ==== */
+
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/InterVariable.woff2') format('woff2-variations'),
+       url('fonts/InterVariable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/InterVariable-Italic.woff2') format('woff2-variations'),
+       url('fonts/InterVariable-Italic.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('fonts/JetBrainsMono.woff2') format('woff2-variations'),
+       url('fonts/JetBrainsMono.woff2') format('woff2');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('fonts/JetBrainsMono-Italic.woff2') format('woff2-variations'),
+       url('fonts/JetBrainsMono-Italic.woff2') format('woff2');
+  font-weight: 100 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  /* ==== TIER 2 — ASK design language (palette values + named lavender-ASK) ==== */
+  /* ---------- Core 5 — backgrounds + text ---------- */
+  --ask-white:          #FFFFFF;   /* light-mode text */
+  --ask-lavender-light: #E2D3F0;   /* light gradient, top-right */
+  --ask-lavender-dark:  #D4C6E1;   /* lavender-ASK — light gradient bottom-left + dark-mode text */
+  --ask-ink-light:      #201D26;   /* dark gradient, bottom-left */
+  --ask-ink-dark:       #0A090C;   /* dark gradient, top-right */
+
+  /* Named alias: #D4C6E1 is canonically "lavender-ASK". The --ask-lavender-dark
+     CSS variable name is retained for backwards compatibility; --ask-lavender-ask
+     is the canonical alias going forward. Both resolve to the same hex. */
+  --ask-lavender-ask:   #D4C6E1;
+
+  /* ---------- Surface (card / container fill) ---------- */
+  --ask-surface:        #BFB3D4;
+  --ask-surface-hover:  #C9BCDE;
+
+  /* ---------- UI accents (muted, secondary use) ---------- */
+  --ask-ui-accent-1:    #8B79A2;   /* muted plum */
+  --ask-ui-accent-2:    #AE87C2;   /* lavender-mid */
+
+  /* ---------- Emphasis accents (sparing — three only) ---------- */
+  --ask-emphasis-magenta: #FF00FF;
+  --ask-emphasis-violet:  #AA40FF;
+  --ask-emphasis-cyan:    #00BEFF;
+
+  /* ==== TIER 1 — Foundation (semantic role tokens; gradient mechanism uses Tier 2 values) ==== */
+  /* ---------- Semantic — Light mode (default) ---------- */
+  --bg-from: var(--ask-lavender-dark);                /* bottom-left */
+  --bg-to:   var(--ask-lavender-light);               /* top-right */
+  --bg-gradient: linear-gradient(45deg, var(--bg-from) 0%, var(--bg-to) 100%);
+
+  --fg-1: #FFFFFF;                                    /* primary text on light bg */
+  --fg-2: rgba(255, 255, 255, 0.78);                  /* secondary text */
+  --fg-3: rgba(255, 255, 255, 0.55);                  /* tertiary / hint */
+  --fg-on-card: var(--ask-ink-light);                 /* when text needs to live on surface/white */
+
+  --line-1: rgba(255, 255, 255, 0.45);                /* hairline divider */
+  --line-2: rgba(255, 255, 255, 0.22);                /* fainter rule */
+  --line-inverse: rgba(32, 29, 38, 0.16);
+
+  --surface-glass:   rgba(255, 255, 255, 0.14);       /* frosted card */
+  --surface-glass-2: rgba(255, 255, 255, 0.24);       /* frosted card, lifted */
+  --surface-solid:   var(--ask-surface);
+  --surface-hover:   var(--ask-surface-hover);
+
+  --shadow-sm: 0 1px 2px rgba(32, 29, 38, 0.06);
+  --shadow-md: 0 8px 24px rgba(32, 29, 38, 0.08);
+  --shadow-lg: 0 24px 60px rgba(32, 29, 38, 0.12);
+  --shadow-glow: 0 0 0 1px rgba(255,255,255,0.35), 0 8px 32px rgba(139,121,162,0.18);
+
+  /* ==== TIER 2 — Type choices (font families) ==== */
+  /* ---------- Type ---------- */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* ==== TIER 1 — Foundation (type scale, spacing, radii, motion) ==== */
+  /* Canonical scale: contrast is weight, not size. */
+  --fs-display: 96px;       /* hero only */
+  --fs-h1: 48px;
+  --fs-h2: 36px;
+  --fs-h3: 28px;
+  --fs-body: 24px;
+  --fs-small: 18px;
+  --fs-caption: 14px;
+
+  --fw-extralight: 200;
+  --fw-light: 300;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+
+  --lh-display: 1.02;
+  --lh-heading: 1.12;
+  --lh-body: 1.45;
+  --lh-tight: 1.2;
+
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.08em;
+  --tracking-display: -0.035em;
+
+  /* ---------- Spacing (4-px base) ---------- */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  /* ---------- Radii ---------- */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 32px;
+  --radius-pill: 999px;
+
+  /* ---------- Motion ---------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-1: 120ms;
+  --dur-2: 220ms;
+  --dur-3: 420ms;
+  --dur-4: 720ms;
+}
+
+/* ==== TIER 1 — Foundation (dark-mode mechanism; references Tier 2 values) ==== */
+/* ---------- Dark mode ---------- */
+:root[data-theme="dark"],
+.theme-dark {
+  --bg-from: var(--ask-ink-light);                    /* bottom-left */
+  --bg-to:   var(--ask-ink-dark);                     /* top-right */
+  --bg-gradient: linear-gradient(45deg, var(--bg-from) 0%, var(--bg-to) 100%);
+
+  --fg-1: var(--ask-lavender-dark);
+  --fg-2: rgba(212, 198, 225, 0.72);
+  --fg-3: rgba(212, 198, 225, 0.48);
+  --fg-on-card: var(--ask-lavender-dark);
+
+  --line-1: rgba(212, 198, 225, 0.22);
+  --line-2: rgba(212, 198, 225, 0.10);
+  --line-inverse: rgba(212, 198, 225, 0.16);
+
+  --surface-glass:   rgba(212, 198, 225, 0.06);
+  --surface-glass-2: rgba(212, 198, 225, 0.10);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.55);
+  --shadow-glow: 0 0 0 1px rgba(212,198,225,0.18), 0 8px 32px rgba(0,0,0,0.6);
+}
+
+/* ==== TIER 1 — Foundation (auto dark-mode bridge: OS preference under no-explicit-theme guard; mirrors explicit dark-mode values) ==== */
+/* ---------- Dark mode — auto (OS preference) ---------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    --bg-from: var(--ask-ink-light);                    /* bottom-left */
+    --bg-to:   var(--ask-ink-dark);                     /* top-right */
+    --bg-gradient: linear-gradient(45deg, var(--bg-from) 0%, var(--bg-to) 100%);
+
+    --fg-1: var(--ask-lavender-dark);
+    --fg-2: rgba(212, 198, 225, 0.72);
+    --fg-3: rgba(212, 198, 225, 0.48);
+    --fg-on-card: var(--ask-lavender-dark);
+
+    --line-1: rgba(212, 198, 225, 0.22);
+    --line-2: rgba(212, 198, 225, 0.10);
+    --line-inverse: rgba(212, 198, 225, 0.16);
+
+    --surface-glass:   rgba(212, 198, 225, 0.06);
+    --surface-glass-2: rgba(212, 198, 225, 0.10);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.55);
+    --shadow-glow: 0 0 0 1px rgba(212,198,225,0.18), 0 8px 32px rgba(0,0,0,0.6);
+  }
+}
+
+/* ==== TIER 1 — Foundation (base resets, semantic typography, utilities; references Tier 2 type + role tokens) ==== */
+/* =========================================================================
+   Base resets + semantic typography
+   ========================================================================= */
+html, body {
+  margin: 0;
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--fg-1);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-extralight);
+  line-height: var(--lh-body);
+  letter-spacing: var(--tracking-normal);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, .h1 {
+  font-family: var(--font-sans);
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--tracking-tight);
+  margin: 0 0 var(--space-5) 0;
+  color: var(--fg-1);
+  text-wrap: pretty;
+}
+
+h2, .h2 {
+  font-family: var(--font-sans);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--tracking-tight);
+  margin: 0 0 var(--space-4) 0;
+  color: var(--fg-1);
+  text-wrap: pretty;
+}
+
+h3, .h3 {
+  font-family: var(--font-sans);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+  margin: 0 0 var(--space-3) 0;
+  color: var(--fg-1);
+}
+
+p, .body {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-extralight);
+  line-height: var(--lh-body);
+  margin: 0 0 var(--space-4) 0;
+  color: var(--fg-1);
+  text-wrap: pretty;
+}
+
+.small  { font-size: var(--fs-small); font-weight: var(--fw-light); }
+.caption{ font-size: var(--fs-caption); font-weight: var(--fw-regular); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--fg-2); }
+
+.display {
+  font-size: var(--fs-display);
+  font-weight: var(--fw-extralight);
+  line-height: var(--lh-display);
+  letter-spacing: var(--tracking-display);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-1);
+  transition: border-color var(--dur-2) var(--ease-out), opacity var(--dur-2) var(--ease-out);
+}
+a:hover { border-bottom-color: currentColor; opacity: 0.92; }
+
+/* Mono is for code, technical and tabular data only. */
+code, kbd, pre, samp, .mono, [data-mono] {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  font-weight: var(--fw-light);
+}
+
+.tabular {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==== TIER 2 — ASK design language (gradient utility classes carry the canonical 45deg stops) ==== */
+/* =========================================================================
+   Utility — backgrounds
+   ========================================================================= */
+.bg-ask-light { background: linear-gradient(45deg, #D4C6E1 0%, #E2D3F0 100%); color: #FFFFFF; }
+.bg-ask-dark  { background: linear-gradient(45deg, #201D26 0%, #0A090C 100%); color: #D4C6E1; }
