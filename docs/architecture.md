@@ -32,13 +32,18 @@ For routing to specific depth artifacts, see Source-of-Truth Routing below. For 
 
 ## Current Architecture Shape
 
-**Layers.** Eight IA layers carry across the four worked-example modes. The layered IA is a normative hierarchy: each layer carries normative authority over downstream layers; the inheritance / override / combination / conflict behavior between layers is the normative-hierarchy mechanism the architecture implements (depth: [layered-reference-and-discretion-architecture-v1.md](layered-reference-and-discretion-architecture-v1.md)).
+**Layers.** Eight IA layers carry across the four worked-example modes. The layered IA is a normative hierarchy: each layer carries normative authority over downstream layers; the inheritance / override / combination / conflict behavior between layers is the normative-hierarchy mechanism the architecture implements (depth: [layered-reference-and-discretion-architecture-v1.md](layered-reference-and-discretion-architecture-v1.md)). These eight span two different meanings of "layer" — five **scope / inheritance layers** (where content lives; how it inherits and overrides) and three **runtime / process layers** (stages in the generation-to-governance flow). The eight-layer count is preserved for continuity; the two meanings are labeled below and disambiguated in [layer-disambiguation-note-v1.md](layer-disambiguation-note-v1.md).
+
+*Scope / inheritance layers (Axis B):*
 
 - **brand-system layer** — currently unmodeled in IA; the brand platform and visual identity system deepenings concretize this as a real architectural gap; substantively narrowed by the brand-system carrier decision surface v2 (see Brand-System Layer Status below)
 - **category / product-class layer** — signaled-only; not first-class; inheritance from brand-system is partial (lighting register plausibly inherits cross-category under shared brand-system aesthetic; environment composition and product-class proportions are category-local)
 - **mode-specific layer** — varies by mode
 - **packet layer** — strongest current carrier
 - **slot layer** — role-specific narrowing
+
+*Runtime / process layers (Axis D):*
+
 - **candidate generation layer** — transient attachments
 - **curation seam** — two distinct senses observed:
   - **authorship-bearing discretion** (where creative judgment actually happens; site varies by mode and packet; appears concentrated at the seam in SKU-mode evidence; surfaced upstream at prompt-authoring and prompt-remediation in campaign-mode evidence)
