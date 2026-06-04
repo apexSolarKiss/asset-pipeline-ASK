@@ -17,6 +17,7 @@ Screenshots and generated images are not committed evidence unless a future evid
 - [README.md](../README.md): entry points and current repo framing
 - [AGENTS.md](../AGENTS.md): repo-local workflow rules; single-node operating model (Claude Code as control surface and executor); rules are agent-agnostic and apply to whoever is executing
 - [docs/architecture.md](architecture.md): high-level architecture stance and current ontology direction
+- [docs/layer-disambiguation-note-v1.md](layer-disambiguation-note-v1.md): deconfliction reference for the project's four uses of "layer" (Axis A ontology / B inheritance / C variation / D runtime); reconciles the 3/5/6/7/8-layer counts and records why the architecture's eight-layer list spans two senses
 - [docs/problem-and-approach.md](problem-and-approach.md): concise statement of the workflow-structure problem and repo approach
 - [docs/method.md](method.md): current method, ontology / application split, and discovery / diagnosis / redesign sequence
 
