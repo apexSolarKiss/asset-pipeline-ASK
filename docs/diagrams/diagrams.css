@@ -2,33 +2,53 @@
    diagrams.css — diagram-specific style layer
 
    Augments `colors_and_type.css` (loaded by the page from the local
-   `_dsa-tokens/` mirror) with two diagram-only token additions
-   (`--node-fill`, `--line-strong`) per theme state, then defines the
-   page chrome and SVG node/edge styles.
+   `_dsa-tokens/` mirror) with diagram-only token additions per theme state,
+   then defines the page chrome and SVG node/edge styles.
 
-   Tier 1 + Tier 2 tokens, type families, fonts, and the light/dark
-   theme bridge all come from `colors_and_type.css`. This file does not
-   redefine them. design-system-ASK remains the visual authority.
+   Tier 1 + Tier 2 tokens, type families, fonts, and the light/dark theme
+   bridge all come from `colors_and_type.css`. This file does not redefine
+   them. design-system-ASK remains the visual authority.
    ========================================================================= */
 
-/* ---------- Diagram-specific token additions (per theme state) ---------- */
+/* ---------- Diagram-specific tokens (per theme state) ----------
+
+   colors_and_type.css resolves the foreground ramp (--fg-1/-2/-3) to WHITE —
+   correct for the dark gradient, but on the light lavender gradient the small
+   diagram TEXT needs dark ink to read, while the structural lines carry white
+   fine. So the diagram owns its own tokens (ink / muted / faint for text,
+   line / line-soft for strokes) and leaves the foundational --fg-* / --line-*
+   tokens untouched. Dark values equal the design-system dark foreground, so
+   dark mode is unchanged. */
 
 :root {
-  /* Node fill on the light gradient — solid surface */
   --node-fill: var(--ask-surface);
-  --line-strong: rgba(255, 255, 255, 0.65);
+  --line-strong: rgba(255, 255, 255, 0.65);          /* corner ticks — white */
+  --diagram-ink:       #6A637F;                       /* primary diagram text */
+  --diagram-muted:     #827399;                       /* secondary diagram text */
+  --diagram-faint:     rgba(130, 115, 153, 0.62);     /* tertiary text / separators */
+  --diagram-line:      rgba(255, 255, 255, 0.90);     /* box borders · edges · section rules — white */
+  --diagram-line-soft: rgba(255, 255, 255, 0.55);     /* held / legacy strokes — soft white */
 }
 
 :root[data-theme="dark"] {
-  /* Node fill on the dark gradient — faint lavender wash */
   --node-fill: rgba(212, 198, 225, 0.06);
   --line-strong: rgba(212, 198, 225, 0.40);
+  --diagram-ink:       var(--ask-lavender-dark);
+  --diagram-muted:     rgba(212, 198, 225, 0.72);
+  --diagram-faint:     rgba(212, 198, 225, 0.48);
+  --diagram-line:      var(--ask-lavender-dark);
+  --diagram-line-soft: rgba(212, 198, 225, 0.72);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not([data-theme="dark"]) {
     --node-fill: rgba(212, 198, 225, 0.06);
     --line-strong: rgba(212, 198, 225, 0.40);
+    --diagram-ink:       var(--ask-lavender-dark);
+    --diagram-muted:     rgba(212, 198, 225, 0.72);
+    --diagram-faint:     rgba(212, 198, 225, 0.48);
+    --diagram-line:      var(--ask-lavender-dark);
+    --diagram-line-soft: rgba(212, 198, 225, 0.72);
   }
 }
 
@@ -44,7 +64,7 @@ body {
   font-weight: 200;
   background: var(--bg-gradient);
   background-attachment: fixed;
-  color: var(--fg-1);
+  color: var(--diagram-ink);
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -63,29 +83,29 @@ body {
   position: relative; z-index: 5;
 }
 .bar .mark {
-  font-weight: 500; font-size: 15px; letter-spacing: -0.01em; color: var(--fg-1);
+  font-weight: 500; font-size: 15px; letter-spacing: -0.01em; color: var(--diagram-ink);
 }
-.bar .mark .sep { color: var(--fg-3); font-weight: 200; padding: 0 6px; }
+.bar .mark .sep { color: var(--diagram-faint); font-weight: 200; padding: 0 6px; }
 .bar .title-block { display: flex; flex-direction: column; gap: 2px; margin-left: 8px; }
 .bar .title-block .t {
   font-size: 15px; font-weight: 400; letter-spacing: -0.01em;
 }
 .bar .title-block .s {
-  font-family: var(--font-mono); font-size: 10px; color: var(--fg-2);
+  font-family: var(--font-mono); font-size: 10px; color: var(--diagram-muted);
   letter-spacing: 0.08em; text-transform: uppercase; font-weight: 300;
 }
 .bar .spacer { flex: 1; }
 .bar .stamp {
   display: flex; gap: 16px;
   font-family: var(--font-mono); font-size: 10px;
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-2);
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--diagram-muted);
   font-weight: 300;
 }
-.bar .stamp .k { color: var(--fg-1); font-weight: 500; }
+.bar .stamp .k { color: var(--diagram-ink); font-weight: 500; }
 .bar .theme-tag {
   font-family: var(--font-mono); font-size: 10px;
   letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--fg-2); font-weight: 400;
+  color: var(--diagram-muted); font-weight: 400;
   padding: 4px 10px;
   border: 1px solid var(--line-1);
   border-radius: var(--radius-sm);
@@ -124,24 +144,24 @@ body {
 /* ---------- Legend ---------- */
 .legend {
   position: absolute; top: 18px; right: 18px;
-  padding: 16px 18px 14px; font-size: 11px; color: var(--fg-1);
+  padding: 16px 18px 14px; font-size: 11px; color: var(--diagram-ink);
   z-index: 4; min-width: 248px;
   font-weight: 300;
 }
 .legend .h {
   font-family: var(--font-mono); font-size: 9px;
-  letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-2);
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--diagram-muted);
   margin-bottom: 12px; display: flex; justify-content: space-between;
   font-weight: 400;
 }
-.legend .h .fig { color: var(--fg-1); font-weight: 500; }
+.legend .h .fig { color: var(--diagram-ink); font-weight: 500; }
 .legend .row {
   display: grid; grid-template-columns: 28px 1fr; gap: 10px;
   align-items: center; padding: 4px 0;
 }
-.legend .row .lbl { color: var(--fg-1); }
+.legend .row .lbl { color: var(--diagram-ink); }
 .legend .row .sub {
-  color: var(--fg-2); font-family: var(--font-mono);
+  color: var(--diagram-muted); font-family: var(--font-mono);
   font-size: 9px; margin-left: 6px; letter-spacing: 0.04em;
   font-weight: 300;
 }
@@ -151,16 +171,16 @@ body {
 }
 .legend .sw .box-solid {
   width: 22px; height: 12px;
-  border: 1px solid var(--fg-1); background: var(--node-fill);
+  border: 1px solid var(--diagram-line); background: var(--node-fill);
   border-radius: 2px;
 }
 .legend .sw .box-dashed {
   width: 22px; height: 12px;
-  border: 1px dashed var(--fg-2); background: transparent;
+  border: 1px dashed var(--diagram-line-soft); background: transparent;
   border-radius: 2px;
 }
 .legend .sw .legacy-txt {
-  font-style: italic; color: var(--fg-2);
+  font-style: italic; color: var(--diagram-muted);
   font-size: 11px; font-weight: 200;
 }
 
@@ -169,7 +189,7 @@ body {
   position: absolute; bottom: 18px; left: 18px;
   display: flex; align-items: center;
   font-family: var(--font-mono); font-size: 11px;
-  letter-spacing: 0.04em; color: var(--fg-1);
+  letter-spacing: 0.04em; color: var(--diagram-ink);
   z-index: 4;
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -177,7 +197,7 @@ body {
 .hud button {
   appearance: none; background: transparent; border: none;
   border-right: 1px solid var(--line-1);
-  color: var(--fg-1); font-family: inherit; font-size: 13px;
+  color: var(--diagram-ink); font-family: inherit; font-size: 13px;
   width: 32px; height: 32px; cursor: pointer;
   transition: background 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -188,63 +208,65 @@ body {
   display: flex; align-items: center;
   border-right: 1px solid var(--line-1);
   min-width: 56px; justify-content: center;
-  color: var(--fg-2); font-weight: 400;
+  color: var(--diagram-muted); font-weight: 400;
 }
 
 /* ---------- Caption ---------- */
 .caption {
   position: absolute; top: 18px; left: 18px;
   padding: 14px 18px; font-family: var(--font-mono); font-size: 10px;
-  letter-spacing: 0.06em; color: var(--fg-2);
+  letter-spacing: 0.06em; color: var(--diagram-muted);
   z-index: 4; max-width: 360px; line-height: 1.55;
   font-weight: 300;
 }
 .caption b {
-  color: var(--fg-1); font-weight: 500;
+  color: var(--diagram-ink); font-weight: 500;
   text-transform: uppercase; letter-spacing: 0.14em;
   font-size: 11px;
 }
 
 /* =========================================================================
-   SVG node + edge styles — driven by CSS variables so theme flips
+   SVG node + edge styles — driven by CSS variables so theme flips.
+   TEXT uses --diagram-ink / --diagram-muted; STROKES use --diagram-line /
+   --diagram-line-soft (white in light, lavender in dark).
    ========================================================================= */
 
 .node-box {
   fill: var(--node-fill);
-  stroke: var(--fg-1);
+  stroke: var(--diagram-line);
   stroke-width: 1;
 }
-.node-box.held { stroke: var(--fg-2); stroke-dasharray: 4 3; fill: transparent; }
-.node-box.legacy { fill: transparent; stroke: var(--fg-2); }
+.node-box.held { stroke: var(--diagram-line-soft); stroke-dasharray: 4 3; fill: transparent; }
+.node-box.legacy { fill: transparent; stroke: var(--diagram-line-soft); }
 .node-box.section { fill: transparent; stroke: none; }
 
 .node-label {
   font-family: var(--font-sans); font-weight: 400; font-size: 13px;
-  fill: var(--fg-1); dominant-baseline: middle;
+  fill: var(--diagram-ink); dominant-baseline: middle;
 }
-.node-label.held { fill: var(--fg-2); font-weight: 300; }
-.node-label.legacy { fill: var(--fg-2); font-weight: 300; font-style: italic; }
+.node-label.held { fill: var(--diagram-muted); font-weight: 300; }
+.node-label.legacy { fill: var(--diagram-muted); font-weight: 300; font-style: italic; }
 .node-label.root { font-weight: 500; font-size: 14px; }
 .node-label.section {
   font-family: var(--font-mono); font-size: 10px;
   letter-spacing: 0.18em; text-transform: uppercase;
-  fill: var(--fg-1); font-weight: 500;
+  fill: var(--diagram-ink); font-weight: 500;
 }
 
 .node-note {
   font-family: var(--font-mono); font-size: 10px;
-  fill: var(--fg-2); letter-spacing: 0.02em;
+  fill: var(--diagram-muted); letter-spacing: 0.02em;
   dominant-baseline: middle; font-weight: 300;
 }
 .node-note.legacy { font-style: italic; }
 
-.section-rule { stroke: var(--fg-1); stroke-width: 1; }
+.section-rule { stroke: var(--diagram-line); stroke-width: 1; }
 .section-tag {
   font-family: var(--font-mono); font-size: 9px;
   letter-spacing: 0.16em; text-transform: uppercase;
-  fill: var(--fg-2); dominant-baseline: middle; font-weight: 300;
+  fill: var(--diagram-muted); dominant-baseline: middle; font-weight: 300;
 }
 
-.edge { fill: none; stroke: var(--fg-1); stroke-width: 1; }
-.edge.held { stroke: var(--fg-2); stroke-dasharray: 4 3; }
-.edge.legacy { stroke: var(--fg-2); }
+.edge { fill: none; stroke: var(--diagram-line); stroke-width: 1; }
+.edge.held { stroke: var(--diagram-line-soft); stroke-dasharray: 4 3; }
+.edge.legacy { stroke: var(--diagram-line-soft); }
