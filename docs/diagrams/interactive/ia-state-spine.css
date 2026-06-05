@@ -85,14 +85,14 @@ svg { width: 100%; height: 100%; display: block; }
 .inspector .ptr { font-family: var(--font-mono); font-size: 10.5px; color: var(--fg-2); word-break: break-word; }
 .inspector .idle { color: var(--fg-2); }
 
-.legend { bottom: 18px; left: 18px; padding: 14px 16px 12px; }
+.legend { bottom: 18px; right: 18px; padding: 14px 16px 12px; }
 .legend .h { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-2); margin-bottom: 10px; }
 .legend .row { display: flex; align-items: center; gap: 9px; margin: 5px 0; font-size: 11px; }
 .legend .sw { width: 12px; height: 12px; border-radius: 3px; flex: none; }
 .legend .row .lbl { color: var(--fg-1); }
 .legend .row .sub { color: var(--fg-2); font-size: 10px; }
 
-.hud { bottom: 18px; right: 18px; display: flex; align-items: center; gap: 4px; padding: 6px; }
+.hud { bottom: 18px; left: 18px; display: flex; align-items: center; gap: 4px; padding: 6px; }
 .hud button { font-family: var(--font-mono); font-size: 14px; width: 30px; height: 30px; border: none; border-radius: 8px; background: transparent; color: var(--fg-1); cursor: pointer; }
 .hud button:hover { background: var(--surface-glass-2); }
 .hud .pct { font-family: var(--font-mono); font-size: 10px; color: var(--fg-2); width: 40px; text-align: center; }
