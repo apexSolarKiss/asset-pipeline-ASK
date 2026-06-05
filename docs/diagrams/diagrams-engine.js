@@ -15,7 +15,8 @@
 */
 (function () {
   /* ---------- layout constants ---------- */
-  const ROW_H = 44;
+  const GAP_WITHIN  = 6;    // vertical gap between sibling boxes of the SAME parent (within a group)
+  const GAP_BETWEEN = 18;   // vertical gap at a group / section boundary (parent change) — keeps groups distinct
   const GAP_COL = 36;
   const BOX_PAD_X = 14;
   const BOX_H = 26;
@@ -54,11 +55,6 @@
     if (kind === 'section') return FONT_SECTION;
     if (status === 'held' || status === 'legacy') return FONT_LABEL_LIGHT;
     return FONT_LABEL;
-  }
-
-  function countLeafRows(node) {
-    if (!node.children || node.children.length === 0) return 1;
-    return node.children.reduce((s, c) => s + countLeafRows(c), 0);
   }
 
   const svgNS = 'http://www.w3.org/2000/svg';
@@ -101,40 +97,55 @@
       xCursor += colMaxW[d] + GAP_COL;
     }
     const width  = xCursor + PAGE_PAD_X - GAP_COL;
-    const totalRows = countLeafRows(TREE);
-    const height = totalRows * ROW_H + PAGE_PAD_Y * 2;
 
-    /* ---------- place nodes (top-aligned cascade) ---------- */
+    /* ---------- place nodes (top-aligned cascade) ----------
+       Vertical positions come from a LEAF CURSOR, not a uniform row pitch: each
+       leaf advances the cursor by its own height plus a gap, and that gap is
+       GAP_WITHIN between siblings of the same parent but GAP_BETWEEN whenever the
+       parent changes (a group / section boundary). So clustered siblings sit
+       tight while groups open up — the groups read as distinct. Internal nodes
+       stay top-aligned to their first child. */
     const nodes = [];
     const edges = [];
-    function place(node, depth, topRow, parent) {
+    let yCursor = PAGE_PAD_Y;
+    let prevLeafParent;            // parent idx of the previously placed leaf (undefined before the first)
+    function place(node, depth, parent) {
       const kind = node.kind || 'node';
       const status = node.status || 'earned';
-      const centerY = PAGE_PAD_Y + (topRow + 0.5) * ROW_H;
       const hasNote = !!(node.note || (kind === 'section' && node.tag));
       const boxH = kind === 'root' ? ROOT_BOX_H : (hasNote ? BOX_H_NOTE : BOX_H);
       const boxW = colMaxW[depth];
       const x = colX[depth];
-      const y = centerY - boxH / 2;
 
       const idx = nodes.length;
-      nodes.push({
-        ...node, depth, x, y, boxW, boxH, centerY, hasNote,
-        status, kind, childIndices: [],
-      });
+      const rec = {
+        ...node, depth, x, boxW, boxH, hasNote,
+        status, kind, childIndices: [], centerY: 0, y: 0,
+      };
+      nodes.push(rec);
       if (parent !== null && parent !== undefined) {
         edges.push({ from: parent, to: idx });
         nodes[parent].childIndices.push(idx);
       }
-      if (node.children) {
-        let r = topRow;
-        for (const c of node.children) {
-          place(c, depth + 1, r, idx);
-          r += countLeafRows(c);
+
+      if (!node.children || node.children.length === 0) {
+        // leaf — advance the cursor; tight within a group, wider across a boundary
+        if (prevLeafParent !== undefined) {
+          yCursor += (parent === prevLeafParent) ? GAP_WITHIN : GAP_BETWEEN;
         }
+        rec.y = yCursor;
+        rec.centerY = yCursor + boxH / 2;
+        yCursor += boxH;
+        prevLeafParent = parent;
+      } else {
+        for (const c of node.children) place(c, depth + 1, idx);
+        rec.centerY = nodes[rec.childIndices[0]].centerY;   // top-aligned to first child
+        rec.y = rec.centerY - boxH / 2;
       }
+      return idx;
     }
-    place(TREE, 0, 0, null);
+    place(TREE, 0, null);
+    const height = yCursor + PAGE_PAD_Y;
 
     /* ---------- render ---------- */
     const svg = document.getElementById('svg');
