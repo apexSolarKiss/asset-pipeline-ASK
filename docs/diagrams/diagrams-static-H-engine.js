@@ -1,4 +1,4 @@
-/* diagrams-engine.js
+/* diagrams-static-H-engine.js
    Shared diagram engine for ASK-family system / architecture diagrams
    (architecture trees, topology maps, source-of-truth maps, and similar).
    Layout is horizontal, top-aligned cascade. Pan + zoom on the canvas.
