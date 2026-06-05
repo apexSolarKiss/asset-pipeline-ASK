@@ -1,9 +1,9 @@
-/* diagrams-spine-engine.js
+/* diagrams-static-V-engine.js
    Vertical placement engine for ASK-family system / architecture diagrams
    rendered as a top→down, horizontally-centered spine — ontology maps,
    inheritance chains, one-axis information-architecture diagrams, and similar.
 
-   Sibling of diagrams-engine.js (the horizontal top-aligned cascade). Same
+   Sibling of diagrams-static-H-engine.js (the horizontal top-aligned cascade). Same
    public contract, same data grammar, same diagrams.css classes, same PNG
    export. ONLY the placement geometry differs: this engine lays the tree out
    as a centered vertical spine instead of a left→right cascade.
