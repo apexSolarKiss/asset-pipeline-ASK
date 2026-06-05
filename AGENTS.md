@@ -462,30 +462,34 @@ Do not refresh because the next project direction changed.
 
 If a proposed update says "the project currently should do X," it does not belong in this file.
 
-### Architecture Tree Diagram
+### Diagram Surface Refresh Cadence
 
-The architecture tree diagram at `docs/diagrams/asset-pipeline-ASK_architecture-tree.html` is a visual orientation artifact, not a depth artifact. The prose docs are authoritative if the two diverge.
+The repo's diagram surface under `docs/diagrams/` is a set of visual orientation artifacts, not depth artifacts. The prose docs are authoritative if a diagram and the prose diverge. The set is currently four diagrams, rendered by in-repo engines:
 
-Refresh trigger: a plateau milestone marker landing on main, or an equivalent architecture-front-door shift (e.g., a substantive compression or reorganization of `docs/architecture.md`) that makes the diagram materially stale. Other PRs do not refresh the diagram.
+- **architecture tree** (`asset-pipeline-ASK_architecture-tree.html`) — repo architecture / artifact structure.
+- **ontology tree** (`asset-pipeline-ASK_ontology-tree.html`) — Axis A: the kinds of information the definition layer structures.
+- **inheritance spine** (`asset-pipeline-ASK_inheritance-spine.html`) — Axis B: where information lives and how it inherits.
+- **interactive IA state spine** (`interactive/asset-pipeline-ASK_ia-state-spine.html`) — the architecture's maturity / evidence **state** surface.
 
-Pattern on refresh:
+(Axis basis: `docs/layer-disambiguation-note-v1.md`. The static diagrams assert no state; the interactive spine is the state surface.)
 
-1. Prepare a brief for the current approved rendering surface: prompt + ASCII tree showing the new architectural state + delta from prior version + style notes preserved
-2. The rendering surface produces an updated diagram (operator-side scratch external to the repo retains any version history)
-3. Bounded absorption PR ships the rendered diagram into `docs/diagrams/`, updates the README pointer and `docs/architecture.md` cross-reference if needed, and updates this file only if the cadence itself changes
+**Maintenance model.** The diagrams are repo-resident and rendered by in-repo engines (the static `diagram-tree` / `diagram-spine-static` engines, and the interactive surface's own engine). The executor maintains them **in-repo** — by editing the per-diagram source data + HTML chrome and validating the rendered output (light + dark) — not by regenerating them through an external rendering surface. Any operator-side exploration surface for diagrams not yet repo-absorbed, and any rendering-tool / vendor identity, remain operator-side context and are not encoded here.
 
-Do not refresh the diagram between milestones. Do not refresh for routine PRs. Do not maintain in-repo version history (the operator-side scratch external to the repo retains version history).
+**Refresh cadence by coupling.** Refresh is milestone-triggered, but per-diagram coupling differs — **do not refresh all diagrams by default just because one changed:**
 
-The specific rendering surface in current use is operator-side context and is not encoded here. Tool / vendor identity belongs in operator memory, not in repo workflow rules. This rule encodes the cadence and authority boundary; the rendering surface may be substituted without revising this file.
+- **architecture tree** — refresh when a plateau milestone marker lands, or when the architecture front door (`docs/architecture.md`), the docs tree, or routing is substantively reorganized.
+- **ontology tree (Axis A)** — refresh only when the information-kind / ontology structure changes.
+- **inheritance spine (Axis B)** — refresh only when the inheritance-layer set / structure changes.
+- **interactive IA state spine** — refresh when milestone / evidence state assignments change (earned / held / deflated / proposed move); the most milestone-coupled of the set.
 
-The diagram may be hosted in the repo as either a single self-contained HTML file or a repo-native diagram bundle (thin HTML shell + per-repo source-data file + shared engine / CSS / export files + a `docs/diagrams/README.md` that carries the source-truth-vs-illustrative-snapshot boundary). The bundle pattern's shared files are typically byte-identical across repos that adopt the same template; review should treat them as substitutable rather than per-repo content.
+Do not refresh between milestones or for routine PRs. Bounded absorption PRs ship a refresh into `docs/diagrams/`, update the README pointer and any cross-reference if needed, and update this file only if the cadence itself changes. Do not maintain in-repo version history (operator-side scratch external to the repo retains any version history).
 
-Review guidance per rendering substrate:
+**Substrate.** A static diagram may be hosted as a single self-contained HTML file or as a repo-native bundle (thin HTML shell + per-diagram source-data file + shared engine / CSS / export files + a `docs/diagrams/README.md` carrying the source-truth-vs-illustrative-snapshot boundary). The interactive state spine is its own artifact class — a self-contained interactive surface with its own engine and styling, distinct from the static scaffolds. Review guidance:
 
-- **Bundle pattern** (current substrate for the architecture-tree diagram): inspect the source-data file for content changes; inspect the README or HTML shell for routing or authority-boundary changes; inspect the shared engine / CSS / export files only when they are intentionally updated; check the rendered output when practical. Bundle files are diffable text and produce meaningful git diffs.
-- **Self-contained HTML** (the prior substrate; may recur if a different rendering surface is later substituted): the file is typically large (~1.7 MB at first absorption) because diagram-generation surfaces often bundle fonts and assets as base64 inside the HTML. Git diffs on the body are not meaningful; treat the file as a binary asset and check the rendered output rather than the diff.
+- **Bundle / source-data substrate** (current for all four diagrams): inspect the per-diagram source-data file for content changes; inspect the README or HTML shell for routing or authority-boundary changes; inspect shared engine / CSS / export files only when they are intentionally updated; check the rendered output when practical. These files are diffable text and produce meaningful git diffs.
+- **Self-contained HTML** (a prior substrate; may recur if a rendering surface is later substituted): typically large (~1.7 MB) because such files bundle fonts and assets as base64. Git diffs on the body are not meaningful; treat the file as a binary asset and check the rendered output rather than the diff.
 
-Either substrate is acceptable. The cadence rule above does not change with substrate.
+Either substrate is acceptable. The cadence rules above do not change with substrate.
 
 ---
 
