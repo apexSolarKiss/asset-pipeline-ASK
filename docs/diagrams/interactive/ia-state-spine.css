@@ -1,0 +1,107 @@
+/* ia-state-spine.css — AP-owned styling for the interactive IA state spine.
+
+   A different artifact class from the static diagram scaffolds (diagram-tree /
+   diagram-spine-static): this is AP's own interactive surface. It uses the
+   design-system-ASK foundation tokens (--bg-gradient, --fg-*, --surface-glass,
+   --font-*) from colors_and_type.css, and the ASK Spectral State role tokens
+   (--state-*) from spectral-state.css. It does NOT depend on the scaffold's
+   diagrams.css.
+
+   State color is applied via a single custom property --st per node (set by the
+   engine to one --state-* role). Color encodes state ONLY. */
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; height: 100%; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--fg-1);
+  overflow: hidden;
+}
+
+.shell { position: fixed; inset: 0; display: grid; grid-template-rows: auto 1fr; }
+
+/* ---- top bar ---- */
+.bar {
+  display: flex; align-items: center; gap: 18px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--surface-glass-2);
+  background: var(--surface-glass);
+  -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+  z-index: 4;
+}
+.bar .mark { font-weight: 500; font-size: 15px; letter-spacing: -0.01em; color: var(--fg-1); }
+.bar .mark .sep { color: var(--fg-3); font-weight: 200; padding: 0 6px; }
+.bar .title-block { line-height: 1.3; }
+.bar .title-block .t { font-weight: 500; font-size: 15px; color: var(--fg-1); }
+.bar .title-block .s { font-family: var(--font-mono); font-size: 10px; color: var(--fg-2); }
+.bar .spacer { flex: 1; }
+.bar .stamp { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-2); text-align: right; }
+.bar .stamp .k { color: var(--fg-1); font-weight: 500; }
+
+/* ---- canvas ---- */
+.canvas-wrap { position: relative; overflow: hidden; }
+#stage { position: absolute; inset: 0; cursor: grab; }
+#stage.panning { cursor: grabbing; }
+svg { width: 100%; height: 100%; display: block; }
+
+/* spine backbone line + edges */
+.backbone { stroke: var(--fg-3); stroke-width: 1.4; }
+.edge { stroke: var(--fg-2); stroke-width: 1.3; opacity: 0; transition: opacity .15s; }
+.edge.on { opacity: 0.65; }
+
+/* ---- nodes ---- */
+.node { cursor: pointer; transition: opacity .15s; }
+.node .box { fill: var(--st); fill-opacity: 0.15; stroke: var(--st); stroke-width: 1.5; rx: 9; ry: 9; }
+.node .chip { fill: var(--st); }
+.node text { fill: var(--fg-1); font-size: 12.5px; dominant-baseline: middle; }
+.node .grp { fill: var(--fg-3); font-family: var(--font-mono); font-size: 8.5px; letter-spacing: 0.14em; text-transform: uppercase; }
+.node:hover .box { stroke-width: 2.4; fill-opacity: 0.22; }
+.node.sel .box { stroke-width: 2.7; fill-opacity: 0.28; }
+.node.dim { opacity: 0.18; }
+
+/* ---- glass panels (inspector, legend, hud) ---- */
+.glass {
+  position: absolute;
+  background: var(--surface-glass);
+  -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+  border: 1px solid var(--surface-glass-2);
+  border-radius: 14px;
+  color: var(--fg-1);
+}
+
+.inspector { top: 18px; right: 18px; width: 320px; padding: 16px 18px; font-size: 12px; line-height: 1.5; }
+.inspector .h { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-2); margin-bottom: 8px; }
+.inspector .name { font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+.inspector .state-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.inspector .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--st, var(--fg-1)); flex: none; }
+.inspector .state-name { font-family: var(--font-mono); font-size: 11px; }
+.inspector .state-mean { color: var(--fg-2); }
+.inspector .field { margin: 8px 0; }
+.inspector .field .lbl { font-family: var(--font-mono); font-size: 8.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-3); display: block; margin-bottom: 2px; }
+.inspector .ptr { font-family: var(--font-mono); font-size: 10.5px; color: var(--fg-2); word-break: break-word; }
+.inspector .idle { color: var(--fg-2); }
+
+.legend { bottom: 18px; left: 18px; padding: 14px 16px 12px; }
+.legend .h { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-2); margin-bottom: 10px; }
+.legend .row { display: flex; align-items: center; gap: 9px; margin: 5px 0; font-size: 11px; }
+.legend .sw { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+.legend .row .lbl { color: var(--fg-1); }
+.legend .row .sub { color: var(--fg-2); font-size: 10px; }
+
+.hud { bottom: 18px; right: 18px; display: flex; align-items: center; gap: 4px; padding: 6px; }
+.hud button { font-family: var(--font-mono); font-size: 14px; width: 30px; height: 30px; border: none; border-radius: 8px; background: transparent; color: var(--fg-1); cursor: pointer; }
+.hud button:hover { background: var(--surface-glass-2); }
+.hud .pct { font-family: var(--font-mono); font-size: 10px; color: var(--fg-2); width: 40px; text-align: center; }
+
+.caption { bottom: 18px; left: 50%; transform: translateX(-50%); padding: 9px 14px; font-size: 10px; color: var(--fg-2); text-align: center; line-height: 1.45; }
+.caption b { color: var(--fg-1); }
+
+.corner-tick { position: absolute; width: 14px; height: 14px; border: 1px solid var(--surface-glass-2); pointer-events: none; z-index: 3; }
+.corner-tick.tl { top: 8px; left: 8px; border-right: 0; border-bottom: 0; }
+.corner-tick.tr { top: 8px; right: 8px; border-left: 0; border-bottom: 0; }
+.corner-tick.bl { bottom: 8px; left: 8px; border-right: 0; border-top: 0; }
+.corner-tick.br { bottom: 8px; right: 8px; border-left: 0; border-top: 0; }

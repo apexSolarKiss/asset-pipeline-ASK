@@ -1,0 +1,91 @@
+/* =========================================================================
+   spectral-state.css — ASK Spectral State
+
+   A semantic state-color system: a small, identity-free vocabulary of STATE
+   roles, each mapped to a neon hue on a 12-step wheel, calibrated per theme.
+
+   SPECIALIZED, OPT-IN foundation primitive. It is for surfaces that encode the
+   *state* of architectural elements — e.g. an interactive state diagram where a
+   node's color says "this is earned / held / deflated". It is NOT general UI
+   color, and it is NOT used by the static diagram scaffolds (`diagram-tree`,
+   `diagram-spine-static`), which are structural and assert no state.
+
+   Layer this ON TOP of `colors_and_type.css` — it relies on that file's theme
+   resolution (`[data-theme]` + `prefers-color-scheme`) and its `--fg-*` tokens.
+   Offline; no CDN.
+
+   STATUS: v1 — AP-proving-first. The role vocabulary and the wheel STRUCTURE
+   (green-earned / red-deflated anchors, health ramp, cool arc, neutral field)
+   are stable. The exact S/L calibration and per-theme values are PROVISIONAL,
+   to be confirmed after the first consumer (asset-pipeline-ASK's interactive
+   spine) proves them in a real surface.
+
+   ---------------------------------------------------------------------------
+   WHEEL LOGIC
+   ---------------------------------------------------------------------------
+   12-hue neon wheel as the palette RESOURCE: hsl(H, S, L), H = n×30°. The wheel
+   is a resource, not a mandate to invent twelve states — only the eight roles
+   below draw from it. Meaning comes from SPARSE, intentional coloring against
+   the neutral lavender field: a node takes a neon hue only to say something.
+
+   Health arc — the maturity ramp (one ordered axis, green "go" → red "no"):
+     state-earned      120°  green        operationally grounded at full depth
+     state-structural   90°  yellow-green  schema/structurally proven
+     state-partial      60°  yellow        operational at bounded depth
+     state-proposed     30°  orange        a candidate; not yet pressured
+     state-deflated      0°  red           pressure showed it unnecessary / dead
+
+   Cool arc — orthogonal categories (NOT a health judgment; "different axis"):
+     state-held        180°  cyan          a named open question
+     state-external    270°  violet        owned elsewhere (inherited / upstream)
+
+   Neutral — the lavender identity field (the default; no neon):
+     state-neutral     = var(--fg-1)       no asserted state
+
+   ONE state role per node. Color encodes state ONLY — evidence depth, risk,
+   normative force, and structural-axis membership belong in panels/metadata on
+   the consuming surface, never in hue. (Consumer-side rule, noted for context.)
+   ========================================================================= */
+
+/* ---------- Light (default) — on the light lavender field ----------
+   Deeper, more saturated neon so each hue reads against the light gradient.
+   (S 85% / L 45%.) Yellow/green are the legibility watch-points on light;
+   provisional pending the AP proof. */
+:root {
+  --state-earned:     hsl(120, 85%, 45%);
+  --state-structural: hsl( 90, 85%, 45%);
+  --state-partial:    hsl( 60, 85%, 45%);
+  --state-proposed:   hsl( 30, 85%, 45%);
+  --state-deflated:   hsl(  0, 85%, 45%);
+  --state-held:       hsl(180, 85%, 45%);
+  --state-external:   hsl(270, 85%, 45%);
+  /* no asserted state — renders as the theme's default foreground (lavender
+     field), never a neon. Auto-flips per theme via --fg-1. */
+  --state-neutral:    var(--fg-1);
+}
+
+/* ---------- Dark — on the dark ink field ----------
+   Bright neon (S 95% / L 60%) to pop against the dark gradient. Explicit theme
+   + auto (prefers-color-scheme) blocks mirror each other, matching the
+   foundation's theme model. --state-neutral inherits var(--fg-1) (lavender). */
+:root[data-theme="dark"] {
+  --state-earned:     hsl(120, 95%, 60%);
+  --state-structural: hsl( 90, 95%, 60%);
+  --state-partial:    hsl( 60, 95%, 60%);
+  --state-proposed:   hsl( 30, 95%, 60%);
+  --state-deflated:   hsl(  0, 95%, 60%);
+  --state-held:       hsl(180, 95%, 60%);
+  --state-external:   hsl(270, 95%, 60%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    --state-earned:     hsl(120, 95%, 60%);
+    --state-structural: hsl( 90, 95%, 60%);
+    --state-partial:    hsl( 60, 95%, 60%);
+    --state-proposed:   hsl( 30, 95%, 60%);
+    --state-deflated:   hsl(  0, 95%, 60%);
+    --state-held:       hsl(180, 95%, 60%);
+    --state-external:   hsl(270, 95%, 60%);
+  }
+}
