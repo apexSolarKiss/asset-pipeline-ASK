@@ -6,8 +6,8 @@ design-system-ASK repo and **no Google Fonts CDN dependency** — the diagram
 renders entirely from these local files.
 
 **Synced from:** `apexSolarKiss/design-system-ASK`
-**Pinned commit:** `3ecc03e615c8862d72b364ded71572c6139b498e`
-**Synced:** 2026-06-02
+**Pinned commit:** `1c565e2fc6d2a085f40db6046c985ec77ff9bb2d`
+**Synced:** 2026-06-04 (foundation light-mode foreground ramp `f9eed18` included; pinned as part of consuming the `diagram-spine-static` vertical scaffold; fonts unchanged from the prior pin; shared by the architecture-tree, ontology-tree, and inheritance-spine diagrams)
 
 | File | Upstream source | Role |
 |---|---|---|
