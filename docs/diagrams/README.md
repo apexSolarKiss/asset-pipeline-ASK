@@ -44,6 +44,12 @@ diagrams-spine-engine.js                        vertical (centered spine) layout
 # Shared scaffold files — byte-identical across both patterns; one copy
 diagrams.css                                    compiled Tier 1 + Tier 2 style
 export-png.js                                   3840×2880 PNG export
+
+interactive/                                     AP-owned interactive surface (different artifact class)
+  asset-pipeline-ASK_ia-state-spine.html         the IA state spine
+  asset-pipeline-ASK_ia-state-spine.data.js      node→state data (AP authorship)
+  ia-state-spine-engine.js                       AP-built layout + interaction engine (vanilla JS + SVG)
+  ia-state-spine.css                             AP-owned interactive styling
 ```
 
 This folder hosts two **Class A** static diagram patterns inherited by reference from `design-system-ASK`: `diagram-tree` (horizontal cascade) and `diagram-spine-static` (vertical centered spine; engine `diagrams-spine-engine.js`, delivered at merge `1c565e2`). `diagrams.css` and `export-png.js` are **byte-identical** across the two patterns, so this folder keeps **one shared copy** rather than vendoring each — a deliberate, documented choice. The two layout engines (`diagrams-engine.js` / `diagrams-spine-engine.js`) are scaffold-owned and not edited locally.
@@ -54,7 +60,16 @@ The diagrams depict **different axes** of the architecture and must not be colla
 - **ontology tree** (horizontal) — Axis A: the kinds of information the definition layer structures (a branching classification → horizontal cascade).
 - **inheritance spine** (vertical) — Axis B: where information lives and how it inherits / overrides / combines (a linear chain → centered spine).
 
-The two IA diagrams (ontology, inheritance) are **structural** maps — they assert **no** maturity state (no earned/held/legacy); their legends are repurposed as reading notes, and architectural nuance rides in the node notes. Maturity-state semantics belong to a separate (interactive) surface on a different axis.
+The two IA diagrams (ontology, inheritance) are **structural** maps — they assert **no** maturity state (no earned/held/legacy); their legends are repurposed as reading notes, and architectural nuance rides in the node notes. Maturity-state semantics belong to the separate interactive surface below.
+
+## Interactive surface — IA state spine
+
+`interactive/asset-pipeline-ASK_ia-state-spine.html` is the **state** view the static structural diagrams deliberately omit: architectural surfaces, seams, and open carrier-shape questions colored by their **current state**, with the four workflow modes as orthogonal axes that selection isolates. Hover previews, click commits a selection (dimming all but the intersecting axes), and the inspector shows the state's evidence, qualifiers, mode coverage, and the authoritative repo pointer.
+
+- **Different artifact class.** It is an AP-owned interactive surface, not a Class A static scaffold — its own vanilla-JS/SVG layout + interaction engine (`ia-state-spine-engine.js`) and styling (`ia-state-spine.css`). It does **not** use `diagrams.css` / the static engines / `export-png.js`.
+- **Color via ASK Spectral State, by reference.** Node color comes from the design-system-ASK `--state-*` role tokens (`_dsa-tokens/spectral-state.css`, opt-in module pinned at `e30c101`). AP consumes by reference and does not mint or edit the palette.
+- **Color encodes state only.** Evidence depth, risk, mode coverage, and repo pointers are inspector metadata — never hue. One state per node.
+- **Illustrative, not source truth.** The node→state data (`…ia-state-spine.data.js`) is AP authorship over the architecture's current state; `docs/architecture.md` remains authoritative.
 
 ## How to use
 
