@@ -18,6 +18,7 @@ Screenshots and generated images are not committed evidence unless a future evid
 - [AGENTS.md](../AGENTS.md): repo-local workflow rules; single-node operating model (Claude Code as control surface and executor); rules are agent-agnostic and apply to whoever is executing
 - [docs/architecture.md](architecture.md): high-level architecture stance and current ontology direction
 - [docs/layer-disambiguation-note-v1.md](layer-disambiguation-note-v1.md): deconfliction reference for the project's four uses of "layer" (Axis A ontology / B inheritance / C variation / D runtime); reconciles the 3/5/6/7/8-layer counts and records why the architecture's eight-layer list spans two meanings
+- [docs/foundational-premises-v1.md](foundational-premises-v1.md): the load-bearing premises the architecture rests on, stated once — prompting is not architecture; visual anchoring is a structural override; product truth / reference / constraint / example / output are different objects; with pointers to the already-stated generated-≠-governed and creative-discretion premises
 - [docs/problem-and-approach.md](problem-and-approach.md): concise statement of the workflow-structure problem and repo approach
 - [docs/method.md](method.md): current method, ontology / application split, and discovery / diagnosis / redesign sequence
 
