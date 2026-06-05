@@ -57,9 +57,14 @@
     questions.forEach(function (q, i) { place(q, 185, 290 + i * 96, 256, 54); });
     if (external) place(external, CX, SY0 + spine.length * SDY + 18, 290, 48);
 
-    // backbone (behind nodes)
+    // The dot (state chip) center of a node — edges anchor here, not the box center.
+    // Mirrors the chip position drawn in drawNode (left of the box, vertically centered).
+    function chip(id) { var L = layout[id]; return { x: L.cx - L.w / 2 + 14, y: L.cy }; }
+
+    // backbone (behind nodes) — runs through the spine dots
     if (spine.length) {
-      el('line', { 'class': 'backbone', x1: CX, y1: layout[spine[0].id].cy, x2: CX, y2: layout[spine[spine.length - 1].id].cy }, edgesG);
+      var sc0 = chip(spine[0].id), scN = chip(spine[spine.length - 1].id);
+      el('line', { 'class': 'backbone', x1: sc0.x, y1: sc0.y, x2: scN.x, y2: scN.y }, edgesG);
     }
 
     // ---- draw nodes ----
@@ -110,12 +115,12 @@
         if (id === n.id) gs[i].classList.add('sel');
         else if (!rel[id]) gs[i].classList.add('dim');
       }
-      // edges from n to related
-      var A = layout[n.id];
+      // edges from n to related — anchored at the dot (chip) centers, not the box centers
+      var A = chip(n.id);
       Object.keys(rel).forEach(function (id) {
         if (id === n.id) return;
-        var B = layout[id];
-        el('line', { 'class': 'edge on', x1: A.cx, y1: A.cy, x2: B.cx, y2: B.cy }, edgesG);
+        var B = chip(id);
+        el('line', { 'class': 'edge on', x1: A.x, y1: A.y, x2: B.x, y2: B.y }, edgesG);
       });
       inspectorShow(n);
     }
