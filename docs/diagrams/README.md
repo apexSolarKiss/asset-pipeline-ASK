@@ -27,12 +27,20 @@ The diagram conforms to [`apexSolarKiss/design-system-ASK`](https://github.com/a
 
 ```text
 README.md                                       this file
-asset-pipeline-ASK_architecture-tree.html       renders TREE_D04
+_dsa-tokens/                                    pinned design-system-ASK Tier 1 + Tier 2 mirror (no CDN)
+asset-pipeline-ASK_architecture-tree.html       renders TREE_D04 (repo architecture / artifact structure)
 asset-pipeline-ASK_architecture-tree.source.js  TREE_D04 data
-diagrams-engine.js                              layout + pan/zoom engine
+asset-pipeline-ASK_ontology-tree.html           renders TREE_ONTOLOGY (Axis A — information kinds)
+asset-pipeline-ASK_ontology-tree.source.js      TREE_ONTOLOGY data
+diagrams-engine.js                              horizontal (top-aligned cascade) layout + pan/zoom engine
 diagrams.css                                    compiled Tier 1 + Tier 2 style
 export-png.js                                   3840×2880 PNG export
 ```
+
+Both diagrams use the same horizontal `diagram-tree` engine. They depict **different axes** of the architecture and must not be collapsed into one picture (basis: [`docs/layer-disambiguation-note-v1.md`](../layer-disambiguation-note-v1.md)):
+
+- **architecture tree** — repo architecture / artifact structure / plateau state.
+- **ontology tree** — Axis A: the kinds of information the definition layer structures. A **structural** map — it asserts **no** maturity state (no earned/held/legacy); the legend is repurposed as a reading note. Maturity-state semantics belong to a separate (interactive) surface on a different axis.
 
 ## How to use
 
