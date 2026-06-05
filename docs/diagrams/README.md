@@ -28,19 +28,33 @@ The diagram conforms to [`apexSolarKiss/design-system-ASK`](https://github.com/a
 ```text
 README.md                                       this file
 _dsa-tokens/                                    pinned design-system-ASK Tier 1 + Tier 2 mirror (no CDN)
+
+# Horizontal — Class A diagram-tree (top-aligned cascade)
 asset-pipeline-ASK_architecture-tree.html       renders TREE_D04 (repo architecture / artifact structure)
 asset-pipeline-ASK_architecture-tree.source.js  TREE_D04 data
 asset-pipeline-ASK_ontology-tree.html           renders TREE_ONTOLOGY (Axis A — information kinds)
 asset-pipeline-ASK_ontology-tree.source.js      TREE_ONTOLOGY data
-diagrams-engine.js                              horizontal (top-aligned cascade) layout + pan/zoom engine
+diagrams-engine.js                              horizontal (top-aligned cascade) layout engine
+
+# Vertical — Class A diagram-spine-static (centered spine)
+asset-pipeline-ASK_inheritance-spine.html       renders TREE_INHERITANCE (Axis B — inheritance ladder)
+asset-pipeline-ASK_inheritance-spine.source.js  TREE_INHERITANCE data
+diagrams-spine-engine.js                        vertical (centered spine) layout engine
+
+# Shared scaffold files — byte-identical across both patterns; one copy
 diagrams.css                                    compiled Tier 1 + Tier 2 style
 export-png.js                                   3840×2880 PNG export
 ```
 
-Both diagrams use the same horizontal `diagram-tree` engine. They depict **different axes** of the architecture and must not be collapsed into one picture (basis: [`docs/layer-disambiguation-note-v1.md`](../layer-disambiguation-note-v1.md)):
+This folder hosts two **Class A** static diagram patterns inherited by reference from `design-system-ASK`: `diagram-tree` (horizontal cascade) and `diagram-spine-static` (vertical centered spine; engine `diagrams-spine-engine.js`, delivered at merge `1c565e2`). `diagrams.css` and `export-png.js` are **byte-identical** across the two patterns, so this folder keeps **one shared copy** rather than vendoring each — a deliberate, documented choice. The two layout engines (`diagrams-engine.js` / `diagrams-spine-engine.js`) are scaffold-owned and not edited locally.
 
-- **architecture tree** — repo architecture / artifact structure / plateau state.
-- **ontology tree** — Axis A: the kinds of information the definition layer structures. A **structural** map — it asserts **no** maturity state (no earned/held/legacy); the legend is repurposed as a reading note. Maturity-state semantics belong to a separate (interactive) surface on a different axis.
+The diagrams depict **different axes** of the architecture and must not be collapsed into one picture (basis: [`docs/layer-disambiguation-note-v1.md`](../layer-disambiguation-note-v1.md)):
+
+- **architecture tree** (horizontal) — repo architecture / artifact structure / plateau state.
+- **ontology tree** (horizontal) — Axis A: the kinds of information the definition layer structures (a branching classification → horizontal cascade).
+- **inheritance spine** (vertical) — Axis B: where information lives and how it inherits / overrides / combines (a linear chain → centered spine).
+
+The two IA diagrams (ontology, inheritance) are **structural** maps — they assert **no** maturity state (no earned/held/legacy); their legends are repurposed as reading notes, and architectural nuance rides in the node notes. Maturity-state semantics belong to a separate (interactive) surface on a different axis.
 
 ## How to use
 
