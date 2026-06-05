@@ -16,6 +16,17 @@ Each diagram is a structural snapshot of the repo at a point in time. Diagrams a
 
 The diagram conforms to [`apexSolarKiss/design-system-ASK`](https://github.com/apexSolarKiss/design-system-ASK) Tier 1 + Tier 2 by reference at generation time. The compiled `diagrams.css` in this folder is render support, not identity source truth. `design-system-ASK` remains the visual authority; this folder does not own visual identity.
 
+## Two diagram patterns (one design language)
+
+This folder hosts two **Class A** static diagram patterns inherited by reference from `design-system-ASK`:
+
+- **`diagram-tree`** (horizontal, top-aligned cascade) — the architecture tree.
+- **`diagram-spine-static`** (vertical, centered spine; engine `diagrams-spine-engine.js`) — delivered by `design-system-ASK` (`patterns/diagram-spine-static/`, merge `1c565e2`) and consumed here for the per-axis IA diagrams. The centered-spine placement renders a branching tree as a symmetric fan (fits **Axis A / ontology**) and a single-child chain as a straight spine (fits **Axis B / inheritance**).
+
+`diagrams.css` and `export-png.js` are **byte-identical** across the two patterns; this folder keeps **one shared copy** rather than vendoring each pattern's separately — a deliberate, documented choice. The two patterns differ only in their layout engines (`diagrams-engine.js` vs `diagrams-spine-engine.js`), which are scaffold-owned and not edited locally.
+
+The ontology spine (Axis A) is a **structural** diagram: it depicts kinds of information and asserts **no** maturity state (no earned/held/legacy). Maturity-state semantics belong to the separate v9-class interactive surface, on a different axis. The basis for one-axis-per-diagram is [`docs/layer-disambiguation-note-v1.md`](../layer-disambiguation-note-v1.md).
+
 ## Update cadence
 
 - plateau milestone marker landing on main: refresh the source data file and re-render
@@ -27,9 +38,19 @@ The diagram conforms to [`apexSolarKiss/design-system-ASK`](https://github.com/a
 
 ```text
 README.md                                       this file
+_dsa-tokens/                                    pinned design-system-ASK Tier 1 + Tier 2 mirror (no CDN)
+
+# Horizontal architecture tree — Class A diagram-tree
 asset-pipeline-ASK_architecture-tree.html       renders TREE_D04
 asset-pipeline-ASK_architecture-tree.source.js  TREE_D04 data
-diagrams-engine.js                              layout + pan/zoom engine
+diagrams-engine.js                              horizontal (top-aligned cascade) layout + pan/zoom engine
+
+# Vertical ontology spine — Class A diagram-spine-static (Axis A)
+asset-pipeline-ASK_ontology-spine.html          renders TREE_ONTOLOGY
+asset-pipeline-ASK_ontology-spine.source.js     TREE_ONTOLOGY data
+diagrams-spine-engine.js                         vertical (centered spine) layout engine
+
+# Shared scaffold files — byte-identical across both patterns; one copy
 diagrams.css                                    compiled Tier 1 + Tier 2 style
 export-png.js                                   3840×2880 PNG export
 ```

@@ -103,9 +103,9 @@
   --bg-to:   var(--ask-lavender-light);               /* top-right */
   --bg-gradient: linear-gradient(45deg, var(--bg-from) 0%, var(--bg-to) 100%);
 
-  --fg-1: #FFFFFF;                                    /* primary text on light bg */
-  --fg-2: rgba(255, 255, 255, 0.78);                  /* secondary text */
-  --fg-3: rgba(255, 255, 255, 0.55);                  /* tertiary / hint */
+  --fg-1: #6A637F;                                    /* primary text — dark ink on the light lavender field */
+  --fg-2: #827399;                                    /* secondary text */
+  --fg-3: rgba(130, 115, 153, 0.62);                  /* tertiary / hint */
   --fg-on-card: var(--ask-ink-light);                 /* when text needs to live on surface/white */
 
   --line-1: rgba(255, 255, 255, 0.45);                /* hairline divider */
