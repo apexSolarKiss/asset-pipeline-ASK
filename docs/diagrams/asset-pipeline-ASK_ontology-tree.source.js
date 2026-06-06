@@ -50,11 +50,14 @@ window.TREE_ONTOLOGY = {
     },
     {
       kind: 'section', label: 'Creative discretion',
-      note: 'the bounded zone of allowed variation',
+      note: 'the bounded interpretive aperture through which creative intent may be executed — not intent itself; left open by intent, constraints, and references, assigned to a decision owner, closed at governance',
       children: [
-        { label: 'where freedom enters', note: 'scene · styling · narrative, within bounds' },
+        { label: 'bounded interpretive aperture', note: 'the residual zone of allowed variation left open after intent, constraints, and references' },
+        { label: 'aimed by creative intent', note: 'intent sets the direction the aperture points; discretion is not intent itself' },
         { label: 'bounded by constraints', note: 'discretion operates inside the constraint envelope' },
-        { label: 'validated at governance', note: 'choices ratified at the curation / approval seam' },
+        { label: 'shaped by references', note: 'approved references guide the allowed variation' },
+        { label: 'assigned to decision ownership', note: 'a decision owner is granted or withheld the latitude' },
+        { label: 'validated at governance', note: 'choices ratified / closed at the curation / approval seam' },
       ],
     },
     {
