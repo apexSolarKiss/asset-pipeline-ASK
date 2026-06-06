@@ -1,16 +1,15 @@
-/* ia-state-spine-export.js — AP-owned 3840×2880 PNG export for the interactive
-   IA state spine.
+/* export-png.js — 3840×2880 PNG export for the interactive IA state spine.
 
-   Parity with the static diagrams' export-png.js (same page size, same "PNG"
-   button in the .hud, same ?export=png auto-run hook, same filename grammar),
-   but adapted to this AP-owned interactive surface: the diagram <svg> has no
-   width/height attributes (it is CSS-sized and pan/zoomed via a #vp transform),
-   and node color comes from the per-node --st → --state-* role rather than the
-   scaffold's --node-fill. So the content bounds are read from #vp.getBBox() and
-   every presentation property (the resolved Spectral State colors, foundation
-   chrome colors, fonts) is baked inline into a freshly serialized, self-contained
-   SVG before it is rasterized — no external CSS, no var() left to resolve, theme
-   correct at click time.
+   design-system-ASK Class A *interactive* diagram pattern. Parity with the static
+   diagrams' export-png.js (same page size, same "PNG" button in the .hud, same
+   ?export=png auto-run hook, same filename grammar), adapted to the interactive
+   surface: the diagram <svg> has no width/height attributes (it is CSS-sized and
+   pan/zoomed via a #vp transform), and node color comes from the per-node
+   --st → --state-* role rather than the static scaffold's --node-fill. So the
+   content bounds are read from #vp.getBBox() and every presentation property (the
+   resolved Spectral State colors, foundation chrome colors, fonts) is baked inline
+   into a freshly serialized, self-contained SVG before it is rasterized — no
+   external CSS, no var() left to resolve, theme correct at click time.
 
    Color encodes state only; this is a faithful snapshot of the rendered surface,
    not a re-interpretation of it.

@@ -1,11 +1,10 @@
-/* ia-state-spine.css — AP-owned styling for the interactive IA state spine.
+/* diagrams-interactive-spine.css — styling for the interactive IA state spine.
 
-   A different artifact class from the static diagram scaffolds (diagram-tree /
-   diagram-spine-static): this is AP's own interactive surface. It uses the
-   design-system-ASK foundation tokens (--bg-gradient, --fg-*, --surface-glass,
-   --font-*) from colors_and_type.css, and the ASK Spectral State role tokens
-   (--state-*) from spectral-state.css. It does NOT depend on the scaffold's
-   diagrams.css.
+   design-system-ASK Class A *interactive* diagram pattern (sibling of the static
+   diagram-static-H / diagram-static-V scaffolds). It uses the design-system-ASK
+   foundation tokens (--bg-gradient, --fg-*, --surface-glass, --font-*) from
+   colors_and_type.css, and the ASK Spectral State role tokens (--state-*) from
+   spectral-state.css. It does NOT depend on the static scaffolds' diagrams.css.
 
    State color is applied via a single custom property --st per node (set by the
    engine to one --state-* role). Color encodes state ONLY. */

@@ -1,9 +1,16 @@
-/* ia-state-spine-engine.js — AP-owned interactive engine for the IA state spine.
+/* diagrams-interactive-spine-engine.js — interactive engine for the IA state spine.
 
-   Vanilla JS + SVG, self-contained, offline. A different artifact class from the
-   static diagram scaffolds: AP builds and owns this layout + interaction model.
-   It consumes the ASK Spectral State role tokens (--state-*) by reference for
-   node color (state only) and the design-system foundation tokens for chrome.
+   design-system-ASK Class A *interactive* diagram pattern — the interactive sibling
+   of the static diagram-static-H / diagram-static-V scaffolds. Vanilla JS + SVG,
+   self-contained, offline. A navigable, stateful information-architecture surface:
+   a vertical spine of layers with mode / question / external branches, each node
+   colored by its state, with hover/click selection, a state inspector, pan/zoom,
+   and a legend.
+
+   Consumes the ASK Spectral State role tokens (--state-*) by reference for node
+   color (state only) and the design-system foundation tokens for chrome. The
+   consuming project owns its source data (window.IA_STATE_SPINE) + HTML chrome;
+   this engine / CSS / export are design-system-owned — do not edit them.
 
    Public: window.IA_SPINE.render(window.IA_STATE_SPINE)
 */
