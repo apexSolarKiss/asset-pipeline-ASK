@@ -63,6 +63,7 @@ Background article series, in chronological order:
 - [The Beautiful Picture is Not the…](https://atomicspacekitten.substack.com/p/the-beautiful-picture-is-not-the)
 - [The Creative Act of Selection](https://atomicspacekitten.substack.com/p/the-creative-act-of-selection)
 - [From Execution Proof Back to Normative Structure](https://atomicspacekitten.substack.com/p/from-execution-proof-back-to-normative)
+- [Creative Discretion Is Not Creative Intent](https://atomicspacekitten.substack.com/p/creative-discretion-is-not-creative)
 
 ## License
 
