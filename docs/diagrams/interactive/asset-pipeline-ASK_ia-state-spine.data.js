@@ -23,7 +23,7 @@ window.IA_STATE_SPINE = {
   meta: {
     title: 'Layered IA — state',
     subtitle: 'Axis-independent state surface · what is earned / held / deflated, and where',
-    stamp: { source: 'source-v1', render: 'render-v1', date: '2026-06-04' },
+    stamp: { source: 'source-v2', render: 'render-v4', date: '2026-06-04' },
   },
 
   // Legend / state vocabulary (ASK Spectral State).
@@ -44,18 +44,19 @@ window.IA_STATE_SPINE = {
       evidence: 'Framing root — asserts no state.', pointer: 'docs/architecture.md' },
 
     // ---- mode axes (orthogonal; selection isolates) ----
-    { id: 'm-sku', group: 'mode', label: 'SKU-driven', state: 'earned',
-      evidence: 'Full-flow generation → curation → governance at PKT-SKU-007 / 009 / 010.',
-      pointer: 'docs/architecture.md §Evidence Depth' },
-    { id: 'm-collection', group: 'mode', label: 'collection / merchandising', state: 'earned',
-      evidence: 'Full-flow at PKT-COLL-001; the composite-anchor mutation was operationally deflated here.',
-      pointer: 'docs/collection-mode-operational-test-findings-v1.md' },
+    // Left-to-right: brand campaign → marketing → collection → SKU-driven.
     { id: 'm-campaign', group: 'mode', label: 'brand campaign / editorial', state: 'partial',
       evidence: 'Bounded full-flow at PKT-CAMP-004 (one packet, three slots).',
       qualifier: 'bounded operational depth', pointer: 'docs/campaign-mode-fork-resolver-test-phase-d-findings-v1.md' },
     { id: 'm-marketing', group: 'mode', label: 'marketing / message-driven', state: 'structural',
       evidence: 'Structurally represented, not operationally earned — PKT-MSG-001 is findings-only; no full-flow.',
       qualifier: 'weakest mode', pointer: 'docs/architecture.md §Evidence Depth' },
+    { id: 'm-collection', group: 'mode', label: 'collection / merchandising', state: 'earned',
+      evidence: 'Full-flow at PKT-COLL-001; the composite-anchor mutation was operationally deflated here.',
+      pointer: 'docs/collection-mode-operational-test-findings-v1.md' },
+    { id: 'm-sku', group: 'mode', label: 'SKU-driven', state: 'earned',
+      evidence: 'Full-flow generation → curation → governance at PKT-SKU-007 / 009 / 010.',
+      pointer: 'docs/architecture.md §Evidence Depth' },
 
     // ---- spine: IA layers / surfaces (upstream → downstream) ----
     { id: 's-brand-system', group: 'spine', label: 'brand-system layer', state: 'held',
