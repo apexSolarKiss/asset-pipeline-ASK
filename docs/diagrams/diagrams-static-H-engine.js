@@ -78,7 +78,12 @@
       const padX = kind === 'root' ? ROOT_PAD_X : BOX_PAD_X;
       const displayLabel = kind === 'section' ? '/ ' + node.label.toUpperCase() : node.label;
       const labelW = measure(displayLabel, fontFor(node), kind === 'section' ? LS_SECTION : 0);
-      let noteW = node.note ? measure(node.note, FONT_NOTE, LS_NOTE) : 0;
+      // Only measure notes for kinds that actually render them. The section branch
+      // renders label + tag + rule but NOT the note, so a section note must not affect
+      // column width — otherwise an invisible note stretches the column and its connector
+      // spans (see the regression case in diagram-static-H.source.js). Section tags ARE
+      // rendered, so they are still measured just below.
+      let noteW = (node.note && kind !== 'section') ? measure(node.note, FONT_NOTE, LS_NOTE) : 0;
       if (kind === 'section' && node.tag) {
         noteW = Math.max(noteW, measure('// ' + node.tag, FONT_TAG, LS_TAG));
       }
