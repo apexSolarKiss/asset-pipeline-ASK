@@ -45,11 +45,14 @@ For routing to specific depth artifacts, see Source-of-Truth Routing below. For 
 *Runtime / process layers (Axis D):*
 
 - **candidate generation layer** — transient attachments
-- **curation seam** — two distinct senses observed:
+- **curation seam** — three acts, which may co-locate or separate:
   - **authorship-bearing discretion** (where creative judgment actually happens; site varies by mode and packet; appears concentrated at the seam in SKU-mode evidence; surfaced upstream at prompt-authoring and prompt-remediation in campaign-mode evidence)
-  - **governance-bearing curation** (where output becomes governed asset; always at the seam; carries five-axis provenance + curator + `curation_pattern`)
+  - **selection** (the adjudicative act: choosing one candidate and making it true to the intent — the decision)
+  - **governance-bearing curation** (the durable record of that selection — output becomes governed asset; always at the seam; carries five-axis provenance + curator + `curation_pattern`)
   - These may co-locate (SKU evidence appears to) or separate (campaign-mode evidence at PKT-CAMP-004 did)
 - **governed asset layer** — durable terminal output; carries `asset_attachment` self-contained writeback
+
+**Definition-layer chain.** The runtime layers above carry the tail of one ordered chain the definition layer exists to keep distinct: **creative intent** (the aim) → the **standards** that envelope it (constraints, references, output role, decision owner) → **creative discretion** (the bounded, reviewable judgment that opens the aperture and is exercised at selection to close it) → the **aperture** of permitted variance → **generation / execution** (fills the aperture with candidate variance) → **selection** (the adjudicative act that chooses one candidate and makes it true to the intent) → **governance** (records the selection and makes it durable). The correction this makes architectural: **selection sits between generation and governance** — governance *records* the selection; it is not the selection. This names the distinctions the open questions above flag ("where discretion enters," "where approvals live"); what remains open is which carrier holds each link, not whether the links are distinct. Stated at doctrine altitude in [creative-discretion-doctrine-v1.md](creative-discretion-doctrine-v1.md).
 
 **Modes.** Four worked-example modes, each with a mode-specific layer between category and packet (SKU-driven mode has none; brand campaign / editorial mode has two):
 

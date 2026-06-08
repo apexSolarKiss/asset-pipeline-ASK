@@ -50,14 +50,15 @@ window.TREE_ONTOLOGY = {
     },
     {
       kind: 'section', label: 'Creative discretion',
-      note: 'the bounded interpretive aperture through which creative intent may be executed — not intent itself; left open by intent, constraints, and references, assigned to a decision owner, closed at governance',
+      note: 'the bounded, reviewable judgment that opens the aperture and is exercised at selection to close it — weak discretion (judgment within standards); not intent, and not the aperture itself',
       children: [
-        { label: 'bounded interpretive aperture', note: 'the residual zone of allowed variation left open after intent, constraints, and references' },
+        { label: 'opens the aperture', note: 'sets the permitted variance the executor may range over' },
+        { label: 'aperture = permitted variance', note: 'the room the judgment opens; a quantity it sets, distinct from the judgment itself' },
         { label: 'aimed by creative intent', note: 'intent sets the direction the aperture points; discretion is not intent itself' },
         { label: 'bounded by constraints', note: 'discretion operates inside the constraint envelope' },
-        { label: 'shaped by references', note: 'approved references guide the allowed variation' },
+        { label: 'shaped by references', note: 'approved references guide the permitted variance' },
         { label: 'assigned to decision ownership', note: 'a decision owner is granted or withheld the latitude' },
-        { label: 'validated at governance', note: 'choices ratified / closed at the curation / approval seam' },
+        { label: 'exercised at selection; recorded at governance', note: 'the decision makes the candidate true to intent; governance records it — selection is not governance' },
       ],
     },
     {
