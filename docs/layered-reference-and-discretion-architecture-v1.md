@@ -262,6 +262,27 @@ This table is the scale-legibility lens applied directly. Where structural trace
 - **Sites with clean operator-independent trace.** Governance-bearing curation and candidate-selection-as-curation-event carry trace dimensions structurally; a non-author operator can reconstruct *who* decided, *when*, on *what basis* (`capture_reason`), against *what source* (`source_attachment_id`), in *what shape* (`curation_pattern`).
 - **Sites that currently rely on operator-continuous context.** Brand digestion, reference selection, layer translation, packet authorship, slot authorship, prompt remediation, and override / exception handling rely on operator-continuous interpretation. The reasoning behind these decisions is reconstructable only if the operator who made them remains in context — and even then often only in part. The minimum-trace question is the load-bearing one for these sites; the normative-force pass v1 named it; this artifact echoes the naming without resolving it.
 
+## Carrier grammar after the creative-discretion doctrine
+
+The creative-discretion doctrine ([`docs/creative-discretion-doctrine-v1.md`](creative-discretion-doctrine-v1.md)) and its IA propagation into [`docs/architecture.md`](architecture.md) sharpened the definition-layer chain — creative intent → creative discretion → aperture → generation / execution → selection → governance. A read-only carrier audit across the four modes (SKU full-flow; collection; the campaign separation case at PKT-CAMP-004; marketing by paper) then tested whether the sharpened chain demands a new carrier. It does not: the chain survives contact with the live carriers as **grammar**, not schema. This section records that carrier grammar. It expands no doctrine and closes no schema.
+
+**The aperture grant lives in `bounded_creative_discretion`.** The field carries the grant by which the brief opens the aperture; the grammar it should answer is fivefold:
+
+- what latitude is granted;
+- what may vary within it;
+- who owns that latitude — the decision owner, currently the one element the upstream grant most often leaves unnamed (it is named only downstream, at `curator`);
+- what standards bound it;
+- where and how selection closes it.
+
+Constraints (`constraint_rules`) and references (`approved_reference_keys` / `reference_assets`) remain separate carriers — the discretion field states *what may vary*, not *what may not* (per foundational-premises #3). **No separate aperture / permitted-variance field is currently earned:** the aperture *is* the permitted variance the discretion opens, and `bounded_creative_discretion` already holds it.
+
+**The selection ("makes-true") rationale has a home, conditioned on whether selection and governance co-locate.**
+
+- When selection and governance **co-locate** at the seam (SKU and collection modes), `capture_notes` may carry both the selection rationale — *why this candidate is true to intent* — and the governance record — *what made it durable*. The two acts are one moment; one field carrying both is acceptable.
+- When authorship-bearing selection work happens **upstream** (slot authorship, prompt remediation) and governance-bearing curation happens **at the seam** as confirmation — the campaign separation case at PKT-CAMP-004 — the makes-true rationale lives upstream in `prompt_composition_notes` / `slot_evaluation_notes`, and `capture_notes` should cross-reference that upstream rationale while recording the confirmation / governance. The separation case already does this: confirmation-bearing `capture_notes` that point upstream rather than pretending the seam authored the choice.
+
+**No separate selection-rationale carrier is currently earned.** The makes-true rationale is never homeless — it co-locates with governance when the two acts are one moment, and lives upstream with a downstream cross-reference when they separate. The residual is discipline, not schema: record the upstream makes-true rationale in `slot_evaluation_notes` / `prompt_composition_notes` even outside a fork-resolver test, and reference its location from `capture_notes` whenever `curation_pattern` is confirmation-bearing.
+
 ## Cross-Cuts: Dining-vs-Bedroom Conceptual Pressure
 
 The dining-vs-bedroom contrast is conceptual pressure on the architecture's category-layer behavior. It is paper-only — the repo's operational evidence is in furniture, with collection mode's calm living-room grouping the cross-category-closest case. The contrast is named because it surfaces what same-category evidence does not pressure.
