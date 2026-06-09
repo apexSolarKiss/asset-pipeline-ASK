@@ -41,6 +41,12 @@ Then read the latest milestone in `docs/milestones/` and any artifacts relevant 
 
 For external context, read the grounding note.
 
+For Airtable prototype work, also read:
+
+- `docs/airtable-connector-tool-capability-limitations-v1.md`
+
+Before schema setup, field-agent setup, attachment handling, record mutation, generation/capture, or cross-base operationalization, confirm which steps are connector-supported and which require Airtable UI / manual hybrid execution. This is a pointer rule — the limitations doc remains the refreshable source for current tool-layer constraints; do not duplicate them here.
+
 ---
 
 ## Inbound Handoff TBI Marker
