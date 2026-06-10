@@ -4,11 +4,11 @@
 
 ## What this is
 
-An open-source scaffold for turning brand style guides, creative rules, and workflow constraints into machine-usable normative structure for AI-native visual asset production workflows.
+An open-source information architecture for commercial visual-asset workflows: it turns brand style guides, creative rules, and workflow constraints into machine-usable normative structure for AI-native visual asset production.
 
-This is not a better image-generation interface; it is a structured definition layer for making visual-production intent, constraints, references, outputs, and governance machine-usable.
+This is not a better image-generation interface. It is a structured definition layer for making visual-production intent, constraints, references, outputs, and governance machine-usable.
 
-The taxonomy and ontology are still being defined. The repository exists to create a disciplined place for that design work to happen.
+The reusable object is a **portable asset-definition package** — the substrate-independent definition layer for a commercial visual-asset workflow: product truth, business and creative intent, constraints, required outputs, slot variation, visual references, decision ownership, approval boundaries, capture/governance rules, and reuse/family-coherence rules, carried as each workflow needs them. The repository is a current worked reference architecture — a prototype proof of that layer, refined as evidence accumulates, not a finished product spec.
 
 ## What claim it makes
 
@@ -23,9 +23,11 @@ The repo is building a durable definition layer above changing tools and models,
 - SKU-driven product imagery — operationally grounded at full-flow depth
 - collection / merchandising — operationally grounded at full-flow depth
 - brand campaign / editorial — bounded full-flow plus structural-proof depth
-- marketing / message-driven — structural-proof depth only; full-flow operationally unearned
+- marketing / message-driven — message-hero full-flow proven in-base; support slot held
 
 Still-image first; video extension is downstream of the layered model stabilizing.
+
+The 2c marketing hero now demonstrates the full chain end to end inside the system: the definition layer drives generation, candidates accumulate, a human curator selects one, the selected candidate is captured into a governed asset with no external import, and the output slot is accepted. Across the other worked modes, the same package grammar is pressured at uneven evidence depth. Airtable is the worked substrate that demonstrates this — one substrate, not the deliverable. The deliverable is the portable definition layer above it, which is substrate-independent.
 
 ## What to read next
 
