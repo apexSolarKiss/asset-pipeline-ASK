@@ -113,6 +113,22 @@ For Dropbox-synced files, a one-time programmatic batch via the Dropbox API:
 
 **Affects:** any AI field-agent field creation moment in a base with pre-existing rows. Cost implications at scale — one auto-run per existing row, charged at field-creation time. Content-discipline implication — input cleanliness should be settled before field creation, not after, because the operator cannot opt out of the first run.
 
+## Known Capability Notes (planning-relevant)
+
+These are not gaps. They are tool capabilities recorded because they resolve planning questions encountered in prototype work — the complement to the limitations above.
+
+### A. AI field-agent Image generation: aspect ratio + resolution are set in Output options, not the prompt
+
+The in-base AI field-agent Image field constrains output framing directly, at parity with an external tool (e.g. Flow) on output control. Its **Output options** expose:
+
+- **Aspect ratio** (menu as of June 2026; UI-surfaced, subject to change): Auto · Square (1:1) · Portrait (2:3) · Landscape (3:2) · Tall Portrait (3:4) · Standard (4:3) · Vertical (9:16) · Widescreen (16:9) · Ultra-wide (21:9)
+- **Resolution:** Auto · 1K · 2K · 4K
+- plus file type / format / file name
+
+**Plan implication:** set aspect ratio and resolution in Output options, not in the prompt. `slot_prompt` carries composition and aesthetic only; output framing is a field setting. Default Auto may yield an unintended framing. Combined with native candidate accumulation in `slot_generated_image_v1`, in-base field-agent generation can support prototype-generated output candidates without external transport. External tools remain appropriate for synthetic inputs or when in-base generation lacks a needed capability documented for the run.
+
+**Confirmed via:** integrated base `app4sBiFw2tft17VF` `output_slots.slot_generated_image_v1` field-agent setup; Phase 2c marketing-hero in-base generation (June 2026). Menu values are UI-surfaced and may evolve — refresh as tooling changes.
+
 ## Implications For Future Airtable Prototype Building
 
 When planning Airtable mutation work, the plan-before-execute step should include a **tool-capability check** in addition to the schema-fit check:
