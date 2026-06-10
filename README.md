@@ -42,7 +42,11 @@ The strategic reader path:
 
 ## One concrete example
 
-The cleanest layered IA case is the SKU-driven mode, anchored against `PKT-SKU-009` and `PKT-SKU-010`:
+For a first reader, the simplest complete package example is the 2c marketing hero:
+
+- [`docs/asset-definition-package-map-2c-marketing-hero-v1.md`](docs/asset-definition-package-map-2c-marketing-hero-v1.md)
+
+For the cleanest layered IA architecture case, see the SKU-driven mode, anchored against `PKT-SKU-009` and `PKT-SKU-010`:
 
 - [`docs/ia-layered-content-sketch-sku-driven-mode-v1.md`](docs/ia-layered-content-sketch-sku-driven-mode-v1.md)
 
