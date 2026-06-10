@@ -42,7 +42,7 @@ The strategic reader path:
 
 ## One concrete example
 
-For a first reader, the simplest complete package example is the 2c marketing hero:
+For a first reader, the simplest complete chain example is the 2c marketing hero — a single output slot carried end to end, not the whole marketing mode:
 
 - [`docs/asset-definition-package-map-2c-marketing-hero-v1.md`](docs/asset-definition-package-map-2c-marketing-hero-v1.md)
 
@@ -57,8 +57,9 @@ For the cleanest layered IA architecture case, see the SKU-driven mode, anchored
 - [`AGENTS.md`](AGENTS.md) — repo-local execution guidance
 - [`docs/diagrams/asset-pipeline-ASK_architecture-tree.html`](docs/diagrams/asset-pipeline-ASK_architecture-tree.html) — visual architecture tree at orientation depth; regenerated when a plateau milestone marker lands or an equivalent architecture-front-door shift makes the diagram materially stale, so its update cadence is slower than the prose docs; the prose docs are authoritative if the two diverge
 
-Prototype test bases:
+Prototype test bases (worked evidence surfaces; Airtable is one substrate, not the deliverable):
 
+- [`Airtable base // Integrated Four-Workflow Home-Goods v1`](https://airtable.com/app4sBiFw2tft17VF) — the base the 2c marketing-hero chain runs in; the worked evidence surface for the end-to-end in-base proof (definition layer → generation → candidate accumulation → selection → governed asset, no external import)
 - [`Airtable base // SKU-Driven Furniture v1`](https://airtable.com/appoqJ25B6w4vSuX9/shrGGnxr3uvLRkEU4) — original prototype base for SKU-driven Furniture v1 and early cross-mode pressure work
 - [`Airtable base // Campaign-Driven D2C Home-Goods v1`](https://airtable.com/appCAcRuA82SWj5h5) — separate campaign-mode prototype base for cross-base / cross-brand pressure work
 
