@@ -44,6 +44,13 @@ These are the current architectural passes anchoring the repo's definition-layer
 
 The predecessor passes remain authoritative for their subject matter; the apex artifact synthesizes without re-deriving. The compression brief and the assessment brief are planning material for downstream moves; the moves themselves are not authorized by these briefs' landing.
 
+## Portability / Extractability
+
+These artifacts pressure the headline target — a durable definition layer above changing tools — by re-expressing the architecture outside Airtable shape. They are complementary legs, not redos of each other.
+
+- [docs/non-airtable-extraction-attempt-v1.md](non-airtable-extraction-attempt-v1.md): bounded extraction of a representative **SKU slice** into JSON Schema + a minimal JSON instance. Core finding: the data shape is portable; the interpretive / procedural layer is not yet portable. Self-scoped as SKU-only / JSON-Schema-only.
+- [docs/portable-package-extraction-2c-marketing-hero-v1.md](portable-package-extraction-2c-marketing-hero-v1.md): re-expresses the **proven 2c marketing-hero package instance** outside Airtable as a hybrid prose walk + tool-agnostic YAML package-instance appendix, walked to instantiation-plan depth (a second substrate must represent / preserve / support — conceptual, not entity design). The complementary leg to the extraction attempt: a concrete proven *package* (not a type schema), marketing mode (not SKU), instance + walk + instantiation plan (not schema + instance), first-reader-facing (not claim-discipline). Surfaces what survives, what becomes an instantiation-plan requirement, and what was Airtable-shaped. Single instance; not a schema, not a reusable package grammar.
+
 ## Post-Milestone-9 Pressure Sequence
 
 Three artifacts landed as a coherent pressure sequence after milestone 9 absorbed the curation semantic split and named the brand-system layer as a structural decision. They are not deepenings; they are pass-shaped, surface-shaped, and operational-pressure-shaped moves above the Phase 1 + Phase 2 deepening work, building on but not superseding the Phase 1 mode sketches, Phase 2 deepenings, structured IA model v1, or apex definition-layer artifact.
