@@ -1,0 +1,36 @@
+# package.yaml — the packet (definition-layer core of the 2c marketing-hero package)
+# Held as data in a file substrate. Substrate-neutral business keys link the records.
+# This is package content; the store's own mechanics live in _substrate.yaml.
+
+id: PKT-MSG-HG-001
+mode: marketing / message-driven        # anchor is the offer/message, not a SKU
+brand_system: Warm Restraint            # inherited layer; see brand-system.yaml
+packet_status: draft
+
+business_intent: >
+  Marketing / message-driven mode. "Spring Refresh" seasonal offer. Anchor is the message/offer,
+  not a single product: communicate renewal and transparent value within Warm Restraint.
+
+creative_intent: >                      # the aim
+  Message-bearing composition: room to carry an offer/headline; warm daylit refresh feeling;
+  products serve the message rather than being the subject.
+
+creative_discretion:                    # the aperture grant — distinct from constraints and references
+  latitude: >
+    Which bath-textile pieces appear and how they are arranged; camera framing and crop;
+    surface choice (light wood or soft stone); and the placement and extent of the
+    copy-overlay negative space may vary.
+  bounded_by: [BC-WR-PALETTE, BC-WR-LIGHTING, BC-WR-MATERIAL, BC-WR-NEGATIVE]   # -> constraints.yaml
+  anchored_to: [REF-WR-BRANDSYS-01, REF-WR-PALETTE-01]                          # -> references.yaml
+  decision_owner: ASK (marketing curator-of-record)
+  closes_at: hero-slot curation
+
+required_output_set: >                  # the obligation, prose; mode-specific structured shape (messages) HELD
+  1 message-hero (offer-ready, copy space); 1 secondary message-support.
+
+products:                               # PERIPHERAL in marketing mode — present, subordinate to the message
+  - SKU-HG-TOWEL-001
+  - SKU-HG-BATHMAT-001
+
+slots: [SLOT-MSG-HG-001-HERO, SLOT-MSG-HG-001-SUPPORT]   # -> slots.yaml
+governed_assets: [ASSET-MSG-HG-001-HERO-001]             # -> governed-assets.yaml

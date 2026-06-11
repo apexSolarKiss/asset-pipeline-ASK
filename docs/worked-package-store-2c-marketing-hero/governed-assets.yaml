@@ -1,0 +1,41 @@
+# governed-assets.yaml — the durable record of the selection (governance).
+# selected_candidate is the SUBSTRATE-NEUTRAL link (a candidate key), replacing Airtable's
+# source_attachment_id. In this package selection and governance CO-LOCATE in one record;
+# campaign mode may separate them, so the shape does not preclude separation.
+
+governed_assets:
+  - id: ASSET-MSG-HG-001-HERO-001
+    of_slot: SLOT-MSG-HG-001-HERO
+    role: message_hero
+    status: governed_output
+    curator: ASK (marketing curator-of-record)
+    captured_at: 2026-06-10
+    curation_pattern: authorship-bearing      # curator ranged the full candidate space, not confirming a default
+    no_external_import: true                  # produced in-base end to end; a prototype OUTPUT, not an imported input
+
+    selected_candidate: CAND-MSG-HG-001-HERO-POST-01   # -> candidates.yaml ; the substrate-neutral selection link
+    capture_reason: "cross-candidate selection from 7 in-base takes (post prompt-remediation); most-true-to-intent"
+
+    # selection + governance co-locate in this record:
+    selection_rationale: >
+      "this is better, approved" — the prompt-remediated take is defensible where the earlier ones were
+      only 'ok'. Composition failures resolved: a clean light-wood ledge parallel to the wall (the
+      orthogonal-bench problem gone), the robe softly draped with the towels rather than hung on a hook,
+      a generous clean evenly-lit upper-left wall left unobstructed for headline/offer copy, and no
+      spa-plinth / corner-nook / furniture-showroom / grid drift. Authorship-bearing curation across the
+      full 7-candidate space (6 pre-remediation rejected for composition; 1 selected after the
+      slot_prompt remediation pass).
+    governance_record: >
+      Governs the take true to creative_intent within the bounded_creative_discretion aperture on
+      PKT-MSG-HG-001. Produced entirely in-base (Gemini 3 Pro Image -> slot candidate -> internal
+      attachment-copy); no external transport — a genuine prototype-generated output, not an imported
+      synthetic input.
+    co_location_note: >
+      selection_rationale (makes-true) and governance_record co-locate here, as they do in SKU and
+      collection mode. The shape does not preclude separation (campaign-mode evidence separated upstream
+      authorship from the seam record).
+
+    # quarantined legacy worked-substrate provenance — NOT link keys, NOT package content:
+    legacy_worked_substrate:
+      airtable_source_attachment_id: attlMAX3ps9LV5DZl
+      airtable_asset_attachment_filename: SLOT-MSG-HG-001-HERO.jpg

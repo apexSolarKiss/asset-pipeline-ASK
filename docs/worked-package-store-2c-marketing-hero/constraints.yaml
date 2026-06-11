@@ -1,0 +1,41 @@
+# constraints.yaml — what may NOT vary. Distinct carriers from the discretion aperture.
+# scope: brand_context/Warm Restraint  => brand-system-layer rules INHERITED by the packet
+# (the packet references them by key in package.yaml; it does not own them).
+
+constraints:
+  - key: BC-WR-PALETTE
+    force: presentation_rule
+    scope: brand_context / Warm Restraint
+    priority: 1
+    active: true
+    text: >
+      Palette: soft white, oat, cream, warm beige, light wood. Warm-neutral only;
+      no saturated color, no high contrast.
+
+  - key: BC-WR-LIGHTING
+    force: fidelity_rule
+    scope: brand_context / Warm Restraint
+    priority: 1
+    active: true
+    text: >
+      Bright daylit interior register (~4500-5500K), abundant soft natural daylight,
+      soft diffuse shadows, airy/high-key. No moody/low-key, no dramatic studio strobe.
+
+  - key: BC-WR-MATERIAL
+    force: fidelity_rule
+    scope: brand_context / Warm Restraint
+    priority: 1
+    active: true
+    text: >
+      Material honesty: natural-fiber textiles (linen, cotton, waffle, terry), light oak/ash,
+      matte/low-gloss glazed ceramic. Clean, refined, uniform; visible weave/grain rendered cleanly.
+
+  - key: BC-WR-NEGATIVE
+    force: hard_requirement        # avoid-list / negative reference function
+    scope: brand_context / Warm Restraint
+    priority: 1
+    active: true
+    text: >
+      Avoid: metallic accents (chrome/brass), moody/low-key/chiaroscuro, rustic/artisanal/
+      weathered/distressed, styled clutter, decorative trims/contrast hems, walnut/rich-oak,
+      glossy glam-luxury, hotel-spa vignettes.

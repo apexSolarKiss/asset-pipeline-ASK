@@ -1,0 +1,55 @@
+# slots.yaml — the output obligations.
+# HERO is accepted (met by the governed asset); SUPPORT is HELD (planned, not generated).
+# Generation-invocation settings are held in `generation:`, SEPARATE from `slot_prompt:` (the text).
+
+slots:
+  - key: SLOT-MSG-HG-001-HERO
+    role: message_hero
+    sort_order: 1
+    status: accepted
+    expected: "Spring Refresh offer-ready hero with clean negative space for headline/offer overlay."
+    generation:                          # invocation settings — NOT prompt text
+      aspect_ratio: "3:4"                # output framing is a setting, not in the prompt body
+      model: "Gemini 3 Pro Image"
+      mode: in-base
+    slot_prompt: >                       # composition + aesthetic ONLY (the remediated text)
+      A single photograph — not a grid, collage, contact sheet, triptych, or multi-image layout.
+      Photographic marketing hero image for a "Spring Refresh" everyday-quality home-goods promotion,
+      in a clean warm-restraint register. A bright, airy, sunlit interior — abundant soft natural
+      daylight around 4500–5500K, soft diffuse shadows, high-key and open. Warm-neutral palette only:
+      soft white, oat, cream, warm beige, light wood (finely-grained oak or ash, not walnut, not
+      weathered). A small, considered arrangement of everyday bath textiles — a neatly folded linen
+      waffle bath towel in unbleached oat, a cotton waffle bath mat in warm cream, and a soft white
+      cotton terry robe folded or softly draped with the towels (not hung) — arranged on a low
+      light-wood ledge, shelf, or built-in bench set parallel to a plain, softly-lit wall. All
+      natural-fiber with clean visible weave and terry texture, matte, refined and uniform (not raw,
+      not distressed, not artisanal). Materials rendered cleanly and honestly: weave, loop pile, and
+      absorbent surface visible. One coherent residential daylight bathroom scene — not a product
+      stack, not a bedroom, not a spa vignette. Preserve a clean, empty, evenly-lit wall area across
+      the upper-left of the frame for a headline and offer copy overlay; keep that copy field
+      completely unobstructed — no window, hook, object, plant, shelf, or textile entering that zone.
+      The empty area matters as much as the textiles. Calm, breathing-room composition; fewer
+      considered things; warmth carried by material and light rather than ornament or quantity.
+      Accessible-everyday quality, transparent and material-honest — not aspirational-refined, not
+      museum-grade, not glam-luxury. Do NOT use a freestanding bench at an odd angle. Do NOT place the
+      bench, ledge, or any object perpendicular or orthogonal to the window. Do NOT use a corner nook,
+      spa plinth, hotel-spa staging, wall hook, robe hook, towel rack, or bathroom-furniture-showroom
+      composition. NO metallic accents (chrome, brass, polished stainless). NO moody, low-key, or
+      dramatic shadow; NO hard studio strobe. NO rustic, farmhouse, weathered, distressed, or
+      artisanal-handmade register. NO styled clutter, decorative towers, or clustered toiletries. NO
+      decorative trims, embroidered edges, or contrasting hems. NO saturated color or high contrast.
+      NO over-styled posed-lifestyle vignette. Clean D2C commercial marketing photography.
+    prompt_remediation: >                # authorship-bearing discretion surfaced UPSTREAM here
+      Remediated once after the first batch drifted (orthogonal bench / robe on a hook / obstructed copy field).
+    candidate_set: candidates.yaml       # the 7-candidate variance for this slot
+    governed_asset: ASSET-MSG-HG-001-HERO-001
+
+  - key: SLOT-MSG-HG-001-SUPPORT
+    role: message_support
+    sort_order: 2
+    status: planned                      # HELD — deliberately not generated; the proof terminated at the single hero
+    expected: "Secondary message-support frame reinforcing the offer."
+    generation: null
+    slot_prompt: null
+    candidate_set: null
+    governed_asset: null

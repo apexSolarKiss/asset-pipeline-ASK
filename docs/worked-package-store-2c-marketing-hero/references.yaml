@@ -1,0 +1,25 @@
+# references.yaml — visual anchors. Distinct carriers from constraints and discretion.
+# In this worked package the references are records-with-notes only: imagery was pending,
+# so NO image bytes are held. image: null + byte_status: not_held is the honest "absent" marker.
+# (In the 2c run the prose slot_prompt carried the visual anchoring in their place.)
+
+references:
+  - key: REF-WR-BRANDSYS-01
+    role: approved_directional_reference
+    scope: brand-system master; shared across all four mode packets   # inherited, not packet-local
+    note: >
+      Warm Restraint brand-system master visual anchor — clean warm restraint; bright daylit;
+      warm-neutral palette; natural-fiber materials; generous negative space.
+    image: null
+    byte_status: not_held
+    status: image-pending
+
+  - key: REF-WR-PALETTE-01
+    role: supporting_input
+    scope: packet-level supporting input
+    note: >
+      Warm-neutral palette board: soft white / oat / cream / warm beige / light wood.
+      Supports BC-WR-PALETTE.
+    image: null
+    byte_status: not_held
+    status: image-pending
