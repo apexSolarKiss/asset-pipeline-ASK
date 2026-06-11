@@ -1,0 +1,28 @@
+# _substrate.yaml — THIS STORE'S OWN MECHANICS. Not package content.
+# The parallel to the substrate_worked_example block in the Airtable re-expression: it names the
+# storage choices this file substrate makes, so package content stays substrate-neutral.
+
+substrate: file-based repo package bundle (this directory)
+format: YAML files, one collection per entity-type
+holds_bytes: false                        # references / filenames / empty hash slots only; no image bytes
+
+entity_links: business keys                # PKT-/SLOT-/BC-/REF-/ASSET-/SKU- ; substrate-neutral, no record-ids
+candidate_id_scheme: >
+  synthetic, phase-explicit keys CAND-MSG-HG-001-HERO-{PRE-NN|POST-NN}. Canonical link target.
+  Chosen because no bytes => no content_hash is computable, and Airtable attachment-ids are
+  substrate-specific. Phase is encoded in the id because it is the architectural distinction, not order.
+content_hash_convention: >
+  content_hash: null on every candidate — the slot a byte-bearing instantiation would populate, and
+  could then promote to the canonical id. Unpopulated here by design (references-only bundle).
+legacy_provenance: >
+  Airtable attachment-ids and Flow auto-filenames are retained on records as quarantined worked-substrate
+  provenance. They are NEVER used as link keys.
+absent_by_design:                          # relational conveniences Airtable supplied for free; intentionally gone
+  - bidirectional link reciprocity
+  - lookup auto-surfacing
+  - rollup / formula fields
+  - attachment-id record identity
+note: >
+  These are storage choices of THIS substrate. They are not part of the package. The package content
+  (intent, discretion, constraints, references, slots, candidate set, governance) is substrate-neutral
+  and is what a recovery test must reconstruct from the data files alone.

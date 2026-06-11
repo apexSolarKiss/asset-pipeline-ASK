@@ -1,0 +1,82 @@
+# candidates.yaml — the VARIANCE: the candidate set generation filled the aperture with.
+# 7 candidates accumulated on SLOT-MSG-HG-001-HERO: 6 pre-remediation, 1 post-remediation (selected).
+#
+# Candidate identity is a SYNTHETIC, PHASE-EXPLICIT key (CAND-...-{PRE-NN|POST-NN}) — the canonical
+# link target the governed asset points at. Chosen because this bundle holds NO bytes, so a real
+# content_hash cannot be computed and the Airtable attachment-id is substrate-specific. The phase is
+# encoded in the id because it is the architectural distinction (pre- vs post-remediation), not order.
+#   - content_hash: null  -> the slot a byte-bearing instantiation would populate (and could promote to id)
+#   - source_filename     -> provenance (Flow auto-name); NOT the link key (filenames are unstable)
+#   - legacy_airtable_attachment_id -> quarantined worked-substrate provenance; NEVER a link key
+# Generation settings are per-candidate and separate from the prompt text (which lives on the slot).
+
+candidates:
+  - id: CAND-MSG-HG-001-HERO-PRE-01
+    slot: SLOT-MSG-HG-001-HERO
+    phase: pre-remediation
+    selected: false
+    source_filename: Image_June_9_2026_11_53_PM.jpeg
+    content_hash: null
+    byte_status: not_held
+    generation: { aspect_ratio: "3:4", model: "Gemini 3 Pro Image", mode: in-base }
+    legacy_airtable_attachment_id: attLV6s7pf1gT7mWB   # quarantined provenance, not a link key
+
+  - id: CAND-MSG-HG-001-HERO-PRE-02
+    slot: SLOT-MSG-HG-001-HERO
+    phase: pre-remediation
+    selected: false
+    source_filename: Image_June_10_2026_12_22_AM.jpeg
+    content_hash: null
+    byte_status: not_held
+    generation: { aspect_ratio: "3:4", model: "Gemini 3 Pro Image", mode: in-base }
+    legacy_airtable_attachment_id: attzE8kvtmz3cT4xt
+
+  - id: CAND-MSG-HG-001-HERO-PRE-03
+    slot: SLOT-MSG-HG-001-HERO
+    phase: pre-remediation
+    selected: false
+    source_filename: Image_June_10_2026_12_24_AM.jpeg
+    content_hash: null
+    byte_status: not_held
+    generation: { aspect_ratio: "3:4", model: "Gemini 3 Pro Image", mode: in-base }
+    legacy_airtable_attachment_id: att4s9638P2rzyudz
+
+  - id: CAND-MSG-HG-001-HERO-PRE-04
+    slot: SLOT-MSG-HG-001-HERO
+    phase: pre-remediation
+    selected: false
+    source_filename: Image_June_10_2026_12_27_AM.jpeg
+    content_hash: null
+    byte_status: not_held
+    generation: { aspect_ratio: "3:4", model: "Gemini 3 Pro Image", mode: in-base }
+    legacy_airtable_attachment_id: att65BEArvssAbW8s
+
+  - id: CAND-MSG-HG-001-HERO-PRE-05
+    slot: SLOT-MSG-HG-001-HERO
+    phase: pre-remediation
+    selected: false
+    source_filename: Image_June_10_2026_12_28_AM.jpeg
+    content_hash: null
+    byte_status: not_held
+    generation: { aspect_ratio: "3:4", model: "Gemini 3 Pro Image", mode: in-base }
+    legacy_airtable_attachment_id: attdWeBbJxjxZYRix
+
+  - id: CAND-MSG-HG-001-HERO-PRE-06
+    slot: SLOT-MSG-HG-001-HERO
+    phase: pre-remediation
+    selected: false
+    source_filename: Image_June_10_2026_12_29_AM.jpeg
+    content_hash: null
+    byte_status: not_held
+    generation: { aspect_ratio: "3:4", model: "Gemini 3 Pro Image", mode: in-base }
+    legacy_airtable_attachment_id: attSxJwO27tDaUIgP
+
+  - id: CAND-MSG-HG-001-HERO-POST-01
+    slot: SLOT-MSG-HG-001-HERO
+    phase: post-remediation
+    selected: true                       # the take selected as governed asset ASSET-MSG-HG-001-HERO-001
+    source_filename: Image_June_10_2026_1_52_AM.jpeg
+    content_hash: null
+    byte_status: not_held
+    generation: { aspect_ratio: "3:4", model: "Gemini 3 Pro Image", mode: in-base }
+    legacy_airtable_attachment_id: attlMAX3ps9LV5DZl

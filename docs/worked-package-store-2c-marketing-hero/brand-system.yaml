@@ -1,0 +1,15 @@
+# brand-system.yaml — the inherited brand-system layer
+# The packet does not own these; it references them by key. Inheritance is represented
+# by scope (brand_context) + reference, not by duplication into the packet.
+
+id: Warm Restraint
+kind: synthetic prototype-aesthetic instance for this worked example   # not a real brand; operational scaffolding
+description: >
+  Clean warm restraint: restraint that stays warm; fewer considered things; breathing room around them;
+  warmth carried by material and light rather than ornament or quantity. Accessible-everyday D2C register,
+  not aspirational-refined or museum-grade.
+
+# Records elsewhere in the store that are brand-system-scoped and inherited by PKT-MSG-HG-001:
+inherited_constraints: [BC-WR-PALETTE, BC-WR-LIGHTING, BC-WR-MATERIAL, BC-WR-NEGATIVE]   # scope: brand_context
+inherited_references: [REF-WR-BRANDSYS-01]   # "shared across all four mode packets" (brand-system master)
+# REF-WR-PALETTE-01 is a packet-level supporting input, not brand-system-shared; it lives in references.yaml.
