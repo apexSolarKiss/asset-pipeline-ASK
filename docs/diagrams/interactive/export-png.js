@@ -92,6 +92,14 @@
     var file = location.pathname.split('/').pop() || 'diagram.html';
     return decodeURIComponent(file).replace(/\.html?$/i, '');
   }
+  // Resolved light/dark theme, matching the CSS precedence: an explicit
+  // data-theme on <html> wins, otherwise the OS prefers-color-scheme. Used to
+  // suffix the export filename (-light / -dark) so the two renders don't collide.
+  function getThemeName() {
+    var explicit = document.documentElement.getAttribute('data-theme');
+    if (explicit === 'light' || explicit === 'dark') return explicit;
+    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
 
   function buildSvg() {
     var svg = document.getElementById('svg');
@@ -216,7 +224,7 @@
 
       var parts = getStampParts();
       var base = getFilenameBase().replace(/_source-v\d+_render-v\d+$/, '');
-      var filename = base + (parts.length ? '_' + parts.join('_') : '') + '.png';
+      var filename = base + (parts.length ? '_' + parts.join('_') : '') + '-' + getThemeName() + '.png';
 
       var blob = await new Promise(function (resolve) { cv.toBlob(resolve, 'image/png'); });
       var url = URL.createObjectURL(blob);
