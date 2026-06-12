@@ -14,7 +14,6 @@ no schema / validator / structured IA model v3
 no 1C reader-path work
 no new generation proof
 no store mutation (the store is read as-is)
-stops at exact scoped diff
 self-superseding when the test is run and a findings artifact lands, or when the definition is revised before a run
 ```
 
@@ -74,7 +73,7 @@ The load-bearing comparison is **Tier 1 vs Tier 2**: does adding hashes + durabl
 
 ## Visual-auditability tasks (pre-registered)
 
-An auditor — a method-user or a consuming artifact (per the next-consumer decision: the consuming-artifact path) — must attempt each task from the package and its declared carriers. At Tier 1, the declared carriers are prose-only. At Tier 2, the declared carriers include content hashes and durable pointers, but no in-package bytes. The auditor may fetch a Tier-2 pointer only if the package itself carries the pointer and the fetched image can be checked against the package-carried identity/integrity evidence. Each task is the kind of verification a creative-ops owner or an implementation-artifact generator would need to trust the package's visual claims.
+An auditor — a method-user or a consuming artifact — must attempt each task from the package and its declared carriers. At Tier 1, the declared carriers are prose-only. At Tier 2, the declared carriers include content hashes and durable pointers, but no in-package bytes. The auditor may fetch a Tier-2 pointer only if the package itself carries the pointer and the fetched image can be checked against the package-carried identity/integrity evidence. Each task is the kind of verification a creative-ops owner or an implementation-artifact generator would need to trust the package's visual claims.
 
 - **A — Selection defensibility.** Verify that the selected candidate (`POST-01`) is more true-to-intent than the six rejected pre-remediation candidates. (The package asserts `authorship-bearing` selection across the full set.)
 - **B — Constraint satisfaction.** Verify that the governed output actually satisfies each of the four constraints — `BC-WR-PALETTE`, `BC-WR-LIGHTING`, `BC-WR-MATERIAL`, `BC-WR-NEGATIVE` (the unobstructed upper-left copy field).
@@ -95,7 +94,7 @@ Aggregate readings the run must report:
 
 1. The per-task PASS / PARTIAL / FAIL grid across Tiers 1 and 2.
 2. The set of tasks that are **PARTIAL or FAIL at Tier 1 but PASS at Tier 2** — the gap that hashes + pointers close *without* bytes.
-3. The set of tasks that **remain PARTIAL or FAIL even at Tier 2** — the gap that only in-package bytes (Tier 3) could close.
+3. The set of tasks that **remain PARTIAL or FAIL even at Tier 2** — the gap not closed by hashes + durable pointers as defined, and therefore the candidate boundary-reopen set.
 
 ## The reopen-trigger determination (pre-registered)
 
