@@ -29,21 +29,27 @@ The diagram conforms to [`apexSolarKiss/design-system-ASK`](https://github.com/a
 README.md                                       this file
 _dsa-tokens/                                    pinned design-system-ASK Tier 1 + Tier 2 mirror (no CDN)
 
-# Horizontal — Class A diagram-tree (top-aligned cascade)
+# Horizontal — Class A diagram-static-H (top-aligned cascade)
 asset-pipeline-ASK_architecture-tree.html       renders TREE_D04 (repo architecture / artifact structure)
 asset-pipeline-ASK_architecture-tree.source.js  TREE_D04 data
 asset-pipeline-ASK_ontology-tree.html           renders TREE_ONTOLOGY (Axis A — information kinds)
 asset-pipeline-ASK_ontology-tree.source.js      TREE_ONTOLOGY data
-diagrams-engine.js                              horizontal (top-aligned cascade) layout engine
+diagrams-static-H-engine.js                     horizontal (top-aligned cascade) layout engine
 
-# Vertical — Class A diagram-spine-static (centered spine)
+# Vertical — Class A diagram-static-V (centered spine)
 asset-pipeline-ASK_inheritance-spine.html       renders TREE_INHERITANCE (Axis B — inheritance ladder)
 asset-pipeline-ASK_inheritance-spine.source.js  TREE_INHERITANCE data
-diagrams-spine-engine.js                        vertical (centered spine) layout engine
+diagrams-static-V-engine.js                     vertical (centered spine) layout engine
 
-# Shared scaffold files — byte-identical across both patterns; one copy
-diagrams.css                                    compiled Tier 1 + Tier 2 style
-export-png.js                                   3840×2880 PNG export
+# Sequence — Class A diagram-static-SEQ (left-aligned, arrowed) — illustrative doctrine diagram
+asset-pipeline-ASK_discretion-chain.html        renders SPINE_DISCRETION_CHAIN (the creative-discretion chain)
+asset-pipeline-ASK_discretion-chain.source.js   SPINE_DISCRETION_CHAIN data
+asset-pipeline-ASK_discretion-chain.png         committed render (real PNG export from the vendored exporter; dark)
+diagrams-static-SEQ-engine.js                   sequence (left-aligned, arrowed) layout engine
+
+# Shared scaffold files — byte-identical across all three static patterns; one copy
+diagrams.css                                    compiled Tier 1 + Tier 2 style (incl. .edge-arrowhead)
+export-png.js                                   3840×2880 PNG export (page-scale chrome)
 
 interactive/                                     AP-owned interactive surface (different artifact class)
   asset-pipeline-ASK_ia-state-spine.html         the IA state spine
@@ -52,15 +58,17 @@ interactive/                                     AP-owned interactive surface (d
   ia-state-spine.css                             AP-owned interactive styling
 ```
 
-This folder hosts two **Class A** static diagram patterns inherited by reference from `design-system-ASK`: `diagram-tree` (horizontal cascade) and `diagram-spine-static` (vertical centered spine; engine `diagrams-spine-engine.js`, delivered at merge `1c565e2`). `diagrams.css` and `export-png.js` are **byte-identical** across the two patterns, so this folder keeps **one shared copy** rather than vendoring each — a deliberate, documented choice. The two layout engines (`diagrams-engine.js` / `diagrams-spine-engine.js`) are scaffold-owned and not edited locally.
+This folder hosts three **Class A** static diagram patterns inherited by reference from `design-system-ASK`: `diagram-static-H` (horizontal cascade), `diagram-static-V` (vertical centered spine; delivered at merge `1c565e2`), and `diagram-static-SEQ` (left-aligned arrowed sequence; graduated upstream at `28aeb2d` and re-vendored here). `diagrams.css` and `export-png.js` are **byte-identical** across all three patterns, so this folder keeps **one shared copy** rather than vendoring each — a deliberate, documented choice. The three layout engines (`diagrams-static-H-engine.js` / `diagrams-static-V-engine.js` / `diagrams-static-SEQ-engine.js`) are scaffold-owned and not edited locally; they are re-vendored by reference, never forked.
 
-The diagrams depict **different axes** of the architecture and must not be collapsed into one picture (basis: [`docs/layer-disambiguation-note-v1.md`](../layer-disambiguation-note-v1.md)):
+The **architecture diagrams** depict **different axes** of the architecture and must not be collapsed into one picture (basis: [`docs/layer-disambiguation-note-v1.md`](../layer-disambiguation-note-v1.md)):
 
 - **architecture tree** (horizontal) — repo architecture / artifact structure / plateau state.
 - **ontology tree** (horizontal) — Axis A: the kinds of information the definition layer structures (a branching classification → horizontal cascade).
 - **inheritance spine** (vertical) — Axis B: where information lives and how it inherits / overrides / combines (a linear chain → centered spine).
 
 The two IA diagrams (ontology, inheritance) are **structural** maps — they assert **no** maturity state (no earned/held/legacy); their legends are repurposed as reading notes, and architectural nuance rides in the node notes. Maturity-state semantics belong to the separate interactive surface below.
+
+The **discretion chain** (`diagram-static-SEQ`) is a **different class** — an illustrative **doctrine** diagram, not an architecture-axis diagram. It renders the chain the architecture preserves (creative intent → creative discretion → variance → selection → governance; basis: [`docs/creative-discretion-doctrine-v1.md`](../creative-discretion-doctrine-v1.md)), as an ordered sequence of steps joined by arrows. Because it depicts doctrine rather than repo/architecture state, it refreshes when the **doctrine chain** changes, not on the milestone-/structure-coupled cadence of the architecture diagrams. A committed PNG (`asset-pipeline-ASK_discretion-chain.png`) is kept alongside the HTML for direct markdown/GitHub embedding — a deliberate exception to the otherwise HTML-only convention here. The HTML + source data remain **canonical**; the PNG is a supplemental presentation raster, not source truth. Provenance, stated plainly: this PNG is a real 3840×2880 export produced by the page-scale-chrome `export-png.js` vendored in this change (dark theme). To refresh it, re-render from the bundle and re-export.
 
 ## Interactive surface — IA state spine
 

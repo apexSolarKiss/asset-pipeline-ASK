@@ -470,14 +470,15 @@ If a proposed update says "the project currently should do X," it does not belon
 
 ### Diagram Surface Refresh Cadence
 
-The repo's diagram surface under `docs/diagrams/` is a set of visual orientation artifacts, not depth artifacts. The prose docs are authoritative if a diagram and the prose diverge. The set is currently four diagrams, rendered by in-repo engines:
+The repo's diagram surface under `docs/diagrams/` is a set of visual orientation artifacts, not depth artifacts. The prose docs are authoritative if a diagram and the prose diverge. The set is currently five diagrams — four architecture / IA orientation diagrams plus one illustrative doctrine diagram — rendered by in-repo engines:
 
 - **architecture tree** (`asset-pipeline-ASK_architecture-tree.html`) — repo architecture / artifact structure.
 - **ontology tree** (`asset-pipeline-ASK_ontology-tree.html`) — Axis A: the kinds of information the definition layer structures.
 - **inheritance spine** (`asset-pipeline-ASK_inheritance-spine.html`) — Axis B: where information lives and how it inherits.
 - **interactive IA state spine** (`interactive/asset-pipeline-ASK_ia-state-spine.html`) — the architecture's maturity / evidence **state** surface.
+- **discretion chain** (`asset-pipeline-ASK_discretion-chain.html`) — an **illustrative doctrine diagram** (a distinct class, not an architecture-axis or state diagram): the chain the architecture preserves (creative intent → creative discretion → variance → selection → governance), rendered as an ordered sequence. Basis: `docs/creative-discretion-doctrine-v1.md`.
 
-(Axis basis: `docs/layer-disambiguation-note-v1.md`. The static diagrams assert no state; the interactive spine is the state surface.)
+(Axis basis: `docs/layer-disambiguation-note-v1.md`. The static architecture diagrams assert no state; the interactive spine is the state surface; the discretion chain is doctrine, not an axis.)
 
 **Maintenance model.** The diagrams are repo-resident and rendered by in-repo engines (the static `diagram-tree` / `diagram-spine-static` engines, and the interactive surface's own engine). The executor maintains them **in-repo** — by editing the per-diagram source data + HTML chrome and validating the rendered output (light + dark) — not by regenerating them through an external rendering surface. Any operator-side exploration surface for diagrams not yet repo-absorbed, and any rendering-tool / vendor identity, remain operator-side context and are not encoded here.
 
@@ -487,12 +488,13 @@ The repo's diagram surface under `docs/diagrams/` is a set of visual orientation
 - **ontology tree (Axis A)** — refresh only when the information-kind / ontology structure changes.
 - **inheritance spine (Axis B)** — refresh only when the inheritance-layer set / structure changes.
 - **interactive IA state spine** — refresh when milestone / evidence state assignments change (earned / held / deflated / proposed move); the most milestone-coupled of the set.
+- **discretion chain** — refresh only when the doctrine chain (`docs/creative-discretion-doctrine-v1.md`) changes; **not** coupled to plateau milestones or architecture / IA structure changes (it depicts doctrine, not repo state). Its committed PNG (`asset-pipeline-ASK_discretion-chain.png`, a real export from the vendored page-scale-chrome exporter) is a deliberate exception to the folder's otherwise HTML-only convention, kept for markdown/GitHub embedding; the HTML + source data remain canonical and the PNG is supplemental.
 
 Do not refresh between milestones or for routine PRs. Bounded absorption PRs ship a refresh into `docs/diagrams/`, update the README pointer and any cross-reference if needed, and update this file only if the cadence itself changes. Do not maintain in-repo version history (operator-side scratch external to the repo retains any version history).
 
 **Substrate.** A static diagram may be hosted as a single self-contained HTML file or as a repo-native bundle (thin HTML shell + per-diagram source-data file + shared engine / CSS / export files + a `docs/diagrams/README.md` carrying the source-truth-vs-illustrative-snapshot boundary). The interactive state spine is its own artifact class — a self-contained interactive surface with its own engine and styling, distinct from the static scaffolds. Review guidance:
 
-- **Bundle / source-data substrate** (current for all four diagrams): inspect the per-diagram source-data file for content changes; inspect the README or HTML shell for routing or authority-boundary changes; inspect shared engine / CSS / export files only when they are intentionally updated; check the rendered output when practical. These files are diffable text and produce meaningful git diffs.
+- **Bundle / source-data substrate** (current for all five diagrams): inspect the per-diagram source-data file for content changes; inspect the README or HTML shell for routing or authority-boundary changes; inspect shared engine / CSS / export files only when they are intentionally updated; check the rendered output when practical. These files are diffable text and produce meaningful git diffs.
 - **Self-contained HTML** (a prior substrate; may recur if a rendering surface is later substituted): typically large (~1.7 MB) because such files bundle fonts and assets as base64. Git diffs on the body are not meaningful; treat the file as a binary asset and check the rendered output rather than the diff.
 
 Either substrate is acceptable. The cadence rules above do not change with substrate.
