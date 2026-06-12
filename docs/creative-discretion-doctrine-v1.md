@@ -38,10 +38,10 @@ This chain is `asset-pipeline-ASK`'s instance of a method-level primitive: **bou
 
 This doctrine names the chain; the surfaces below carry the detail. The doctrine does not duplicate them.
 
-- **the chain, illustrated** — the discretion-chain diagram (`docs/diagrams/asset-pipeline-ASK_discretion-chain.html`) renders the five links as an ordered sequence. Illustrative orientation only: this doctrine prose is source truth, not the diagram, and the chain is not a runtime schema, validator, grammar, or orchestration flow.
+- **the chain, illustrated** — the discretion-chain diagram ([`docs/diagrams/asset-pipeline-ASK_discretion-chain.html`](diagrams/asset-pipeline-ASK_discretion-chain.html)) renders the five links as an ordered sequence. Illustrative orientation only: this doctrine prose is source truth, not the diagram, and the chain is not a runtime schema, validator, grammar, or orchestration flow.
 
   ![The discretion chain — creative intent → creative discretion → variance → selection → governance (illustrative; this doctrine prose is source truth, not the diagram)](diagrams/asset-pipeline-ASK_discretion-chain.png)
-- **kinds of information** (intent · inputs · constraints · references · outputs · governance) — the definition-layer ontology (Axis A); see [layer-disambiguation-note-v1.md](layer-disambiguation-note-v1.md) and the ontology diagram (`docs/diagrams/asset-pipeline-ASK_ontology-tree.html`, which draws the intent → discretion relation).
+- **kinds of information** (intent · inputs · constraints · references · outputs · governance) — the definition-layer ontology (Axis A); see [layer-disambiguation-note-v1.md](layer-disambiguation-note-v1.md) and the ontology diagram ([`docs/diagrams/asset-pipeline-ASK_ontology-tree.html`](diagrams/asset-pipeline-ASK_ontology-tree.html), which draws the intent → discretion relation).
 - **creative discretion as structural** — [foundational-premises-v1.md](foundational-premises-v1.md) premise 5.
 - **the nine discretion sites + reference-function taxonomy** — [layered-reference-and-discretion-architecture-v1.md](layered-reference-and-discretion-architecture-v1.md).
 - **the curation semantic split** (authorship-bearing discretion, variable site, vs governance-bearing curation, always at the seam) and **generated ≠ governed** — [architecture.md](architecture.md).
