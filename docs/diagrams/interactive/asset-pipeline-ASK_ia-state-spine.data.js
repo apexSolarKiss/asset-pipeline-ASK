@@ -7,7 +7,7 @@
 
    DISCIPLINE: color encodes STATE only. Everything else — evidence, qualifier,
    mode coverage, repo pointer — is metadata shown in the inspector panel, never
-   in hue. One state per node. States drawn from current repo truth (milestone 12
+   in hue. One state per node. States drawn from current repo truth (milestone 13
    + evidence-depth brief + architecture.md); every state has an honest example,
    none invented for palette coverage.
 
@@ -23,7 +23,7 @@ window.IA_STATE_SPINE = {
   meta: {
     title: 'Layered IA — state',
     subtitle: 'Axis-independent state surface · what is earned / held / deflated, and where',
-    stamp: { source: 'source-v2', render: 'render-v6', date: '2026-06-04' },
+    stamp: { source: 'source-v3', render: 'render-v7', date: '2026-06-12' },
   },
 
   // Legend / state vocabulary (ASK Spectral State).
@@ -48,9 +48,9 @@ window.IA_STATE_SPINE = {
     { id: 'm-campaign', group: 'mode', label: 'brand campaign / editorial', state: 'partial',
       evidence: 'Bounded full-flow at PKT-CAMP-004 (one packet, three slots).',
       qualifier: 'bounded operational depth', pointer: 'docs/campaign-mode-fork-resolver-test-phase-d-findings-v1.md' },
-    { id: 'm-marketing', group: 'mode', label: 'marketing / message-driven', state: 'structural',
-      evidence: 'Structurally represented, not operationally earned — PKT-MSG-001 is findings-only; no full-flow.',
-      qualifier: 'weakest mode', pointer: 'docs/architecture.md §Evidence Depth' },
+    { id: 'm-marketing', group: 'mode', label: 'marketing / message-driven', state: 'partial',
+      evidence: 'Bounded full-flow at the message-hero slot — the 2c in-base proof: generation → candidate accumulation → authorship-bearing selection → governed ASSET-MSG-HG-001-HERO-001, no external import.',
+      qualifier: 'message-hero slot only; support slot held; full mode not closed', pointer: 'docs/architecture.md §Evidence Depth' },
     { id: 'm-collection', group: 'mode', label: 'collection / merchandising', state: 'earned',
       evidence: 'Full-flow at PKT-COLL-001; the composite-anchor mutation was operationally deflated here.',
       pointer: 'docs/collection-mode-operational-test-findings-v1.md' },
@@ -76,17 +76,17 @@ window.IA_STATE_SPINE = {
       evidence: 'Role-specific narrowing; the terminal expected-output obligation.',
       pointer: 'docs/architecture.md', modes: ['m-sku','m-collection','m-campaign','m-marketing'] },
     { id: 's-candidate', group: 'spine', label: 'candidate-generation layer', state: 'earned',
-      evidence: 'Transient generated attachments; operationally exercised.',
-      qualifier: 'earned where operationally pressured; marketing not yet live',
-      pointer: 'docs/architecture.md', modes: ['m-sku','m-collection','m-campaign'] },
+      evidence: 'Transient generated attachments; operationally exercised across all four modes (marketing now live at the message-hero slot via the 2c in-base proof).',
+      qualifier: 'earned where operationally pressured; marketing at bounded message-hero-slot depth',
+      pointer: 'docs/architecture.md', modes: ['m-sku','m-collection','m-campaign','m-marketing'] },
     { id: 's-curation', group: 'spine', label: 'curation seam', state: 'earned',
-      evidence: 'Governance carriers operational (asset_attachment · curation_pattern · curator).',
-      qualifier: 'earned where operationally pressured; marketing not yet live; the authorship-bearing vs governance-bearing split is a held sub-question',
-      pointer: 'docs/architecture.md §Curation', modes: ['m-sku','m-collection','m-campaign'] },
+      evidence: 'Governance carriers operational (asset_attachment · curation_pattern · curator); the 2c marketing-hero selection was authorship-bearing.',
+      qualifier: 'earned where operationally pressured; marketing at bounded message-hero-slot depth; the authorship-bearing vs governance-bearing split is a held sub-question',
+      pointer: 'docs/architecture.md §Curation', modes: ['m-sku','m-collection','m-campaign','m-marketing'] },
     { id: 's-governed', group: 'spine', label: 'governed-asset layer', state: 'earned',
-      evidence: 'asset_attachment self-contained writeback; durable terminal output.',
-      qualifier: 'earned where operationally pressured; marketing not yet live',
-      pointer: 'docs/architecture.md', modes: ['m-sku','m-collection','m-campaign'] },
+      evidence: 'asset_attachment self-contained writeback; durable terminal output (marketing governed asset ASSET-MSG-HG-001-HERO-001 produced in-base).',
+      qualifier: 'earned where operationally pressured; marketing at bounded message-hero-slot depth',
+      pointer: 'docs/architecture.md', modes: ['m-sku','m-collection','m-campaign','m-marketing'] },
 
     // ---- architectural-question nodes ----
     { id: 'q-structured-model', group: 'question', label: 'structured IA model v2', state: 'structural',
@@ -109,6 +109,10 @@ window.IA_STATE_SPINE = {
       evidence: 'Operationally deflated for collection mode (the paper-strain mutation did not survive operational pressure).',
       qualifier: 'held for marketing / campaign modes', pointer: 'docs/collection-mode-operational-test-findings-v1.md',
       modes: ['m-collection'] },
+    { id: 'q-portability', group: 'question', label: 'portable asset-definition package · extractability', state: 'partial',
+      evidence: 'Data shape portable; the proven 2c package re-expressed outside Airtable and held in a file-bundle second substrate, recovered from the store alone (8/8 PASS). First bounded portability evidence outside Airtable shape.',
+      qualifier: 'narrow — one package, one second substrate; no runtime consumer, no package grammar; visual-payload portability is the next held question',
+      pointer: 'docs/architecture.md §Portability / Extractability', modes: ['m-marketing'] },
 
     // ---- external ----
     { id: 'x-design-system', group: 'external', label: 'design-system-ASK foundations', state: 'external',

@@ -2,7 +2,7 @@
    Source data for the asset-pipeline-ASK architecture tree diagram.
    Renderable by diagrams-engine.js.
 
-   D04 // asset-pipeline-ASK architecture tree // source-v2 // 2026-05-26
+   D04 // asset-pipeline-ASK architecture tree // source-v3 // 2026-06-12
    Single-tree extraction from the operator-side ecology-ASK diagram package
    following the Class A repo-native diagram-bundle pattern proven across
    apexSolarKiss/control-surface (D01) and apexSolarKiss/method-ASK (D02).
@@ -35,7 +35,21 @@ window.TREE_D04 = {
     {
       kind: 'section', label: 'current plateau',
       children: [
-        { label: 'milestone 12', note: 'multi-axis carrier-pattern plateau · recurrence across three architecturally-distinct seams · sharpened-not-closed' },
+        { label: 'milestone 13', note: 'portability evidence plateau · 2c in-base transition event · portability evidence arc · Phase 3 translation / portability / instantiation as the active frontier' },
+      ],
+    },
+    {
+      kind: 'section', label: 'portability / extractability',
+      tag: 'docs/architecture.md §Portability',
+      children: [
+        { label: 'data-shape extraction (SKU slice)', note: 'representative SKU slice → JSON Schema + minimal instance · data shape portable; interpretive / procedural layer not yet portable' },
+        { label: 'package extraction (proven 2c instance)', note: 'proven 2c marketing-hero package re-expressed outside Airtable · prose walk + tool-agnostic YAML · walked to instantiation-plan depth' },
+        { label: 'worked package store (instantiation evidence)', note: 'proven 2c package held in a file-bundle second substrate · recovered from the store alone (8/8 PASS) · substrate-neutral keys; Airtable couplings quarantined' },
+        { label: 'claim boundary', note: 'earned: one package, one second substrate, recovered · not earned: package grammar · runtime consumer · additional stores by default · image-byte storage · schema / v3' },
+        { kind: 'group', label: 'next frontier questions', children: [
+          { label: 'visual-payload portability', status: 'held' },
+          { label: 'failable next-evidence (test use, not readability)', status: 'held' },
+        ]},
       ],
     },
     {
@@ -65,9 +79,9 @@ window.TREE_D04 = {
     {
       kind: 'section', label: 'evidence depth',
       children: [
-        { label: 'operationally grounded full-flow', note: 'SKU-driven mode · collection / merchandising mode · brand campaign / editorial mode at bounded depth' },
+        { label: 'operationally grounded full-flow', note: 'SKU-driven mode · collection / merchandising mode · brand campaign / editorial mode at bounded depth · marketing / message-driven mode at bounded message-hero-slot depth (the 2c in-base proof; support slot held)' },
         { label: 'bounded operational depth' },
-        { label: 'structurally proven', note: 'marketing / message-driven mode · campaign-mode structural proof · cross-base + cross-brand at bounded depth' },
+        { label: 'structurally proven', note: 'marketing / message-driven earlier PKT-MSG-001 probe (findings-only) · campaign-mode structural proof · cross-base + cross-brand at bounded depth' },
         { label: 'paper-pressed', note: 'cross-mode composite-anchor · selection-axis enum · brand-platform / brand-wide-constants entities · approval-state metadata · several held schema candidates' },
         { label: 'application-consumer validated', note: 'one conceptual consumer; one execution instance at synthetic-realistic depth (operator-side)' },
         { label: 'structured-consumer preflighted', note: 'zero structured consumers live · seven candidates named at preflight depth' },
@@ -94,6 +108,7 @@ window.TREE_D04 = {
       kind: 'section', label: 'source-of-truth routing',
       children: [
         { label: 'milestones', tag: 'docs/milestones/', children: [
+          { label: 'milestone 13 // portability evidence plateau' },
           { label: 'milestone 12 // multi-axis carrier-pattern plateau' },
           { label: 'milestone 11 // Zone 6 / Option F trace carrier shape plateau' },
           { label: 'milestone 10 // Phase 2 six-category synthesis plateau' },
@@ -105,6 +120,11 @@ window.TREE_D04 = {
           { label: 'structured-ia-model-v2.md' },
           { label: 'structured-ia-v2-consumer-preflight-v1.md' },
           { label: 'structured-ia-model-v1.md', status: 'legacy' },
+        ]},
+        { label: 'portability docs', tag: 'docs/', children: [
+          { label: 'non-airtable-extraction-attempt-v1.md' },
+          { label: 'portable-package-extraction-2c-marketing-hero-v1.md' },
+          { label: 'worked-package-store-2c-marketing-hero/' },
         ]},
         { label: 'architecture depth docs', tag: 'docs/', children: [
           { label: 'architecture-apex-definition-layer-v1.md' },
