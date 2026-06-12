@@ -163,6 +163,7 @@ Entry points to depth. Full repo navigation lives in [docs/index.md](index.md); 
 
 - [docs/index.md](index.md) — full navigation across all repo artifacts
 - [docs/diagrams/asset-pipeline-ASK_architecture-tree.html](diagrams/asset-pipeline-ASK_architecture-tree.html) — visual architecture tree at orientation depth; regenerated when a plateau milestone marker lands; the prose docs are authoritative if the two diverge
+- [docs/diagrams/interactive/asset-pipeline-ASK_ia-state-spine.html](diagrams/interactive/asset-pipeline-ASK_ia-state-spine.html) — interactive maturity / evidence **state** surface (the static diagrams assert no state); orientation aid only, the prose docs (this Evidence Depth section especially) are authoritative if the two diverge
 - [docs/milestones/milestone-12-...](milestones/milestone-12-post-milestone-11-multi-axis-carrier-pattern-plateau.md) — current plateau marker; absorbs the multi-axis recurrence finding and the post-milestone-9 carrier-shape arc at plateau depth
 - [docs/milestones/milestone-11-...](milestones/milestone-11-zone-6-option-f-carrier-shape-plateau.md) — prior plateau marker (Zone 6 / intake-time judgment trace carrier shape arc)
 - [docs/milestones/milestone-10-...](milestones/milestone-10-phase-2-six-category-synthesis-plateau.md) — Phase 2 six-category brand-system input synthesis plateau
