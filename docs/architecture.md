@@ -21,7 +21,7 @@ The repository is expected to support still-image workflows first. Video should 
 
 ## Purpose / Current Posture
 
-This file is the **current-architecture front door**: a concise statement of where the architecture currently sits, what it has earned, and where the substantive content lives. It routes to depth rather than reproducing detail. The current plateau is [milestone 12](milestones/milestone-12-post-milestone-11-multi-axis-carrier-pattern-plateau.md); read against the plateau for the architecture's full state.
+This file is the **current-architecture front door**: a concise statement of where the architecture currently sits, what it has earned, and where the substantive content lives. It routes to depth rather than reproducing detail. The current plateau is [milestone 13](milestones/milestone-13-portability-evidence-plateau.md) (portability evidence plateau; the 2c in-base transition event + the portability evidence arc + Phase 3 translation / portability / instantiation as the active frontier); read against the plateau for the architecture's full state.
 
 This file's claims are scoped to evidence depth, distinct from the project's target layer.
 
@@ -164,7 +164,8 @@ Entry points to depth. Full repo navigation lives in [docs/index.md](index.md); 
 - [docs/index.md](index.md) — full navigation across all repo artifacts
 - [docs/diagrams/asset-pipeline-ASK_architecture-tree.html](diagrams/asset-pipeline-ASK_architecture-tree.html) — visual architecture tree at orientation depth; regenerated when a plateau milestone marker lands; the prose docs are authoritative if the two diverge
 - [docs/diagrams/interactive/asset-pipeline-ASK_ia-state-spine.html](diagrams/interactive/asset-pipeline-ASK_ia-state-spine.html) — interactive maturity / evidence **state** surface (the static diagrams assert no state); orientation aid only, the prose docs (this Evidence Depth section especially) are authoritative if the two diverge
-- [docs/milestones/milestone-12-...](milestones/milestone-12-post-milestone-11-multi-axis-carrier-pattern-plateau.md) — current plateau marker; absorbs the multi-axis recurrence finding and the post-milestone-9 carrier-shape arc at plateau depth
+- [docs/milestones/milestone-13-...](milestones/milestone-13-portability-evidence-plateau.md) — current plateau marker; the 2c in-base transition event + the portability evidence arc (data-shape extraction, package extraction, worked package store + recovery) + Phase 3 translation / portability / instantiation as the active frontier
+- [docs/milestones/milestone-12-...](milestones/milestone-12-post-milestone-11-multi-axis-carrier-pattern-plateau.md) — prior plateau marker; absorbs the multi-axis recurrence finding and the post-milestone-9 carrier-shape arc at plateau depth
 - [docs/milestones/milestone-11-...](milestones/milestone-11-zone-6-option-f-carrier-shape-plateau.md) — prior plateau marker (Zone 6 / intake-time judgment trace carrier shape arc)
 - [docs/milestones/milestone-10-...](milestones/milestone-10-phase-2-six-category-synthesis-plateau.md) — Phase 2 six-category brand-system input synthesis plateau
 - [docs/milestones/milestone-9-...](milestones/milestone-9-curation-semantic-split-brand-system-decision-surface-plateau.md), [milestone-8](milestones/milestone-8-phase-2-structured-model-plateau.md), [milestone-7](milestones/milestone-7-v1-sweep-closure-plateau.md) — earlier plateau markers
@@ -204,4 +205,4 @@ This file does not do the following:
 - Per-input-category mapping. Lives in the Phase 2 deepenings; this file does not duplicate them.
 - Per-packet operational findings. Live in the corresponding finding artifacts.
 
-This file is current as of [milestone 12](milestones/milestone-12-post-milestone-11-multi-axis-carrier-pattern-plateau.md). It will need revision when the next architectural plateau is reached, when one of the held questions earns resolution beyond bounded scope, or when an authorized next-pressure surface lands content that materially shifts the current state.
+This file is current as of [milestone 13](milestones/milestone-13-portability-evidence-plateau.md). It will need revision when the next architectural plateau is reached, when one of the held questions earns resolution beyond bounded scope, or when an authorized next-pressure surface lands content that materially shifts the current state.
