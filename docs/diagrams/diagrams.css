@@ -270,3 +270,7 @@ body {
 .edge { fill: none; stroke: var(--diagram-line); stroke-width: 1; }
 .edge.held { stroke: var(--diagram-line-soft); stroke-dasharray: 4 3; }
 .edge.legacy { stroke: var(--diagram-line-soft); }
+
+/* Sequence connectors (diagram-static-SEQ): explicit arrowhead triangles —
+   not SVG markers, which rasterize unreliably through the PNG export path. */
+.edge-arrowhead { fill: var(--diagram-line); stroke: none; }
