@@ -3,13 +3,13 @@
 
 ## Purpose / altitude
 
-This is a high-level doctrine surface. It states, in one place, the chain the architecture exists to preserve, and names where each link is detailed elsewhere. It is **doctrine altitude** — not a schema, not a proof-test, not a diagram. The structured definition layer and the architecture docs *implement* this chain; this note states *what they are for*.
+This is a high-level doctrine surface. It states, in one place, the **discretion chain** the architecture exists to preserve, and names where each link is detailed elsewhere. It is **doctrine altitude** — not a schema, not a proof-test, not a diagram. The structured definition layer and the architecture docs *implement* this chain; this note states *what they are for*.
 
 It expands [foundational-premises-v1.md](foundational-premises-v1.md) premise 5 ("creative discretion is a structural concern, not a residual") into the full sequence that premise sits inside.
 
-## The chain
+## The discretion chain
 
-The architecture exists to keep five things distinct and in order, end to end:
+The discretion chain keeps five things distinct and in order, end to end:
 
 1. **Creative intent** — the aim: what the asset is meant to express. The normative layer, where source of intent lives.
 2. **Creative discretion** — the bounded, reviewable judgment that opens and closes the aperture while pursuing the intent. It is *weak* discretion — judgment exercised within standards (intent, constraints, references, output role, decision owner), not freedom from them. The aperture is the permitted variance created by that judgment.
