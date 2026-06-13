@@ -2,7 +2,7 @@
    Source data for the asset-pipeline-ASK architecture tree diagram.
    Renderable by diagrams-engine.js.
 
-   D04 // asset-pipeline-ASK architecture tree // source-v3 // 2026-06-12
+   D04 // asset-pipeline-ASK architecture tree // source-v4 // 2026-06-13
    Single-tree extraction from the operator-side ecology-ASK diagram package
    following the Class A repo-native diagram-bundle pattern proven across
    apexSolarKiss/control-surface (D01) and apexSolarKiss/method-ASK (D02).
@@ -35,20 +35,26 @@ window.TREE_D04 = {
     {
       kind: 'section', label: 'current plateau',
       children: [
-        { label: 'milestone 13', note: 'portability evidence plateau · 2c in-base transition event · portability evidence arc · Phase 3 translation / portability / instantiation as the active frontier' },
+        { label: 'milestone 14', note: 'portability frontier separation · recovery (earned) / auditability (carrier-class) / consumability (redirect) · the deployment-diagnostic grammar is the wrong consumer for a package instance · open question: what consumes a package, and is one needed' },
       ],
     },
     {
       kind: 'section', label: 'portability / extractability',
       tag: 'docs/architecture.md §Portability',
+      note: 'milestone 14: the frontier separated into three distinct questions',
       children: [
-        { label: 'data-shape extraction (SKU slice)', note: 'representative SKU slice → JSON Schema + minimal instance · data shape portable; interpretive / procedural layer not yet portable' },
-        { label: 'package extraction (proven 2c instance)', note: 'proven 2c marketing-hero package re-expressed outside Airtable · prose walk + tool-agnostic YAML · walked to instantiation-plan depth' },
-        { label: 'worked package store (instantiation evidence)', note: 'proven 2c package held in a file-bundle second substrate · recovered from the store alone (8/8 PASS) · substrate-neutral keys; Airtable couplings quarantined' },
-        { label: 'claim boundary', note: 'earned: one package, one second substrate, recovered · not earned: package grammar · runtime consumer · additional stores by default · image-byte storage · schema / v3' },
+        { kind: 'group', label: 'recovery (earned)', children: [
+          { label: 'data-shape extraction (SKU slice)', note: 'representative SKU slice → JSON Schema + minimal instance · data shape portable; interpretive / procedural layer not yet portable' },
+          { label: 'package extraction (proven 2c instance)', note: 'proven 2c marketing-hero package re-expressed outside Airtable · prose walk + tool-agnostic YAML · walked to instantiation-plan depth' },
+          { label: 'worked package store · recovery 8/8', note: 'proven 2c package held in a file-bundle second substrate · recovered from the store alone (8/8 PASS) · substrate-neutral keys; Airtable couplings quarantined' },
+        ]},
+        { label: 'auditability · carrier-class (byte-boundary run)', note: 'no-image-byte boundary holds at carrier-class depth · hashes + durable pointers sufficient · gap is carrier-completeness, not byte-storage' },
+        { label: 'consumability · the redirect (consuming-artifact run)', note: 'deployment-diagnostic implementation-roadmap / system-map grammar is category-mismatched to a package instance · 0 PASS / 0 PARTIAL / 10 FAIL source-type mismatch · package is a governed-output instance, not a deployment intake', status: 'held' },
+        { label: 'claim boundary', note: 'earned: recovery (one package, one second substrate) + auditability (carrier-class) · not earned: a package consumer (current grammar mismatched) · package grammar · runtime consumer · image-byte storage · schema / v3' },
         { kind: 'group', label: 'next frontier questions', children: [
-          { label: 'visual-payload portability', status: 'held' },
-          { label: 'failable next-evidence (test use, not readability)', status: 'held' },
+          { label: 'what consumes a package? · is one needed', note: 'named, not framed or answered · or is the package role already complete (portable / auditable / exemplary)', status: 'held' },
+          { label: 'visual-payload portability (down-ranked as premature)', status: 'held' },
+          { label: 'package-shaped consumer design (unauthorized)', status: 'held' },
         ]},
       ],
     },
@@ -66,6 +72,7 @@ window.TREE_D04 = {
       children: [
         { label: 'implementation roadmap + system map artifact grammar', note: 'first generated-output artifact grammar · ten-section skeleton' },
         { label: 'application-consumer pressure pass', note: 'reads grammar back into architecture · surfaces conceptual-vs-vocabular split' },
+        { label: 'consuming-artifact run · package as source', note: 'operational successor to the pressure pass · grammar is category-mismatched to a package instance (10/10 FAIL) · the redirect', status: 'held' },
         { label: 'application subtree README routing' },
         { kind: 'group', label: 'sibling substrates', children: [
           { label: 'Airtable base-plan grammar', status: 'held' },
@@ -108,6 +115,7 @@ window.TREE_D04 = {
       kind: 'section', label: 'source-of-truth routing',
       children: [
         { label: 'milestones', tag: 'docs/milestones/', children: [
+          { label: 'milestone 14 // portability frontier separation' },
           { label: 'milestone 13 // portability evidence plateau' },
           { label: 'milestone 12 // multi-axis carrier-pattern plateau' },
           { label: 'milestone 11 // Zone 6 / Option F trace carrier shape plateau' },
@@ -125,6 +133,10 @@ window.TREE_D04 = {
           { label: 'non-airtable-extraction-attempt-v1.md' },
           { label: 'portable-package-extraction-2c-marketing-hero-v1.md' },
           { label: 'worked-package-store-2c-marketing-hero/' },
+          { label: 'byte-boundary-auditability-test-definition-v1.md' },
+          { label: 'byte-boundary-auditability-test-findings-v1.md' },
+          { label: 'consuming-artifact-test-definition-v1.md' },
+          { label: 'consuming-artifact-test-findings-v1.md' },
         ]},
         { label: 'architecture depth docs', tag: 'docs/', children: [
           { label: 'architecture-apex-definition-layer-v1.md' },
