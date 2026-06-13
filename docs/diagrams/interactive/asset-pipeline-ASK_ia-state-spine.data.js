@@ -7,7 +7,7 @@
 
    DISCIPLINE: color encodes STATE only. Everything else — evidence, qualifier,
    mode coverage, repo pointer — is metadata shown in the inspector panel, never
-   in hue. One state per node. States drawn from current repo truth (milestone 13
+   in hue. One state per node. States drawn from current repo truth (milestone 14
    + evidence-depth brief + architecture.md); every state has an honest example,
    none invented for palette coverage.
 
@@ -23,7 +23,7 @@ window.IA_STATE_SPINE = {
   meta: {
     title: 'Layered IA — state',
     subtitle: 'Axis-independent state surface · what is earned / held / deflated, and where',
-    stamp: { source: 'source-v3', render: 'render-v7', date: '2026-06-12' },
+    stamp: { source: 'source-v4', render: 'render-v7', date: '2026-06-13' },
   },
 
   // Legend / state vocabulary (ASK Spectral State).
@@ -110,9 +110,13 @@ window.IA_STATE_SPINE = {
       qualifier: 'held for marketing / campaign modes', pointer: 'docs/collection-mode-operational-test-findings-v1.md',
       modes: ['m-collection'] },
     { id: 'q-portability', group: 'question', label: 'portable asset-definition package · extractability', state: 'partial',
-      evidence: 'Data shape portable; the proven 2c package re-expressed outside Airtable and held in a file-bundle second substrate, recovered from the store alone (8/8 PASS). First bounded portability evidence outside Airtable shape.',
-      qualifier: 'narrow — one package, one second substrate; no runtime consumer, no package grammar; visual-payload portability is the next held question',
+      evidence: 'Milestone 14 separated the frontier into three questions. Recovery: earned (2c package held in a file-bundle second substrate, recovered 8/8). Auditability: holds at carrier-class depth (no-image-byte boundary; hashes + durable pointers sufficient; gap is carrier-completeness, not byte-storage). Consumability: the deployment-diagnostic application grammar is category-mismatched to a package instance (10/10 FAIL) — the redirect.',
+      qualifier: 'narrow — one package, one second substrate; visual-payload work down-ranked as premature; package-shaped consumer design unauthorized',
       pointer: 'docs/architecture.md §Portability / Extractability', modes: ['m-marketing'] },
+    { id: 'q-package-consumer', group: 'question', label: 'what consumes a package?', state: 'held',
+      evidence: 'Surfaced by the consuming-artifact run (#332): the current deployment-diagnostic grammar is the wrong consumer for a package instance. The open question — what consumes a package, and is one needed — is named, not framed or answered; or the package role may already be complete (portable / auditable / exemplary).',
+      qualifier: 'named, not framed; package-shaped consumer design unauthorized',
+      pointer: 'docs/milestones/milestone-14-portability-frontier-separation.md', modes: ['m-marketing'] },
 
     // ---- external ----
     { id: 'x-design-system', group: 'external', label: 'design-system-ASK foundations', state: 'external',
