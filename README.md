@@ -59,9 +59,9 @@ For the cleanest layered IA architecture case, see the SKU-driven mode, anchored
 
 Prototype test bases (worked evidence surfaces; Airtable is one substrate, not the deliverable):
 
-- [`Airtable base // Integrated Four-Workflow Home-Goods v1`](https://airtable.com/app4sBiFw2tft17VF) — the base the 2c marketing-hero chain runs in; the worked evidence surface for the end-to-end in-base proof (definition layer → generation → candidate accumulation → selection → governed asset, no external import)
+- [`Airtable base // Integrated Four-Workflow Home-Goods v1`](https://airtable.com/app4sBiFw2tft17VF/shrckbrFuw0k9e6wq) — the base the 2c marketing-hero chain runs in; the worked evidence surface for the end-to-end in-base proof (definition layer → generation → candidate accumulation → selection → governed asset, no external import)
 - [`Airtable base // SKU-Driven Furniture v1`](https://airtable.com/appoqJ25B6w4vSuX9/shrGGnxr3uvLRkEU4) — original prototype base for SKU-driven Furniture v1 and early cross-mode pressure work
-- [`Airtable base // Campaign-Driven D2C Home-Goods v1`](https://airtable.com/appCAcRuA82SWj5h5) — separate campaign-mode prototype base for cross-base / cross-brand pressure work
+- [`Airtable base // Campaign-Driven D2C Home-Goods v1`](https://airtable.com/appCAcRuA82SWj5h5/shryHuOgJHRsNhMMU) — separate campaign-mode prototype base for cross-base / cross-brand pressure work
 
 Background article series, in chronological order:
 

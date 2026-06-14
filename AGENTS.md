@@ -318,6 +318,10 @@ Use direct visual evidence in chat for image-fidelity judgment.
 
 Do not speculate about Airtable record contents when the connector can answer directly.
 
+### Public Airtable Links in Repo-Readable Surfaces
+
+Any Airtable base linked from a repo-readable surface (README, docs) must be a public read-only "Share to web" link (the `/shr…` form), not a bare base URL (`/app…`). A bare base URL gates public readers behind Airtable sign-in, so a cold visitor following a repo link to such a base hits a login wall, not the evidence. Before committing an Airtable link, enable "Share to web" (read-only) on the base or view and verify the resulting `/shr…` link loads in a logged-out browser. Share-link creation is an Airtable-UI action; the connector cannot create or verify public share links. Because a full-base "Share to web" link exposes every table in that shared base, clear operator-side residue from the shared scope first.
+
 ### Generation State Model
 
 Distinguish:
