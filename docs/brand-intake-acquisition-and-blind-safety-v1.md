@@ -4,18 +4,18 @@
 
 This is a thin **preflight discipline** for corpus construction — the checks a corpus
 must pass, and the order to run them, before it is used to pressure-test the visual-payload
-register. It is not a new architecture doctrine and not a brand-intake manifesto. It
+model. It is not a new architecture doctrine and not a brand-intake manifesto. It
 articulates one layer the rest of the architecture assumed but never stated: a corpus is
 *evidence*, and evidence has to be acquired and made identity-neutral before it can be trusted.
 
-It reads against [`docs/visual-payload-architecture-v1.md`](visual-payload-architecture-v1.md)
-(the register a corpus is built to pressure) and the foundational premise that references,
+It reads against [`docs/visual-payload-architecture-v2.md`](visual-payload-architecture-v2.md)
+(the model a corpus is built to pressure) and the foundational premise that references,
 product truth, and output are different objects ([`docs/foundational-premises-v1.md`](foundational-premises-v1.md)).
 It is aesthetic-agnostic and uses no real-brand examples.
 
 ## What This Artifact Attempts
 
-A corpus brought in to test the register must first be **acquired** and then made **blind**.
+A corpus brought in to test the model must first be **acquired** and then made **blind**.
 These are different operations: a source can be trivial to acquire and still require strict
 neutralization, or hard to acquire and trivial to neutralize once acquired. Treating them as
 one question hides risk. On top of both sits a duty to **report what the corpus covers**
@@ -83,7 +83,7 @@ behaves consistently across further cases.)
 ## Boundaries / Non-Actions
 
 - structure and discipline, not schema: no fields, validator, or structured-IA revision
-- no register edit; this preflights the visual-payload register, it does not modify it
+- no model edit; this preflights the visual-payload model, it does not modify it
 - no method-doctrine expansion; the discretion-chain and `bounded generativity` primitives are
   untouched
 - aesthetic-agnostic: no real-brand examples, no live-site mechanics, no case narratives
@@ -95,10 +95,10 @@ behaves consistently across further cases.)
 
 This is the v1 articulation of the corpus-construction preflight. It is superseded by any later
 version that revises the checks or promotes the coverage-adequacy statement to an axis. It does
-not supersede the visual-payload register or any architecture document; it reads against them
+not supersede the visual-payload model or any architecture document; it reads against them
 and adds the preflight layer they assumed.
 
 ## Anchor Documents
 
-- [`docs/visual-payload-architecture-v1.md`](visual-payload-architecture-v1.md) — the register a corpus is built to pressure-test; this artifact is the preflight before that test
+- [`docs/visual-payload-architecture-v2.md`](visual-payload-architecture-v2.md) — the model a corpus is built to pressure-test; this artifact is the preflight before that test
 - [`docs/foundational-premises-v1.md`](foundational-premises-v1.md) — references, product truth, and output are different objects
