@@ -23,7 +23,7 @@ window.IA_STATE_SPINE = {
   meta: {
     title: 'Layered IA — state',
     subtitle: 'Axis-independent state surface · what is earned / held / deflated, and where',
-    stamp: { source: 'source-v4', render: 'render-v7', date: '2026-06-13' },
+    stamp: { source: 'source-v5', render: 'render-v7', date: '2026-06-18' },
   },
 
   // Legend / state vocabulary (ASK Spectral State).
@@ -113,10 +113,10 @@ window.IA_STATE_SPINE = {
       evidence: 'Milestone 14 separated the frontier into three questions. Recovery: earned (2c package held in a file-bundle second substrate, recovered 8/8). Auditability: holds at carrier-class depth (no-image-byte boundary; hashes + durable pointers sufficient; gap is carrier-completeness, not byte-storage). Consumability: the deployment-diagnostic application grammar is category-mismatched to a package instance (10/10 FAIL) — the redirect.',
       qualifier: 'narrow — one package, one second substrate; visual-payload work down-ranked as premature; package-shaped consumer design unauthorized',
       pointer: 'docs/architecture.md §Portability / Extractability', modes: ['m-marketing'] },
-    { id: 'q-package-consumer', group: 'question', label: 'what consumes a package?', state: 'held',
-      evidence: 'Surfaced by the consuming-artifact run (#332): the current deployment-diagnostic grammar is the wrong consumer for a package instance. The open question — what consumes a package, and is one needed — is named, not framed or answered; or the package role may already be complete (portable / auditable / exemplary).',
-      qualifier: 'named, not framed; package-shaped consumer design unauthorized',
-      pointer: 'docs/milestones/milestone-14-portability-frontier-separation.md', modes: ['m-marketing'] },
+    { id: 'q-package-consumer', group: 'question', label: 'what consumes a package?', state: 'partial',
+      evidence: 'Milestone 15 names a first operational consumer — a package-instantiation planning agent — and formally calibrates it on one known-achievable filesystem target (run 1): a faithful dual-cited instantiation brief derived from the package alone, blind to the prior instantiation, classifying gaps instead of inventing.',
+      qualifier: 'first operational consumer calibrated at run-1 (one package, one target, two runners); no consuming grammar; next evidence = a materially different second target',
+      pointer: 'docs/package-instantiation-consumer-evidence-boundary-v1.md', modes: ['m-marketing'] },
 
     // ---- external ----
     { id: 'x-design-system', group: 'external', label: 'design-system-ASK foundations', state: 'external',
