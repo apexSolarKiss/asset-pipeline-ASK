@@ -216,15 +216,20 @@ This is a bridge to existing vocabulary, not a new force model.
 
 Many dimensions can be articulated as a relatively stable upstream grammar plus a
 context-specialized setup — lighting is the clean case (a warm, soft register vs a
-studio key vs an outdoor exposure). The split is real and was observable in test
-corpora. But the **ownership assignment** — that the brand owns the upstream grammar
-and context owns the setup — is an *architectural* claim, not something a blind corpus
-proves. This is the local form of the method-level `bounded generativity` primitive
+studio key vs an outdoor exposure). A language-versus-setup distinction was observable
+in the two earlier corpus runs. Its ownership and placement in the architecture — that
+the brand owns the upstream grammar and context owns the setup — remain architectural
+claims, not something a blind corpus proves. This is the local form of the
+method-level `bounded generativity` primitive
 (defined and owned at method-ASK); stated here in AP terms only.
 
 ## What the corpus evidence supports — and does not
 
-Two anonymized blind corpus runs informed this revision. Stated precisely:
+Two anonymized blind corpus runs predate this revision and tested the v1 flat
+register. They did not produce or validate the ontology/topology correction. A later
+terminology catch exposed the `post-processing / retouch` category error and prompted
+the audit that produced v2. Their evidence is carried forward only where v2 retains
+the same observable visual dimensions. Stated precisely:
 
 **Supported:**
 - the observed visual dimensions populate from real imagery, blind;
