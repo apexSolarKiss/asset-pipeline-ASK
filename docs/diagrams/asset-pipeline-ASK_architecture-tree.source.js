@@ -2,7 +2,7 @@
    Source data for the asset-pipeline-ASK architecture tree diagram.
    Renderable by diagrams-engine.js.
 
-   D04 // asset-pipeline-ASK architecture tree // source-v4 // 2026-06-13
+   D04 // asset-pipeline-ASK architecture tree // source-v5 // 2026-06-18
    Single-tree extraction from the operator-side ecology-ASK diagram package
    following the Class A repo-native diagram-bundle pattern proven across
    apexSolarKiss/control-surface (D01) and apexSolarKiss/method-ASK (D02).
@@ -50,11 +50,15 @@ window.TREE_D04 = {
         ]},
         { label: 'auditability · carrier-class (byte-boundary run)', note: 'no-image-byte boundary holds at carrier-class depth · hashes + durable pointers sufficient · gap is carrier-completeness, not byte-storage' },
         { label: 'consumability · the redirect (consuming-artifact run)', note: 'deployment-diagnostic implementation-roadmap / system-map grammar is category-mismatched to a package instance · 0 PASS / 0 PARTIAL / 10 FAIL source-type mismatch · package is a governed-output instance, not a deployment intake', status: 'held' },
-        { label: 'claim boundary', note: 'earned: recovery (one package, one second substrate) + auditability (carrier-class) · not earned: a package consumer (current grammar mismatched) · package grammar · runtime consumer · image-byte storage · schema / v3' },
+        { label: 'claim boundary', note: 'earned: recovery (one package, one second substrate) + auditability (carrier-class) + a first operational consumer calibrated run-1 · not earned: a consuming grammar · package grammar · runtime consumer · image-byte storage · schema / v3' },
+        { kind: 'group', label: 'package-instantiation consumer (milestone 15)', children: [
+          { label: 'first operational consumer · calibrated run-1', note: 'the consumability redirect named a first operational consumer — a package-instantiation planning agent · formally calibrated on one known-achievable filesystem target (run 1) · faithful dual-cited instantiation brief from the package alone, blind to the prior instantiation · gaps classified, not invented' },
+          { label: 'not earned (run-1 bounds)', note: 'no consuming grammar · no second-target portability · no general converter · no schema / runtime · next evidence = a materially different second target', status: 'held' },
+        ]},
         { kind: 'group', label: 'next frontier questions', children: [
-          { label: 'what consumes a package? · is one needed', note: 'named, not framed or answered · or is the package role already complete (portable / auditable / exemplary)', status: 'held' },
+          { label: 'what consumes a package? · is one needed', note: 'milestone 15: answered at first-operational-consumer depth (package-instantiation planning agent, calibrated run-1); the consuming-grammar question stays open · or the package role may already be complete (portable / auditable / exemplary)', status: 'held' },
           { label: 'visual-payload portability (down-ranked as premature)', status: 'held' },
-          { label: 'package-shaped consumer design (unauthorized)', status: 'held' },
+          { label: 'package-shaped consumer / consuming grammar (unauthorized; needs a materially different second target)', status: 'held' },
         ]},
       ],
     },
@@ -115,6 +119,7 @@ window.TREE_D04 = {
       kind: 'section', label: 'source-of-truth routing',
       children: [
         { label: 'milestones', tag: 'docs/milestones/', children: [
+          { label: 'milestone 15 // resolution calculus + package-instantiation consumer evidence plateau' },
           { label: 'milestone 14 // portability frontier separation' },
           { label: 'milestone 13 // portability evidence plateau' },
           { label: 'milestone 12 // multi-axis carrier-pattern plateau' },
@@ -137,6 +142,7 @@ window.TREE_D04 = {
           { label: 'byte-boundary-auditability-test-findings-v1.md' },
           { label: 'consuming-artifact-test-definition-v1.md' },
           { label: 'consuming-artifact-test-findings-v1.md' },
+          { label: 'package-instantiation-consumer-evidence-boundary-v1.md' },
         ]},
         { label: 'architecture depth docs', tag: 'docs/', children: [
           { label: 'architecture-apex-definition-layer-v1.md' },
@@ -148,6 +154,7 @@ window.TREE_D04 = {
           { label: 'campaign-mode-fork-resolver-test-phase-d-findings-v1.md' },
           { label: 'evidence-depth-asymmetry-assessment-brief-v1.md' },
           { label: 'architecture-front-door-compression-brief-v1.md' },
+          { label: 'resolution-calculus-evidence-boundary-v1.md' },
         ]},
         { label: 'application docs', tag: 'docs/application/' },
         { label: 'AGENTS.md', note: 'single-node operating model · agent-agnostic workflow rules' },
