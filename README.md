@@ -72,6 +72,7 @@ Background article series, in chronological order:
 - [From Execution Proof Back to Normative Structure](https://atomicspacekitten.substack.com/p/from-execution-proof-back-to-normative)
 - [Creative Discretion Is Not Creative Intent](https://atomicspacekitten.substack.com/p/creative-discretion-is-not-creative)
 - [The Missing Layer Is Not Generation](https://atomicspacekitten.substack.com/p/the-missing-layer-is-not-generation)
+- [Selection Is Not Governance](https://atomicspacekitten.substack.com/p/selection-is-not-governance)
 
 ## License
 
