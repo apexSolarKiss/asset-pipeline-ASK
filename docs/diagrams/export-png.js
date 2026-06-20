@@ -187,6 +187,12 @@
     var diagW = +svg.getAttribute('width');
     var diagH = +svg.getAttribute('height');
     if (!diagW || !diagH) return null;
+    // The content coordinate system may not start at (0,0): the FLOW engine centers
+    // content around x=0, so its viewBox origin is negative. Read it so the fit
+    // transform can offset by it (H/V/SEQ have a 0,0 origin → minX/minY = 0, no-op).
+    var vb = (svg.getAttribute('viewBox') || '').trim().split(/[\s,]+/).map(Number);
+    var minX = (vb.length === 4 && isFinite(vb[0])) ? vb[0] : 0;
+    var minY = (vb.length === 4 && isFinite(vb[1])) ? vb[1] : 0;
 
     /* Clone the live diagram content groups and bake computed styles inline — a
        faithful snapshot of what the browser rendered, not a reconstruction.
@@ -333,18 +339,21 @@
     }
 
     /* ---------- fit the diagram content ----------
-       The overlay panels are opaque enough that content running under them
-       reads as a collision, so the fit area starts BELOW the taller panel —
-       the diagram is centered in the clear band between panels and page
-       bottom. (Computed after the panels so their measured heights are known.) */
+       Tall/portrait diagrams fill the whole width, so their top edge would run
+       under the corner panels — they start BELOW the taller panel. LANDSCAPE
+       diagrams (wider than tall) have empty top corners, so they can start just
+       below the header and use near-full page height (bigger render) without
+       colliding with the corner panels. (Computed after the panels.) */
     var panelBand = Math.max(cavH, legendH);
-    var diagTop = overlayY + (panelBand ? panelBand + 48 : 0);
+    var landscape = diagW >= diagH;
+    var diagTop = overlayY + (landscape ? 120 : (panelBand ? panelBand + 48 : 0));
     var diagBot = PAGE_H - M, diagLeft = M, diagRight = PAGE_W - M;
     var availW = diagRight - diagLeft, availH = diagBot - diagTop;
     var scale = Math.min(availW / diagW, availH / diagH);
     var sw = diagW * scale, sh = diagH * scale;
     var sx = diagLeft + (availW - sw) / 2, sy = diagTop + (availH - sh) / 2;
-    content.setAttribute('transform', 'translate(' + sx + ' ' + sy + ') scale(' + scale + ')');
+    // offset by the viewBox origin so negative-origin (centered) content isn't clipped
+    content.setAttribute('transform', 'translate(' + (sx - minX * scale) + ' ' + (sy - minY * scale) + ') scale(' + scale + ')');
 
     var serializer = new XMLSerializer();
     var contentStr = serializer.serializeToString(content);

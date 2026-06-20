@@ -73,6 +73,7 @@ Background article series, in chronological order:
 - [Creative Discretion Is Not Creative Intent](https://atomicspacekitten.substack.com/p/creative-discretion-is-not-creative)
 - [The Missing Layer Is Not Generation](https://atomicspacekitten.substack.com/p/the-missing-layer-is-not-generation)
 - [Selection Is Not Governance](https://atomicspacekitten.substack.com/p/selection-is-not-governance)
+- [The Image Is Not One Thing](https://atomicspacekitten.substack.com/p/the-image-is-not-one-thing)
 
 ## License
 
