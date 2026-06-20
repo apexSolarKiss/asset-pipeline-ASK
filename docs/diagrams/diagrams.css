@@ -26,8 +26,8 @@
   --diagram-ink:       #6A637F;                       /* primary diagram text */
   --diagram-muted:     #827399;                       /* secondary diagram text */
   --diagram-faint:     rgba(130, 115, 153, 0.62);     /* tertiary text / separators */
-  --diagram-line:      rgba(255, 255, 255, 0.90);     /* box borders · edges · section rules — white */
-  --diagram-line-soft: rgba(255, 255, 255, 0.55);     /* held / legacy strokes — soft white */
+  --diagram-line:      rgba(74, 66, 96, 0.92);        /* light mode: DARK ASK ink lines (legible on lavender) */
+  --diagram-line-soft: rgba(106, 99, 127, 0.55);      /* light mode: soft dark ink for held / legacy / taps */
 }
 
 :root[data-theme="dark"] {
@@ -274,3 +274,95 @@ body {
 /* Sequence connectors (diagram-static-SEQ): explicit arrowhead triangles —
    not SVG markers, which rasterize unreliably through the PNG export path. */
 .edge-arrowhead { fill: var(--diagram-line); stroke: none; }
+
+/* =========================================================================
+   Convergence-flow additions (diagram-static-FLOW).
+
+   The FLOW pattern reuses the whole shared vocabulary above (node-box,
+   node-label, node-note, edge, edge-arrowhead, section tags) and adds the
+   classes below for the parts of a convergence flow the trees and sequence
+   do not have: a grouped source field, a lateral relation rail, secondary
+   cross-stage evaluation edges, and an optional return edge. All strokes are
+   theme-driven (no new color), and dash patterns differ from the held/legacy
+   dashes so the relation reads as a relation, not a state.
+
+   This FLOW copy is therefore a SUPERSET of the byte-identical H/V/SEQ
+   diagrams.css. The base above is unchanged; only this block is appended.
+   ========================================================================= */
+
+/* Grouped source field — a labelled frame around the convergence inputs. */
+.flow-group {
+  fill: none;
+  stroke: var(--diagram-line-soft);
+  stroke-width: 1;
+}
+
+/* Small mono tag for a region (field label, rail label, band label).
+   Same family/treatment as .section-tag; positioned by the engine. */
+.flow-tag {
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  fill: var(--diagram-muted); dominant-baseline: middle; font-weight: 300;
+}
+
+/* Lateral relation rail — a carrier participates across the whole source
+   field through this rail (it is not a peer source branch). Solid, with
+   small diamond end-caps drawn by the engine. */
+.edge-rail { fill: none; stroke: var(--diagram-line); stroke-width: 1; }
+.edge-rail-cap { fill: var(--diagram-line); stroke: none; }
+
+/* Secondary cross-stage evaluation edges — a source operating a second time,
+   evaluating a realized result (NOT feeding it back upstream). Fine dash,
+   soft stroke; distinct from the held/legacy 4 3 dash. */
+.edge-eval { fill: none; stroke: var(--diagram-line-soft); stroke-width: 1; stroke-dasharray: 2 3; }
+
+/* Optional styled return edge — a governed output later reused as a carrier.
+   Dotted, soft, round caps; clearly not a primary process edge. */
+.edge-return { fill: none; stroke: var(--diagram-line-soft); stroke-width: 1; stroke-dasharray: 1 4; stroke-linecap: round; }
+
+/* Hierarchy tiers — weight/contrast only, no new color (DS rule).
+   anchor = the load-bearing nodes (resolved spec, governed asset): heavier stroke + 400 label.
+   recede = source-field inputs: soft stroke + muted label, so the flow reads over them. */
+.node-box.anchor   { stroke: var(--diagram-line); stroke-width: 1.75; }
+.node-label.anchor { font-weight: 400; }
+.node-box.recede   { stroke: var(--diagram-line); fill: var(--node-fill); }
+.node-label.recede { fill: var(--diagram-muted); }
+
+/* Contained dimensions ribbon — one measured strip carrying the dimension
+   inventory as text (not floating pills). Context, not a process stage. */
+.flow-ribbon     { fill: var(--node-fill); stroke: var(--diagram-line-soft); stroke-width: 1; }
+.flow-ribbon-txt { font-family: var(--font-mono); font-size: 9px; fill: var(--diagram-muted); letter-spacing: 0.04em; dominant-baseline: middle; }
+
+/* Short taps — rail-stub and conformance-rail→node. Soft, fine dash. */
+.edge-tap { fill: none; stroke: var(--diagram-line-soft); stroke-width: 1; stroke-dasharray: 2 2.5; }
+
+/* Convergence — the load-bearing many-to-one merge. Visible, solid; this is the
+   central event, so it must read (NOT the invisible undefined class it replaces). */
+.converge { fill: none; stroke: var(--diagram-line); stroke-width: 1.1; }
+
+/* Rail lane — typed-reference rail rendered as a light label lane (no divider line). */
+.flow-railband { fill: none; stroke: none; }
+
+/* Return loop — the long dotted feedback curve from the future-reference-carrier
+   chip back up to the reference carrier. Soft, dashed, clearly secondary. */
+.edge-loop { fill: none; stroke: var(--diagram-line-soft); stroke-width: 1.1; stroke-dasharray: 2 5; stroke-linecap: round; }
+
+/* ---- interactive/explanatory mode: hover hit-areas, highlight, side panel ---- */
+.hit-layer .node-hit { fill: transparent; cursor: pointer; }
+/* highlight = weight/contrast only (DS rule), never a new hue */
+.node-box.hi    { stroke-width: 2.4; }
+.flow-ribbon.hi { stroke-width: 2; }
+
+/* explanatory side panel — repo-native view; absent/ignored in static export */
+.flow-panel {
+  position: absolute; bottom: 24px; right: 22px; width: 300px; max-width: 38vw;
+  padding: 16px 18px; border-radius: 10px;
+  background: var(--node-fill); border: 1px solid var(--diagram-line-soft);
+  color: var(--diagram-ink); font-family: var(--font-sans, "Inter", system-ui, sans-serif);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.10); pointer-events: none; z-index: 5;
+}
+.flow-panel .fp-hint { color: var(--diagram-muted); font-size: 12px; line-height: 1.5; }
+.flow-panel .fp-title { font-size: 14px; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 8px; color: var(--diagram-ink); }
+.flow-panel .fp-def { font-size: 12.5px; line-height: 1.55; color: var(--diagram-ink); }
+.flow-panel .fp-eg, .flow-panel .fp-not { margin-top: 9px; font-size: 11.5px; line-height: 1.5; color: var(--diagram-muted); }
+.flow-panel .fp-k { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; margin-right: 6px; color: var(--diagram-muted); }
