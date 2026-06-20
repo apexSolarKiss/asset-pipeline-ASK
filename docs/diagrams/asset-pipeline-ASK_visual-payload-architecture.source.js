@@ -20,8 +20,9 @@
 window.FLOW_DIAGRAM = {
   // NOTE: the "visual dimensions" band was removed from this figure (ASK flagged it as
   // redundant/confusing next to the source field). The payload dimensions (subject ·
-  // lighting · color · composition · …) belong to the SEPARATE payload-attribute matrix
-  // figure, not this governance-flow figure. Re-add a `band: {...}` here to restore it.
+  // lighting · color · composition · …) are defined in prose; if diagrammed separately,
+  // they should live in a separate payload-attribute matrix, not in this convergence-flow
+  // figure. Re-add a `band: {...}` here to restore the ribbon if needed.
   carrier: {
     label: 'reference image / carrier',
     short: 'reference carrier',
