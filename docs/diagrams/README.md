@@ -48,7 +48,7 @@ asset-pipeline-ASK_discretion-chain.png         committed render (real PNG expor
 diagrams-static-SEQ-engine.js                   sequence (left-aligned, arrowed) layout engine
 
 # Convergence flow — Class A diagram-static-FLOW (two render modes) — illustrative VPA diagram
-asset-pipeline-ASK_visual-payload-architecture.html              chrome-free STATIC export shell (the article target)
+asset-pipeline-ASK_visual-payload-architecture.html              chrome-free STATIC export shell (canonical repo shell; dark by default)
 asset-pipeline-ASK_visual-payload-architecture.interactive.html  full-chrome INTERACTIVE shell (#flowPanel; FLOW_MODE='interactive')
 asset-pipeline-ASK_visual-payload-architecture.source.js         FLOW_DIAGRAM data (carrier/field/converge/spine/evalEdges/futureCarrier; AP-owned)
 asset-pipeline-ASK_visual-payload-architecture.png               committed static render (chrome-free, dark gradient field, dot-free) — embedded in docs/visual-payload-architecture-v2.md
