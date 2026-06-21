@@ -1,7 +1,8 @@
 /* asset-pipeline-ASK_visual-payload-architecture.source.js
    AP-owned source data (Tier 3 content) for the Visual Payload Architecture diagram,
-   rendered on the design-system-ASK `diagram-static-FLOW` scaffold vendored by reference
-   at design-system-ASK@c87aa0d (engine / diagrams.css / export-png.js unchanged).
+   rendered on design-system-ASK `diagram-static-FLOW`, currently vendored by reference
+   at design-system-ASK@98d6074. AP owns this source data; the FLOW engine / shared CSS /
+   exporter remain DS-owned and are never forked locally.
 
    Illustrative, not source truth — docs/visual-payload-architecture-v2.md is authoritative.
 

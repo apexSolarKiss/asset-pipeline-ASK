@@ -176,7 +176,6 @@
     // line, no kink, no box crossing (the trunk axis x=0 is clear of every source box).
     fNodes.forEach((b) => {
       line(edges, b.right, b.cy, trunkX, b.cy, 'converge');
-      edges.appendChild(el('circle', { cx: trunkX, cy: b.cy, r: 2.2, class: 'edge-arrowhead' }));
     });
     const trunkTop = Math.min(...fNodes.map((b) => b.cy));
     line(edges, trunkX, trunkTop, converge.cx, converge.top - ARROW_H, 'converge');  // straight trunk → spec
@@ -248,7 +247,6 @@
       const busX = Math.min(T.left, ...srcs.map((s) => s.left), ...passed.map((b) => b.left)) - BUS_CLEAR;
       srcs.forEach((s) => {
         line(edges, s.left, s.cy, busX, s.cy, 'edge-tap');                 // source taps left onto the bus
-        edges.appendChild(el('circle', { cx: busX, cy: s.cy, r: 2.4, class: 'edge-arrowhead' }));
       });
       line(edges, busX, topY, busX, T.cy, 'edge-tap');                     // the bus runs down
       line(edges, busX, T.cy, T.left - ARROW_H, T.cy, 'edge-tap');         // bus → conformance

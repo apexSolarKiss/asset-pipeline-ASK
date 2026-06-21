@@ -26,8 +26,8 @@
   --diagram-ink:       #6A637F;                       /* primary diagram text */
   --diagram-muted:     #827399;                       /* secondary diagram text */
   --diagram-faint:     rgba(130, 115, 153, 0.62);     /* tertiary text / separators */
-  --diagram-line:      rgba(74, 66, 96, 0.92);        /* light mode: DARK ASK ink lines (legible on lavender) */
-  --diagram-line-soft: rgba(106, 99, 127, 0.55);      /* light mode: soft dark ink for held / legacy / taps */
+  --diagram-line:      rgba(255, 255, 255, 0.90);     /* box borders · edges · section rules — white */
+  --diagram-line-soft: rgba(255, 255, 255, 0.55);     /* held / legacy strokes — soft white */
 }
 
 :root[data-theme="dark"] {
