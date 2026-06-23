@@ -8,6 +8,8 @@ The [README](../README.md) names the package as this project's reusable object �
 
 Read it as an example, not a spec. It shows what a package holds, how generation fills it, how a human closes it, and how governance records the result — using one real chain from packet to accepted asset.
 
+**What this example is.** This worked package contains a completed hero record and a still-prospective held support obligation; it is not one undifferentiated approval object. A forward production decision applies to the prospective definition, including whether the support slot is released, remains held, or is retired. The closed hero is historical and should be read as a governed record. See [package lifecycle partition](package-lifecycle-partition-v1.md) for why the package's elements sit in three different lifecycle states, and the interpretive rule for reading its statuses.
+
 ## The package, instance by instance
 
 The worked case is a "Spring Refresh" marketing hero for the prototype's synthetic D2C everyday-quality home-goods instance ("Warm Restraint"). One image: an offer-ready hero with clean space for a headline / offer copy overlay.
@@ -28,6 +30,16 @@ The worked case is a "Spring Refresh" marketing hero for the prototype's synthet
 | **Governed asset** (the record) | `ASSET-MSG-HG-001-HERO-001` — the selected candidate, captured as a governed output with its curation reason, curator, and provenance; the output slot moved to *accepted*. |
 
 The chain reads top to bottom: **the brief opens an aperture → generation fills it with candidates → a human selects one and makes it true to the intent → governance records the result.**
+
+### Reading the three lifecycle states
+
+The rows above are not all the same *kind* of thing — they sit in three lifecycle states, and telling them apart is how a reader knows which decision the example supports:
+
+- **Prospective definition** (what would drive a run): packet, business intent, creative intent, creative discretion, constraints, references, required output, the slot definitions, the slot prompt, and the *intended* generation configuration. The held **support slot** rests here — a still-prospective obligation, not yet run.
+- **Execution / run state** (a run's log, not an instruction): the seven-candidate set, the *actual* per-candidate invocation settings, and the prompt-remediation event.
+- **Governed record** (the closed run): the governed asset and the hero slot's *accepted* status, with the governance record carrying the selection rationale. (Selection itself is the transition from run state into the governed record, not a state of its own.)
+
+The states become conceptually legible when read as separate definition and run/governance axes, but the current store does not encode that partition explicitly. In this worked example, `packet_status: draft` is read as the prospective definition's editorial state, not as a roll-up of slot execution or governance state. This is an interpretive rule, not a typed relationship in the current data. Full mapping and the rule: [package lifecycle partition](package-lifecycle-partition-v1.md).
 
 ## What Airtable demonstrates (and what is substrate-independent)
 
