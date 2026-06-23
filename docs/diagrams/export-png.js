@@ -375,30 +375,108 @@
       '</svg>';
   }
 
-  async function exportPNG(button) {
-    var T = resolveTheme();
-    var fullSvg = buildSvg(T);
-    if (!fullSvg) { alert('PNG export: diagram not ready.'); return; }
+  /* ---------- diagram-only build (PNG diagram) ----------
+     The engine authors its own SVG width / height / viewBox to include the node
+     boxes, connectors, arrowheads, edge labels, the SEQ return-loop gutter, and any
+     figure-specific landscape geometry. Trust that authored canvas as the diagram
+     boundary — do NOT re-infer a tight getBBox, which would clip return loops,
+     arrowheads, or custom offshoots.
 
-    button.disabled = true;
-    var originalText = button.textContent;
-    button.textContent = '…';
+     Reproduce the proven clean-render recipe EXACTLY — it is a TWO-step sizing:
+       (1) size the viewport: viewport = round(svg × S) + 220, S capped at 1.1 and
+           at 1500 / longest-edge;
+       (2) rerun the engine's fit() into that viewport: 80px padding budget, scale
+           capped at 1.2×, content centered.
+     Earlier this collapsed to a single `S × raster` scale with flat padding, which
+     reproduced the OUTER dimensions but under-scaled and over-padded the diagram
+     WITHIN (v4 audit). The fit() step is what scales portrait figures up to fill.
+     Header / caption / legend / HUD / ticks live OUTSIDE #svg, so cloning only the
+     diagram content groups excludes them. */
+  function buildDiagramSvg(T) {
+    var svg = document.getElementById('svg');
+    if (!svg) return null;
+    var w = +svg.getAttribute('width'), h = +svg.getAttribute('height');
+    if (!w || !h) return null;
+    var vb = (svg.getAttribute('viewBox') || '').trim().split(/[\s,]+/).map(Number);
+    var minX = (vb.length === 4 && isFinite(vb[0])) ? vb[0] : 0;
+    var minY = (vb.length === 4 && isFinite(vb[1])) ? vb[1] : 0;
+
+    // (1) viewport sizing — the clean-shell recipe.
+    var S = Math.min(1.1, 1500 / Math.max(w, h));
+    var viewportW = Math.round(w * S) + 220;
+    var viewportH = Math.round(h * S) + 220;
+    // (2) engine fit() into that viewport: 80px padding budget, 1.2× cap, centered.
+    var fitScale = Math.min((viewportW - 80) / w, (viewportH - 80) / h, 1.2);
+    var RASTER = 2;
+    var outW = viewportW * RASTER;
+    var outH = viewportH * RASTER;
+    var scale = fitScale * RASTER;
+    var padX = ((viewportW - w * fitScale) / 2) * RASTER;
+    var padY = ((viewportH - h * fitScale) / 2) * RASTER;
+
+    var content = document.createElementNS(NS, 'g');
+    var liveGroups = svg.querySelectorAll(':scope > g');
+    for (var i = 0; i < liveGroups.length; i++) {
+      var clone = liveGroups[i].cloneNode(true);
+      inlineStyles(liveGroups[i], clone);
+      content.appendChild(clone);
+    }
+    // offset by the viewBox origin so negative-origin (centered) content isn't clipped
+    content.setAttribute('transform', 'translate(' + (padX - minX * scale) + ' ' + (padY - minY * scale) + ') scale(' + scale + ')');
+
+    var contentStr = new XMLSerializer().serializeToString(content);
+    return {
+      svg: '<?xml version="1.0" encoding="UTF-8"?>\n' +
+        '<svg xmlns="' + NS + '" width="' + outW + '" height="' + outH + '" viewBox="0 0 ' + outW + ' ' + outH + '">\n' +
+        '  <defs>\n' +
+        '    <linearGradient id="pageBg" x1="0%" y1="100%" x2="100%" y2="0%">\n' +
+        '      <stop offset="0%" stop-color="' + T.bgFrom + '"/>\n' +
+        '      <stop offset="100%" stop-color="' + T.bgTo + '"/>\n' +
+        '    </linearGradient>\n' +
+        '  </defs>\n' +
+        '  <rect width="100%" height="100%" fill="url(#pageBg)"/>\n' +
+        '  ' + contentStr + '\n' +
+        '</svg>',
+      w: outW, h: outH,
+    };
+  }
+
+  /* ---------- one rasterization path, page / diagram mode ---------- */
+  async function exportPng(opts) {
+    opts = opts || {};
+    var mode = opts.mode === 'diagram' ? 'diagram' : 'page';
+    var button = opts.button || null;
+    var T = resolveTheme();
+
+    var svgStr, OUT_W, OUT_H, slugTag;
+    if (mode === 'diagram') {
+      var built = buildDiagramSvg(T);
+      if (!built) { alert('PNG export: diagram not ready.'); return; }
+      svgStr = built.svg; OUT_W = built.w; OUT_H = built.h; slugTag = '-diagram-';
+    } else {
+      svgStr = buildSvg(T);
+      if (!svgStr) { alert('PNG export: diagram not ready.'); return; }
+      OUT_W = PAGE_W; OUT_H = PAGE_H; slugTag = '-';
+    }
+
+    var originalText = button ? button.textContent : '';
+    if (button) { button.disabled = true; button.textContent = '…'; }
     try {
       var img = new Image();
       await new Promise(function (resolve, reject) {
         img.onload = resolve;
         img.onerror = function () { reject(new Error('SVG image load failed')); };
-        img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(fullSvg);
+        img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgStr);
       });
 
       var cv = document.createElement('canvas');
-      cv.width = PAGE_W;
-      cv.height = PAGE_H;
-      cv.getContext('2d').drawImage(img, 0, 0, PAGE_W, PAGE_H);
+      cv.width = OUT_W;
+      cv.height = OUT_H;
+      cv.getContext('2d').drawImage(img, 0, 0, OUT_W, OUT_H);
 
       var versionParts = getVersionParts();
       var base = getFilenameBase().replace(/_source-v\d+_render-v\d+$/, '');
-      var filename = base + (versionParts.length ? '_' + versionParts.join('_') : '') + '-' + getThemeName() + '.png';
+      var filename = base + (versionParts.length ? '_' + versionParts.join('_') : '') + slugTag + getThemeName() + '.png';
 
       var blob = await new Promise(function (resolve) { cv.toBlob(resolve, 'image/png'); });
       var url = URL.createObjectURL(blob);
@@ -413,33 +491,39 @@
       console.error(err);
       alert('PNG export failed: ' + err.message);
     } finally {
-      button.disabled = false;
-      button.textContent = originalText;
+      if (button) { button.disabled = false; button.textContent = originalText; }
     }
   }
 
   function injectButton() {
     var hud = document.querySelector('.hud');
     if (!hud) return;
-    if (document.getElementById('exportPng')) return;
-    var btn = document.createElement('button');
-    btn.id = 'exportPng';
-    btn.title = 'Export 3840×2880 PNG';
-    btn.textContent = 'PNG';
-    btn.style.width = 'auto';
-    btn.style.padding = '0 14px';
-    btn.style.fontSize = '11px';
-    btn.style.fontFamily = "'JetBrains Mono', monospace";
-    btn.style.letterSpacing = '0.06em';
-    btn.addEventListener('click', function () { exportPNG(btn); });
-    hud.appendChild(btn);
+    var mkBtn = function (id, label, title, mode) {
+      if (document.getElementById(id)) return;
+      var btn = document.createElement('button');
+      btn.id = id;
+      btn.title = title;
+      btn.textContent = label;
+      btn.style.width = 'auto';
+      btn.style.padding = '0 14px';
+      btn.style.fontSize = '11px';
+      btn.style.fontFamily = "'JetBrains Mono', monospace";
+      btn.style.letterSpacing = '0.06em';
+      btn.addEventListener('click', function () { exportPng({ mode: mode, button: btn }); });
+      hud.appendChild(btn);
+    };
+    // id 'exportPng' retained for back-compat (the chromed page export).
+    mkBtn('exportPng', 'PNG page', 'Export 3840×2880 chromed page PNG', 'page');
+    mkBtn('exportPngDiagram', 'PNG diagram', 'Export diagram-only PNG — no chrome, natural aspect', 'diagram');
   }
 
   function checkAutoExport() {
     var params = new URLSearchParams(location.search);
-    if (params.get('export') !== 'png') return;
+    var p = params.get('export');
+    if (p !== 'png' && p !== 'png-diagram') return;          // 'png' retained for back-compat (page)
+    var id = p === 'png-diagram' ? 'exportPngDiagram' : 'exportPng';
     var tryRun = function () {
-      var btn = document.getElementById('exportPng');
+      var btn = document.getElementById(id);
       var svg = document.getElementById('svg');
       if (!btn || !svg || !svg.getAttribute('width')) { setTimeout(tryRun, 50); return; }
       btn.click();
