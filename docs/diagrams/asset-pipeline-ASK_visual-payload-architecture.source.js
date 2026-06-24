@@ -6,11 +6,11 @@
 
    Illustrative, not source truth — docs/visual-payload-architecture-v2.md is authoritative.
 
-   ONE shared source model, TWO render modes (cannot drift):
-     - static/export mode (the article PNG + the chrome-free shell): draws each node's
-       `short` label + topology ONLY; legible without interaction.
-     - interactive/explanatory mode (the repo-native .interactive.html): same topology;
-       descriptive burden moves into the hover/click side panel fed by each node's `detail`.
+   ONE shared source model, TWO engine render modes (cannot drift):
+     - static/export mode: draws each node's `short` label + topology ONLY; legible
+       without interaction — this is what the exporter's `PNG diagram` export captures.
+     - interactive/explanatory mode (the repo-native full-chrome HTML, FLOW_MODE='interactive'):
+       same topology; descriptive burden moves into the hover/click side panel fed by each node's `detail`.
 
    Per node:
      label  = full phrase (interactive panel title)
@@ -72,7 +72,7 @@ window.FLOW_DIAGRAM = {
     { id: 'select', label: 'selection judgment', short: 'selection',
       detail: { def: 'The creative-discretion act: choosing among conforming candidates.', not: 'Distinct from governance — selection chooses, governance records.' } },
     { id: 'govern', label: 'governance', short: 'governance',
-      detail: { def: 'The chosen output is recorded and made authoritative.', not: 'Distinct from selection — governance is the seam where authorship becomes recordable.' } },
+      detail: { def: 'Artifact governance binds the accepted output to its claim, use, and answerability.', not: 'Distinct from selection — the governance record is its durable trace, not where authorship is created.' } },
     { id: 'asset', label: 'governed asset / accepted output', short: 'governed asset', anchor: true,
       detail: { def: 'The accepted, governed output of the pipeline.' } },
   ],
