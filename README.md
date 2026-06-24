@@ -8,7 +8,7 @@ An open-source information architecture for commercial visual-asset workflows: i
 
 This is not a better image-generation interface. It is a structured definition layer for making visual-production intent, constraints, references, outputs, and governance machine-usable.
 
-The reusable object is a **portable asset-definition package** — the substrate-independent definition layer for a commercial visual-asset workflow: product truth, business and creative intent, constraints, required outputs, slot variation, visual references, decision ownership, approval boundaries, capture/governance rules, and reuse/family-coherence rules, carried as each workflow needs them. The repository is a current worked reference architecture — a prototype proof of that layer, refined as evidence accumulates, not a finished product spec.
+The reusable object is a **portable asset-definition package** — the definition layer for a commercial visual-asset workflow, **designed to be substrate-independent**: product truth, business and creative intent, constraints, required outputs, slot variation, visual references, decision ownership, approval boundaries, capture/governance rules, and reuse/family-coherence rules, carried as each workflow needs them. The repository is a current worked reference architecture — a prototype proof of that layer, refined as evidence accumulates, not a finished product spec.
 
 ## What claim it makes
 
@@ -27,18 +27,20 @@ The repo is building a durable definition layer above changing tools and models,
 
 Still-image first; video extension is downstream of the layered model stabilizing.
 
-The 2c marketing hero now demonstrates the full chain end to end inside the system: the definition layer drives generation, candidates accumulate, a human curator selects one, the selected candidate is captured into a governed asset with no external import, and the output slot is accepted. Across the other worked modes, the same package grammar is pressured at uneven evidence depth. Airtable is the worked substrate that demonstrates this — one substrate, not the deliverable. The deliverable is the portable definition layer above it, which is substrate-independent.
+The 2c marketing hero now demonstrates the full chain end to end inside the system: the definition layer drives generation, candidates accumulate, a human curator selects one, the selected candidate is captured into a governed asset with no external import, and the output slot is accepted. Across the other worked modes, the same definition-layer structure is pressured at uneven evidence depth. Airtable is the worked substrate that demonstrates this — one substrate, not the deliverable. The deliverable is the portable definition layer above it, designed to be substrate-independent.
+
+**Target vs earned.** "Machine-usable" and "substrate-independent" name the *target*, not present-tense generality. Earned to date: one package re-expressed outside Airtable and recovered from a file-bundle second substrate, and one bounded, model-mediated package-instantiation planning consumer calibrated on one known-achievable filesystem target. Not yet earned: operational cross-substrate execution, a reusable consuming grammar, a general converter, a validator, or a runtime. "Machine-usable" here means model/advisor consumption of the definition layer to generate fit-for-purpose artifacts — not a validator or runtime orchestrator.
 
 ## What to read next
 
-The strategic reader path:
+The strategic reader path — to the concrete object first, then depth:
 
-1. [`docs/problem-and-approach.md`](docs/problem-and-approach.md) — the workflow-structure problem and the repo's approach
-2. [`docs/method.md`](docs/method.md) — ontology / application split and working sequence
-3. [`docs/architecture.md`](docs/architecture.md) — current architecture front door
-4. [`docs/structured-ia-model-v2.md`](docs/structured-ia-model-v2.md) — current canonical machine-readable IA representation (hybrid prose + YAML appendix; v1 preserved as predecessor)
-5. [`docs/layered-reference-and-discretion-architecture-v1.md`](docs/layered-reference-and-discretion-architecture-v1.md) — nine-fold reference-function taxonomy, normative hierarchy across the eight IA layers, and nine-site creative-discretion decomposition across the four workflow modes
-6. [`docs/brand-system-input-cross-category-synthesis-v1.md`](docs/brand-system-input-cross-category-synthesis-v1.md) — Phase 2 six-category cross-category synthesis: six-category comparison matrix, nine-relation cross-category vocabulary, refined extraction sequence (default graph with conditional jump-points), and the five-or-six-zone hybrid implication for the brand-system layer
+1. [`docs/problem-and-approach.md`](docs/problem-and-approach.md) — the differentiated failure this repo addresses, and the object distinction it makes
+2. [`docs/asset-definition-package-map-2c-marketing-hero-v1.md`](docs/asset-definition-package-map-2c-marketing-hero-v1.md) — the concrete package: one chain end to end (intent → discretion → variance → selection → governance)
+3. [`docs/package-lifecycle-partition-v1.md`](docs/package-lifecycle-partition-v1.md) — the three lifecycle states a package spans (prospective definition / execution-run state / governed record) and how to read its statuses
+4. [`docs/architecture.md`](docs/architecture.md) — current architecture front door
+5. [`docs/method.md`](docs/method.md) — ontology / application split and working sequence
+6. **structured IA + deeper artifacts** — [`docs/structured-ia-model-v2.md`](docs/structured-ia-model-v2.md) (canonical machine-readable IA; hybrid prose + YAML appendix), [`docs/layered-reference-and-discretion-architecture-v1.md`](docs/layered-reference-and-discretion-architecture-v1.md) (nine-fold reference-function taxonomy + nine-site discretion decomposition), and [`docs/brand-system-input-cross-category-synthesis-v1.md`](docs/brand-system-input-cross-category-synthesis-v1.md) (Phase 2 six-category cross-category synthesis)
 
 ## One concrete example
 
