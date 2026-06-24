@@ -48,11 +48,11 @@ window.SPINE_DISCRETION_CHAIN = {
               children: [
                 {
                   kind: 'node', label: '4 · selection',
-                  note: 'one candidate made true · aperture closes · authorship becomes recordable',
+                  note: 'one candidate made true · aperture closes · the curatorial closure gate, not all authorship',
                   children: [
                     {
                       kind: 'node', label: '5 · governance',
-                      note: 'the durable, accountable record · a generated image is not yet a governed asset',
+                      note: 'artifact governance binds the accepted artifact · the record is its durable trace · a generated image is not yet a governed asset',
                     },
                   ],
                 },
