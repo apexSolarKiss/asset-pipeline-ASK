@@ -12,30 +12,33 @@
 
 /* ---------- Diagram-specific tokens (per theme state) ----------
 
-   colors_and_type.css resolves the foreground ramp (--fg-1/-2/-3) to WHITE —
-   correct for the dark gradient, but on the light lavender gradient the small
-   diagram TEXT needs dark ink to read, while the structural lines carry white
-   fine. So the diagram owns its own tokens (ink / muted / faint for text,
-   line / line-soft for strokes) and leaves the foundational --fg-* / --line-*
-   tokens untouched. Dark values equal the design-system dark foreground, so
-   dark mode is unchanged. */
+   The diagram's scoped text roles (ink / muted / faint) ALIAS the foundation
+   foreground ramp (--fg-1/-2/-3) rather than carry copied values — so the
+   approved dark-purple foreground (#6A637F / #827399 / tertiary in light,
+   lavender in dark) resolves through the foundation, and a future foreground
+   change propagates here automatically. Because --fg-* already flips per
+   theme, these three text roles need no separate dark-mode definition.
+
+   The diagram keeps its own structural line tokens (line / line-soft) local:
+   they use stronger white strokes than the foundation hairlines, so they are
+   genuine diagram-scoped roles, not duplicates of --fg-* / --line-*. The
+   foundational --fg-* / --line-* tokens are left untouched. */
 
 :root {
   --node-fill: var(--ask-surface);
   --line-strong: rgba(255, 255, 255, 0.65);          /* corner ticks — white */
-  --diagram-ink:       #6A637F;                       /* primary diagram text */
-  --diagram-muted:     #827399;                       /* secondary diagram text */
-  --diagram-faint:     rgba(130, 115, 153, 0.62);     /* tertiary text / separators */
+  --diagram-ink:       var(--fg-1);                   /* primary diagram text — foundation foreground */
+  --diagram-muted:     var(--fg-2);                   /* secondary diagram text — foundation foreground */
+  --diagram-faint:     var(--fg-3);                   /* tertiary text / separators — foundation foreground */
   --diagram-line:      rgba(255, 255, 255, 0.90);     /* box borders · edges · section rules — white */
   --diagram-line-soft: rgba(255, 255, 255, 0.55);     /* held / legacy strokes — soft white */
 }
 
+/* Dark theme: only the diagram-local structural tokens are redefined; the text
+   roles (ink / muted / faint) inherit the foundation --fg-* flip automatically. */
 :root[data-theme="dark"] {
   --node-fill: rgba(212, 198, 225, 0.06);
   --line-strong: rgba(212, 198, 225, 0.40);
-  --diagram-ink:       var(--ask-lavender-dark);
-  --diagram-muted:     rgba(212, 198, 225, 0.72);
-  --diagram-faint:     rgba(212, 198, 225, 0.48);
   --diagram-line:      var(--ask-lavender-dark);
   --diagram-line-soft: rgba(212, 198, 225, 0.72);
 }
@@ -44,9 +47,6 @@
   :root:not([data-theme="light"]):not([data-theme="dark"]) {
     --node-fill: rgba(212, 198, 225, 0.06);
     --line-strong: rgba(212, 198, 225, 0.40);
-    --diagram-ink:       var(--ask-lavender-dark);
-    --diagram-muted:     rgba(212, 198, 225, 0.72);
-    --diagram-faint:     rgba(212, 198, 225, 0.48);
     --diagram-line:      var(--ask-lavender-dark);
     --diagram-line-soft: rgba(212, 198, 225, 0.72);
   }

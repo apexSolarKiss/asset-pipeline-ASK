@@ -73,7 +73,7 @@
 :root {
   /* ==== TIER 2 — ASK design language (palette values + named lavender-ASK) ==== */
   /* ---------- Core 5 — backgrounds + text ---------- */
-  --ask-white:          #FFFFFF;   /* light-mode text */
+  --ask-white:          #FFFFFF;   /* light-mode WORDMARK (brand mark) — not body text */
   --ask-lavender-light: #E2D3F0;   /* light gradient, top-right */
   --ask-lavender-dark:  #D4C6E1;   /* lavender-ASK — light gradient bottom-left + dark-mode text */
   --ask-ink-light:      #201D26;   /* dark gradient, bottom-left */
@@ -83,6 +83,9 @@
      CSS variable name is retained for backwards compatibility; --ask-lavender-ask
      is the canonical alias going forward. Both resolve to the same hex. */
   --ask-lavender-ask:   #D4C6E1;
+
+  /* ---------- Foreground value (Tier-1 --fg-1 references this; role value, not a brand-named color) ---------- */
+  --ask-fg-light:       #6A637F;   /* default light-mode foreground — the approved dark purple (A-S-K.studio, diagrams, artifact templates) */
 
   /* ---------- Surface (card / container fill) ---------- */
   --ask-surface:        #BFB3D4;
@@ -103,10 +106,11 @@
   --bg-to:   var(--ask-lavender-light);               /* top-right */
   --bg-gradient: linear-gradient(45deg, var(--bg-from) 0%, var(--bg-to) 100%);
 
-  --fg-1: #6A637F;                                    /* primary text — dark ink on the light lavender field */
+  --fg-1: var(--ask-fg-light);                        /* default light-mode foreground — the approved dark purple #6A637F */
   --fg-2: #827399;                                    /* secondary text */
   --fg-3: rgba(130, 115, 153, 0.62);                  /* tertiary / hint */
-  --fg-on-card: var(--ask-ink-light);                 /* when text needs to live on surface/white */
+  --fg-on-card: var(--fg-1);                          /* text on solid/white surfaces — the approved default foreground (#6A637F) */
+  --fg-high-contrast: var(--ask-ink-light);           /* RESERVED opt-in high-contrast backup (#201D26); not reached by any approved surface — opt in explicitly, do not apply by font size */
 
   --line-1: rgba(255, 255, 255, 0.45);                /* hairline divider */
   --line-2: rgba(255, 255, 255, 0.22);                /* fainter rule */
@@ -329,5 +333,5 @@ code, kbd, pre, samp, .mono, [data-mono] {
 /* =========================================================================
    Utility — backgrounds
    ========================================================================= */
-.bg-ask-light { background: linear-gradient(45deg, #D4C6E1 0%, #E2D3F0 100%); color: #FFFFFF; }
+.bg-ask-light { background: linear-gradient(45deg, #D4C6E1 0%, #E2D3F0 100%); color: var(--fg-1); }
 .bg-ask-dark  { background: linear-gradient(45deg, #201D26 0%, #0A090C 100%); color: #D4C6E1; }
