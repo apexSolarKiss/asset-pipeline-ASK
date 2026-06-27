@@ -7,7 +7,7 @@
 
    Type: Inter for interface + display; JetBrains Mono for code, technical
    and tabular data. Contrast is weight, not size.
-   Color: two diagonal gradients, five-color core, with sanctioned surface,
+   Color: two diagonal gradients, a core identity set, with sanctioned surface,
    UI accents (2) and emphasis accents (3, sparing).
    ========================================================================= */
 
@@ -72,7 +72,7 @@
 
 :root {
   /* ==== TIER 2 — ASK design language (palette values + named lavender-ASK) ==== */
-  /* ---------- Core 5 — backgrounds + text ---------- */
+  /* ---------- Core set — backgrounds, wordmark, dark-mode text ---------- */
   --ask-white:          #FFFFFF;   /* light-mode WORDMARK (brand mark) — not body text */
   --ask-lavender-light: #E2D3F0;   /* light gradient, top-right */
   --ask-lavender-dark:  #D4C6E1;   /* lavender-ASK — light gradient bottom-left + dark-mode text */

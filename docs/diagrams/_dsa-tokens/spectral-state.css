@@ -1,8 +1,9 @@
 /* =========================================================================
    spectral-state.css — Spectral State
 
-   A semantic state-color system: a small, identity-free vocabulary of STATE
-   roles, each mapped to a neon hue on a 12-step wheel, calibrated per theme.
+   A semantic state-color system: a small, identity-free vocabulary of eight STATE
+   roles — seven sparse neon state signals on a 12-step wheel, plus a neutral role
+   that resolves to the theme foreground — calibrated per theme.
 
    SPECIALIZED, OPT-IN foundation primitive. It is for surfaces that encode the
    *state* of architectural elements — e.g. an interactive state diagram where a
