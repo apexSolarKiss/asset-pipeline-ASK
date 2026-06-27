@@ -93,7 +93,7 @@ Worked example: the Visual Payload Architecture FLOW diagram — the AP repo emb
 `interactive/asset-pipeline-ASK_ia-state-spine.html` is the **state** view the static structural diagrams deliberately omit: architectural surfaces, seams, and open carrier-shape questions colored by their **current state**, with the four workflow modes as orthogonal axes that selection isolates. Hover previews, click commits a selection (dimming all but the intersecting axes), and the inspector shows the state's evidence, qualifiers, mode coverage, and the authoritative repo pointer.
 
 - **Different artifact class.** It is an AP-owned interactive surface, not a Class A static scaffold — its own vanilla-JS/SVG layout + interaction engine (`ia-state-spine-engine.js`) and styling (`ia-state-spine.css`). It does **not** use `diagrams.css` / the static engines / `export-png.js`.
-- **Color via ASK Spectral State, by reference.** Node color comes from the design-system-ASK `--state-*` role tokens (`_dsa-tokens/spectral-state.css`, opt-in module pinned at `e30c101`). AP consumes by reference and does not mint or edit the palette.
+- **Color via ASK Spectral State, by reference.** Node color comes from the design-system-ASK `--state-*` role tokens (`_dsa-tokens/spectral-state.css`, opt-in module pinned at `1231d03`; `_dsa-tokens/MANIFEST.md` owns the canonical per-file pin + sha). AP consumes by reference and does not mint or edit the palette.
 - **Color encodes state only.** Evidence depth, risk, mode coverage, and repo pointers are inspector metadata — never hue. One state per node.
 - **Illustrative, not source truth.** The node→state data (`…ia-state-spine.data.js`) is AP authorship over the architecture's current state; `docs/architecture.md` remains authoritative.
 
