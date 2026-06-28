@@ -170,6 +170,8 @@ Each stage names what it produces, what it depends on from earlier stages, what 
 
 The two outputs are architecturally distinct (see [Fallback Behavior](#fallback-behavior) below). Inferred-not-stated content has a derivation chain back to evidence; operator-authored content does not. Treating them as the same case obscures where the architecture is functioning as digestion of existing brand content versus where it is functioning as authorship of brand content from scratch.
 
+**Digestion is not the model authoring the brand — and its output is non-authoritative until validated.** Ingesting unstructured brand material and synthesizing a brand-system reading does not, *by the act of synthesizing*, make that synthesis an author or transfer the source materials' authority to it (*judgment does not propagate through synthesis*, per [`creative-discretion-doctrine-v1.md`](creative-discretion-doctrine-v1.md)). The synthesized brand model is **non-authoritative until it preserves source roles and passes post-ingestion validation against the source of intent — or is corrected until it does**; that validation / correction loop is what lets it inherit authority. This is exactly why Stage 7 separates inferred-not-stated (evidence-anchored) from operator-authored (no upstream evidence) and keeps both traceable: authority is *earned* through validation and marked operator work under a locatable source of intent, not assumed from the digestion pass.
+
 **Depends on.** Stages 1–6 outputs (Stage 7 names what those stages did not produce).
 
 **Defers when sparse.** Stage 7 is the final stage; it does not defer further. Its output marks where the architecture has reached the limit of its current carriers.

@@ -46,6 +46,13 @@ lighting, product truth, composition, a prohibition, continuity). In the resolut
 picture below, references are a cross-cutting function axis, never one independent
 content branch.
 
+**A reference's governing role is assigned within the production ask; it is not
+intrinsic to the image carrier.** The same image may function as product-truth
+evidence, a directional / scene anchor, a mood reference, a prohibition example, a
+continuity reference, or non-governing inspiration depending on the package's source
+of intent, scope, and carrier role. A reference does not carry its own instructions;
+the production ask states what each carrier governs — and what it does not.
+
 ## The visual dimensions (content axis)
 
 **Per-image dimensions (12):**
@@ -226,6 +233,11 @@ the brand owns the upstream grammar and context owns the setup — remain archit
 claims, not something a blind corpus proves. This is the local form of the
 method-level `bounded generativity` primitive
 (defined and owned at method-ASK); stated here in AP terms only.
+
+Language supplies the upstream grammar; setup narrows a context-specific aperture; and
+references and constraints can govern either layer. This is the visual-payload instance
+of a nested aperture — upstream aperture-setting, then a narrower context aperture, then
+nonjudgmental realization within it.
 
 ## What the corpus evidence supports — and does not
 
