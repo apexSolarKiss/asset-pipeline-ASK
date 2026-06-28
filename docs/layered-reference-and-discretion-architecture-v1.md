@@ -42,6 +42,8 @@ This is not a separate scale-fork question. It is the basic legibility test any 
 
 References are not a single class. The architecture has at least nine reference functions, distinguished by what they carry, what they constrain, where they live in the layered model, whether they inherit or are local, and what they must not be confused with.
 
+**A visual carrier does not bring its function with it.** A reference's function is assigned under the source of intent — by scope and role — not read off the image: the same image can be product-truth evidence, a directional / scene anchor, a mood anchor, a prohibition example, a continuity reference, or non-governing inspiration depending on the package. Raw visual ingestion is therefore under-determined until role-bound; the architecture's job is to say what each carrier is *for* and what it does **not** govern. (This is the deeper-IA form of the assigned-reference-role point the discretion doctrine and VPA state compactly.)
+
 The taxonomy treats reference-function as a conceptual cut. Carrier representation (where each function currently lives in Airtable structure or prose; where structural carriers exist vs do not) belongs to the structured IA model v1 and the carrier-status matrix in the cross-mode synthesis. This artifact reads above carrier; it asks what each reference function *does* in the architecture.
 
 ### Brand-system reference
@@ -282,6 +284,8 @@ Constraints (`constraint_rules`) and references (`approved_reference_keys` / `re
 - When authorship-bearing selection work happens **upstream** (slot authorship, prompt remediation) and governance-bearing curation happens **at the seam** as confirmation — the campaign separation case at PKT-CAMP-004 — the makes-true rationale lives upstream in `prompt_composition_notes` / `slot_evaluation_notes`, and `capture_notes` should cross-reference that upstream rationale while recording the confirmation / governance. The separation case already does this: confirmation-bearing `capture_notes` that point upstream rather than pretending the seam authored the choice.
 
 **No separate selection-rationale carrier is currently earned.** The makes-true rationale is never homeless — it co-locates with governance when the two acts are one moment, and lives upstream with a downstream cross-reference when they separate. The residual is discipline, not schema: record the upstream makes-true rationale in `slot_evaluation_notes` / `prompt_composition_notes` even outside a fork-resolver test, and reference its location from `capture_notes` whenever `curation_pattern` is confirmation-bearing.
+
+**Delegated realization (antecedent influence).** AP treats delegated realization as an architectural problem: a locatable source of intent — carrying instructions, constraints, and references — can authorize downstream realization without the originator directly making the final image. **Sol LeWitt** is an antecedent influence for this delegated-realization shape (concept → instruction → interpreter → instance → closure); AP's domain-specific question is how that shape becomes visual-production infrastructure carrying product truth, reference roles, selection, and governance. Delegation does not transfer the source of intent, and an instruction is not the realization — the slot prompt is the instruction, the candidate is the realized instance, and the source of intent stays locatable across the delegation.
 
 ## Cross-Cuts: Dining-vs-Bedroom Conceptual Pressure
 
