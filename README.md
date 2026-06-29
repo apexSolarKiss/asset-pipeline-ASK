@@ -78,7 +78,7 @@ Background article series, in chronological order:
 - [The Missing Layer Is Not Generation](https://atomicspacekitten.substack.com/p/the-missing-layer-is-not-generation)
 - [Selection Is Not Governance](https://atomicspacekitten.substack.com/p/selection-is-not-governance)
 - [The Image Is Not One Thing](https://atomicspacekitten.substack.com/p/the-image-is-not-one-thing)
-- [The Model Does Not Know What the Image Is For](https://atomicspacekitten.substack.com/p/the-model-does-not-know-what-the)
+- [The Model Does Not Know What Image to Make](https://atomicspacekitten.substack.com/p/the-model-does-not-know-what-the)
 - [A Reference Does Not Carry Its Own Instructions](https://atomicspacekitten.substack.com/p/a-reference-does-not-carry-its-own)
 - [Synthesis Is Not Authorization](https://atomicspacekitten.substack.com/p/synthesis-is-not-authorization)
 
