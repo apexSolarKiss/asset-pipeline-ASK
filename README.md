@@ -81,6 +81,7 @@ Background article series, in chronological order:
 - [The Model Does Not Know What Image to Make](https://atomicspacekitten.substack.com/p/the-model-does-not-know-what-the)
 - [A Reference Does Not Carry Its Own Instructions](https://atomicspacekitten.substack.com/p/a-reference-does-not-carry-its-own)
 - [Synthesis Is Not Authorization](https://atomicspacekitten.substack.com/p/synthesis-is-not-authorization)
+- [The Manual Barrier Was Never the Craft](https://atomicspacekitten.substack.com/p/the-manual-barrier-was-never-the)
 
 ## License
 
