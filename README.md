@@ -82,6 +82,7 @@ Background article series, in chronological order:
 - [A Reference Does Not Carry Its Own Instructions](https://atomicspacekitten.substack.com/p/a-reference-does-not-carry-its-own)
 - [Synthesis Is Not Authorization](https://atomicspacekitten.substack.com/p/synthesis-is-not-authorization)
 - [The Manual Barrier Was Never the Craft](https://atomicspacekitten.substack.com/p/the-manual-barrier-was-never-the)
+- [The Hollow Middle Is Not Empty](https://atomicspacekitten.substack.com/p/the-hollow-middle-is-not-empty)
 
 ## License
 
