@@ -83,6 +83,7 @@ Background article series, in chronological order:
 - [Synthesis Is Not Authorization](https://atomicspacekitten.substack.com/p/synthesis-is-not-authorization)
 - [The Manual Barrier Was Never the Craft](https://atomicspacekitten.substack.com/p/the-manual-barrier-was-never-the)
 - [The Hollow Middle Is Not Empty](https://atomicspacekitten.substack.com/p/the-hollow-middle-is-not-empty)
+- [Provenance Is Not Authorship](https://atomicspacekitten.substack.com/p/provenance-is-not-authorship)
 
 ## License
 
