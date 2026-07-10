@@ -42,6 +42,73 @@
   };
   var text = function (el) { return (el ? el.textContent : '').replace(/\s+/g, ' ').trim(); };
 
+  /* ---------- font embedding (fixes right-edge clipping in the raster) ----------
+     SVG-as-image rasterization (data:image/svg+xml → <img> → canvas) is
+     font-isolated in Chromium: the SVG document cannot reach the *page's*
+     @font-face web fonts. Referencing the fonts by family name only makes the
+     raster fall back to a system font — a WIDER monospace than JetBrains Mono —
+     so node text laid out for the narrower web font overflows its box on the
+     right. Fix: read the page's OWN @font-face faces, fetch each woff2, and
+     inline them as base64 data-URI @font-face rules inside the exported SVG, so
+     the raster resolves the same faces the boxes were measured for. Consumer-
+     agnostic: it embeds whatever faces the page declares, from wherever it
+     serves them. Requires the render context to fetch same-origin font files
+     (i.e. served over http, as the ?export= auto-route flow implies); if a
+     fetch fails it degrades to the prior name-only behavior, never throwing. */
+  var _fontStyleCache = null;
+  function collectFontFaces() {
+    var faces = [], sheets = document.styleSheets;
+    for (var s = 0; s < sheets.length; s++) {
+      var rules;
+      try { rules = sheets[s].cssRules; } catch (e) { continue; } // cross-origin sheet: skip
+      if (!rules) continue;
+      for (var r = 0; r < rules.length; r++) {
+        var rule = rules[r];
+        if (rule.type !== 5 /* CSSFontFaceRule */) continue;
+        var m = /url\(\s*['"]?([^'")]+\.woff2)['"]?\s*\)/i.exec(rule.style.getPropertyValue('src'));
+        if (!m) continue;
+        var abs;
+        try { abs = new URL(m[1], sheets[s].href || document.baseURI).href; } catch (e) { continue; }
+        faces.push({
+          family: rule.style.getPropertyValue('font-family'),
+          weight: rule.style.getPropertyValue('font-weight') || 'normal',
+          style: rule.style.getPropertyValue('font-style') || 'normal',
+          url: abs,
+        });
+      }
+    }
+    var seen = {}, out = [];
+    for (var i = 0; i < faces.length; i++) {
+      var k = faces[i].url + '|' + faces[i].weight + '|' + faces[i].style;
+      if (!seen[k]) { seen[k] = 1; out.push(faces[i]); }
+    }
+    return out;
+  }
+  function bufToBase64(buf) {
+    var bytes = new Uint8Array(buf), bin = '', chunk = 0x8000;
+    for (var i = 0; i < bytes.length; i += chunk) {
+      bin += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+    }
+    return btoa(bin);
+  }
+  async function buildFontFaceStyle() {
+    if (_fontStyleCache != null) return _fontStyleCache;
+    var faces = collectFontFaces();
+    var css = '';
+    for (var i = 0; i < faces.length; i++) {
+      var f = faces[i];
+      try {
+        var resp = await fetch(f.url);
+        if (!resp.ok) continue;
+        var b64 = bufToBase64(await resp.arrayBuffer());
+        css += '@font-face{font-family:' + f.family + ';font-style:' + f.style +
+          ';font-weight:' + f.weight + ';src:url(data:font/woff2;base64,' + b64 + ') format("woff2");}';
+      } catch (e) { /* one font failed to fetch — skip it, keep the rest */ }
+    }
+    _fontStyleCache = css ? '<style>' + css + '</style>' : '';
+    return _fontStyleCache;
+  }
+
   /* ---------- text measurement (canvas + manual letter-spacing) ---------- */
   var measureCtx = document.createElement('canvas').getContext('2d');
   function textW(s, font, ls) {
@@ -181,7 +248,7 @@
     return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
   }
 
-  function buildSvg(T) {
+  function buildSvg(T, fontStyle) {
     var svg = document.getElementById('svg');
     if (!svg) return null;
     var diagW = +svg.getAttribute('width');
@@ -361,6 +428,7 @@
     return '<?xml version="1.0" encoding="UTF-8"?>\n' +
       '<svg xmlns="' + NS + '" width="' + PAGE_W + '" height="' + PAGE_H + '" viewBox="0 0 ' + PAGE_W + ' ' + PAGE_H + '">\n' +
       '  <defs>\n' +
+      '    ' + (fontStyle || '') + '\n' +
       '    <linearGradient id="pageBg" x1="0%" y1="100%" x2="100%" y2="0%">\n' +
       '      <stop offset="0%" stop-color="' + T.bgFrom + '"/>\n' +
       '      <stop offset="100%" stop-color="' + T.bgTo + '"/>\n' +
@@ -392,7 +460,7 @@
      WITHIN (v4 audit). The fit() step is what scales portrait figures up to fill.
      Header / caption / legend / HUD / ticks live OUTSIDE #svg, so cloning only the
      diagram content groups excludes them. */
-  function buildDiagramSvg(T) {
+  function buildDiagramSvg(T, fontStyle) {
     var svg = document.getElementById('svg');
     if (!svg) return null;
     var w = +svg.getAttribute('width'), h = +svg.getAttribute('height');
@@ -429,6 +497,7 @@
       svg: '<?xml version="1.0" encoding="UTF-8"?>\n' +
         '<svg xmlns="' + NS + '" width="' + outW + '" height="' + outH + '" viewBox="0 0 ' + outW + ' ' + outH + '">\n' +
         '  <defs>\n' +
+        '    ' + (fontStyle || '') + '\n' +
         '    <linearGradient id="pageBg" x1="0%" y1="100%" x2="100%" y2="0%">\n' +
         '      <stop offset="0%" stop-color="' + T.bgFrom + '"/>\n' +
         '      <stop offset="100%" stop-color="' + T.bgTo + '"/>\n' +
@@ -447,14 +516,15 @@
     var mode = opts.mode === 'diagram' ? 'diagram' : 'page';
     var button = opts.button || null;
     var T = resolveTheme();
+    var fontStyle = await buildFontFaceStyle();
 
     var svgStr, OUT_W, OUT_H, slugTag;
     if (mode === 'diagram') {
-      var built = buildDiagramSvg(T);
+      var built = buildDiagramSvg(T, fontStyle);
       if (!built) { alert('PNG export: diagram not ready.'); return; }
       svgStr = built.svg; OUT_W = built.w; OUT_H = built.h; slugTag = '-diagram-';
     } else {
-      svgStr = buildSvg(T);
+      svgStr = buildSvg(T, fontStyle);
       if (!svgStr) { alert('PNG export: diagram not ready.'); return; }
       OUT_W = PAGE_W; OUT_H = PAGE_H; slugTag = '-';
     }
