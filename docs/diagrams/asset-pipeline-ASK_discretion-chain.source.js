@@ -40,7 +40,7 @@ window.SPINE_DISCRETION_CHAIN = {
       children: [
         {
           kind: 'node', label: '2 · creative discretion',
-          note: 'the bounded judgment that opens the aperture — later exercised at selection',
+          note: 'bounded judgment within the granted aperture · exercised at selection',
           children: [
             {
               kind: 'node', label: '3 · variance',

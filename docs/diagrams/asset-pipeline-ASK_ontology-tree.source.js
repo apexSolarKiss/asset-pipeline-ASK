@@ -50,10 +50,10 @@ window.TREE_ONTOLOGY = {
     },
     {
       kind: 'section', label: 'Creative discretion',
-      note: 'the bounded, reviewable judgment that opens the aperture and is exercised at selection to close it — weak discretion (judgment within standards); not intent, and not the aperture itself',
+      note: 'the bounded, reviewable judgment exercised within the granted aperture and at selection to close it — weak discretion (judgment within standards); not intent, and not the aperture itself',
       children: [
-        { label: 'opens the aperture', note: 'sets the permitted variance the executor may range over' },
-        { label: 'aperture = permitted variance', note: 'the room the judgment opens; a quantity it sets, distinct from the judgment itself' },
+        { label: 'exercised within the granted aperture', note: 'the brief grants the permitted variance the executor may range over' },
+        { label: 'aperture = permitted variance', note: 'granted by the brief / source-of-intent package; a quantity distinct from the judgment exercised within it' },
         { label: 'aimed by creative intent', note: 'intent sets the direction the aperture points; discretion is not intent itself' },
         { label: 'bounded by constraints', note: 'discretion operates inside the constraint envelope' },
         { label: 'shaped by references', note: 'approved references guide the permitted variance' },
