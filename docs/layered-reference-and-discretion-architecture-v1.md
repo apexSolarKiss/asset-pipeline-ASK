@@ -276,7 +276,7 @@ The creative-discretion doctrine ([`docs/creative-discretion-doctrine-v1.md`](cr
 - what standards bound it;
 - where and how selection closes it.
 
-Constraints (`constraint_rules`) and references (`approved_reference_keys` / `reference_assets`) remain separate carriers — the discretion field states *what may vary*, not *what may not* (per foundational-premises #3). **No separate aperture / permitted-variance field is currently earned:** the aperture *is* the permitted variance the discretion opens, and `bounded_creative_discretion` already holds it.
+Constraints (`constraint_rules`) and references (`approved_reference_keys` / `reference_assets`) remain separate carriers — the discretion field states *what may vary*, not *what may not* (per foundational-premises #3). **No separate aperture / permitted-variance field is currently earned:** the aperture *is* the permitted variance the brief grants; creative discretion is the judgment exercised within it, and `bounded_creative_discretion` already holds it.
 
 **The selection ("makes-true") rationale has a home, conditioned on whether selection and governance co-locate.**
 
