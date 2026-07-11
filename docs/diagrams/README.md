@@ -109,6 +109,8 @@ Worked example: the Visual Payload Architecture FLOW diagram — the AP repo emb
   cd docs/diagrams && python3 -m http.server 8432
   ```
 
+  then open `http://127.0.0.1:8432/<diagram>.html` (e.g. `asset-pipeline-ASK_discretion-chain.html`) and export.
+
 ## Lineage
 
 This diagram is the first repo-native asset-pipeline-ASK architecture-tree absorption using the Class A diagram-bundle pattern proven across [`apexSolarKiss/control-surface/docs/diagrams/`](https://github.com/apexSolarKiss/control-surface/tree/main/docs/diagrams) (TREE_D01) and [`apexSolarKiss/method-ASK/docs/diagrams/`](https://github.com/apexSolarKiss/method-ASK/tree/main/docs/diagrams) (TREE_D02). It supersedes the prior self-contained HTML architecture-tree artifact (Claude-Design-generated, ~1.7 MB single file) at the same path.
