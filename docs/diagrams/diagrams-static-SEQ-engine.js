@@ -38,6 +38,8 @@
   const EDGE_INDENT   = 26;   // connector x = left edge + this indent
   const ARROW_W       = 9;    // arrowhead width
   const ARROW_H       = 8;    // arrowhead height
+  const LOOP_GAP      = 80;   // base right-gutter offset past the widest box (secondary edges)
+  const GUTTER_STEP   = 44;   // stagger between nested secondary-edge gutter columns
   const BOX_PAD_X     = 14;
   const BOX_H         = 26;
   const BOX_H_NOTE    = 44;
@@ -113,7 +115,44 @@
       y += n.boxH + (i === 0 ? ROOT_GAP : STEP_GAP);
     });
     const height = y - (nodes.length ? STEP_GAP : 0) + PAGE_PAD_Y;
-    const width = LEFT_PAD + Math.max(...nodes.map((n) => n.boxW), 0) + PAGE_PAD_R;
+    const maxBoxW = Math.max(...nodes.map((n) => n.boxW), 0);
+
+    /* ---------- secondary edges (dashed, gutter-routed) ----------
+       Optional skip edges / return loops drawn as an orthogonal dashed path out
+       into a right gutter — the primary linear connectors below are untouched.
+       Source grammar (SEQ only):
+         secondaryEdges: [{ from, to, style?, route?, label? }]
+       `from`/`to` match a node LABEL (string) or a STEP index (number: nodes[0]
+       is the root, so index n = step n). `style:'solid'` drops the dashes.
+       `loop:true` is sugar for last-step → first-step (the prior unmerged
+       return-loop behavior), honoring `loopGutter`. `route` is reserved
+       ('right-gutter' is the only routing today). Diagrams with no secondary
+       edges keep the exact original width — render-neutral. */
+    function resolveNode(ref) {
+      if (ref == null) return null;
+      if (typeof ref === 'number') return nodes[ref] || null;   // nodes[0]=root, nodes[n]=step n
+      return nodes.find((n) => n.label === ref) || null;
+    }
+    const secEdges = [];
+    (TREE.secondaryEdges || []).forEach((e) => {
+      const from = resolveNode(e.from), to = resolveNode(e.to);
+      if (!from || !to || from === to) {
+        console.warn('[SEQ engine] secondaryEdge skipped — unresolved/degenerate from/to:', e);
+        return;
+      }
+      secEdges.push({ from, to, dashed: e.style !== 'solid', label: e.label || null });
+    });
+    if (TREE.loop && nodes.length > 2) {
+      secEdges.push({ from: nodes[nodes.length - 1], to: nodes[1], dashed: true, label: null });
+    }
+    // Longer-span edges take the outer gutters so shorter ones nest inside.
+    secEdges.sort((a, b) => Math.abs(b.to.top - b.from.top) - Math.abs(a.to.top - a.from.top));
+    const baseGap = (TREE.loop && TREE.loopGutter != null) ? TREE.loopGutter : LOOP_GAP;
+    secEdges.forEach((e, i) => { e.gx = LEFT_PAD + maxBoxW + baseGap + i * GUTTER_STEP; });
+
+    const width = secEdges.length
+      ? LEFT_PAD + maxBoxW + baseGap + (secEdges.length - 1) * GUTTER_STEP + 40
+      : LEFT_PAD + maxBoxW + PAGE_PAD_R;
 
     /* ---------- render ---------- */
     const svg = document.getElementById('svg');
@@ -146,6 +185,35 @@
         d: `M ${edgeX - ARROW_W / 2} ${y2 - ARROW_H} L ${edgeX + ARROW_W / 2} ${y2 - ARROW_H} L ${edgeX} ${y2} Z`,
         class: 'edge-arrowhead',
       }));
+    }
+
+    /* secondary edges: dashed orthogonal path from `from`'s right edge → its
+       gutter column → `to`'s y → into `to`'s right edge with a left-pointing
+       arrowhead. Drawn in the edge layer (behind the nodes) and part of the
+       diagram, so it renders in the chrome-free PNG-diagram export too. Same
+       geometry for a forward skip (2→4) or a return loop (last→first) — only the
+       y values flip. `fill:none` keeps the 4-point path a stroke, not a shape. */
+    for (const e of secEdges) {
+      const fromRight = LEFT_PAD + e.from.boxW;
+      const toRight = LEFT_PAD + e.to.boxW;
+      const yFrom = e.from.top + e.from.boxH / 2;
+      const yTo = e.to.top + e.to.boxH / 2;
+      edgeLayer.appendChild(el('path', {
+        d: `M ${fromRight} ${yFrom} L ${e.gx} ${yFrom} L ${e.gx} ${yTo} L ${toRight + ARROW_H} ${yTo}`,
+        class: 'edge', fill: 'none',
+        'stroke-dasharray': e.dashed ? '3 5' : null,
+      }));
+      edgeLayer.appendChild(el('path', {
+        d: `M ${toRight + ARROW_H} ${yTo - ARROW_W / 2} L ${toRight + ARROW_H} ${yTo + ARROW_W / 2} L ${toRight} ${yTo} Z`,
+        class: 'edge-arrowhead',
+      }));
+      if (e.label) {
+        edgeLayer.appendChild(el('text', {
+          x: e.gx + 11, y: (yFrom + yTo) / 2,
+          transform: `rotate(90 ${e.gx + 11} ${(yFrom + yTo) / 2})`,
+          'text-anchor': 'middle', class: 'node-note',
+        }, [e.label]));
+      }
     }
 
     for (const n of nodes) {
