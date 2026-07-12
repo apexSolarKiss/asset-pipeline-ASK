@@ -121,17 +121,39 @@
        Optional skip edges / return loops drawn as an orthogonal dashed path out
        into a right gutter — the primary linear connectors below are untouched.
        Source grammar (SEQ only):
-         secondaryEdges: [{ from, to, style?, route?, label? }]
+         secondaryEdges: [{ from, to, style?, route?, label?,
+                            gutterMode?, gutter? / gutterOffset? }]
        `from`/`to` match a node LABEL (string) or a STEP index (number: nodes[0]
        is the root, so index n = step n). `style:'solid'` drops the dashes.
+
+       Gutter routing:
+         `gutterMode:'span'` (DEFAULT) — the riser clears only the widest box
+           within the edge's own from…to span, so a short forward skip (e.g. 2→4)
+           routes just past the boxes it actually spans, NOT past the globally
+           widest box elsewhere in the diagram.
+         `gutterMode:'global'` — the riser clears the whole diagram's widest box
+           (the pre-span behavior). Return loops use this; set it per-edge, or
+           `TREE.gutterMode:'global'` for a diagram-wide default.
+         `gutter` / `gutterOffset` (px) — offset of the riser past its reference
+           box (default `LOOP_GAP`); per-edge lever for exact tuning.
+
        `loop:true` is sugar for last-step → first-step (the prior unmerged
-       return-loop behavior), honoring `loopGutter`. `route` is reserved
-       ('right-gutter' is the only routing today). Diagrams with no secondary
-       edges keep the exact original width — render-neutral. */
+       return-loop behavior); it routes `global` and honors `loopGutter`. `route`
+       is reserved ('right-gutter' is the only routing today). Diagrams with no
+       secondary edges keep the exact original width — render-neutral. */
     function resolveNode(ref) {
       if (ref == null) return null;
       if (typeof ref === 'number') return nodes[ref] || null;   // nodes[0]=root, nodes[n]=step n
       return nodes.find((n) => n.label === ref) || null;
+    }
+    // Widest box within an edge's own vertical span (from…to, inclusive) — what a
+    // 'span'-mode riser must clear, vs the global maxBoxW a 'global' riser clears.
+    function spanMaxBoxW(a, b) {
+      const i = nodes.indexOf(a), j = nodes.indexOf(b);
+      const lo = Math.min(i, j), hi = Math.max(i, j);
+      let w = 0;
+      for (let k = lo; k <= hi; k++) w = Math.max(w, nodes[k].boxW);
+      return w;
     }
     const secEdges = [];
     (TREE.secondaryEdges || []).forEach((e) => {
@@ -140,18 +162,54 @@
         console.warn('[SEQ engine] secondaryEdge skipped — unresolved/degenerate from/to:', e);
         return;
       }
-      secEdges.push({ from, to, dashed: e.style !== 'solid', label: e.label || null });
+      const gutter = e.gutter != null ? e.gutter
+                   : e.gutterOffset != null ? e.gutterOffset : LOOP_GAP;
+      const mode = e.gutterMode || TREE.gutterMode || 'span';
+      secEdges.push({ from, to, dashed: e.style !== 'solid', label: e.label || null, mode, gutter });
     });
     if (TREE.loop && nodes.length > 2) {
-      secEdges.push({ from: nodes[nodes.length - 1], to: nodes[1], dashed: true, label: null });
+      // return-loop sugar clears the whole diagram → 'global', honoring loopGutter.
+      secEdges.push({
+        from: nodes[nodes.length - 1], to: nodes[1], dashed: true, label: null,
+        mode: 'global', gutter: TREE.loopGutter != null ? TREE.loopGutter : LOOP_GAP,
+      });
     }
-    // Longer-span edges take the outer gutters so shorter ones nest inside.
-    secEdges.sort((a, b) => Math.abs(b.to.top - b.from.top) - Math.abs(a.to.top - a.from.top));
-    const baseGap = (TREE.loop && TREE.loopGutter != null) ? TREE.loopGutter : LOOP_GAP;
-    secEdges.forEach((e, i) => { e.gx = LEFT_PAD + maxBoxW + baseGap + i * GUTTER_STEP; });
+    // Base gutter column: past this edge's reference box (its own span, or global).
+    secEdges.forEach((e) => {
+      const refW = e.mode === 'global' ? maxBoxW : spanMaxBoxW(e.from, e.to);
+      e.gxBase = LEFT_PAD + refW + e.gutter;
+    });
+    // Nest overlapping edges: shorter spans take inner columns, longer spans wrap
+    // outside. Edges whose vertical spans don't overlap may share a column — no
+    // forced stagger, so a single skip edge stays tight against its own span.
+    secEdges.sort((a, b) =>
+      Math.abs(a.to.top - a.from.top) - Math.abs(b.to.top - b.from.top));
+    const yRange = (e) => [
+      Math.min(e.from.top, e.to.top),
+      Math.max(e.from.top + e.from.boxH, e.to.top + e.to.boxH),
+    ];
+    const placed = [];
+    secEdges.forEach((e) => {
+      const [eTop, eBot] = yRange(e);
+      let gx = e.gxBase, changed = true;
+      while (changed) {
+        changed = false;
+        for (const p of placed) {
+          const [pTop, pBot] = yRange(p);
+          const overlap = eTop < pBot && pTop < eBot;
+          if (overlap && Math.abs(gx - p.gx) < GUTTER_STEP - 0.5) {
+            gx = p.gx + GUTTER_STEP;
+            changed = true;
+          }
+        }
+      }
+      e.gx = gx;
+      placed.push(e);
+    });
 
     const width = secEdges.length
-      ? LEFT_PAD + maxBoxW + baseGap + (secEdges.length - 1) * GUTTER_STEP + 40
+      ? Math.max(LEFT_PAD + maxBoxW + PAGE_PAD_R,
+                 Math.max(...secEdges.map((e) => e.gx)) + 40)
       : LEFT_PAD + maxBoxW + PAGE_PAD_R;
 
     /* ---------- render ---------- */
