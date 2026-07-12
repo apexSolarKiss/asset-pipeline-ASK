@@ -275,9 +275,17 @@
   }
   function getLegendRows() {
     return Array.prototype.slice.call(document.querySelectorAll('.legend .row')).map(function (r) {
+      var subEl = r.querySelector('.sub');
+      // Mirror the browser: white-space is inherited, so a nowrap wrapper resolves
+      // onto the .sub's computed style. A sub the live layout keeps on one line must
+      // not be re-wrapped by the export's fixed budget (renderer fidelity, read from
+      // computed style — not an AP-specific text/filename special case). Only the two
+      // non-wrapping values suppress the wrap; 'pre-wrap' / 'pre-line' still wrap.
+      var ws = subEl ? getComputedStyle(subEl).whiteSpace : 'normal';
       return {
         lbl: text(r.querySelector('.lbl')),
-        sub: text(r.querySelector('.sub')),
+        sub: text(subEl),
+        nowrap: ws === 'nowrap' || ws === 'pre',
         isSolid: !!r.querySelector('.box-solid'),
         isDashed: !!r.querySelector('.box-dashed'),
         isLegacy: !!r.querySelector('.legacy-txt'),
@@ -419,12 +427,18 @@
       var maxLblW = 0, maxSubW = 0;
       legend.forEach(function (row) {
         maxLblW = Math.max(maxLblW, textW(row.lbl, F_LEG_LBL));
-        row.subLines = wrapToWidth(row.sub, F_LEG_SUB, LS_LEG_SUB, SUB_BUDGET, 3);
+        row.subLines = row.nowrap ? [row.sub] : wrapToWidth(row.sub, F_LEG_SUB, LS_LEG_SUB, SUB_BUDGET, 3);
         row.subLines.forEach(function (l) { maxSubW = Math.max(maxSubW, textW(l, F_LEG_SUB, LS_LEG_SUB)); });
       });
+      // Collapse a column only when the WHOLE legend lacks it (aggregate, so mixed
+      // rows stay aligned): a swatch-less legend drops the swatch lane; a label-less
+      // legend drops the label lane — no phantom left offset. A legend with any
+      // swatch or any label keeps its lane and stays byte-identical to before.
+      var hasSwatch = legend.some(function (row) { return row.isSolid || row.isDashed || row.isLegacy; });
+      var hasLabel  = legend.some(function (row) { return !!row.lbl; });
       var swOff  = PAD;
-      var lblOff = swOff + SW_W + 40;
-      var subOff = lblOff + Math.ceil(maxLblW) + 36;
+      var lblOff = swOff + (hasSwatch ? SW_W + 40 : 0);
+      var subOff = lblOff + (hasLabel ? Math.ceil(maxLblW) + 36 : 0);
       var legendW = subOff + Math.ceil(maxSubW) + PAD;
       var legendX = PAGE_W - M - legendW;
 
