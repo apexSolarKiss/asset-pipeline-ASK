@@ -38,6 +38,8 @@
   const EDGE_INDENT   = 26;   // connector x = left edge + this indent
   const ARROW_W       = 9;    // arrowhead width
   const ARROW_H       = 8;    // arrowhead height
+  const LOOP_GAP      = 80;   // base right-gutter offset past the widest box (secondary edges)
+  const GUTTER_STEP   = 44;   // stagger between nested secondary-edge gutter columns
   const BOX_PAD_X     = 14;
   const BOX_H         = 26;
   const BOX_H_NOTE    = 44;
@@ -113,7 +115,102 @@
       y += n.boxH + (i === 0 ? ROOT_GAP : STEP_GAP);
     });
     const height = y - (nodes.length ? STEP_GAP : 0) + PAGE_PAD_Y;
-    const width = LEFT_PAD + Math.max(...nodes.map((n) => n.boxW), 0) + PAGE_PAD_R;
+    const maxBoxW = Math.max(...nodes.map((n) => n.boxW), 0);
+
+    /* ---------- secondary edges (dashed, gutter-routed) ----------
+       Optional skip edges / return loops drawn as an orthogonal dashed path out
+       into a right gutter — the primary linear connectors below are untouched.
+       Source grammar (SEQ only):
+         secondaryEdges: [{ from, to, style?, route?, label?,
+                            gutterMode?, gutter? / gutterOffset? }]
+       `from`/`to` match a node LABEL (string) or a STEP index (number: nodes[0]
+       is the root, so index n = step n). `style:'solid'` drops the dashes.
+
+       Gutter routing:
+         `gutterMode:'span'` (DEFAULT) — the riser clears only the widest box
+           within the edge's own from…to span, so a short forward skip (e.g. 2→4)
+           routes just past the boxes it actually spans, NOT past the globally
+           widest box elsewhere in the diagram.
+         `gutterMode:'global'` — the riser clears the whole diagram's widest box
+           (the pre-span behavior). Return loops use this; set it per-edge, or
+           `TREE.gutterMode:'global'` for a diagram-wide default.
+         `gutter` / `gutterOffset` (px) — offset of the riser past its reference
+           box (default `LOOP_GAP`); per-edge lever for exact tuning.
+
+       `loop:true` is sugar for last-step → first-step (the prior unmerged
+       return-loop behavior); it routes `global` and honors `loopGutter`. `route`
+       is reserved ('right-gutter' is the only routing today). Diagrams with no
+       secondary edges keep the exact original width — render-neutral. */
+    function resolveNode(ref) {
+      if (ref == null) return null;
+      if (typeof ref === 'number') return nodes[ref] || null;   // nodes[0]=root, nodes[n]=step n
+      return nodes.find((n) => n.label === ref) || null;
+    }
+    // Widest box within an edge's own vertical span (from…to, inclusive) — what a
+    // 'span'-mode riser must clear, vs the global maxBoxW a 'global' riser clears.
+    function spanMaxBoxW(a, b) {
+      const i = nodes.indexOf(a), j = nodes.indexOf(b);
+      const lo = Math.min(i, j), hi = Math.max(i, j);
+      let w = 0;
+      for (let k = lo; k <= hi; k++) w = Math.max(w, nodes[k].boxW);
+      return w;
+    }
+    const secEdges = [];
+    (TREE.secondaryEdges || []).forEach((e) => {
+      const from = resolveNode(e.from), to = resolveNode(e.to);
+      if (!from || !to || from === to) {
+        console.warn('[SEQ engine] secondaryEdge skipped — unresolved/degenerate from/to:', e);
+        return;
+      }
+      const gutter = e.gutter != null ? e.gutter
+                   : e.gutterOffset != null ? e.gutterOffset : LOOP_GAP;
+      const mode = e.gutterMode || TREE.gutterMode || 'span';
+      secEdges.push({ from, to, dashed: e.style !== 'solid', label: e.label || null, mode, gutter });
+    });
+    if (TREE.loop && nodes.length > 2) {
+      // return-loop sugar clears the whole diagram → 'global', honoring loopGutter.
+      secEdges.push({
+        from: nodes[nodes.length - 1], to: nodes[1], dashed: true, label: null,
+        mode: 'global', gutter: TREE.loopGutter != null ? TREE.loopGutter : LOOP_GAP,
+      });
+    }
+    // Base gutter column: past this edge's reference box (its own span, or global).
+    secEdges.forEach((e) => {
+      const refW = e.mode === 'global' ? maxBoxW : spanMaxBoxW(e.from, e.to);
+      e.gxBase = LEFT_PAD + refW + e.gutter;
+    });
+    // Nest overlapping edges: shorter spans take inner columns, longer spans wrap
+    // outside. Edges whose vertical spans don't overlap may share a column — no
+    // forced stagger, so a single skip edge stays tight against its own span.
+    secEdges.sort((a, b) =>
+      Math.abs(a.to.top - a.from.top) - Math.abs(b.to.top - b.from.top));
+    const yRange = (e) => [
+      Math.min(e.from.top, e.to.top),
+      Math.max(e.from.top + e.from.boxH, e.to.top + e.to.boxH),
+    ];
+    const placed = [];
+    secEdges.forEach((e) => {
+      const [eTop, eBot] = yRange(e);
+      let gx = e.gxBase, changed = true;
+      while (changed) {
+        changed = false;
+        for (const p of placed) {
+          const [pTop, pBot] = yRange(p);
+          const overlap = eTop < pBot && pTop < eBot;
+          if (overlap && Math.abs(gx - p.gx) < GUTTER_STEP - 0.5) {
+            gx = p.gx + GUTTER_STEP;
+            changed = true;
+          }
+        }
+      }
+      e.gx = gx;
+      placed.push(e);
+    });
+
+    const width = secEdges.length
+      ? Math.max(LEFT_PAD + maxBoxW + PAGE_PAD_R,
+                 Math.max(...secEdges.map((e) => e.gx)) + 40)
+      : LEFT_PAD + maxBoxW + PAGE_PAD_R;
 
     /* ---------- render ---------- */
     const svg = document.getElementById('svg');
@@ -146,6 +243,35 @@
         d: `M ${edgeX - ARROW_W / 2} ${y2 - ARROW_H} L ${edgeX + ARROW_W / 2} ${y2 - ARROW_H} L ${edgeX} ${y2} Z`,
         class: 'edge-arrowhead',
       }));
+    }
+
+    /* secondary edges: dashed orthogonal path from `from`'s right edge → its
+       gutter column → `to`'s y → into `to`'s right edge with a left-pointing
+       arrowhead. Drawn in the edge layer (behind the nodes) and part of the
+       diagram, so it renders in the chrome-free PNG-diagram export too. Same
+       geometry for a forward skip (2→4) or a return loop (last→first) — only the
+       y values flip. `fill:none` keeps the 4-point path a stroke, not a shape. */
+    for (const e of secEdges) {
+      const fromRight = LEFT_PAD + e.from.boxW;
+      const toRight = LEFT_PAD + e.to.boxW;
+      const yFrom = e.from.top + e.from.boxH / 2;
+      const yTo = e.to.top + e.to.boxH / 2;
+      edgeLayer.appendChild(el('path', {
+        d: `M ${fromRight} ${yFrom} L ${e.gx} ${yFrom} L ${e.gx} ${yTo} L ${toRight + ARROW_H} ${yTo}`,
+        class: 'edge', fill: 'none',
+        'stroke-dasharray': e.dashed ? '3 5' : null,
+      }));
+      edgeLayer.appendChild(el('path', {
+        d: `M ${toRight + ARROW_H} ${yTo - ARROW_W / 2} L ${toRight + ARROW_H} ${yTo + ARROW_W / 2} L ${toRight} ${yTo} Z`,
+        class: 'edge-arrowhead',
+      }));
+      if (e.label) {
+        edgeLayer.appendChild(el('text', {
+          x: e.gx + 11, y: (yFrom + yTo) / 2,
+          transform: `rotate(90 ${e.gx + 11} ${(yFrom + yTo) / 2})`,
+          'text-anchor': 'middle', class: 'node-note',
+        }, [e.label]));
+      }
     }
 
     for (const n of nodes) {

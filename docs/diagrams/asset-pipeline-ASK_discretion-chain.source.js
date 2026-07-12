@@ -33,6 +33,14 @@ window.SPINE_DISCRETION_CHAIN = {
   kind: 'root',
   label: 'Creative Discretion · The Chain',
   note: 'the aim, the aperture, and the variance a brief allows — kept distinct, end to end',
+  // Secondary edge (DS #64 SEQ `secondaryEdges`): the doctrinal "discretion is
+  // exercised AT selection" relation — a dashed skip edge from node 2 to node 4,
+  // gutter-routed, muted (inherits `--diagram-line`, no new hue — the mockup's
+  // magenta was a routing annotation, not the target color). Unlabeled on purpose:
+  // node 2's note already reads "exercised at selection"; the edge carries the relation.
+  secondaryEdges: [
+    { from: '2 · creative discretion', to: '4 · selection', style: 'dashed', route: 'right-gutter' },
+  ],
   children: [
     {
       kind: 'node', label: '1 · creative intent',
