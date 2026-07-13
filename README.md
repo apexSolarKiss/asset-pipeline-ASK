@@ -29,7 +29,7 @@ The repo is building a durable definition layer above changing tools and models,
 
 Still-image first; video extension is downstream of the layered model stabilizing.
 
-The 2c marketing hero now demonstrates the full chain end to end inside the system: the definition layer drives generation, candidates accumulate, a human curator selects one, the selected candidate is captured into a governed asset with no external import, and the output slot is accepted. Across the other worked modes, the same definition-layer structure is pressured at uneven evidence depth. Airtable is the worked substrate that demonstrates this — one substrate, not the deliverable. The deliverable is the portable definition layer above it, designed to be substrate-independent.
+The 2c marketing hero now demonstrates the full bounded-generativity topology end to end inside the system: the definition layer drives generation, candidates accumulate, a human curator selects one, the selected candidate is captured into a governed asset with no external import, and the output slot is accepted. Across the other worked modes, the same definition-layer structure is pressured at uneven evidence depth. Airtable is the worked substrate that demonstrates this — one substrate, not the deliverable. The deliverable is the portable definition layer above it, designed to be substrate-independent.
 
 **Target vs earned.** "Machine-usable" and "substrate-independent" name the *target*, not present-tense generality. Earned to date: one package re-expressed outside Airtable and recovered from a file-bundle second substrate, and one bounded, model-mediated package-instantiation planning consumer calibrated on one known-achievable filesystem target. Not yet earned: operational cross-substrate execution, a reusable consuming grammar, a general converter, a validator, or a runtime. "Machine-usable" here means model/advisor consumption of the definition layer to generate fit-for-purpose artifacts — not a validator or runtime orchestrator.
 
@@ -38,7 +38,7 @@ The 2c marketing hero now demonstrates the full chain end to end inside the syst
 The strategic reader path — to the concrete object first, then depth:
 
 1. [`docs/problem-and-approach.md`](docs/problem-and-approach.md) — the differentiated failure this repo addresses, and the object distinction it makes
-2. [`docs/asset-definition-package-map-2c-marketing-hero-v1.md`](docs/asset-definition-package-map-2c-marketing-hero-v1.md) — the concrete package: one chain end to end (intent → discretion → variance → selection → governance)
+2. [`docs/asset-definition-package-map-2c-marketing-hero-v1.md`](docs/asset-definition-package-map-2c-marketing-hero-v1.md) — the concrete package: one package carried end to end — its bounded-generativity topology read as a function-order projection (intent → discretion → variance → selection → governance)
 3. [`docs/package-lifecycle-partition-v1.md`](docs/package-lifecycle-partition-v1.md) — the three lifecycle states a package spans (prospective definition / execution-run state / governed record) and how to read its statuses
 4. [`docs/architecture.md`](docs/architecture.md) — current architecture front door
 5. [`docs/method.md`](docs/method.md) — ontology / application split and working sequence
@@ -46,7 +46,7 @@ The strategic reader path — to the concrete object first, then depth:
 
 ## One concrete example
 
-For a first reader, the simplest complete chain example is the 2c marketing hero — a single output slot carried end to end, not the whole marketing mode:
+For a first reader, the simplest complete example is the 2c marketing hero — a single output slot carried end to end through the bounded-generativity topology, not the whole marketing mode:
 
 - [`docs/asset-definition-package-map-2c-marketing-hero-v1.md`](docs/asset-definition-package-map-2c-marketing-hero-v1.md)
 

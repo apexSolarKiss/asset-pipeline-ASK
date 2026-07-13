@@ -6,7 +6,7 @@ This is one **portable asset-definition package**, shown as a worked example.
 
 The [README](../README.md) names the package as this project's reusable object — the substrate-independent definition layer for a commercial visual-asset workflow. This page makes that concrete by walking the simplest complete case the prototype has proven end to end: the *2c marketing hero*.
 
-Read it as an example, not a spec. It shows what a package holds, how generation fills it, how a human closes it, and how governance records the result — using one real chain from packet to accepted asset.
+Read it as an example, not a spec. It shows what a package holds, how generation fills it, how a human closes it, and how artifact governance binds the result (the governance record carries the trace) — using one real end-to-end run from packet to accepted asset.
 
 **What this example is.** This worked package contains a completed hero record and a still-prospective held support obligation; it is not one undifferentiated approval object. A forward production decision applies to the prospective definition, including whether the support slot is released, remains held, or is retired. The closed hero is historical and should be read as a governed record. See [package lifecycle partition](package-lifecycle-partition-v1.md) for why the package's elements sit in three different lifecycle states, and the interpretive rule for reading its statuses.
 
@@ -19,7 +19,7 @@ The worked case is a "Spring Refresh" marketing hero for the prototype's synthet
 | **Packet** (the brief) | `PKT-MSG-HG-001` |
 | **Business intent** | Marketing / message-driven. A "Spring Refresh" seasonal offer; the anchor is the offer/message, not a single product — communicate renewal and transparent value within Warm Restraint. |
 | **Creative intent** (the aim) | A message-bearing composition with room to carry an offer/headline; a warm daylit refresh feeling; products serve the message rather than being the subject. |
-| **Creative discretion** (the aperture grant) | What may vary: which bath-textile pieces appear and how they are arranged; camera framing/crop; surface choice; the placement and extent of the copy-overlay space. Bounded by the constraints and references below. Decision owner: the marketing curator. The aperture closes at hero-slot selection. |
+| **Aperture grant** (carried in `bounded_creative_discretion`) | What may vary: which bath-textile pieces appear and how they are arranged; camera framing/crop; surface choice; the placement and extent of the copy-overlay space. Bounded by the constraints and references below. Decision owner: the marketing curator. The aperture closes at hero-slot selection. |
 | **Constraints** (what may not vary) | Warm Restraint palette · daylit high-key lighting · natural-fiber material honesty · preserved copy-overlay negative space (`BC-WR-PALETTE` / `-LIGHTING` / `-MATERIAL` / `-NEGATIVE`). |
 | **References** (visual anchors) | Brand-system and palette references (`REF-WR-BRANDSYS-01`, `REF-WR-PALETTE-01`). |
 | **Required output** | One message-hero (offer-ready, copy space). The secondary support frame is held — see *What this does not prove*. |
@@ -29,7 +29,7 @@ The worked case is a "Spring Refresh" marketing hero for the prototype's synthet
 | **Selection** (closing the aperture) | The curator selected one candidate (the post-remediation take) as the one that best carries the offer within the envelope — an authorship-bearing choice made across the full candidate set, with the reason recorded. |
 | **Governed asset** (the record) | `ASSET-MSG-HG-001-HERO-001` — the selected candidate, captured as a governed output with its curation reason, curator, and provenance; the output slot moved to *accepted*. |
 
-The chain reads top to bottom: **the brief opens an aperture → generation fills it with candidates → a human selects one and makes it true to the intent → governance records the result.**
+The topology reads top to bottom as a function-order projection: **the brief opens an aperture → generation fills it with candidates → a human selects one and makes it true to the intent → artifact governance binds the result (the governance record carries the trace).**
 
 ### Reading the three lifecycle states
 
@@ -51,7 +51,7 @@ But the **package is the definition layer above the substrate.** The same intent
 
 ## What this proves
 
-This one chain shows the full loop running inside the system:
+This one end-to-end run shows the full loop running inside the system:
 
 - the **definition layer drives generation** — the slot prompt, constraints, and references shape what is produced;
 - **candidates accumulate** as a set, not a single inevitable answer;

@@ -1,0 +1,85 @@
+/* =========================================================================
+   three-functions.css — Three Functions
+
+   A semantic FUNCTION-color system: a small, identity-free vocabulary of three
+   ROLE colors — legislative, executive, judicial — that marks which invariant
+   structural FUNCTION an element performs. A sibling to Spectral State, not a
+   profile under it: Spectral State encodes the STATE of an element; Three
+   Functions encodes its FUNCTION. Different axis.
+
+   SPECIALIZED, OPT-IN foundation primitive. It is for surfaces that encode a
+   separation of functions in an apparatus — e.g. a method diagram whose parts
+   author a rule, realize candidates under it, and select and close against it.
+   It is NOT general UI color, and the static diagram scaffolds
+   (`diagram-static-H` / `-V` / `-SEQ` / `-FLOW`) do NOT use it.
+
+   NOT A PALETTE EXPANSION. The three role values are existing ASK values — two
+   emphasis accents (magenta, cyan) plus the neutral white / lavender-ASK
+   identity value. This primitive is a new SEMANTIC BINDING over the closed
+   palette, not a new hue.
+
+   Layer this ON TOP of `colors_and_type.css` — it relies on that file's theme
+   resolution (`[data-theme]` + `prefers-color-scheme`) and its palette tokens.
+   Offline; no CDN.
+
+   STATUS: v0.1 — first authored, awaiting first-consumer proving. Authorized by
+   ASK source-of-intent (2026-07-12). The first consumer will be method-ASK's
+   bounded-generativity figure (by reference); asset-pipeline-ASK is the intended
+   second consumer and the portability pressure test. Provisional-but-portable:
+   the mappings are the stable part; the role list is fixed at three.
+
+   ---------------------------------------------------------------------------
+   ROLE MAP
+   ---------------------------------------------------------------------------
+   Function       Meaning                                          ASK mapping
+     legislative  authors / carries the governing rule and the     --ask-emphasis-magenta
+                  grant of permitted variance (the aperture)         (#FF00FF)
+     executive    realizes candidates under the rule; does not     theme-neutral:
+                  author it and does not judge the result            #FFFFFF light /
+                                                                     lavender-ASK dark
+     judicial     evaluates candidates against the standard,       --ask-emphasis-cyan
+                  selects one, ratifies, and closes                  (#00BEFF)
+
+   The executive role is deliberately HUE-LESS. Its neutrality is the signal:
+   execution fills the aperture but neither originates the norm nor closes the
+   judgment. In light it is white (#FFFFFF); on the dark ink field pure white is
+   too hot, so it resolves to lavender-ASK (#D4C6E1), the dark-mode neutral
+   foreground value. legislative (magenta) and judicial (cyan) are the two hot
+   points; the executive neutral reads by contrast between them.
+
+   CHANNEL DISCIPLINE (coexistence with Spectral State / Evidence State).
+   Function, element state, and evidence state are three separate semantic axes.
+   Reused hue does NOT create semantic identity: magenta is both
+   --function-legislative and --state-proposed; cyan is both --function-judicial
+   and --state-held. They are not aliases. On one element, function / state /
+   evidence must not compete for the same visual channel:
+     function role   -> fill / principal node treatment
+     state           -> outline, badge, or separate state marker
+     evidence state  -> evidence marker, rail, dash, or labelled annotation
+   Color stays redundant with visible labels and geometry: a consuming surface
+   must still read legislative / executive / judicial in monochrome.
+   ========================================================================= */
+
+/* ---------- Light (default) — on the light lavender field ----------
+   legislative + judicial bind to the fixed emphasis accents (hot points on the
+   calm field); executive is the neutral white value (not body text). */
+:root {
+  --function-legislative: var(--ask-emphasis-magenta);   /* #FF00FF */
+  --function-executive:   var(--ask-white);              /* #FFFFFF — neutral executor */
+  --function-judicial:    var(--ask-emphasis-cyan);      /* #00BEFF */
+}
+
+/* ---------- Dark — on the dark ink field ----------
+   legislative + judicial are unchanged (the emphasis accents already read on
+   both fields); only executive flips: pure white is too hot on ink, so it
+   resolves to lavender-ASK, the dark-mode neutral foreground. Explicit + auto
+   blocks mirror each other, matching the foundation's theme model. */
+:root[data-theme="dark"] {
+  --function-executive:   var(--ask-lavender-ask);       /* #D4C6E1 */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    --function-executive: var(--ask-lavender-ask);       /* #D4C6E1 */
+  }
+}

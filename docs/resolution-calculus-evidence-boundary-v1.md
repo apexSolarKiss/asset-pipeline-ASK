@@ -36,5 +36,5 @@ the calculus held — no revision earned
 ## Anchor documents
 
 - [`docs/visual-payload-architecture-v2.md`](visual-payload-architecture-v2.md) — the convergence-at-slot-resolution picture this calculus resolves conflicts within
-- [`docs/creative-discretion-doctrine-v1.md`](creative-discretion-doctrine-v1.md) — the discretion chain the terminal states sit against
+- [`docs/creative-discretion-doctrine-v1.md`](creative-discretion-doctrine-v1.md) — the bounded-generativity topology the terminal states sit against
 - [`docs/milestones/milestone-15-resolution-calculus-and-instantiation-consumer-evidence-plateau.md`](milestones/milestone-15-resolution-calculus-and-instantiation-consumer-evidence-plateau.md)

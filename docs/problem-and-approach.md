@@ -27,7 +27,7 @@ Collapse these into one "creative direction" field and the system can still prod
 
 The fastest way to see the distinction is the worked package, not the abstract ontology:
 
-- [`asset-definition-package-map-2c-marketing-hero-v1.md`](asset-definition-package-map-2c-marketing-hero-v1.md) — one package, one chain end to end (intent → discretion → variance → selection → governance).
+- [`asset-definition-package-map-2c-marketing-hero-v1.md`](asset-definition-package-map-2c-marketing-hero-v1.md) — one package carried end to end — its bounded-generativity topology read as a function-order projection (intent → discretion → variance → selection → governance).
 - [`package-lifecycle-partition-v1.md`](package-lifecycle-partition-v1.md) — the three lifecycle states a package spans (prospective definition / execution-run state / governed record), and how to read its statuses without contradiction.
 
 ## How the model is exercised

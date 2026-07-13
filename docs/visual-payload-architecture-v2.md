@@ -198,7 +198,7 @@ sources + constraints converge
 
 *Visual Payload Architecture // a reference carrier can qualify the source field; source inputs converge into a resolved slot specification; the result is generated, evaluated, selected, governed, and may later return as a reference input. Illustrative — this prose is source truth. Repo-native interactive version (hover/click for definitions): [`docs/diagrams/asset-pipeline-ASK_visual-payload-architecture.html`](diagrams/asset-pipeline-ASK_visual-payload-architecture.html).*
 
-**Evaluation precedes selection; selection adjudicates; governance records.**
+**Evaluation precedes selection; selection adjudicates; artifact governance binds — the record carries the trace.**
 Governance does **not** require one stored record per dimension: a governed asset can
 record the accepted output, the selection judgment, the rationale, and the
 controlling specification / references, while some dimension-level evaluation stays
@@ -312,7 +312,7 @@ convergence topology.
 - [`docs/visual-payload-architecture-v1.md`](visual-payload-architecture-v1.md) — predecessor (preserved as evidence)
 - [`docs/layered-reference-and-discretion-architecture-v1.md`](layered-reference-and-discretion-architecture-v1.md) — the function-axis companion
 - [`docs/normative-force-and-durable-layer-pressure-v1.md`](normative-force-and-durable-layer-pressure-v1.md) — the six-kind normative-force vocabulary
-- [`docs/creative-discretion-doctrine-v1.md`](creative-discretion-doctrine-v1.md) — the discretion chain; AP as a worked instance of the method-level `bounded generativity` primitive
+- [`docs/creative-discretion-doctrine-v1.md`](creative-discretion-doctrine-v1.md) — the bounded-generativity topology / creative-discretion doctrine; AP as a worked instance of the method-level `bounded generativity` primitive
 - [`docs/structured-ia-model-v2.md`](structured-ia-model-v2.md) and [`docs/architecture.md`](architecture.md) — the Axis-B scope spine this artifact preserves
 - [`docs/foundational-premises-v1.md`](foundational-premises-v1.md) — references, product truth, and output are different objects
 - [`docs/layer-disambiguation-note-v1.md`](layer-disambiguation-note-v1.md) — the project's four uses of "layer"

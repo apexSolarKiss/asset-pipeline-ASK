@@ -23,6 +23,28 @@
    panel — nothing overflows a panel edge and no fixed column offsets remain.
 
    Theme-aware: chrome colors read from CSS custom properties at click time.
+
+   Legend fidelity (2026-07-12). The legend reader was `.row`-only and reduced
+   each swatch to a generic solid/dashed/legacy box drawn in the neutral node fill,
+   so a consumer's SEMANTIC legend flattened: colored role swatches all collapsed to
+   neutral, and inter-row structure (a dotted divider, a group heading) was dropped
+   entirely. It now walks the legend's DIRECT children as an ordered list of rows,
+   dividers, and group headings, and captures each swatch from its COMPUTED
+   presentation (fill, border color / width / style, radius) — the live browser has
+   already resolved var()/color-mix(), so any consumer primitive (Three Functions,
+   or whatever comes next) exports faithfully without the exporter learning its role
+   names. A plain row-only legend lays out exactly as before — and the capture is
+   symmetric: a border-less color chip stays fill-only (no phantom outline in the
+   resolved text ink), a solid separator stays solid, and a mixed-case heading keeps
+   its case.
+
+   Landscape placement (2026-07-12). The diagram body uses a tighter side margin
+   than the page chrome (DIAG_M < M), so it renders larger. Landscape diagrams
+   (wider than tall) are now anchored LOW — centered in the space *below* the corner
+   panels rather than floating in the middle of the full page — so the top panels
+   breathe and the page is not bottom-heavy with dead space. Scale still uses the
+   full band above, so a height-limited landscape is not shrunk; portrait diagrams
+   are unchanged.
 */
 (function () {
   'use strict';
@@ -273,24 +295,104 @@
     }
     return { title: title, lines: out };
   }
-  function getLegendRows() {
-    return Array.prototype.slice.call(document.querySelectorAll('.legend .row')).map(function (r) {
-      var subEl = r.querySelector('.sub');
-      // Mirror the browser: white-space is inherited, so a nowrap wrapper resolves
-      // onto the .sub's computed style. A sub the live layout keeps on one line must
-      // not be re-wrapped by the export's fixed budget (renderer fidelity, read from
-      // computed style — not an AP-specific text/filename special case). Only the two
-      // non-wrapping values suppress the wrap; 'pre-wrap' / 'pre-line' still wrap.
-      var ws = subEl ? getComputedStyle(subEl).whiteSpace : 'normal';
-      return {
-        lbl: text(r.querySelector('.lbl')),
-        sub: text(subEl),
-        nowrap: ws === 'nowrap' || ws === 'pre',
-        isSolid: !!r.querySelector('.box-solid'),
-        isDashed: !!r.querySelector('.box-dashed'),
-        isLegacy: !!r.querySelector('.legacy-txt'),
-      };
-    });
+  // A CSS color is "no fill" when it is transparent / none / zero-alpha. Used to
+  // decide whether a swatch draws a filled rect or an open (stroke-only) one.
+  function isTransparentColor(c) {
+    if (!c) return true;
+    c = String(c).trim();
+    if (c === 'transparent' || c === 'none') return true;
+    var m = /^rgba?\(([^)]+)\)$/i.exec(c);
+    if (m) {
+      var p = m[1].split(',');
+      if (p.length === 4 && parseFloat(p[3]) === 0) return true;
+    }
+    return false;
+  }
+  // Capture a legend swatch from its COMPUTED presentation — fill, border color /
+  // width / style, radius — rather than reducing it to a generic solid/dashed box.
+  // This is what lets a consumer-defined semantic legend (Three Functions role
+  // color, or whatever primitive comes next) export faithfully without the exporter
+  // knowing the role names: the live browser already resolved var()/color-mix() to
+  // concrete values, and we read those. A `.legacy-txt` swatch stays a text glyph.
+  function readSwatch(row) {
+    var el = row.querySelector('.box-solid, .box-dashed, .legacy-txt, .sw > *');
+    if (!el) return null;
+    if (el.classList.contains('legacy-txt')) return { kind: 'legacy' };
+    var cs = getComputedStyle(el);
+    var style = cs.borderTopStyle || 'none';
+    var width = parseFloat(cs.borderTopWidth) || 0;
+    // Only draw a swatch outline when the live element actually paints a border. A
+    // border-less color chip (a plain `.sw > *` background fill) must export as a
+    // fill-only rect — never gain a phantom stroke in the resolved text ink, which is
+    // what border-top-color falls back to when there is no border.
+    var hasBorder = style !== 'none' && style !== 'hidden' && width > 0;
+    var bg = cs.backgroundColor;
+    return {
+      kind: 'box',
+      fill: isTransparentColor(bg) ? null : bg,
+      stroke: hasBorder ? cs.borderTopColor : null,
+      strokeWidth: hasBorder ? width : 0,
+      dashed: hasBorder && (style === 'dashed' || style === 'dotted'),
+      dotted: hasBorder && style === 'dotted',
+      radius: parseFloat(cs.borderTopLeftRadius) || 0,
+    };
+  }
+  // A divider (an <hr> or a `.fn-divider` rule) carries its line on border-top.
+  // Preserve its line style so a solid separator does not export as a dashed one.
+  function readDivider(el) {
+    var cs = getComputedStyle(el);
+    var style = cs.borderTopStyle;
+    if (!style || style === 'none' || style === 'hidden') style = 'solid';
+    return { type: 'divider', style: style, color: cs.borderTopColor };
+  }
+  function readRow(el) {
+    var subEl = el.querySelector('.sub');
+    // Mirror the browser: white-space is inherited, so a nowrap wrapper resolves
+    // onto the .sub's computed style. A sub the live layout keeps on one line must
+    // not be re-wrapped by the export's fixed budget (renderer fidelity, read from
+    // computed style). Only the two non-wrapping values suppress the wrap.
+    var ws = subEl ? getComputedStyle(subEl).whiteSpace : 'normal';
+    return {
+      type: 'row',
+      lbl: text(el.querySelector('.lbl')),
+      sub: text(subEl),
+      nowrap: ws === 'nowrap' || ws === 'pre',
+      swatch: readSwatch(el),
+    };
+  }
+  // A group heading: keep the live text and its case (do not force-uppercase a
+  // heading the consumer wrote in mixed case) and its computed color.
+  function readGroupLabel(el) {
+    var cs = getComputedStyle(el);
+    var t = text(el);
+    if (cs.textTransform === 'uppercase') t = t.toUpperCase();
+    return { type: 'grouplabel', text: t, color: cs.color };
+  }
+  // Read the legend as an ORDERED list of items — rows, dividers, and group
+  // headings — walking the legend's children (not just `.row`), so a consumer's
+  // grouping (e.g. a dotted separator + a "downstream — not a fourth function"
+  // heading between the function rows and a neutral governance row) is preserved
+  // instead of collapsed into one flat list. A wrapper element that itself holds
+  // rows or dividers is descended into rather than mistaken for one giant heading.
+  // The legend header (`.h`) is drawn separately in buildSvg.
+  function collectLegendItems(container, items) {
+    var kids = container.children;
+    for (var i = 0; i < kids.length; i++) {
+      var el = kids[i];
+      if (el.classList.contains('h')) continue;                       // header — drawn separately
+      if (el.tagName === 'HR' || el.classList.contains('fn-divider') ||
+          el.classList.contains('divider')) { items.push(readDivider(el)); continue; }
+      if (el.classList.contains('row')) { items.push(readRow(el)); continue; }
+      if (el.querySelector('.row, hr, .fn-divider, .divider')) { collectLegendItems(el, items); continue; }
+      if (text(el)) items.push(readGroupLabel(el));                   // a bare text block = a group heading
+    }
+  }
+  function getLegendItems() {
+    var legend = document.querySelector('.legend');
+    if (!legend) return [];
+    var items = [];
+    collectLegendItems(legend, items);
+    return items;
   }
   function getVersionParts() {
     return Array.prototype.slice.call(document.querySelectorAll('.bar .stamp .k')).map(function (e) { return text(e); });
@@ -344,7 +446,7 @@
     var themeTag = getThemeTag();
     var stamp = getStamp(), stamp1 = stamp[0], stamp2 = stamp[1];
     var caveat = getCaveat();
-    var legend = getLegendRows();
+    var legendItems = getLegendItems();
 
     /* ---------- header (laid out at page scale) ----------
        Repo mark on the left, the title-block (title + subtitle) to the RIGHT of
@@ -416,57 +518,100 @@
 
     var legendBody = '';
     var legendH = 0;
-    if (legend.length) {
+    if (legendItems.length) {
       var F_LEG_H   = '400 26px ' + MONO, LS_LEG_H   = 4.2;
       var F_LEG_FIG = '500 26px ' + MONO, LS_LEG_FIG = 2.1;
       var F_LEG_LBL = '400 34px ' + SANS;
       var F_LEG_SUB = '300 26px ' + MONO, LS_LEG_SUB = 1.0;
-      var SW_W = 68, SW_H = 40;
+      var F_LEG_GRP = '400 24px ' + MONO, LS_LEG_GRP = 3.4; // group heading (mirrors a live .fn-down)
+      var SW_W = 68, SW_H = 40, SW_ONSCREEN_H = 12;         // page-scale swatch; 12px = live box height (radius/border scale)
       var SUB_BUDGET = 1100; // max sub-text line width before wrapping
 
+      // Only rows carry the swatch/label/sub columns; dividers and group headings
+      // span the panel. Measure column widths from rows alone.
+      var rows = legendItems.filter(function (it) { return it.type === 'row'; });
       var maxLblW = 0, maxSubW = 0;
-      legend.forEach(function (row) {
+      rows.forEach(function (row) {
         maxLblW = Math.max(maxLblW, textW(row.lbl, F_LEG_LBL));
         row.subLines = row.nowrap ? [row.sub] : wrapToWidth(row.sub, F_LEG_SUB, LS_LEG_SUB, SUB_BUDGET, 3);
         row.subLines.forEach(function (l) { maxSubW = Math.max(maxSubW, textW(l, F_LEG_SUB, LS_LEG_SUB)); });
       });
-      // Collapse a column only when the WHOLE legend lacks it (aggregate, so mixed
-      // rows stay aligned): a swatch-less legend drops the swatch lane; a label-less
-      // legend drops the label lane — no phantom left offset. A legend with any
-      // swatch or any label keeps its lane and stays byte-identical to before.
-      var hasSwatch = legend.some(function (row) { return row.isSolid || row.isDashed || row.isLegacy; });
-      var hasLabel  = legend.some(function (row) { return !!row.lbl; });
+      // Collapse a column only when EVERY row lacks it (aggregate, so mixed rows stay
+      // aligned): a swatch-less legend drops the swatch lane; a label-less legend drops
+      // the label lane. A row-only legend keeps its lanes and lays out as before.
+      var hasSwatch = rows.some(function (row) { return !!row.swatch; });
+      var hasLabel  = rows.some(function (row) { return !!row.lbl; });
       var swOff  = PAD;
       var lblOff = swOff + (hasSwatch ? SW_W + 40 : 0);
       var subOff = lblOff + (hasLabel ? Math.ceil(maxLblW) + 36 : 0);
-      var legendW = subOff + Math.ceil(maxSubW) + PAD;
+      // A group heading can be wider than any row — let it widen the panel too.
+      var grpMaxW = 0;
+      legendItems.forEach(function (it) {
+        if (it.type === 'grouplabel') grpMaxW = Math.max(grpMaxW, textW(it.text, F_LEG_GRP, LS_LEG_GRP));
+      });
+      var legendW = Math.max(subOff + Math.ceil(maxSubW) + PAD, PAD + Math.ceil(grpMaxW) + PAD);
       var legendX = PAGE_W - M - legendW;
 
-      // Row centers: 96px per row plus 44px per extra wrapped sub line.
-      var yOff = 152;
-      legend.forEach(function (row) {
-        row.cy = yOff;
-        yOff += 96 + (row.subLines.length - 1) * 44;
+      // Vertical rhythm (page scale). Rows keep the prior cadence (first center at
+      // +152, 96 per row, +44 per extra sub line), so a plain row-only legend lays
+      // out exactly as before; dividers and group headings insert their own bands.
+      var ROW_H = 96, SUBLINE = 44, DIV_H = 56, GRP_H = 60;
+      var cursor = 104;                                     // top of the content band (152 − ROW_H/2)
+      legendItems.forEach(function (it) {
+        if (it.type === 'row') {
+          it.cy = cursor + ROW_H / 2;
+          cursor += ROW_H + (it.subLines.length - 1) * SUBLINE;
+        } else if (it.type === 'divider') {
+          it.y = cursor + DIV_H / 2;
+          cursor += DIV_H;
+        } else { // grouplabel
+          it.baseline = cursor + GRP_H - 16;
+          cursor += GRP_H;
+        }
       });
-      var last = legend[legend.length - 1];
-      legendH = last.cy + (last.subLines.length - 1) * 44 + 64;
+      legendH = cursor + 16;   // bottom padding matches the pre-patch row-only panel exactly (16px below the last band)
 
       var header = document.querySelector('.legend .h');
       var headerLbl = header ? text(header.querySelector('span')) : 'Legend';
-      var headerFig = header ? text(header.querySelector('.fig')) : (legend.length + ' states');
+      var headerFig = header ? text(header.querySelector('.fig')) : (rows.length + ' states');
       legendBody =
         '<rect x="' + legendX + '" y="' + overlayY + '" width="' + legendW + '" height="' + legendH + '" fill="' + T.panelFill + '" fill-opacity="' + PANEL_OPACITY + '" stroke="' + T.line1 + '" rx="' + PANEL_RX + '"/>' +
         '<text x="' + (legendX + PAD) + '" y="' + (overlayY + 80) + '" font-family="' + MONO + '" font-size="26" fill="' + T.fg2 + '" letter-spacing="4.2">' + xml(headerLbl.toUpperCase()) + '</text>' +
         '<text x="' + (legendX + legendW - PAD) + '" y="' + (overlayY + 80) + '" text-anchor="end" font-family="' + MONO + '" font-size="26" font-weight="500" fill="' + T.fg1 + '" letter-spacing="2.1">' + xml(headerFig.toUpperCase()) + '</text>';
-      legend.forEach(function (row) {
+
+      legendItems.forEach(function (it) {
+        if (it.type === 'divider') {
+          var dy = overlayY + it.y;
+          var dd = it.style === 'dotted' ? ' stroke-dasharray="2 10" stroke-linecap="round"'
+                 : it.style === 'dashed' ? ' stroke-dasharray="10 8"' : '';   // solid → no dasharray
+          legendBody += '<line x1="' + (legendX + PAD) + '" y1="' + dy + '" x2="' + (legendX + legendW - PAD) + '" y2="' + dy +
+            '" stroke="' + (it.color || T.line1) + '" stroke-width="2"' + dd + '/>';
+          return;
+        }
+        if (it.type === 'grouplabel') {
+          legendBody += '<text x="' + (legendX + PAD) + '" y="' + (overlayY + it.baseline) +
+            '" font-family="' + MONO + '" font-size="24" font-weight="400" fill="' + (it.color || T.fg2) + '" letter-spacing="3.4">' + xml(it.text) + '</text>';
+          return;
+        }
+        // row
+        var row = it;
         var y = overlayY + row.cy;
         var swX = legendX + swOff;
-        if (row.isSolid) {
-          legendBody += '<rect x="' + swX + '" y="' + (y - SW_H / 2) + '" width="' + SW_W + '" height="' + SW_H + '" rx="6" fill="' + T.nodeFill + '" stroke="' + T.fg1 + '"/>';
-        } else if (row.isDashed) {
-          legendBody += '<rect x="' + swX + '" y="' + (y - SW_H / 2) + '" width="' + SW_W + '" height="' + SW_H + '" rx="6" fill="transparent" stroke="' + T.fg2 + '" stroke-dasharray="8 6"/>';
-        } else if (row.isLegacy) {
-          legendBody += '<text x="' + (swX + SW_W / 2) + '" y="' + y + '" text-anchor="middle" font-family="' + SANS + '" font-size="30" font-style="italic" font-weight="300" fill="' + T.fg2 + '" dominant-baseline="middle">legacy</text>';
+        if (row.swatch) {
+          if (row.swatch.kind === 'legacy') {
+            legendBody += '<text x="' + (swX + SW_W / 2) + '" y="' + y + '" text-anchor="middle" font-family="' + SANS + '" font-size="30" font-style="italic" font-weight="300" fill="' + T.fg2 + '" dominant-baseline="middle">legacy</text>';
+          } else {
+            var sw = row.swatch;
+            var rx = Math.max(2, Math.round(sw.radius * (SW_H / SW_ONSCREEN_H)));
+            // Stroke only when the live swatch paints a border — a fill-only color chip stays fill-only.
+            var strokeAttr = '';
+            if (sw.stroke) {
+              var strokeW = Math.max(1, Math.round(sw.strokeWidth * (SW_H / SW_ONSCREEN_H)));
+              var dash = sw.dashed ? ' stroke-dasharray="' + (sw.dotted ? '2 8' : '8 6') + '"' : '';
+              strokeAttr = ' stroke="' + sw.stroke + '" stroke-width="' + strokeW + '"' + dash;
+            }
+            legendBody += '<rect x="' + swX + '" y="' + (y - SW_H / 2) + '" width="' + SW_W + '" height="' + SW_H + '" rx="' + rx + '" fill="' + (sw.fill || 'transparent') + '"' + strokeAttr + '/>';
+          }
         }
         legendBody += '<text x="' + (legendX + lblOff) + '" y="' + y + '" font-family="' + SANS + '" font-size="34" fill="' + T.fg1 + '" dominant-baseline="middle">' + xml(row.lbl) + '</text>';
         row.subLines.forEach(function (line, li) {
@@ -477,18 +622,37 @@
 
     /* ---------- fit the diagram content ----------
        Tall/portrait diagrams fill the whole width, so their top edge would run
-       under the corner panels — they start BELOW the taller panel. LANDSCAPE
-       diagrams (wider than tall) have empty top corners, so they can start just
-       below the header and use near-full page height (bigger render) without
-       colliding with the corner panels. (Computed after the panels.) */
+       under the corner panels — they start BELOW the taller panel and center in
+       the space that remains. LANDSCAPE diagrams (wider than tall) have empty top
+       corners, so they start below the header and are anchored LOW (~lower third):
+       the top panels breathe above and the page is not bottom-heavy with dead space
+       below. The diagram body uses a tighter side margin than the page chrome (M),
+       so it renders larger; the header and corner panels keep the page margin M.
+       (Computed after the panels.) */
     var panelBand = Math.max(cavH, legendH);
     var landscape = diagW >= diagH;
+    var DIAG_M = 40;                                    // diagram-body side margin (< page M) → larger render
     var diagTop = overlayY + (landscape ? 120 : (panelBand ? panelBand + 48 : 0));
-    var diagBot = PAGE_H - M, diagLeft = M, diagRight = PAGE_W - M;
+    var diagBot = PAGE_H - M, diagLeft = DIAG_M, diagRight = PAGE_W - DIAG_M;
     var availW = diagRight - diagLeft, availH = diagBot - diagTop;
     var scale = Math.min(availW / diagW, availH / diagH);
     var sw = diagW * scale, sh = diagH * scale;
-    var sx = diagLeft + (availW - sw) / 2, sy = diagTop + (availH - sh) / 2;
+    var sx = diagLeft + (availW - sw) / 2;
+    var sy;
+    if (landscape) {
+      // Position low: CENTER the diagram in the space BELOW the corner panels, so
+      // the top panels breathe and the gaps above/below the diagram are balanced —
+      // rather than floating it in the middle of the full page (which left dead
+      // space below). Scale still uses the full band above, so a height-limited
+      // landscape is not shrunk. Fall back to full-band centering if it can't fit
+      // below the panels.
+      var bandTop = overlayY + panelBand + 48;
+      sy = (bandTop + sh <= diagBot)
+        ? bandTop + ((diagBot - bandTop) - sh) / 2
+        : diagTop + (availH - sh) / 2;
+    } else {
+      sy = diagTop + (availH - sh) / 2;
+    }
     // offset by the viewBox origin so negative-origin (centered) content isn't clipped
     content.setAttribute('transform', 'translate(' + (sx - minX * scale) + ' ' + (sy - minY * scale) + ') scale(' + scale + ')');
 
