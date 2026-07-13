@@ -312,7 +312,7 @@ convergence topology.
 - [`docs/visual-payload-architecture-v1.md`](visual-payload-architecture-v1.md) — predecessor (preserved as evidence)
 - [`docs/layered-reference-and-discretion-architecture-v1.md`](layered-reference-and-discretion-architecture-v1.md) — the function-axis companion
 - [`docs/normative-force-and-durable-layer-pressure-v1.md`](normative-force-and-durable-layer-pressure-v1.md) — the six-kind normative-force vocabulary
-- [`docs/creative-discretion-doctrine-v1.md`](creative-discretion-doctrine-v1.md) — the discretion chain; AP as a worked instance of the method-level `bounded generativity` primitive
+- [`docs/creative-discretion-doctrine-v1.md`](creative-discretion-doctrine-v1.md) — the bounded-generativity topology / creative-discretion doctrine; AP as a worked instance of the method-level `bounded generativity` primitive
 - [`docs/structured-ia-model-v2.md`](structured-ia-model-v2.md) and [`docs/architecture.md`](architecture.md) — the Axis-B scope spine this artifact preserves
 - [`docs/foundational-premises-v1.md`](foundational-premises-v1.md) — references, product truth, and output are different objects
 - [`docs/layer-disambiguation-note-v1.md`](layer-disambiguation-note-v1.md) — the project's four uses of "layer"

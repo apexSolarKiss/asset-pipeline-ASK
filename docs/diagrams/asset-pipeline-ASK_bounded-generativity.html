@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>asset-pipeline-ASK // bounded generativity</title>
+<meta name="description" content="Illustrative system-model diagram — asset-pipeline-ASK's commercial image-production instance of the bounded-generativity primitive. Repo prose (docs/creative-discretion-doctrine-v1.md) is source truth.">
+<meta name="generator" content="conforms to apexSolarKiss/design-system-ASK Tier 1 + Tier 2 by reference at generation time">
+<!-- design-system-ASK foundations — local mirror (Tier 1 + Tier 2), no CDN. See _dsa-tokens/MANIFEST.md -->
+<link rel="stylesheet" href="./_dsa-tokens/colors_and_type.css">
+<link rel="stylesheet" href="diagrams.css">
+<!-- ASK Three Functions — opt-in semantic function-color primitive, vendored from design-system-ASK. See _dsa-tokens/MANIFEST.md -->
+<link rel="stylesheet" href="./_dsa-tokens/three-functions.css">
+<style>
+  /* ===== Three Functions consumption (source-v4): role stroke + 30% fill; executive = the chamber, variance = negative cutouts ===== */
+  .node-box.fn-leg  { stroke: var(--function-legislative); fill: color-mix(in srgb, var(--function-legislative) 30%, transparent); }
+  .node-box.fn-jud  { stroke: var(--function-judicial);    fill: color-mix(in srgb, var(--function-judicial) 30%, transparent); }
+  .edge.fn-jud-ring { stroke: var(--function-judicial); }
+  .fn-exe-wash               { fill: color-mix(in srgb, var(--function-executive) 30%, transparent); }
+  .flow-group.fn-exe-chamber { stroke: var(--function-executive); fill: none; }
+  .node-box.fn-cut           { fill: none; }
+  .legend .box-solid.fn-leg { background: color-mix(in srgb, var(--function-legislative) 30%, transparent); border-color: var(--function-legislative); }
+  .legend .box-solid.fn-exe { background: color-mix(in srgb, var(--function-executive) 30%, transparent); border-color: var(--function-executive); }
+  .legend .box-solid.fn-jud { background: color-mix(in srgb, var(--function-judicial) 30%, transparent); border-color: var(--function-judicial); }
+  .legend .fn-divider { border: none; border-top: 1px dotted var(--diagram-line); margin: 12px 0 9px; }
+  .legend .fn-down { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.13em; text-transform: uppercase; color: var(--diagram-muted); margin-bottom: 9px; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <div class="bar">
+    <div class="mark">apexSolarKiss<span class="sep">/</span>asset-pipeline-ASK</div>
+    <div class="title-block">
+      <div class="t">Bounded Generativity</div>
+      <div class="s">source of intent >> creative brief grants the aperture >> image-production span >> curatorial selection + closure >> artifact governance >> governed asset + record</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="stamp">
+      <div><span class="k">source-v1</span> // <span class="k">render-v1</span></div>
+      <div>2026-07-13</div>
+    </div>
+  </div>
+
+  <div class="canvas-wrap" id="canvasWrap">
+    <div class="stage" id="stage">
+      <svg id="svg" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+
+    <div class="corner-tick tl"></div>
+    <div class="corner-tick tr"></div>
+    <div class="corner-tick bl"></div>
+    <div class="corner-tick br"></div>
+
+    <div class="legend glass">
+      <div class="h"><span>Three functions</span><span class="fig">one spine</span></div>
+      <div class="row">
+        <div class="sw"><div class="box-solid fn-leg"></div></div>
+        <div><span class="lbl">legislative</span><span class="sub">creative brief · grants the aperture</span></div>
+      </div>
+      <div class="row">
+        <div class="sw"><div class="box-solid fn-exe"></div></div>
+        <div><span class="lbl">executive</span><span class="sub">variance production · fills the aperture · nonjudgmental</span></div>
+      </div>
+      <div class="row">
+        <div class="sw"><div class="box-solid fn-jud"></div></div>
+        <div><span class="lbl">judicial</span><span class="sub">curatorial selection + closure · ratifies one candidate</span></div>
+      </div>
+      <hr class="fn-divider">
+      <div class="fn-down">downstream — not a fourth function</div>
+      <div class="row">
+        <div class="sw"><div class="box-solid"></div></div>
+        <div><span class="lbl">artifact governance</span><span class="sub">binds the accepted result</span></div>
+      </div>
+    </div>
+
+    <div class="hud glass">
+      <button id="zoomOut" title="Zoom out">−</button>
+      <div class="pct" id="zoomPct">100%</div>
+      <button id="zoomIn" title="Zoom in">+</button>
+      <button id="zoomFit" title="Fit">⤢</button>
+    </div>
+
+    <div class="caption glass">
+      <b>bounded generativity >> commercial image production</b><br>
+      illustrative · creative-discretion doctrine is source truth.<br>
+      creative discretion is authorized judgment where present; the brief grants the aperture and selection closes it.
+    </div>
+  </div>
+</div>
+
+<script src="asset-pipeline-ASK_bounded-generativity.figure.js"></script>
+<!-- DS embedded-font carrier — lets PNG export embed fonts with no server (file://).
+     Must load BEFORE export-png.js. Vendored from design-system-ASK; do not hand-edit. -->
+<script src="./_dsa-tokens/fonts-embedded.js"></script>
+<script src="export-png.js"></script>
+
+</body>
+</html>

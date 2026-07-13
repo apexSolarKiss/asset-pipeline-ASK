@@ -29,7 +29,7 @@ The worked case is a "Spring Refresh" marketing hero for the prototype's synthet
 | **Selection** (closing the aperture) | The curator selected one candidate (the post-remediation take) as the one that best carries the offer within the envelope — an authorship-bearing choice made across the full candidate set, with the reason recorded. |
 | **Governed asset** (the record) | `ASSET-MSG-HG-001-HERO-001` — the selected candidate, captured as a governed output with its curation reason, curator, and provenance; the output slot moved to *accepted*. |
 
-The chain reads top to bottom: **the brief opens an aperture → generation fills it with candidates → a human selects one and makes it true to the intent → governance records the result.**
+The topology reads top to bottom as a function-order projection: **the brief opens an aperture → generation fills it with candidates → a human selects one and makes it true to the intent → governance records the result.**
 
 ### Reading the three lifecycle states
 

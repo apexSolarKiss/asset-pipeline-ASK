@@ -84,8 +84,7 @@ behaves consistently across further cases.)
 
 - structure and discipline, not schema: no fields, validator, or structured-IA revision
 - no model edit; this preflights the visual-payload model, it does not modify it
-- no method-doctrine expansion; the discretion-chain and `bounded generativity` primitives are
-  untouched
+- no method-doctrine expansion; the `bounded generativity` primitive is untouched
 - aesthetic-agnostic: no real-brand examples, no live-site mechanics, no case narratives
 - acquisition is bounded corpus construction; a neutralized package carries only neutral
   identifiers and neutral context

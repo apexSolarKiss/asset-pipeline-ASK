@@ -40,7 +40,7 @@ extraction-v1 already established that the relational data shape survives. This 
 
 ## The walk — reading the package without Airtable
 
-The full instance is in the [YAML appendix](#yaml-appendix--the-2c-marketing-hero-package-instance) below. The walk reads it top to bottom as the doctrine chain ([`creative-discretion-doctrine-v1.md`](creative-discretion-doctrine-v1.md)).
+The full instance is in the [YAML appendix](#yaml-appendix--the-2c-marketing-hero-package-instance) below. The walk reads it top to bottom as the bounded-generativity topology / creative-discretion doctrine ([`creative-discretion-doctrine-v1.md`](creative-discretion-doctrine-v1.md)).
 
 - **Creative intent (the aim).** "A message-bearing composition with room to carry an offer/headline; a warm daylit refresh feeling; products serve the message rather than being the subject." This is marketing mode: the anchor is the offer/message, not a SKU. The two products (`SKU-HG-TOWEL-001`, `SKU-HG-BATHMAT-001`) are **peripheral** — present, but subordinate to the message. That mode-shape (products peripheral when the message is the fidelity anchor) reads from the instance without any tool.
 
@@ -58,7 +58,7 @@ The full instance is in the [YAML appendix](#yaml-appendix--the-2c-marketing-her
 
 - **Governance (the durable record).** `ASSET-MSG-HG-001-HERO-001`, `governed_output`, curator ASK, captured 2026-06-10, produced **entirely in-base with no external import** — a prototype-generated *output*, not an imported synthetic input. In this instance **selection and governance co-locate**: one carrier holds both the makes-true selection rationale and the governance record. The doctrine's selection-≠-governance distinction is still legible (the rationale names both acts explicitly) even though one field carries both — which is exactly the co-location the doctrine predicts for SKU/collection and, here, marketing.
 
-The chain reads end to end from the re-expressed instance. A reader who has never seen the Airtable base can follow the brief opening an aperture, generation filling it, a human closing it, and governance recording it.
+The topology reads end to end from the re-expressed instance, as a function-order projection. A reader who has never seen the Airtable base can follow the brief opening an aperture, generation filling it, a human closing it, and governance recording it.
 
 ## What survives extraction
 
