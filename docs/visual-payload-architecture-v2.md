@@ -198,7 +198,7 @@ sources + constraints converge
 
 *Visual Payload Architecture // a reference carrier can qualify the source field; source inputs converge into a resolved slot specification; the result is generated, evaluated, selected, governed, and may later return as a reference input. Illustrative — this prose is source truth. Repo-native interactive version (hover/click for definitions): [`docs/diagrams/asset-pipeline-ASK_visual-payload-architecture.html`](diagrams/asset-pipeline-ASK_visual-payload-architecture.html).*
 
-**Evaluation precedes selection; selection adjudicates; governance records.**
+**Evaluation precedes selection; selection adjudicates; artifact governance binds — the record carries the trace.**
 Governance does **not** require one stored record per dimension: a governed asset can
 record the accepted output, the selection judgment, the rationale, and the
 controlling specification / references, while some dimension-level evaluation stays

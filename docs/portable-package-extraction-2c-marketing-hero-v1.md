@@ -14,7 +14,7 @@ not an all-mode package system — one package, one mode, one slot
 self-superseding when a different package, a second real substrate instantiation, or an operational consumer earns its place
 ```
 
-This artifact pressures the claim the README now makes: that the deliverable is a **portable asset-definition package** — a substrate-independent definition layer — and that Airtable is one substrate, not the deliverable. It tests that claim against the one chain the prototype has proven end to end in-base: the **2c "Spring Refresh" marketing hero**. The standard the artifact answers to is whether the proven package can be re-expressed and understood without Airtable, and what a second substrate would have to be able to do to hold and run it — not whether a tidy file can be written.
+This artifact pressures the claim the README now makes: that the deliverable is a **portable asset-definition package** — a substrate-independent definition layer — and that Airtable is one substrate, not the deliverable. It tests that claim against the one package the prototype has proven end to end in-base: the **2c "Spring Refresh" marketing hero**. The standard the artifact answers to is whether the proven package can be re-expressed and understood without Airtable, and what a second substrate would have to be able to do to hold and run it — not whether a tidy file can be written.
 
 ## Architectural question
 
@@ -44,7 +44,7 @@ The full instance is in the [YAML appendix](#yaml-appendix--the-2c-marketing-her
 
 - **Creative intent (the aim).** "A message-bearing composition with room to carry an offer/headline; a warm daylit refresh feeling; products serve the message rather than being the subject." This is marketing mode: the anchor is the offer/message, not a SKU. The two products (`SKU-HG-TOWEL-001`, `SKU-HG-BATHMAT-001`) are **peripheral** — present, but subordinate to the message. That mode-shape (products peripheral when the message is the fidelity anchor) reads from the instance without any tool.
 
-- **Creative discretion (the aperture grant).** A distinct carrier — *what may vary* (which bath-textile pieces appear and their arrangement; framing/crop; surface; the placement and extent of the copy-overlay negative space), *bounded by* the four constraints, *anchored to* the two references, *owned by* the marketing curator-of-record, *closing at* hero-slot curation. The grammar conclusion from the discretion arc holds in the re-expression: the aperture grant is one carrier; the constraints ("what may not vary") and references ("what anchors it") are separate carriers. They do not collapse into one "creative direction" field.
+- **Aperture grant (carried in `bounded_creative_discretion`).** A distinct carrier — *what may vary* (which bath-textile pieces appear and their arrangement; framing/crop; surface; the placement and extent of the copy-overlay negative space), *bounded by* the four constraints, *anchored to* the two references, *owned by* the marketing curator-of-record, *closing at* hero-slot curation. The grammar conclusion from the discretion arc holds in the re-expression: the aperture grant is one carrier; the constraints ("what may not vary") and references ("what anchors it") are separate carriers. They do not collapse into one "creative direction" field.
 
 - **Constraints (what may not vary).** Four bounded rules, each typed by normative force: `BC-WR-PALETTE` (presentation), `BC-WR-LIGHTING` and `BC-WR-MATERIAL` (fidelity), `BC-WR-NEGATIVE` (hard requirement / avoid-list). Scoped at the brand-system layer ("Warm Restraint") and inherited by the packet. The force-typing and the brand→packet inheritance survive extraction.
 
@@ -64,8 +64,8 @@ The topology reads end to end from the re-expressed instance, as a function-orde
 
 The package's load-bearing distinctions carry tool-independently:
 
-1. **The full chain** — intent → discretion → variance → selection → governance — is reconstructable from the instance alone.
-2. **The grammar separation** — discretion (aperture grant) vs constraints (what may not vary) vs references (anchors) as three distinct carriers, not one fused field.
+1. **The full function-order projection** — intent → discretion → variance → selection → governance — is reconstructable from the instance alone.
+2. **The grammar separation** — aperture grant vs constraints (what may not vary) vs references (anchors) as three distinct carriers, not one fused field.
 3. **Selection as a first-class act** distinct from both generation (mechanical) and governance (the record) — legible even where selection and governance co-locate in one carrier.
 4. **Authorship-bearing vs confirmation-bearing curation** — the instance records which pattern produced the asset (`authorship-bearing`, full-candidate-space), and *where* authorship sat (upstream at prompt-remediation as well as at the seam).
 5. **Mode shape** — products peripheral when the message is the anchor; the mode reads from the instance, not from a schema.

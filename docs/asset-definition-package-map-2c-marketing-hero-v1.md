@@ -19,7 +19,7 @@ The worked case is a "Spring Refresh" marketing hero for the prototype's synthet
 | **Packet** (the brief) | `PKT-MSG-HG-001` |
 | **Business intent** | Marketing / message-driven. A "Spring Refresh" seasonal offer; the anchor is the offer/message, not a single product — communicate renewal and transparent value within Warm Restraint. |
 | **Creative intent** (the aim) | A message-bearing composition with room to carry an offer/headline; a warm daylit refresh feeling; products serve the message rather than being the subject. |
-| **Creative discretion** (the aperture grant) | What may vary: which bath-textile pieces appear and how they are arranged; camera framing/crop; surface choice; the placement and extent of the copy-overlay space. Bounded by the constraints and references below. Decision owner: the marketing curator. The aperture closes at hero-slot selection. |
+| **Aperture grant** (carried in `bounded_creative_discretion`) | What may vary: which bath-textile pieces appear and how they are arranged; camera framing/crop; surface choice; the placement and extent of the copy-overlay space. Bounded by the constraints and references below. Decision owner: the marketing curator. The aperture closes at hero-slot selection. |
 | **Constraints** (what may not vary) | Warm Restraint palette · daylit high-key lighting · natural-fiber material honesty · preserved copy-overlay negative space (`BC-WR-PALETTE` / `-LIGHTING` / `-MATERIAL` / `-NEGATIVE`). |
 | **References** (visual anchors) | Brand-system and palette references (`REF-WR-BRANDSYS-01`, `REF-WR-PALETTE-01`). |
 | **Required output** | One message-hero (offer-ready, copy space). The secondary support frame is held — see *What this does not prove*. |
@@ -51,7 +51,7 @@ But the **package is the definition layer above the substrate.** The same intent
 
 ## What this proves
 
-This one chain shows the full loop running inside the system:
+This one end-to-end run shows the full loop running inside the system:
 
 - the **definition layer drives generation** — the slot prompt, constraints, and references shape what is produced;
 - **candidates accumulate** as a set, not a single inevitable answer;

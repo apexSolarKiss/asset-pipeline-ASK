@@ -55,7 +55,7 @@ asset-pipeline-ASK_visual-payload-architecture.source.js         FLOW_DIAGRAM da
 asset-pipeline-ASK_visual-payload-architecture.png               committed clean render via the PNG diagram export (chrome-free, dark gradient field) — embedded in docs/visual-payload-architecture-v2.md
 diagrams-static-FLOW-engine.js                  convergence-flow layout engine (two modes; pan/zoom)
 
-# Shared scaffold files — byte-identical across all FOUR static patterns; one copy
+# Shared scaffold files — byte-identical across the three Class A static patterns and reused by the bounded-generativity figure; one copy
 diagrams.css                                    compiled Tier 1 + Tier 2 style (incl. .edge-arrowhead, FLOW classes, --diagram-* dark-ink lines)
 export-png.js                                   dual PNG export — "PNG page" (chromed 3840×2880) + "PNG diagram" (canvas-only, no chrome, natural aspect, on the gradient field); re-vendored from design-system-ASK @ 5512b5d (dual export #50/#51; font-embed raster fix #60; native file:// export via the _dsa-tokens/fonts-embedded.js carrier #62; PNG-page legend nowrap-fidelity + empty-column collapse #63; Three Functions semantic-legend fidelity #69; larger / lower-anchored landscape page composition #70 — consumed by the bounded-generativity figure)
 
