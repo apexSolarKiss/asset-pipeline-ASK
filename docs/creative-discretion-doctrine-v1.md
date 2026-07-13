@@ -3,7 +3,7 @@
 
 ## Purpose / altitude
 
-This is a high-level doctrine surface. It states, in one place, the **bounded-generativity topology** the architecture exists to preserve — `asset-pipeline-ASK` is the commercial image-production instance of that method-level primitive — and names where each distinction is detailed elsewhere. It is **doctrine altitude** — not a schema, not a proof-test, not a runtime. The structured definition layer and the architecture docs *implement* this topology; this note states *what they are for*.
+This is a high-level doctrine surface. It states, in one place, the **bounded-generativity topology** the architecture exists to preserve — [`asset-pipeline-ASK`](../README.md) is the commercial image-production instance of that method-level primitive — and names where each distinction is detailed elsewhere. It is **doctrine altitude** — not a schema, not a proof-test, not a runtime. The structured definition layer and the architecture docs *implement* this topology; this note states *what they are for*.
 
 The five load-bearing distinctions can be read in functional order — `creative intent → creative discretion → variance → selection → governance` — but that ordering is a **function-order projection**, a reading aid, **not the system's shape**. The system-model topology is bracketed rather than linear; its functions retain an ordered reading (see below).
 
@@ -11,7 +11,7 @@ It expands [foundational-premises-v1.md](foundational-premises-v1.md) premise 5 
 
 ## The bounded-generativity topology
 
-`asset-pipeline-ASK` is the commercial image-production instance of **bounded generativity**. The model is a **bracketed topology, not a linear handoff**:
+[`asset-pipeline-ASK`](../README.md) is the commercial image-production instance of **bounded generativity**. The model is a **bracketed topology, not a linear handoff**:
 
 - a human or institutional **source of intent / normative apex** sits *outside* the bounded frame and supplies purpose plus the governing standard;
 - the **creative brief** carries creative intent into the frame and **grants the aperture** of permitted creative variance;
@@ -52,11 +52,11 @@ Collapse any two of these and the system can still produce images, but it can no
 
 ## AP as a worked instance of a method primitive
 
-`asset-pipeline-ASK` is the commercial image-production instance of the method-level primitive **bounded generativity**: define a grammar, permit bounded variance inside it, select from the realized candidates, and govern what becomes durable. The primitive is defined and owned at [`method-ASK/docs/bounded-generativity.md`](https://github.com/apexSolarKiss/method-ASK/blob/main/docs/bounded-generativity.md), on a legislative / executive / judicial spine (weak discretion in the Dworkin sense); that grounding lives in the method doc and is not restated here. The general governance architecture is owned at [`method-ASK/docs/governance.md`](https://github.com/apexSolarKiss/method-ASK/blob/main/docs/governance.md); AP instantiates its artifact-governance subtype and carries a governance record as the durable trace.
+[`asset-pipeline-ASK`](../README.md) is the commercial image-production instance of the method-level primitive **bounded generativity**: define a grammar, permit bounded variance inside it, select from the realized candidates, and govern what becomes durable. The primitive is defined and owned at [`method-ASK/docs/bounded-generativity.md`](https://github.com/apexSolarKiss/method-ASK/blob/main/docs/bounded-generativity.md), on a legislative / executive / judicial spine (weak discretion in the Dworkin sense); that grounding lives in the method doc and is not restated here. The general governance architecture is owned at [`method-ASK/docs/governance.md`](https://github.com/apexSolarKiss/method-ASK/blob/main/docs/governance.md); AP instantiates its artifact-governance subtype and carries a governance record as the durable trace.
 
 AP's five distinctions are the domain-language articulation of that topology: the **creative brief** carries creative intent, the governing standard, and the aperture grant; **realization** produces candidate variance; **creative discretion** names authorized judgment wherever it enters; **curatorial selection** ratifies one candidate and closes the aperture; **artifact governance** binds the accepted result; and the **governance record** carries the trace. One topology, not two structures.
 
-`asset-pipeline-ASK` is the **worked instance with governance built out first-class** — the full topology through to the governed-asset record. It is **not** the primitive's owner. The cross-ecology relation (the same structure in `isometric-cubes-ASK`, `mazeASK`, this repo, and generative-AI workflows generally) is recorded at the ecology tier; `isometric-cubes-ASK` and `mazeASK` are **antecedent studies, not dependencies or imports** of this repo.
+`asset-pipeline-ASK` is the **worked instance with governance built out first-class** — the full topology through to the governed-asset record. It is **not** the primitive's owner. The cross-ecology relation (the same structure in [`isometric-cubes-ASK`](https://github.com/apexSolarKiss/isometric-cubes-ASK), [`mazeASK`](https://github.com/apexSolarKiss/mazeASK), this repo, and generative-AI workflows generally) is recorded at the ecology tier; `isometric-cubes-ASK` and `mazeASK` are **antecedent studies, not dependencies or imports** of this repo.
 
 ## Where the topology is carried in this repo
 
@@ -80,7 +80,7 @@ The public statement of this model is the article *[Creative Discretion Is Not C
 ## Boundaries / status
 
 - **Doctrine altitude.** Not schema, proof-test, or runtime; the embedded figure is illustrative and doctrine-subordinate. It authorizes nothing operational.
-- **AP is a worked instance, not the owner.** `method-ASK` is the primitive's home; cite it as such.
+- **AP is a worked instance, not the owner.** [`method-ASK`](https://github.com/apexSolarKiss/method-ASK) is the primitive's home; cite it as such.
 - **Source of intent is human / institutional in the worked AP implementations.** Source of intent, decision ownership, and ultimate recourse remain human / institutional. A computational agent may exercise bounded delegated judgment without thereby becoming the source of intent or owning ultimate recourse; current model sampling fills the aperture and does not author the intent that opened it.
 - **Held: qualitative equivalence.** This model locates *where* judgment, selection, and governance occur; it does **not** settle whether the locus, density, latency, or binding authority of judgment changes the *strength or character* of authorship across delegated patterns (e.g. live human judgment in the making vs a human curating a model pass). That qualitative-equivalence question is held upstream, not resolved by the curation seam — the architectural placement is settled; the evaluative consequence is open.
 - Starting doctrine the architecture builds on; not re-proved by routine work. It exists so the model can be cited once, plainly.
