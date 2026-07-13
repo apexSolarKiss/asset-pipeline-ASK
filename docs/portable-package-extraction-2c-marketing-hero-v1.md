@@ -58,7 +58,7 @@ The full instance is in the [YAML appendix](#yaml-appendix--the-2c-marketing-her
 
 - **Governance (the durable record).** `ASSET-MSG-HG-001-HERO-001`, `governed_output`, curator ASK, captured 2026-06-10, produced **entirely in-base with no external import** — a prototype-generated *output*, not an imported synthetic input. In this instance **selection and governance co-locate**: one carrier holds both the makes-true selection rationale and the governance record. The doctrine's selection-≠-governance distinction is still legible (the rationale names both acts explicitly) even though one field carries both — which is exactly the co-location the doctrine predicts for SKU/collection and, here, marketing.
 
-The topology reads end to end from the re-expressed instance, as a function-order projection. A reader who has never seen the Airtable base can follow the brief opening an aperture, generation filling it, a human closing it, and governance recording it.
+The topology reads end to end from the re-expressed instance, as a function-order projection. A reader who has never seen the Airtable base can follow the brief opening an aperture, generation filling it, a human closing it, and artifact governance binding it (the governance record carries the trace).
 
 ## What survives extraction
 

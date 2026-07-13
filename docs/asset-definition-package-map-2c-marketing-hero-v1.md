@@ -6,7 +6,7 @@ This is one **portable asset-definition package**, shown as a worked example.
 
 The [README](../README.md) names the package as this project's reusable object — the substrate-independent definition layer for a commercial visual-asset workflow. This page makes that concrete by walking the simplest complete case the prototype has proven end to end: the *2c marketing hero*.
 
-Read it as an example, not a spec. It shows what a package holds, how generation fills it, how a human closes it, and how governance records the result — using one real chain from packet to accepted asset.
+Read it as an example, not a spec. It shows what a package holds, how generation fills it, how a human closes it, and how artifact governance binds the result (the governance record carries the trace) — using one real end-to-end run from packet to accepted asset.
 
 **What this example is.** This worked package contains a completed hero record and a still-prospective held support obligation; it is not one undifferentiated approval object. A forward production decision applies to the prospective definition, including whether the support slot is released, remains held, or is retired. The closed hero is historical and should be read as a governed record. See [package lifecycle partition](package-lifecycle-partition-v1.md) for why the package's elements sit in three different lifecycle states, and the interpretive rule for reading its statuses.
 
@@ -29,7 +29,7 @@ The worked case is a "Spring Refresh" marketing hero for the prototype's synthet
 | **Selection** (closing the aperture) | The curator selected one candidate (the post-remediation take) as the one that best carries the offer within the envelope — an authorship-bearing choice made across the full candidate set, with the reason recorded. |
 | **Governed asset** (the record) | `ASSET-MSG-HG-001-HERO-001` — the selected candidate, captured as a governed output with its curation reason, curator, and provenance; the output slot moved to *accepted*. |
 
-The topology reads top to bottom as a function-order projection: **the brief opens an aperture → generation fills it with candidates → a human selects one and makes it true to the intent → governance records the result.**
+The topology reads top to bottom as a function-order projection: **the brief opens an aperture → generation fills it with candidates → a human selects one and makes it true to the intent → artifact governance binds the result (the governance record carries the trace).**
 
 ### Reading the three lifecycle states
 

@@ -55,14 +55,14 @@
   nodes.append(note(140, 286, M.apex.note1));
 
   /* ===== bounded generativity frame · NEUTRAL ===== */
-  const FX = 340, FY = 112, FW = 930, FH = 402;   // x 340-1270, y 112-514; AP widened frame +14 (916->930) so the brief->aperture gap = the 36px frame inset — ASK-authorized accommodation, pending method sync
+  const FX = 340, FY = 112, FW = 930, FH = 402;   // x 340-1270, y 112-514; AP widened frame +14 (916->930) so the brief->aperture gap = the 36px frame inset — ASK-authorized accommodation for the AP surface
   nodes.append(el('rect', { x:FX, y:FY, width:FW, height:FH, rx:14, ry:14, class:'flow-group' }));
   nodes.append(tag(FX + FW/2, FY - 14, M.bracket));
 
   /* ===== source beam · NEUTRAL → grammar/brief = LEGISLATIVE ===== */
   edges.append(line(`M 146 ${YM} L 372 ${YM}`));
   edges.append(headR(372, YM));
-  nodes.append(box(376, YM-38, 164, 76, 'node-box fn-leg'));   // AP three-line node (150->164 w, 58->76 h) to carry the brief's two-part note without loss — ASK-authorized label-accommodation, pending method sync
+  nodes.append(box(376, YM-38, 164, 76, 'node-box fn-leg'));   // AP three-line node (150->164 w, 58->76 h) to carry the brief's two-part note without loss — ASK-authorized label-accommodation for the AP surface
   nodes.append(lbl(392, YM-18, M.grammar.label));
   nodes.append(note(392, YM, M.grammar.note1));
   nodes.append(note(392, YM+18, M.grammar.note2));
