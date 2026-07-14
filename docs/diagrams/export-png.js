@@ -14,6 +14,12 @@
    caveat chrome with inline presentation attributes — no class rules, no var()
    left to resolve. Mirrors patterns/diagram-interactive-spine/export-png.js.
 
+   Direct <defs> are carried into the export (2026-07-13): the content clone copies
+   the live SVG's direct <defs> children (masks, clipPaths, gradients, markers) so
+   every exported url(#id) reference resolves. Without this, a referenced-but-absent
+   definition renders unmasked — e.g. a negative-cutout wash fills solid in the raster
+   while the live browser render stays correct.
+
    Chrome is laid out at PAGE SCALE (2026-06-11). The diagram content is scaled
    up to fill the 3840×2880 page, so the header / caveat / legend must be drawn
    at matching size — earlier versions drew them at on-screen pixel sizes, which
@@ -432,6 +438,13 @@
        (Pan/zoom lives on the #stage div, not the SVG content, so the engine
        coordinates need no un-transform.) */
     var content = document.createElementNS(NS, 'g');
+    // Carry the live SVG's direct <defs> (masks, clipPaths, gradients, markers) into the
+    // export so every url(#id) reference resolves in the raster. SVG-as-image is self-
+    // contained: a reference whose definition was left behind renders unmasked (a
+    // negative-cutout wash then fills solid). Cloned verbatim — defs use presentation
+    // attributes, not class rules, so no style inlining is needed.
+    var liveDefs = svg.querySelectorAll(':scope > defs');
+    for (var di = 0; di < liveDefs.length; di++) { content.appendChild(liveDefs[di].cloneNode(true)); }
     var liveGroups = svg.querySelectorAll(':scope > g'); // edges layer, nodes layer
     for (var i = 0; i < liveGroups.length; i++) {
       var clone = liveGroups[i].cloneNode(true);
@@ -717,6 +730,10 @@
     var padY = ((viewportH - h * fitScale) / 2) * RASTER;
 
     var content = document.createElementNS(NS, 'g');
+    // Carry the live SVG's direct <defs> (masks, clipPaths, gradients, markers) into the
+    // export so every url(#id) reference resolves in the raster (see buildSvg).
+    var liveDefs = svg.querySelectorAll(':scope > defs');
+    for (var di = 0; di < liveDefs.length; di++) { content.appendChild(liveDefs[di].cloneNode(true)); }
     var liveGroups = svg.querySelectorAll(':scope > g');
     for (var i = 0; i < liveGroups.length; i++) {
       var clone = liveGroups[i].cloneNode(true);

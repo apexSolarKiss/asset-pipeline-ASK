@@ -1,4 +1,4 @@
-/* asset-pipeline-ASK_bounded-generativity.figure.js — AP instance (source-v1 // render-v1, ASK 2026-07-13)
+/* asset-pipeline-ASK_bounded-generativity.figure.js — AP instance (source-v1 // render-v2, ASK 2026-07-13)
    Derived from the method-ASK bounded-generativity topology @ 2e5d8c4. Per ASK apex ruling (2026-07-13),
    AP copy AND geometry are adapted for the commercial image-production surface under ASK authorization — the
    shared invariant is the TOPOLOGY, the semantic-role mapping (legislative/executive/judicial), the Three
