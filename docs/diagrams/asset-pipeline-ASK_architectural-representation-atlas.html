@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>asset-pipeline-ASK // Architectural Representation Atlas</title>
+<meta name="description" content="Architecture-deconfliction orientation figure — a map of asset-pipeline-ASK's existing architectural representations. For each view it names the object represented, the question it answers, the live diagram/surface, and where that view's authority ends: the governed visual-payload information architecture (principal payload views: ontology / Axis A and visual payload architecture; supporting: inheritance / Axis B; runtime / Axis D in prose), the generative-governance system model (bounded generativity), the project/repository information architecture (architecture tree), and architecture state (interactive IA state spine). Orientation only — not another architecture model. Repo prose is source truth.">
+<meta name="generator" content="conforms to apexSolarKiss/design-system-ASK Tier 1 + Tier 2 by reference at generation time">
+<!-- design-system-ASK foundations — local mirror (Tier 1 + Tier 2), no CDN. See _dsa-tokens/MANIFEST.md -->
+<link rel="stylesheet" href="./_dsa-tokens/colors_and_type.css">
+<link rel="stylesheet" href="diagrams.css">
+<style>
+  /* ===== atlas-only presentational classes (scoped; no shared-file edits). Every property here is in
+     export-png.js INLINE_PROPS so it survives the PNG raster; colors come from theme-flipping tokens. ===== */
+  .atlas-path   { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.02em;
+                  fill: var(--diagram-faint); dominant-baseline: middle; font-weight: 300; }
+  .atlas-sil      { fill: none; stroke: var(--diagram-line); stroke-width: 1.2; }
+  .atlas-sil-soft { fill: none; stroke: var(--diagram-line-soft); stroke-width: 1.1; }
+  .atlas-dot      { fill: var(--diagram-line); stroke: none; }
+  .atlas-rule     { stroke: var(--diagram-line-soft); stroke-width: 1; }
+  .atlas-gov      { font-family: var(--font-sans); font-size: 13px; font-weight: 300;
+                    fill: var(--diagram-ink); dominant-baseline: middle; letter-spacing: 0.005em; }
+  .atlas-gov-em   { font-family: var(--font-sans); font-size: 13px; font-weight: 500;
+                    fill: var(--diagram-ink); dominant-baseline: middle; letter-spacing: 0.005em; }
+  /* dense corner-to-corner content: widen the caption so its lines don't wrap into the region headers */
+  .caption { max-width: 470px; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <div class="bar">
+    <div class="mark">apexSolarKiss<span class="sep">/</span>asset-pipeline-ASK</div>
+    <div class="title-block">
+      <div class="t">Architectural Representation Atlas</div>
+      <div class="s">The distinct objects, axes, topologies, and states represented across asset-pipeline-ASK</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="stamp">
+      <div><span class="k">source-v1</span> // <span class="k">render-v1</span></div>
+      <div>2026-07-14</div>
+    </div>
+  </div>
+
+  <div class="canvas-wrap" id="canvasWrap">
+    <div class="stage" id="stage">
+      <svg id="svg" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+
+    <div class="corner-tick tl"></div>
+    <div class="corner-tick tr"></div>
+    <div class="corner-tick bl"></div>
+    <div class="corner-tick br"></div>
+
+    <div class="hud glass">
+      <button id="zoomOut" title="Zoom out">−</button>
+      <div class="pct" id="zoomPct">100%</div>
+      <button id="zoomIn" title="Zoom in">+</button>
+      <button id="zoomFit" title="Fit">⤢</button>
+    </div>
+
+    <div class="caption glass">
+      <b>architecture deconfliction</b><br>
+      orientation — not another architecture model.
+    </div>
+  </div>
+</div>
+
+<script src="asset-pipeline-ASK_architectural-representation-atlas.figure.js"></script>
+<!-- DS embedded-font carrier — lets PNG export embed fonts with no server (file://).
+     Must load BEFORE export-png.js. Vendored from design-system-ASK; do not hand-edit. -->
+<script src="./_dsa-tokens/fonts-embedded.js"></script>
+<script src="export-png.js"></script>
+
+</body>
+</html>
