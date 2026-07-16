@@ -57,6 +57,24 @@ Method-altitude articulation: `method-ASK/docs/source-of-intent.md` §Inbound ha
 
 ---
 
+## Provenance Transcript PTX Marker
+
+A filename ending in `-PTX.md` identifies an ASK-assembled **Provenance Transcript**: a frozen record of a source conversation or cross-surface exchange, retained for lineage and later verification.
+
+A `-PTX` artifact is not a canonical, a draft or draft-zero, a versioned canonical snapshot, a handoff, an approval or execution instruction, or an ingestion-state marker.
+
+- Do not infer version precedence from `-PTX`, absorb it as project truth without classification, or treat it as the start of a `_vN` chain.
+- Treat it as read-only unless ASK explicitly authorizes a correction or successor.
+- The `-PTX` file is itself the frozen record; it does not get snapshotted.
+- If the transcript creates work for another surface, route a separate handoff rather than stacking `-PTX` with `-TBI`.
+- The convention is prospective. Historical transcripts are not renamed for conformance, so the absence of `-PTX` does not establish that a file is a model draft — classify an unsuffixed artifact from the file and its scratch context before versioning or superseding it.
+
+Form: `YYYY-MM-DD_<surface-or-subject>_<topic>-PTX.md`
+
+`-TBI` and `-PTX` do not share an axis: `-TBI` is a lifecycle state, renamed off on ingestion; `-PTX` is an artifact role, never renamed, conferring no state and no authority.
+
+---
+
 ## Repo Workflow Discipline
 
 ### Session-Start Discipline
