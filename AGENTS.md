@@ -121,6 +121,14 @@ merged
 merged branches cleaned up
 ```
 
+### Explicit Artifact-Lifecycle Verbs
+
+Do not use `cut` as an operation verb for drafts, changes, files, versions, snapshots, handoffs, releases, or other artifacts. It is ambiguous between creation and destruction.
+
+Name the actual operation instead: draft, write, revise, save, create a version, create a snapshot, copy at byte parity, rename, route, supersede, retire, or delete.
+
+This rule applies to plans, instructions, handoffs, change summaries, and status reports. Historical quotations, provenance records, frozen artifacts, and unambiguous domain terms such as a film's rough cut are not rewritten solely to enforce it.
+
 ### Exact Scoped Diff Gate
 
 Stop at exact scoped diff unless ASK has already approved commit / push / PR.
