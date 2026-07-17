@@ -2,7 +2,7 @@
    Source data for the asset-pipeline-ASK architecture tree diagram.
    Renderable by diagrams-engine.js.
 
-   D04 // asset-pipeline-ASK architecture tree // source-v5 // 2026-06-18
+   D04 // asset-pipeline-ASK architecture tree // source-v6 // 2026-07-17
    Single-tree extraction from the operator-side ecology-ASK diagram package
    following the Class A repo-native diagram-bundle pattern proven across
    apexSolarKiss/control-surface (D01) and apexSolarKiss/method-ASK (D02).
@@ -118,7 +118,7 @@ window.TREE_D04 = {
     {
       kind: 'section', label: 'source-of-truth routing',
       children: [
-        { label: 'milestones', tag: 'docs/milestones/', children: [
+        { label: 'milestones', note: 'docs/milestones/', children: [
           { label: 'milestone 15 // resolution calculus + package-instantiation consumer evidence plateau' },
           { label: 'milestone 14 // portability frontier separation' },
           { label: 'milestone 13 // portability evidence plateau' },
@@ -129,12 +129,12 @@ window.TREE_D04 = {
           { label: 'milestone 8 // Phase 2 structured-model plateau' },
           { label: 'milestone 7 // v1 sweep closure plateau' },
         ]},
-        { label: 'structured IA docs', tag: 'docs/', children: [
+        { label: 'structured IA docs', note: 'docs/', children: [
           { label: 'structured-ia-model-v2.md' },
           { label: 'structured-ia-v2-consumer-preflight-v1.md' },
           { label: 'structured-ia-model-v1.md', status: 'legacy' },
         ]},
-        { label: 'portability docs', tag: 'docs/', children: [
+        { label: 'portability docs', note: 'docs/', children: [
           { label: 'non-airtable-extraction-attempt-v1.md' },
           { label: 'portable-package-extraction-2c-marketing-hero-v1.md' },
           { label: 'worked-package-store-2c-marketing-hero/' },
@@ -144,7 +144,7 @@ window.TREE_D04 = {
           { label: 'consuming-artifact-test-findings-v1.md' },
           { label: 'package-instantiation-consumer-evidence-boundary-v1.md' },
         ]},
-        { label: 'architecture depth docs', tag: 'docs/', children: [
+        { label: 'architecture depth docs', note: 'docs/', children: [
           { label: 'architecture-apex-definition-layer-v1.md' },
           { label: 'normative-force-and-durable-layer-pressure-v1.md' },
           { label: 'layered-reference-and-discretion-architecture-v1.md' },
@@ -156,7 +156,7 @@ window.TREE_D04 = {
           { label: 'architecture-front-door-compression-brief-v1.md' },
           { label: 'resolution-calculus-evidence-boundary-v1.md' },
         ]},
-        { label: 'application docs', tag: 'docs/application/' },
+        { label: 'application docs', note: 'docs/application/' },
         { label: 'AGENTS.md', note: 'single-node operating model · agent-agnostic workflow rules' },
         { label: 'docs/index.md', note: 'full repo navigation' },
       ],
