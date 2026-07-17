@@ -117,7 +117,15 @@
     function place(node, depth, parent) {
       const kind = node.kind || 'node';
       const status = node.status || 'earned';
-      const hasNote = !!(node.note || (kind === 'section' && node.tag));
+      // True when this kind actually RENDERS a second line under its label — the same
+      // predicate preMeasure uses for width, so measured and rendered content stay in
+      // step on both axes. The section branch draws label + tag + rule but never the
+      // note, so a section note earns neither width nor height; a section tag earns
+      // both. Every other kind renders its note.
+      const hasNote = !!(
+        (kind !== 'section' && node.note) ||
+        (kind === 'section' && node.tag)
+      );
       const boxH = kind === 'root' ? ROOT_BOX_H : (hasNote ? BOX_H_NOTE : BOX_H);
       const boxW = colMaxW[depth];
       const x = colX[depth];
@@ -234,9 +242,17 @@
           'fill-opacity': 0.5,
         }));
         nodeLayer.appendChild(el('text', {
-          x: n.x + BOX_PAD_X, y: n.centerY,
+          x: n.x + BOX_PAD_X,
+          y: n.hasNote ? n.y + 16 : n.centerY,
           class: 'node-label',
         }, [n.label]));
+        if (n.note) {
+          nodeLayer.appendChild(el('text', {
+            x: n.x + BOX_PAD_X,
+            y: n.y + n.boxH - 10,
+            class: 'node-note',
+          }, [n.note]));
+        }
         continue;
       }
 
