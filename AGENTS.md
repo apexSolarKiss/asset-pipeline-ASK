@@ -59,17 +59,17 @@ Method-altitude articulation: `method-ASK/docs/source-of-intent.md` §Inbound ha
 
 ## Provenance Transcript PTX Marker
 
-A filename ending in `-PTX.md` or `-PTX_vN.md` identifies an ASK-assembled **Provenance Transcript**: a frozen record of a source conversation or cross-surface exchange, retained for lineage and later verification.
+A filename ending in `-PTX.md` or `-PTX_vN.md` identifies an ASK-assembled **Provenance Transcript**: a record of a source conversation or cross-surface exchange, retained for lineage and later verification.
 
 The `-PTX` segment is the artifact-role marker. An optional `_vN` suffix records the version of the transcript artifact itself. It does not make the artifact a model draft or draft-zero, and it confers no lifecycle state or authority.
 
 A `-PTX` artifact is not a canonical, a model draft or model draft-zero, a versioned canonical snapshot, a handoff, an approval or execution instruction, or an ingestion-state marker.
 
 - `-PTX.md` is an unversioned singleton transcript.
-- `-PTX_vN.md` is a frozen member of an explicit transcript version lineage. `_v0` means the first saved PTX version, not draft-zero.
+- `-PTX_vN.md` is a numbered member of an explicit transcript version lineage. `_v0` means the first numbered PTX version, not draft-zero.
 - Infer version precedence only from an explicit `_vN`, never from the `-PTX` marker itself.
-- Treat every saved PTX version as read-only. When ASK authorizes a correction, extension, or reassembly, create the next `_vN` version rather than editing the prior version in place.
-- The PTX files are themselves the frozen lineage; do not create a separate canonical-plus-snapshot chain for them.
+- Neither `-PTX` nor `_vN` establishes whether the transcript is still being assembled, complete, closed, or frozen. PTX lifecycle and version progression are ASK-owned; do not edit, extend, rename, close, freeze, or advance a PTX unless ASK explicitly directs the exact operation.
+- The PTX files are themselves the lineage; do not create a separate canonical-plus-snapshot chain for them.
 - Do not absorb a PTX as project truth without classification.
 - If the transcript creates work for another surface, route a separate handoff rather than stacking `-PTX` with `-TBI`.
 - The convention is prospective. Historical transcripts are not renamed for conformance, so the absence of `-PTX` does not establish that a file is a model draft — classify an unmarked artifact from the file and its scratch context before versioning or superseding it.
