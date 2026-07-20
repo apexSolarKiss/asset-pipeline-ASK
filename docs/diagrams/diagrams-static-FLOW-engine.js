@@ -37,6 +37,14 @@
    status: earned (default) | held | legacy.  ids default f0.. / converge / s0.. / carrier.
 */
 (function () {
+  /* FAIL-CLOSED on a partial re-vendor. diagrams-fit.js is a DS-owned support file that
+     must be copied alongside this engine and loaded immediately BEFORE it. A silent
+     legacy fallback is deliberately NOT provided: a consumer that vendored the engine
+     without the helper would then look current while keeping the old panel-collision
+     geometry. Fail visibly instead. */
+  if (!window.DIAGRAM_FIT || typeof window.DIAGRAM_FIT.compute !== 'function') {
+    throw new Error('Diagram fit support is missing. Load diagrams-fit.js before the diagram engine.');
+  }
   /* ---------- constants ---------- */
   const PAGE_PAD = 84;                                   // canvas padding
   const BOX_PAD_X = 20, BOX_H = 40, BOX_H_NOTE = 48;    // BIGGER boxes / more padding (ASK)
@@ -322,18 +330,53 @@
     /* ---------- pan / zoom ---------- */
     const wrap = document.getElementById('canvasWrap'), stage = document.getElementById('stage'), pct = document.getElementById('zoomPct');
     let tx = 0, ty = 0, scale = 1;
+
+    /* Interaction floor. The ordinary zoom-out floor is this pattern's historical
+       BASE_MIN_SCALE. But the panel-aware fit can legitimately land BELOW it on a
+       constrained viewport (a tall diagram that collides with the chrome fits smaller
+       than it used to), and a fixed floor above the fitted scale makes "zoom out"
+       INCREASE the scale — the control reverses direction. So the live floor is the
+       lower of the base floor and the most recent Fit. Fit itself is never clamped:
+       clamping it would restore the panel collision this engine exists to avoid. */
+    const BASE_MIN_SCALE = 0.15;
+    let fittedMinScale = BASE_MIN_SCALE;
     function apply() { stage.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`; if (pct) pct.textContent = Math.round(scale * 100) + '%'; }
-    function fit() { const r = wrap.getBoundingClientRect(); const pad = 80; scale = Math.min((r.width - pad) / width, (r.height - pad) / height, 1.2); tx = (r.width - width * scale) / 2; ty = (r.height - height * scale) / 2; apply(); }
+    /* Shared DS fit contract (diagrams-fit.js). Origin is 0, not the viewBox origin:
+       the transform targets the stage div and the svg is sized width x height, so the
+       element box starts at 0 in CSS space and the viewBox origin never enters it. */
+    function fit() {
+      const f = window.DIAGRAM_FIT.compute({
+        wrap: wrap,
+        bounds: { minX: 0, minY: 0, maxX: width, maxY: height },
+        clearanceX: 80, clearanceY: 80, maxScale: 1.2, gutter: 26,
+        /* The full-chrome shell carries an always-visible explanatory side panel
+           (.flow-panel) in addition to the HUD. It is anchored bottom-RIGHT with a fixed
+           300px width and a height that grows with its explanatory content, so it is a
+           RIGHT-SIDE EXCLUSION LANE, not a bottom band. Classifying it as bottom chrome
+           reserved a full-width strip as tall as the panel and collapsed the figure —
+           6.4x at a short viewport. As a right lane its fixed width bounds the cost, and
+           the panel's height growth no longer consumes page height.
+
+           One engine serves both shells: the chrome-free static shell contains none of
+           these elements, so no panel is found, no band is reserved, and its transform
+           is unchanged. */
+        bottomSelector: '.hud',
+        rightSelector: '.flow-panel'
+      });
+      fittedMinScale = Math.min(BASE_MIN_SCALE, f.scale);
+      scale = f.scale; tx = f.tx; ty = f.ty;
+      apply();
+    }
     fit(); window.addEventListener('resize', fit);
     const zi = document.getElementById('zoomIn'), zo = document.getElementById('zoomOut'), zf = document.getElementById('zoomFit');
     if (zi) zi.onclick = () => { scale = Math.min(scale * 1.2, 4); apply(); };
-    if (zo) zo.onclick = () => { scale = Math.max(scale / 1.2, 0.15); apply(); };
+    if (zo) zo.onclick = () => { scale = Math.max(scale / 1.2, fittedMinScale); apply(); };
     if (zf) zf.onclick = fit;
     let drag = false, sx0, sy0, tx0, ty0;
     wrap.addEventListener('pointerdown', (ev) => { if (ev.target.closest('.hud, .legend, .caption') || (ev.target.classList && ev.target.classList.contains('node-hit'))) return; drag = true; wrap.classList.add('dragging'); wrap.setPointerCapture(ev.pointerId); sx0 = ev.clientX; sy0 = ev.clientY; tx0 = tx; ty0 = ty; });
     wrap.addEventListener('pointermove', (ev) => { if (!drag) return; tx = tx0 + (ev.clientX - sx0); ty = ty0 + (ev.clientY - sy0); apply(); });
     wrap.addEventListener('pointerup', () => { drag = false; wrap.classList.remove('dragging'); });
-    wrap.addEventListener('wheel', (ev) => { ev.preventDefault(); const r = wrap.getBoundingClientRect(); const mx = ev.clientX - r.left, my = ev.clientY - r.top; const f = ev.deltaY > 0 ? 1 / 1.1 : 1.1; const ns = Math.max(0.15, Math.min(4, scale * f)); const k = ns / scale; tx = mx - (mx - tx) * k; ty = my - (my - ty) * k; scale = ns; apply(); }, { passive: false });
+    wrap.addEventListener('wheel', (ev) => { ev.preventDefault(); const r = wrap.getBoundingClientRect(); const mx = ev.clientX - r.left, my = ev.clientY - r.top; const f = ev.deltaY > 0 ? 1 / 1.1 : 1.1; const ns = Math.max(fittedMinScale, Math.min(4, scale * f)); const k = ns / scale; tx = mx - (mx - tx) * k; ty = my - (my - ty) * k; scale = ns; apply(); }, { passive: false });
   }
 
   function renderWhenFontsReady(DATA) {
