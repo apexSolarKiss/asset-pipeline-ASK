@@ -31,6 +31,14 @@
    its box on first paint. See renderWhenFontsReady at the bottom.
 */
 (function () {
+  /* FAIL-CLOSED on a partial re-vendor. diagrams-fit.js is a DS-owned support file that
+     must be copied alongside this engine and loaded immediately BEFORE it. A silent
+     legacy fallback is deliberately NOT provided: a consumer that vendored the engine
+     without the helper would then look current while keeping the old panel-collision
+     geometry. Fail visibly instead. */
+  if (!window.DIAGRAM_FIT || typeof window.DIAGRAM_FIT.compute !== 'function') {
+    throw new Error('Diagram fit support is missing. Load diagrams-fit.js before the diagram engine.');
+  }
   /* ---------- layout constants ---------- */
   const DEPTH_GAP = 58;      // vertical gap between depth bands (room for edges)
   const SIB_GAP   = 30;      // min horizontal gap between sibling boxes
@@ -337,25 +345,39 @@
     const stage = document.getElementById('stage');
     const zoomPct = document.getElementById('zoomPct');
     let tx = 0, ty = 0, scale = 1;
+
+    /* Interaction floor. The ordinary zoom-out floor is this pattern's historical
+       BASE_MIN_SCALE. But the panel-aware fit can legitimately land BELOW it on a
+       constrained viewport (a tall diagram that collides with the chrome fits smaller
+       than it used to), and a fixed floor above the fitted scale makes "zoom out"
+       INCREASE the scale — the control reverses direction. So the live floor is the
+       lower of the base floor and the most recent Fit. Fit itself is never clamped:
+       clamping it would restore the panel collision this engine exists to avoid. */
+    const BASE_MIN_SCALE = 0.15;
+    let fittedMinScale = BASE_MIN_SCALE;
     function apply() {
       stage.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
       zoomPct.textContent = Math.round(scale * 100) + '%';
     }
     function fit() {
-      const rect = canvasWrap.getBoundingClientRect();
-      const padding = 80;
-      const sx = (rect.width - padding) / width;
-      const sy = (rect.height - padding) / height;
-      scale = Math.min(sx, sy, 1.2);
-      tx = (rect.width - width * scale) / 2;
-      ty = (rect.height - height * scale) / 2;
+      /* Shared DS fit contract (diagrams-fit.js): reserves the measured caption/legend
+         and HUD bands, then centres in the remainder. With no visible panels both bands
+         are 0 and this is arithmetically identical to the previous formula. clearance is
+         TOTAL (the value formerly subtracted from the viewport), not per-side padding. */
+      const f = window.DIAGRAM_FIT.compute({
+        wrap: canvasWrap,
+        bounds: { minX: 0, minY: 0, maxX: width, maxY: height },
+        clearanceX: 80, clearanceY: 80, maxScale: 1.2, gutter: 26
+      });
+      fittedMinScale = Math.min(BASE_MIN_SCALE, f.scale);
+      scale = f.scale; tx = f.tx; ty = f.ty;
       apply();
     }
     fit();
     window.addEventListener('resize', fit);
 
     document.getElementById('zoomIn').onclick  = () => { scale = Math.min(scale * 1.2, 4); apply(); };
-    document.getElementById('zoomOut').onclick = () => { scale = Math.max(scale / 1.2, 0.15); apply(); };
+    document.getElementById('zoomOut').onclick = () => { scale = Math.max(scale / 1.2, fittedMinScale); apply(); };
     document.getElementById('zoomFit').onclick = fit;
 
     let dragging = false, sx0, sy0, tx0, ty0;
@@ -381,7 +403,7 @@
       const rect = canvasWrap.getBoundingClientRect();
       const mx = ev.clientX - rect.left, my = ev.clientY - rect.top;
       const factor = ev.deltaY > 0 ? 1 / 1.1 : 1.1;
-      const newScale = Math.max(0.15, Math.min(4, scale * factor));
+      const newScale = Math.max(fittedMinScale, Math.min(4, scale * factor));
       const k = newScale / scale;
       tx = mx - (mx - tx) * k;
       ty = my - (my - ty) * k;

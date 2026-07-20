@@ -13,6 +13,14 @@
    legislative = creative-brief box · executive = the candidate-realization chamber (variance = negative cutouts)
    · judicial = selection ring + ratified node. Everything else neutral. */
 (function () {
+  /* FAIL CLOSED BEFORE ANY LAYOUT. diagrams-fit.js is a DS-owned support file that must be
+     vendored alongside this figure and loaded immediately BEFORE it. Checked here, at the top
+     of the builder, so a missing helper stops this file before the SVG is constructed — rather
+     than leaving a half-built, unpositioned artifact. The message names the figure builder. */
+  if (!window.DIAGRAM_FIT || typeof window.DIAGRAM_FIT.compute !== 'function') {
+    throw new Error('Diagram fit support is missing. Load diagrams-fit.js before the figure builder.');
+  }
+
   const M = {
     apex:   { label: 'source of intent', sub: 'normative apex supplies', note1: 'purpose + governing standard' },
     grammar:{ label: 'creative brief', note1: 'carries creative intent', note2: 'grants the aperture' },
@@ -164,17 +172,46 @@
   svg.setAttribute('width', vbW);
   svg.setAttribute('height', vbH);
 
-  /* ---- pan / zoom / fit + drag + wheel (local; mirrors the DS engines) ---- */
+  /* ---- pan / zoom / fit + drag + wheel (interaction is local; FIT is DS-owned) ---- */
   const wrap = document.getElementById('canvasWrap'), stage = document.getElementById('stage'), pct = document.getElementById('zoomPct');
   if (wrap && stage) {
     let tx=0, ty=0, sc=1;
+    /* Interaction floor. Ordinary zoom-out floor is this figure's historical 0.2 base, but the
+       DS panel-aware fit can land BELOW it on a constrained viewport; a fixed floor above the
+       fitted scale would make zoom-out ENLARGE the figure (direction reversal). So the live floor
+       is the lower of the base and the most recent Fit, refreshed by fit() (initial, fonts.ready,
+       resize). */
+    const BASE_MIN_SCALE = 0.2;
+    let fittedMinScale = BASE_MIN_SCALE;
     const apply = () => { stage.style.transform = `translate(${tx}px,${ty}px) scale(${sc})`; if (pct) pct.textContent = Math.round(sc*100)+'%'; };
-    const fit = () => { const r=wrap.getBoundingClientRect(); const pad=90;
-      sc=Math.min((r.width-pad)/vbW,(r.height-pad)/vbH,1.3); tx=(r.width-vbW*sc)/2; ty=(r.height-vbH*sc)/2; apply(); };
-    fit(); window.addEventListener('resize', fit);
+    /* Fit comes from the design-system helper (diagrams-fit.js; presence checked at the top of
+       this file). This figure previously carried its own copy of the DS fit arithmetic — which is
+       exactly why the panel-band defect had to be fixed per-figure. The duplicated arithmetic is
+       retired; the figure's caller-owned inputs are kept: 90px total clearance (DS default 80),
+       1.3 max scale (DS default 1.2), and ZERO-origin bounds even though the tightened viewBox
+       origin is negative — the transform target is the stage div, whose box starts at 0 in CSS
+       space, so the viewBox origin never enters it. */
+    const fit = () => {
+      const f = window.DIAGRAM_FIT.compute({
+        wrap,
+        bounds: { minX: 0, minY: 0, maxX: vbW, maxY: vbH },
+        clearanceX: 90, clearanceY: 90, maxScale: 1.3, gutter: 26
+      });
+      fittedMinScale = Math.min(BASE_MIN_SCALE, f.scale);
+      sc = f.scale; tx = f.tx; ty = f.ty; apply();
+    };
+    /* Fit immediately so the figure is never left unpositioned, then refit once the webfonts land:
+       the vendored faces use font-display:swap and the DS helper measures the LIVE caption / legend
+       / HUD rectangles, which change size across the swap. */
+    fit();
+    const fonts = document.fonts;
+    if (fonts && fonts.ready && typeof fonts.ready.then === 'function') {
+      fonts.ready.then(fit).catch(() => {});
+    }
+    window.addEventListener('resize', fit);
     const zi=document.getElementById('zoomIn'), zo=document.getElementById('zoomOut'), zf=document.getElementById('zoomFit');
     if (zi) zi.onclick=()=>{sc=Math.min(sc*1.2,4);apply();};
-    if (zo) zo.onclick=()=>{sc=Math.max(sc/1.2,0.2);apply();};
+    if (zo) zo.onclick=()=>{sc=Math.max(sc/1.2,fittedMinScale);apply();};
     if (zf) zf.onclick=fit;
     let dragging=false, px0=0, py0=0, tx0=0, ty0=0;
     wrap.addEventListener('pointerdown', (ev)=>{ if (ev.target.closest('.hud, .legend, .caption')) return;
@@ -183,6 +220,6 @@
     const endDrag=()=>{ dragging=false; wrap.classList.remove('dragging'); };
     wrap.addEventListener('pointerup', endDrag); wrap.addEventListener('pointercancel', endDrag);
     wrap.addEventListener('wheel', (ev)=>{ ev.preventDefault(); const r=wrap.getBoundingClientRect(), mx=ev.clientX-r.left, my=ev.clientY-r.top;
-      const ns=Math.max(0.2, Math.min(4, sc*(ev.deltaY>0 ? 1/1.1 : 1.1))), k=ns/sc; tx=mx-(mx-tx)*k; ty=my-(my-ty)*k; sc=ns; apply(); }, { passive:false });
+      const ns=Math.max(fittedMinScale, Math.min(4, sc*(ev.deltaY>0 ? 1/1.1 : 1.1))), k=ns/sc; tx=mx-(mx-tx)*k; ty=my-(my-ty)*k; sc=ns; apply(); }, { passive:false });
   }
 })();

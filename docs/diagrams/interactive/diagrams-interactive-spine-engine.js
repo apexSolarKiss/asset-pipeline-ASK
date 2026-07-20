@@ -16,6 +16,14 @@
 */
 (function () {
   'use strict';
+  /* FAIL-CLOSED on a partial re-vendor. diagrams-fit.js is a DS-owned support file that
+     must be copied alongside this engine and loaded immediately BEFORE it. A silent
+     legacy fallback is deliberately NOT provided: a consumer that vendored the engine
+     without the helper would then look current while keeping the old panel-collision
+     geometry. Fail visibly instead. */
+  if (!window.DIAGRAM_FIT || typeof window.DIAGRAM_FIT.compute !== 'function') {
+    throw new Error('Diagram fit support is missing. Load diagrams-fit.js before the diagram engine.');
+  }
   var NS = 'http://www.w3.org/2000/svg';
 
   function el(tag, attrs, parent) {
@@ -158,6 +166,17 @@
 
     // ---- pan / zoom ----
     var tx = 0, ty = 0, sc = 1;
+
+    /* Interaction floor. The ordinary zoom-out floor is this pattern's historical
+       BASE_MIN_SCALE (0.25 here — the spine's own floor, NOT the static patterns' 0.15;
+       each pattern keeps its own). The panel-aware fit can legitimately land BELOW it on
+       a constrained viewport, and a fixed floor above the fitted scale makes "zoom out"
+       INCREASE the scale — the control reverses direction. So the live floor is the lower
+       of the base floor and the most recent Fit. Fit itself is never clamped: clamping it
+       would restore the panel collision this engine exists to avoid. Both zoom buttons and
+       the wheel funnel through zoomAt, so that one clamp is the whole surface. */
+    var BASE_MIN_SCALE = 0.25;
+    var fittedMinScale = BASE_MIN_SCALE;
     var stage = document.getElementById('stage');
     var wrapEl = document.getElementById('canvasWrap');
     var pctEl = document.getElementById('zoomPct');
@@ -168,16 +187,92 @@
       return { minX: minX, minY: minY, maxX: maxX, maxY: maxY };
     }
     function fit() {
-      var b = contentBounds(), pad = 60;
-      var vw = wrapEl.clientWidth, vh = wrapEl.clientHeight;
-      var cw = (b.maxX - b.minX) + pad * 2, ch = (b.maxY - b.minY) + pad * 2;
-      sc = Math.min(vw / cw, vh / ch, 1.4);
-      tx = (vw - (b.maxX + b.minX) * sc) / 2;
-      ty = (vh - (b.maxY + b.minY) * sc) / 2;
+      /* Shared DS fit contract (diagrams-fit.js).
+
+         TRANSFORM TARGET: the #vp group, in SVG user space — so the REAL content-bounds
+         origin is passed. (The static engines transform an element box that starts at 0
+         in CSS space and pass a zero origin instead. Transform target, not viewBox sign,
+         decides this.)
+
+         LEGACY PADDING: this pattern has always expanded the CONTENT by 60px per side
+         (cw = width + 120) rather than shrinking the viewport. Those are NOT equivalent
+         formulas. Expressing the margin as expanded bounds with zero subtractive
+         clearance reproduces the prior scale and translation exactly — the ±60 terms
+         cancel out of the centring arithmetic. Do not "simplify" this to clearance:120.
+
+         LEGACY VIEWPORT MEASUREMENT: this engine has always sized itself from
+         clientWidth/clientHeight (integer), while the static engines read
+         getBoundingClientRect() (fractional). On a fractional layout those differ — a
+         843.5px wrap reports clientHeight 844 — which would shift this pattern by a
+         quarter pixel. Adopting the other measurement is a separate render-contract
+         decision, not part of reserving the panel band, so the historical measurement is
+         passed explicitly here. Do not drop `viewport` to "let the utility measure it". */
+      var b = contentBounds(), legacyPad = 60;
+      function fitWith(edges) {
+        var o = {
+          wrap: wrapEl,
+          viewport: { width: wrapEl.clientWidth, height: wrapEl.clientHeight },
+          bounds: {
+            minX: b.minX - legacyPad, minY: b.minY - legacyPad,
+            maxX: b.maxX + legacyPad, maxY: b.maxY + legacyPad
+          },
+          clearanceX: 0, clearanceY: 0, maxScale: 1.4, gutter: 26
+        };
+        for (var k in edges) o[k] = edges[k];
+        return window.DIAGRAM_FIT.compute(o);
+      }
+      var f = fitWith({
+        /* PANEL ANATOMY DIFFERS FROM THE STATIC PATTERNS, and is classified by the edge
+           each panel actually OCCUPIES rather than by its vertical CSS anchor:
+
+             .inspector  top-right,    fixed 320px wide   -> right lane
+             .legend     bottom-right                     -> right lane
+             .hud        bottom-left                       -> left lane
+             .caption    bottom-centre                     -> bottom band
+
+           The inspector and legend are side chrome. Reserving them as full-width top /
+           bottom bands would spend vertical space on panels that occupy a narrow column,
+           and both grow vertically with their content — the same over-reservation
+           corrected for FLOW's .flow-panel. As side lanes their measured left edge bounds
+           the cost by WIDTH, so a tall populated inspector costs no page height. Only the
+           caption, which sits in the centre of the horizontal working area, is a band. */
+        topSelector: null,
+        bottomSelector: '.caption',
+        leftSelector: '.hud',
+        rightSelector: '.inspector, .legend'
+      });
+
+      /* NARROW-WIDTH FALLBACK. Side lanes are the better classification wherever they
+         fit, but at small widths they cannot: the inspector (320px) plus the HUD (329px)
+         alone consume 649px, so the horizontal safe region falls under minAvailable and
+         both lanes are discarded, leaving the placement obstructed. Measured transition
+         at this shell's chrome sizes: between 850px and 860px of canvas width.
+         Only in that case fall back to the panels' VERTICAL extent, which costs page
+         height but can still clear.
+
+         The trigger is an unresolved collision (`!clear`) together with a discarded
+         horizontal reservation (`degradedX`) — not degradation alone. A dropped
+         horizontal band whose vertical correction already cleared the chrome must keep
+         the more legible primary placement. If the fallback cannot clear either, the
+         primary result stands, since shrinking further would buy nothing. */
+      if (!f.clear && f.degradedX) {
+        var vertical = fitWith({
+          topSelector: '.inspector',
+          bottomSelector: '.hud, .legend, .caption',
+          leftSelector: null,
+          rightSelector: null
+        });
+        if (vertical.clear) f = vertical;
+      }
+
+      /* Set from the RESOLVED result, after the fallback has had its chance to replace
+         `f` — so the floor tracks whichever placement is actually applied. */
+      fittedMinScale = Math.min(BASE_MIN_SCALE, f.scale);
+      sc = f.scale; tx = f.tx; ty = f.ty;
       applyVp();
     }
     function zoomAt(cx, cy, factor) {
-      var ns = Math.max(0.25, Math.min(3, sc * factor));
+      var ns = Math.max(fittedMinScale, Math.min(3, sc * factor));
       var k = ns / sc;
       tx = cx - (cx - tx) * k; ty = cy - (cy - ty) * k; sc = ns; applyVp();
     }
