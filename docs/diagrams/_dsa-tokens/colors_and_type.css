@@ -24,12 +24,15 @@
      TIER 2 — ASK design language (family DNA, inheritable)
        palette values, lavender-ASK (#D4C6E1) named color, the two specific
        45deg gradient stops, Inter + JetBrains Mono type choices. Inheritable
-       by ASK-family child instances.
+       by ASK-family child instances. The --ask-* variable prefix is the
+       canonical implementation namespace for these Tier 2 tokens; it travels
+       with Tier 2 by reference and does not itself create Tier 3 identity.
 
      TIER 3 — ASK instance identity (NOT inherited by children)
-       the --ask-* variable prefix as instance naming; the file header above
-       naming "ASK Design System"; the logo-ASK wordmark (in assets/, not
-       this file). Child ASK-family instances supply their own Tier 3.
+       ASK's Tier 3 consists of the ASK name and logo-ASK wordmark
+       (in assets/, not this file). The file header above identifies the
+       owner carrier for provenance; it is not child-instance identity.
+       Child ASK-family instances supply their own Tier 3.
 
    Section comments below mark which tier each block belongs to. Do not fuse
    Tier 2 values into Tier 1 primitives or bleed Tier 3 into Tier 2.
