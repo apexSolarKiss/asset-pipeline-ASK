@@ -5,9 +5,9 @@ This repo's `AGENTS.md` is a **resolved carrier**: the shared execution protocol
 <!-- BEGIN carrier-metadata -->
 CARRIER_TYPE: resolved-local
 SHARED_BLOCK_SOURCE: apexSolarKiss/control-surface/protocol/AGENTS.shared.md
-SHARED_BLOCK_PIN: 0e375f5963d9af71f920f900fe8061f12f5295f2
+SHARED_BLOCK_PIN: c94f252edf6a94845a11558de4959d1faddedb5b
 PROFILES: []
-GRANT_FRAGMENT: standing-upstream-conformance-grant@0e375f5963d9af71f920f900fe8061f12f5295f2
+GRANT_FRAGMENT: standing-upstream-conformance-grant@c94f252edf6a94845a11558de4959d1faddedb5b
 OPERATING_SURFACE: separately-operated
 <!-- END carrier-metadata -->
 
@@ -354,6 +354,25 @@ exact scoped diff ready for approval
 ```
 
 Exact scoped diff review is the mandatory approval checkpoint before meaningful write actions complete. Approval may be given inside the executor session after the diff is reviewed; once given, the executor may complete the remaining git workflow without separate manual GitHub UI ceremony.
+
+### Advisor-Readable Review Objects
+<!-- rule-id: advisor-readable-review-objects -->
+
+When exact-byte advisor review is required and the advisor cannot read the executor's session-local scratch, publish the minimum named review object to the narrowest authorized shared-scratch path mapped by the surface's source index (`_INDEX`). This is the normal transport surface for cross-surface exact review. **Use an already advisor-readable exact surface first:** a pushed PR is the review object for repo changes once it exists — do not create a duplicate shared-scratch packet merely because session-local scratch is unreadable. Session-local scratch remains appropriate for intermediate construction and for objects not intended for cross-surface review; manual operator upload is fallback only when the payload is already authorized for this advisor and the mapped shared path is temporarily unavailable or technically unreachable.
+
+**Path authorization is not content authorization.** A mapped scratch path authorizes a retrieval route, not every payload that could travel it. Do not copy secrets, wall-bound material, or any payload the advisor is not authorized to read into shared scratch or into a manual upload. If the mapped path or the payload is outside the advisor's authorized read surface, stop and ask ASK to name an authorized review surface; upload does not cure an authorization boundary and never bypasses a wall.
+
+A request to prepare an exact artifact for advisor review authorizes one declared proposal-only review object or bounded review bundle, provided its exact path(s), filename(s), role, and lifecycle (supersession trigger) are stated before creation. It does **not** authorize the target canonical, a version snapshot, a companion artifact, a repo commit, or a private-memory write — each of those remains a separate approval unit.
+
+The review object carries its proposal status in its **scratch path, filename, and handoff**, never in wrapper text that would alter bytes intended to match a target. It takes one of three forms:
+
+- **single-artifact exact-byte review** — the `-PROPOSED` object is byte-identical to the proposed target bytes;
+- **single-file multi-target review** — one `-PROPOSED` packet carries the complete exact patch, the target file set, the baseline refs, the proposed hashes, and the declared role and lifecycle, **when the advisor can retrieve it completely**;
+- **connector-bounded review bundle** — when one packet cannot be retrieved completely (connector text-extraction truncation), or a target is not representable as a text patch, publish one declared bundle of ordered exact-object or exact-patch parts in mapped shared scratch. Its manifest records, per part: ordered path, `part_type` (`exact-object` | `exact-patch`), the target path or set, byte size, SHA-256, a baseline ref/hash where applicable, the reconstruction operation, and the proposed target hash — plus the complete target set, the package hash, role, and lifecycle. A text or repo diff is an `exact-patch` against a declared baseline; a binary or non-patch artifact (a PNG, a diagram export, any exact object) is carried as its exact proposed object bytes; a mixed package may contain both part types. Prefer one bounded part per target over arbitrary prose truncation, but never force binary target bytes into a text-extraction representation. The manifest itself and every part must be individually retrievable through the intended advisor path; every physical path is declared before creation; the bundle is one logical transport operation, not open-ended scratch authority.
+
+**Once its path and hash have been reported for review, a review object or bundle is immutable.** Never overwrite it in place. A revision receives a new unique dated or `_vN` `-PROPOSED` name, identifies its predecessor, and reports new hashes; the superseded object remains scratch provenance unless ASK separately authorizes retirement.
+
+Report the target path(s), baseline ref/hash, and proposed hash in the handoff. A shared-scratch review object is an ordinary named operator-scratch artifact — a visible surface under normal proposal/scratch discipline, **not** a private persistent surface governed by §Private-Memory Write Gate.
 
 ### Structured Change Summary
 <!-- rule-id: structured-change-summary -->
