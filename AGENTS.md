@@ -5,9 +5,9 @@ This repo's `AGENTS.md` is a **resolved carrier**: the shared execution protocol
 <!-- BEGIN carrier-metadata -->
 CARRIER_TYPE: resolved-local
 SHARED_BLOCK_SOURCE: apexSolarKiss/control-surface/protocol/AGENTS.shared.md
-SHARED_BLOCK_PIN: 8bdacc2dfc86bec8d2c0f34aa5dc4507fc7bd72b
+SHARED_BLOCK_PIN: 0e375f5963d9af71f920f900fe8061f12f5295f2
 PROFILES: []
-GRANT_FRAGMENT: standing-upstream-conformance-grant@8bdacc2dfc86bec8d2c0f34aa5dc4507fc7bd72b
+GRANT_FRAGMENT: standing-upstream-conformance-grant@0e375f5963d9af71f920f900fe8061f12f5295f2
 OPERATING_SURFACE: separately-operated
 <!-- END carrier-metadata -->
 
@@ -21,7 +21,7 @@ OPERATING_SURFACE: separately-operated
 - **`AGENTS.md`** = workflow rules for repo execution, resolved as: this shared core + applicable profiles + opt-in fragments + repo-local delta.
 - **Grounding note** (external) = repo-external context: intent, audience, philosophy, foundational premises, durable loose threads.
 - **Per-conversation / task state** (ChatGPT thread history, task lists, in-flight session context) = ephemeral; does NOT belong in the grounding note.
-- **Private agent memory** (e.g. Claude Code's MEMORY.md) = non-authoritative operator context. It MAY retain ASK-authorized incidents, anti-re-derivation pointers, worked examples, refusal/supersession records, tool/vendor occupancy, and other operator context **within that memory's authorized owning surface** — but it NEVER owns durable project truth or workflow protocol (see §Verification Claims). Wall-bound material remains on the owning side of the wall; this rule creates no cross-wall read, copy, or retention authority.
+- **Private agent memory** (e.g. Claude Code's MEMORY.md) = non-authoritative operator context. It MAY retain ASK-authorized incidents, anti-re-derivation pointers, worked examples, refusal/supersession records, tool/vendor occupancy, and other operator context **within that memory's authorized owning surface** — but it NEVER owns durable project truth or workflow protocol (see §Verification Claims). Wall-bound material remains on the owning side of the wall; this rule creates no cross-wall read, copy, or retention authority. Retention conditions and the authorization required for any memory write are governed by §Learning Disposition and §Private-Memory Write Gate.
 
 ### Aging-Rate Principle
 <!-- rule-id: aging-rate-principle -->
@@ -35,6 +35,88 @@ The split between repo, `AGENTS.md`, grounding note, ephemeral per-conversation 
 - A doc that mixes rules, context, and state ages at the rate of its fastest-aging contents — usually badly.
 
 If a statement would become stale when a PR lands, a chain closes, or a next path changes, it does not belong in this file or in the grounding note.
+
+---
+
+## Learning Disposition
+<!-- rule-id: learning-disposition -->
+
+When a reusable learning appears — a correction, a discovered constraint, a convention, a calibration, a failure and its remedy — classify it **before** deciding where it is retained. Classify per claim limb: one observation often carries a shared rule, a local exception, current state, and historical provenance at once, and those limbs do not share a destination.
+
+Route each limb to its visible durable owner:
+
+- **shared workflow rule** → the owner canonical at `apexSolarKiss/control-surface/protocol/`; classify it as shared core, an applicable profile, an opt-in fragment, or an explicit hold before changing any resolved consumer
+- **project-local workflow rule or exception** → the owning repo's `AGENTS.md` local delta
+- **project truth, guidance, architecture, implementation contract, or maintained procedure** → the owning repo's code, tests, or docs
+- **cross-surface maintenance state, pins, obligations, propagation, or currency** → the applicable operator ledger; ordinary project state remains with the owning repo
+- **event, experiment, failure, review disposition, or closure evidence** → the owning surface's scratch, a PR record, or a named closure artifact
+- **slow external intent, audience, or durable external constraint** → the owning grounding note
+- **temporary task state** → current task state only, then no retention
+- **an unearned generalization** → an explicit nomination or hold
+- **material that earns no durable retention** → no retention
+
+Private agent memory is not a durable owner, protocol-candidate inbox, state ledger, or pre-absorption staging surface. It becomes a candidate only after the visible-owner test establishes either:
+
+1. a durable owner has intentionally omitted the non-operative residue; or
+2. no visible owner is appropriate because the payload is machine-local, wall-bound, or deliberately non-operative.
+
+The absence of a visible owner never authorizes memory to carry knowledge required for correctness.
+
+Subject to §Private-Memory Write Gate, private memory may retain narrowly scoped origin or incident history, refusal or supersession evidence, worked examples, evidence of a local exception whose operative rule or constraint is visibly owned, machine-local calibration, machine-local or deliberately non-operative tool/vendor occupancy whose structural role and durable procedure are visibly owned, anti-re-derivation pointers, and wall-bound residue within the memory's authorized owning surface.
+
+Removing private memory may make an executor slower. It must never make an executor wrong. If a decision cannot be made correctly without a memory entry, that entry carries operative knowledge and is in the wrong place.
+
+A generic request to "remember this" requests durable retention, not a predetermined storage surface. Classify and propose the appropriate owner. Only a request that explicitly names private agent memory, followed by ASK's approval of the exact target and payload, authorizes that destination.
+
+---
+
+## Private-Memory Write Gate
+<!-- rule-id: private-memory-write-gate -->
+
+**Default deny.** A private-memory mutation is a separate approval unit. It may occur inside an explicitly scoped memory-maintenance operation, but it is never incidental to another task, inferred from another approval, or added during task closure.
+
+For this rule, a **private persistent mutation** means creating, editing, or deleting any governed auto-memory, subagent-memory, user-instruction, user-rule, or gitignored local-instruction artifact. References below to a private-memory mutation use that broader meaning.
+
+This gate governs **private persistent agent surfaces**: auto-memory stores and their indexes, subagent memory, and private instruction files that load across sessions without repo review — user-scope instructions and rules, and gitignored local instruction files. A checked-in repo adapter is not one of these: it is a visible carrier under ordinary diff and review gates.
+
+A private persistent instruction imported from any other path is governed by this gate as well. It must not be used unless its exact path is declared, a matching `Edit(...)` ask rule is installed, and the active-session receipt classifies it as covered. A private import outside the standard guarded paths is a stop condition.
+
+Any governed private persistent creation or edit requires all of:
+
+1. the learning has been classified under §Learning Disposition and its visible owner has been named;
+2. a stated reason the visible owner is insufficient for the residual payload;
+3. the exact target and exact proposed mutation, shown before execution: full payload for creation; exact diff or replacement payload for an edit;
+4. explicit ASK authorization of that exact target and exact mutation;
+5. a recorded aging or review trigger.
+
+Any governed private persistent deletion requires all of:
+
+1. the artifact's current role and disposition have been classified, including its visible owner or a no-retention result;
+2. a stated reason deletion is warranted — for example unauthorized creation, supersession, owner absorption, or expiry of its review trigger;
+3. the exact path plus a pre-deletion size/hash receipt and, when restoring a prior state, the exact baseline bytes or diff;
+4. explicit ASK authorization of that exact deletion;
+5. a post-operation absence receipt, or exact restored-byte/hash verification when deletion is one step in a rollback.
+
+Approval of a plan, a diff, a PR, a merge, or a task completion is **not** authorization of that private persistent mutation. Neither is advisor agreement.
+
+**Authorization is per artifact.** Approval of a topic file does not authorize an index entry, and approval of an index entry does not authorize the topic file. Every created, modified, or deleted artifact requires its own displayed change or deletion receipt and its own ASK decision. Never select a session-wide or standing approval for a governed private persistent path, including "allow Claude to edit its own settings for this session."
+
+**Live credentials, authorization tokens, private keys, and other secrets are never admissible payloads** for a private persistent surface or for any disposition record.
+
+Specifically prohibited without the authorization above:
+
+- banking "one durable note" at task close;
+- using memory as a protocol-candidate inbox;
+- post-merge memory mutation framed as cleanup;
+- automatic index (`MEMORY.md`) updates.
+
+Do not bypass the gate through Bash, Python, Node, another subprocess, a helper agent, or an alternate write tool. Subagents, census agents, staging agents, and read-only workers never perform private persistent mutations; they return the candidate learning and proposed disposition to the parent coordinator.
+
+Before memory-bearing work, confirm that the required ask rules are active and that every governed private persistent path — including the effective auto-memory root and every loaded private instruction import — is covered. Missing rules, unmatched rules, or an uncovered governed path are stop conditions.
+
+Do not perform private persistent-context maintenance in a mode that disables the runtime's safety checks. This is defense in depth: explicit ask rules currently still apply in that mode, but the gate must not depend on one product carve-out while other checks are disabled.
+
+Where the runtime enforces this gate with a permission prompt, treat the prompt as the technical gate only. The visible disposition above is the semantic gate, and a runtime status message is not evidence that a write did or did not persist — verify the filesystem.
 
 ---
 
@@ -131,7 +213,7 @@ A verification statement is bounded by the evidence actually gathered.
 - If a **completed audit, closure, provenance record, or other frozen record** overstates its evidence, preserve the original statement and append a correction. Do not silently tidy the audit trail.
 - If a **live canonical or current instruction** overstates its evidence, correct the operative statement under that carrier's version and snapshot discipline, preserving the prior state in its lineage — rather than leaving a false current instruction in force.
 
-Private agent memory may record an incident or point to this canonical rule **only when ASK explicitly authorizes that memory write**. This section does not itself authorize creating, extending, or revising memory. Private agent memory is not the owner of durable workflow protocol.
+Private agent memory may record an incident or point to this canonical rule **only when ASK explicitly authorizes that memory write**. This section does not itself authorize creating, extending, or revising memory. Private agent memory is not the owner of durable workflow protocol. Any retention under this clause remains subject to §Learning Disposition and §Private-Memory Write Gate.
 <!-- rule-id: private-memory-not-owner -->
 
 ---
@@ -285,14 +367,16 @@ Meaningful changes require a structured change summary covering:
 
 If a PR is used, this belongs in the PR description. If no PR is used, the same summary must be produced in the executor handoff or approval record before write actions complete.
 
+When the work surfaces a potentially reusable learning, include a one-line learning disposition: visible owner · nomination/hold · private-memory candidate pending separate authorization · or no retention. "Reusable" is not itself a destination.
+
 ### Operator-Side Voice Scan
 <!-- rule-id: operator-side-voice-scan -->
 
-Before presenting an exact scoped diff for approval, scan added prose for voice / surface-boundary risk according to the project's operator-side voice discipline memory and grounding-note voice guidance.
+Before presenting an exact scoped diff for approval, scan added prose for voice / surface-boundary risk against the project's named operator-side voice owner(s) and grounding-note voice guidance. Do not assume a private-memory artifact exists or owns those constraints. Any private-memory contribution must already have survived §Learning Disposition and remains subject to §Private-Memory Write Gate.
 
 Flag any matches or concerns honestly in the structured change summary. Do not auto-sanitize: some apparent matches may be legitimate domain vocabulary that the project needs to name directly.
 
-The scan rule may live in `AGENTS.md`; the token list, translation table, and protected domain-vocabulary list do not. Those specifics are operator-side context and must not be copied into repo-local artifacts.
+The scan rule may live in `AGENTS.md`; the token list, translation table, and protected domain-vocabulary list do not. Route those specifics to the narrowest authorized operator-side owner suited to their wall and cadence; do not copy them into repo-local artifacts. Private memory may retain only ASK-authorized machine-local, wall-bound, or deliberately non-operative residue under the two gates.
 
 ### Default: Hold or Carry Through Per Adversarial-Collaboration Preconditions
 <!-- rule-id: default-hold-or-carry-through -->
@@ -334,6 +418,8 @@ After merge, verify `main`, delete merged task branches where safe, verify remot
 - final branches
 - final working tree status
 - terminal state: `merged branches cleaned up`
+
+Post-merge cleanup never includes private-memory mutation unless a separately planned and explicitly authorized memory operation remains open.
 
 ### Direct Push to Main
 <!-- rule-id: direct-push-to-main -->
@@ -381,6 +467,12 @@ This applies whether the executor is a separate process (Codex) or the same agen
 
 The plan-before-execute step preserves the explicit reasoning surface that prompt-compilation provides when execution is split across a prompt-compiler and an executor. In a single-node model, plan-before-execute is the rule that restores it. Do not collapse plan and execution into a single opaque step.
 
+Any proposed private persistent mutation must be named as a separate planned operation with its exact target, exact proposed mutation, visible-owner or no-retention disposition, and terminal state.
+
+For a creation, include the full proposed payload. For an edit, include the exact diff or replacement payload. For a deletion, include the exact path, deletion warrant, pre-deletion size/hash receipt, and expected absence or restored-byte/hash receipt.
+
+If the operation is absent from the approved plan, the private persistent mutation is out of scope.
+
 ---
 
 ## Tool-Dependent Workflow Rules
@@ -388,9 +480,9 @@ The plan-before-execute step preserves the explicit reasoning surface that promp
 
 When a project workflow depends on an external tool, vendor, model, rendering surface, extraction surface, diagram-generation surface, or other operator-supplied system whose identity may change, encode the repo-local rule tool-agnostically.
 
-In `AGENTS.md`, name the structural role the tool plays, when it is invoked, what inputs and outputs it expects, the authority boundary, and any refresh cadence. In operator-side memory, carry the current approved tool / vendor / surface identity, the substitution path, and any operational details that depend on the specific tool.
+In `AGENTS.md`, name the structural role the tool plays, when it is invoked, what inputs and outputs it expects, the authority boundary, and any refresh cadence. Carry the current approved tool / vendor / surface identity, the substitution path, and any operational details that depend on the specific tool outside that repo rule.
 
-The repo rule names the role; operator-side memory names the current occupant of the role. Substitution updates the memory entry, not the repo rule.
+The repo rule names the structural role. The current occupant, substitution path, and vendor-specific operating details belong in the narrowest visible or operator-side owner suited to their cadence. Private memory may cache only machine-local or deliberately non-operative residue, and only under §Learning Disposition and §Private-Memory Write Gate.
 
 ---
 
