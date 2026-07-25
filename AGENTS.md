@@ -5,9 +5,9 @@ This repo's `AGENTS.md` is a **resolved carrier**: the shared execution protocol
 <!-- BEGIN carrier-metadata -->
 CARRIER_TYPE: resolved-local
 SHARED_BLOCK_SOURCE: apexSolarKiss/control-surface/protocol/AGENTS.shared.md
-SHARED_BLOCK_PIN: c94f252edf6a94845a11558de4959d1faddedb5b
+SHARED_BLOCK_PIN: f33e67f334e06928b20ee4a34880416d331e1ab9
 PROFILES: []
-GRANT_FRAGMENT: standing-upstream-conformance-grant@c94f252edf6a94845a11558de4959d1faddedb5b
+GRANT_FRAGMENT: standing-upstream-conformance-grant@f33e67f334e06928b20ee4a34880416d331e1ab9
 OPERATING_SURFACE: separately-operated
 <!-- END carrier-metadata -->
 
@@ -140,6 +140,10 @@ When a routed handoff memo in a shared intake carries the `-TBI.md` suffix, trea
 
 `-TBI` marks material that ASK has saved but has not yet fed into the operating surface responsible for ingesting it. It is an unconsumed ingestion-queue marker — not a repo-ownership marker and not a pending-action marker. That is why the suffix is struck **on ingestion** rather than at absorption: the item leaves the queue when it is fed in.
 
+Pre-ingestion supersession — removing `-TBI` is not the only way an active handoff leaves the unconsumed queue. Before ingestion, ASK may instead retire it by replacing `-TBI` with `-SUPERSEDED`. The `-SUPERSEDED` artifact itself was never ingested and never absorbed, carries no pending work, and remains in the intake only as lineage — typically beside an active successor, which carries its own `-TBI`. Active queue membership therefore has two exits: `-TBI` removed with no replacement marker means **ingested**; `-TBI` replaced by `-SUPERSEDED` means **retired before ingestion, unconsumed**. Neither disposition authorizes implementation, and a `-SUPERSEDED` artifact is not ingested, reactivated, or renamed off merely because it remains physically present in the intake folder.
+
+Historical body versus current disposition — a received handoff body is byte-immutable: it is not edited on ingestion or on pre-ingestion supersession. A sender-authored in-body status line records the routing-time state and remains historical evidence; it is not rewritten because the recipient later ingested or superseded the artifact. Current lifecycle disposition is carried by the filename marker (`-TBI` active-intake · unmarked ingested · `-SUPERSEDED` retired-unconsumed). Any recipient/ASK closure or separately maintained current-status record, when present, is also current disposition evidence; every such current carrier must agree with the filename marker and with every other current carrier. An immutable body's historical routing-status string is not required to match a later recipient disposition; successor linkage belongs in a closure or explicit lineage record, never in a post-receipt edit to the received body.
+
 **Do not create a `-TBI` addressed to a surface the acting surface already operates.** Moving between repos inside one operating surface is a hard repo-boundary reset — read that repo's grounding note and `AGENTS.md`, verify live state, work under its own branch, diff, review, and merge gates — not an ingestion event. A handoff addressed back to the surface that authored it tracks nothing: the destination operating surface already has the material, so no ingestion boundary was crossed.
 
 Separate repo authority is real and unaffected by this rule. **It does not create a separate ingestion boundary.** Pending owner classification or repo action is repo state — carried by the closure, the relay, or task state — not `-TBI` state.
@@ -173,7 +177,7 @@ YYYY-MM-DD_<surface-or-subject>_<topic>-PTX.md
 YYYY-MM-DD_<surface-or-subject>_<topic>-PTX_vN.md
 ```
 
-`-TBI`, `-PTX`, and `_vN` do not share an axis: `-TBI` is a lifecycle state, renamed off on ingestion; `-PTX` is an artifact role, and the role marker is retained throughout any version lineage; `_vN` is an optional version index for the transcript artifact. Neither `-PTX` nor `_vN` confers state, authority, or canonical status.
+`-TBI`, `-PTX`, and `_vN` do not share an axis: `-TBI` is a lifecycle state — struck on ingestion, or replaced by `-SUPERSEDED` on pre-ingestion retirement; `-PTX` is an artifact role, and the role marker is retained throughout any version lineage; `_vN` is an optional version index for the transcript artifact. Neither `-PTX` nor `_vN` confers state, authority, or canonical status.
 
 ---
 
