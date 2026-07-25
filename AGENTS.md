@@ -5,9 +5,9 @@ This repo's `AGENTS.md` is a **resolved carrier**: the shared execution protocol
 <!-- BEGIN carrier-metadata -->
 CARRIER_TYPE: resolved-local
 SHARED_BLOCK_SOURCE: apexSolarKiss/control-surface/protocol/AGENTS.shared.md
-SHARED_BLOCK_PIN: f33e67f334e06928b20ee4a34880416d331e1ab9
+SHARED_BLOCK_PIN: c79d69cca495b77eff3cb55680cfa37d1bdc9809
 PROFILES: []
-GRANT_FRAGMENT: standing-upstream-conformance-grant@f33e67f334e06928b20ee4a34880416d331e1ab9
+GRANT_FRAGMENT: standing-upstream-conformance-grant@c79d69cca495b77eff3cb55680cfa37d1bdc9809
 OPERATING_SURFACE: separately-operated
 <!-- END carrier-metadata -->
 
@@ -454,7 +454,7 @@ Branch plus PR is the default for meaningful structure or rule changes. Narrow l
 ## Session Topology / Single-Writer Discipline
 <!-- rule-id: session-topology-single-writer -->
 
-Multiple operator sessions (multiple Claude Code threads, parallel Codex sessions, ChatGPT thread plus Codex thread) can mutate the same repo files concurrently. This is a real failure mode, not a hypothetical.
+Multiple writer-capable sessions — for example parallel executor threads, subagents in separate worktrees, a human editor plus an executor, or another runtime occupying the executor role — can mutate the same repo files concurrently. This is a real failure mode, not a hypothetical.
 
 Rules:
 
@@ -486,9 +486,7 @@ Do not bundle unrelated work. Do not widen scope mid-task unless the widening is
 
 Before executing a meaningful repo change, state the plan: what files will change, what scope is in vs out, what non-actions apply, what terminal state is expected.
 
-This applies whether the executor is a separate process (Codex) or the same agent doing the planning (Claude Code).
-
-The plan-before-execute step preserves the explicit reasoning surface that prompt-compilation provides when execution is split across a prompt-compiler and an executor. In a single-node model, plan-before-execute is the rule that restores it. Do not collapse plan and execution into a single opaque step.
+The plan creates an inspectable reasoning object before mutation. It lets ASK, the executor, and any configured advisor challenge scope, assumptions, non-actions, and the intended terminal state before work becomes harder to unwind. This applies whether planning and execution occur in one session or across multiple surfaces. Do not collapse plan and execution into one opaque step.
 
 Any proposed private persistent mutation must be named as a separate planned operation with its exact target, exact proposed mutation, visible-owner or no-retention disposition, and terminal state.
 
