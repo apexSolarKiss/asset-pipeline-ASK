@@ -121,7 +121,7 @@ Worked example: the Visual Payload Architecture FLOW diagram — the AP repo emb
 
 This diagram is the first repo-native asset-pipeline-ASK architecture-tree absorption using the Class A diagram-bundle pattern proven across [`apexSolarKiss/control-surface/docs/diagrams/`](https://github.com/apexSolarKiss/control-surface/tree/main/docs/diagrams) (TREE_D01) and [`apexSolarKiss/method-ASK/docs/diagrams/`](https://github.com/apexSolarKiss/method-ASK/tree/main/docs/diagrams) (TREE_D02). It supersedes the prior self-contained HTML architecture-tree artifact (Claude-Design-generated, ~1.7 MB single file) at the same path.
 
-The current bundle absorbs at `source-v2 // render-v9` to align with the other repo-native bundles. Future refreshes will bump the render version and may bump the source version if the tree data changes materially.
+This bundle was first absorbed here at `source-v2 // render-v9`, aligning with the other repo-native bundles. The architecture-tree current tuple is `source-v7 // render-v16` (2026-07-25). Source advances when the authored tree data changes; render advances only when the renderer realization changes.
 
 The operator-side ecology-ASK diagram package and historical render iterations remain in `asset-pipeline-ASK-EXTERNAL/scratch/` and are not repo truth.
 

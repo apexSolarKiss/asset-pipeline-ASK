@@ -189,7 +189,7 @@ Entry points to depth. Full repo navigation lives in [docs/index.md](index.md); 
 - [docs/application/README.md](application/README.md) — application sub-tree map
 - [docs/application/implementation-roadmap-system-map-artifact-grammar-v1.md](application/implementation-roadmap-system-map-artifact-grammar-v1.md) — first generated-output artifact grammar
 - [docs/application/artifact-grammar-consumer-pressure-v1.md](application/artifact-grammar-consumer-pressure-v1.md) — application-consumer pressure pass; conceptual-vs-vocabular split
-- [AGENTS.md](../AGENTS.md) — single-node operating model and agent-agnostic workflow rules
+- [AGENTS.md](../AGENTS.md) — operating model and agent-agnostic workflow rules
 
 Predecessor artifacts at content depth (Phase 1 mode sketches, Phase 2 input-category deepenings, brand-system hybrid carrier decision surface v1, structured IA model v1, the post-milestone-9 carrier-shape arc source artifacts, the cross-mode probe series, the operational findings chain) are routed via [docs/index.md](index.md) and the milestone markers above.
 

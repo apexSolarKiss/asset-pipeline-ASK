@@ -15,7 +15,7 @@ Screenshots and generated images are not committed evidence unless a future evid
 ## Start Here / Foundation
 
 - [README.md](../README.md): entry points and current repo framing
-- [AGENTS.md](../AGENTS.md): repo-local workflow rules; single-node operating model (Claude Code as control surface and executor); rules are agent-agnostic and apply to whoever is executing
+- [AGENTS.md](../AGENTS.md): repo-local workflow rules; the adversarial-collaboration operating model (ASK-apexed advisor–executor topology); rules are agent-agnostic and apply to whoever is executing
 - [docs/architecture.md](architecture.md): high-level architecture stance and current ontology direction
 - [docs/layer-disambiguation-note-v1.md](layer-disambiguation-note-v1.md): deconfliction reference for the project's four uses of "layer" (Axis A ontology / B inheritance / C variation / D runtime); reconciles the 3/5/6/7/8-layer counts and records why the architecture's eight-layer list spans two meanings
 - [docs/diagrams/asset-pipeline-ASK_architectural-representation-atlas.html](diagrams/asset-pipeline-ASK_architectural-representation-atlas.html): **architectural representation atlas** — orientation across the repo's architectural representations (an orientation layer over the repo's representations, not another model); names per view the object represented, the question it answers, the live diagram / surface, and where its authority ends — the governed visual-payload IA (ontology / Axis A · visual payload architecture · inheritance / Axis B · runtime / Axis D in prose), the generative-governance system model (bounded generativity), the project / repository IA (architecture tree), and architecture state (interactive IA state spine); no single diagram is the master picture
