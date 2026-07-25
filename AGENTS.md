@@ -594,7 +594,7 @@ These rules are the repo-local delta for `asset-pipeline-ASK` (a separately-oper
 
 ## Operating model (AP layer)
 
-`asset-pipeline-ASK` uses a single-node operating model: the active control surface is also the executor.
+`asset-pipeline-ASK` runs the family's **adversarial-collaboration operating model** — an ASK-apexed advisor–executor topology: ASK is the source-of-intent and authorization apex and the relay across surfaces; a non-writing advisor surface supplies challenge, reconstruction, and verification from outside the execution thread; a repo-attached execution surface plans and performs authorized work under this file, single-writer-per-branch. **Direct execution** — ASK driving the executor without an advisor pass where a separate pass would not materially reduce uncertainty — is a bounded task-level path within this model, not a separate model.
 
 ## Source-of-Truth additions (AP layer)
 

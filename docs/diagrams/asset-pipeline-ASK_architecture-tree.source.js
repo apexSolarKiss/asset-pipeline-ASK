@@ -2,7 +2,13 @@
    Source data for the asset-pipeline-ASK architecture tree diagram.
    Renderable by diagrams-engine.js.
 
-   D04 // asset-pipeline-ASK architecture tree // source-v6 // 2026-07-17
+   D04 // asset-pipeline-ASK architecture tree // source-v7 // 2026-07-25
+   v7 (2026-07-25): operating-model current truth per control-surface#171. The retired
+   "single-node" label is removed from the root note and the AGENTS.md node, which now
+   names the adversarial-collaboration operating model (ASK-apexed advisor-executor
+   topology). No architecture, IA, mode, carrier, or evidence-depth content changed. The
+   repo's aesthetic-layering inheritance/override vocabulary is a separate domain term set
+   and is untouched. Content-only; render held render-v16.
    Single-tree extraction from the operator-side ecology-ASK diagram package
    following the Class A repo-native diagram-bundle pattern proven across
    apexSolarKiss/control-surface (D01) and apexSolarKiss/method-ASK (D02).
@@ -16,7 +22,7 @@
 window.TREE_D04 = {
   kind: 'root',
   label: 'asset-pipeline-ASK',
-  note: 'information architecture for visual asset production // single-node downstream pressure surface',
+  note: 'information architecture for visual asset production // downstream pressure surface',
   children: [
     {
       kind: 'section', label: 'current architecture front door',
@@ -157,7 +163,7 @@ window.TREE_D04 = {
           { label: 'resolution-calculus-evidence-boundary-v1.md' },
         ]},
         { label: 'application docs', note: 'docs/application/' },
-        { label: 'AGENTS.md', note: 'single-node operating model · agent-agnostic workflow rules' },
+        { label: 'AGENTS.md', note: 'adversarial-collaboration operating model · agent-agnostic workflow rules' },
         { label: 'docs/index.md', note: 'full repo navigation' },
       ],
     },
