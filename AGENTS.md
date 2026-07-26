@@ -605,7 +605,7 @@ Execution jurisdiction does not transfer artifact ownership. ASK may suspend or 
 <!-- BEGIN local-delta -->
 ## asset-pipeline-ASK-Local
 
-These rules are the repo-local delta for `asset-pipeline-ASK` (a separately-operated ASK ecology consumer) on top of the shared protocol above. It installs the `advisor-project-surface` profile and opts into the standing upstream-conformance grant (installed above). `asset-pipeline-ASK`'s local delta wins for `asset-pipeline-ASK` where an explicit conflict exists.
+These rules are the repo-local delta for `asset-pipeline-ASK` (a separately-operated ASK ecology consumer) on top of the resolved carrier above. This repo opts into the standing upstream-conformance grant (installed above). `asset-pipeline-ASK`'s local delta wins for `asset-pipeline-ASK` where an explicit conflict exists.
 
 ## Operating model (AP layer)
 
