@@ -1,12 +1,12 @@
 # AGENTS.md — asset-pipeline-ASK
 
-This repo's `AGENTS.md` is a **resolved carrier**: the shared execution protocol (below, resolved from `control-surface/protocol/AGENTS.shared.md`) + the standing upstream-conformance grant + the asset-pipeline-ASK-local delta. It installs no profile. The shared block and grant are machine-maintained — do not hand-edit between the markers.
+This repo's `AGENTS.md` is a **resolved carrier**: the shared execution protocol (below, resolved from `control-surface/protocol/AGENTS.shared.md`) + the applicable `advisor-project-surface` profile + the standing upstream-conformance grant + the asset-pipeline-ASK-local delta. The shared block, profile, and grant are machine-maintained — do not hand-edit between the markers.
 
 <!-- BEGIN carrier-metadata -->
 CARRIER_TYPE: resolved-local
 SHARED_BLOCK_SOURCE: apexSolarKiss/control-surface/protocol/AGENTS.shared.md
 SHARED_BLOCK_PIN: c79d69cca495b77eff3cb55680cfa37d1bdc9809
-PROFILES: []
+PROFILES: [advisor-project-surface]
 GRANT_FRAGMENT: standing-upstream-conformance-grant@c79d69cca495b77eff3cb55680cfa37d1bdc9809
 OPERATING_SURFACE: separately-operated
 <!-- END carrier-metadata -->
@@ -561,6 +561,21 @@ If a proposed update says "the project currently should do X," it does not belon
 - Bound every verification claim to the exact evidence gathered; separate checked facts from inferences, and test rules against the live artifacts they govern before applying them.
 <!-- END shared -->
 
+<!-- BEGIN profile: advisor-project-surface -->
+## Advisor Project surface deployment
+
+- Where this repo homes a configured advisor Project, that Project **must use the bootstrap-only deployment architecture**. The always-applied Instructions field carries only the pre-retrieval safety floor — what must bind before any fetch, and must still hold when every fetch fails. One mounted bootstrap carries the operative advisor contract and the exact live-index locator. The index and the canonicals are fetched live at the locators those carriers declare.
+- **Do not place operative advisor protocol in the Instructions field.** A size-capped, always-applied carrier cannot grow: past its ceiling, each addition is paid for by compressing an existing requirement — a preservation judgment made at install time, under space pressure, with no record of what was dropped.
+- **A requirement may leave a carrier only with a recorded disposition:** `MOVED` (naming the exact surviving carrier), `REVISED`, `RETIRED`, or `NOT-APPLICABLE`. `DROP-AS-DUPLICATE` without a named surviving carrier is deletion, not deduplication. A requirement no carrier holds and no disposition retired is unowned; unowned count must be zero. **The surface-overlay completion gate runs before a carrier is generated, not after it is installed** — an unowned requirement found at install time has already shipped.
+- **One standing mount per surface.** Do not mount a shared core plus a separate overlay — two mounts is another synchronization seam, and it makes connector-failure behavior harder to reason about. Share at the authoring layer; be self-contained at the runtime layer.
+- **Maintenance consequence.** An ordinary protocol change updates the bootstrap and remounts it. An ordinary index change updates the index canonical and remounts nothing. The Instructions field is repasted only when the invocation architecture itself changes.
+- **Generating a carrier is not conformance.** A surface is conformant only after the applicable acceptance tests pass, and they must be *exercised* rather than inspected — reading a carrier and concluding it would behave correctly is not a test result. **A7, connector-failure behavior, is the gate:** a surface that has never been observed failing safely has not demonstrated the property the thin floor exists to guarantee.
+- **Project UI mutation is ASK-owned.** Mounting or unmounting a Source, repasting the Instructions field, and changing Project settings are ASK's operations. The executor prepares exact carriers, installation steps, and rollback pairs; it does not perform the Project mutation. An advisor surface never mutates its own Project settings — that boundary is why the advisor is non-writing at all.
+- Requirements true only of one surface live in that surface's generated bootstrap, never in a shared body. **A surface that must deviate from the owner records an explicit disposition against the owner registry**; undocumented local divergence is drift, and it is indistinguishable from the compression this profile exists to prevent.
+
+Owner: `control-surface/docs/advisor-project-surface-architecture.md` — the normative requirement registry, placement contract, acceptance tests, and surface-overlay completion gate. Carriers are generated from `control-surface/templates/advisor-project-bootstrap.template.md`, `advisor-project-instructions.template.md`, and `_INDEX-project.template.md`. This profile binds the deployment shape; it does not restate the registry.
+<!-- END profile: advisor-project-surface -->
+
 <!-- BEGIN grant: standing-upstream-conformance-grant (OPTIONAL — separately-operated opt-in only) -->
 ## Standing upstream conformance grants
 
@@ -590,7 +605,7 @@ Execution jurisdiction does not transfer artifact ownership. ASK may suspend or 
 <!-- BEGIN local-delta -->
 ## asset-pipeline-ASK-Local
 
-These rules are the repo-local delta for `asset-pipeline-ASK` (a separately-operated ASK ecology consumer) on top of the shared protocol above. It installs no profile and opts into the standing upstream-conformance grant (installed above). `asset-pipeline-ASK`'s local delta wins for `asset-pipeline-ASK` where an explicit conflict exists.
+These rules are the repo-local delta for `asset-pipeline-ASK` (a separately-operated ASK ecology consumer) on top of the shared protocol above. It installs the `advisor-project-surface` profile and opts into the standing upstream-conformance grant (installed above). `asset-pipeline-ASK`'s local delta wins for `asset-pipeline-ASK` where an explicit conflict exists.
 
 ## Operating model (AP layer)
 
