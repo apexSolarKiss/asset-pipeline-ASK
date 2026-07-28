@@ -768,7 +768,12 @@ Before schema setup, field-agent setup, attachment handling, record mutation, ge
 
 ## Inbound handoff intake (AP layer)
 
-The generic `-TBI` ingestion, rename-on-ingestion, and classification mechanics are owned by the shared §Inbound Handoff TBI Marker. The exact intake destination for routed inbound handoff memos is `asset-pipeline-ASK-EXTERNAL/sources of intent/`.
+The generic `-TBI` overlay, ingestion, resolution, and disposition mechanics
+are owned by the shared §Inbound Handoff TBI Marker.
+
+The exact AP intake destination is the current intent-inbox path declared by
+`asset-pipeline-ASK-EXTERNAL/_INDEX-asset-pipeline-ASK.md`. Do not hard-code
+or infer a different path from historical records.
 
 ## Direct Push to Main (AP layer)
 
