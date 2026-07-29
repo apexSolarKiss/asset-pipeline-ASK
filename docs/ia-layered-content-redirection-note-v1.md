@@ -14,7 +14,7 @@ not the current architecture synthesis
 
 ## Triggering Clarification
 
-The triggering source-of-intent is `asset-pipeline-ASK_redirection-to-IA-content-work_v1.md` in the project's external sources-of-intent directory. The durable layer of that clarification has been absorbed into grounding-note v51.
+The triggering source-of-intent is `asset-pipeline-ASK_redirection-to-IA-content-work_v1-2026-05-08.md` in the project's external `intent-INbox/`. The durable layer of that clarification has been absorbed into grounding-note v51.
 
 This repo-local note carries the temporal-sequencing piece of the same clarification, scoped to what a returning repo reader needs to see.
 
