@@ -83,6 +83,7 @@ The first direct architecture-attempt artifact after the post-milestone-9 pressu
 - [docs/visual-payload-architecture-v1.md](visual-payload-architecture-v1.md): content-axis companion to the reference-function taxonomy; visual payload attribute register and brand-image-system/context-profile/slot-resolution lattice. **Superseded by [docs/visual-payload-architecture-v2.md](visual-payload-architecture-v2.md)**; v1 preserved as predecessor evidence.
 - [docs/visual-payload-architecture-v2.md](visual-payload-architecture-v2.md): corrected content-axis model — per-image visual dimensions + set-level relations across lifecycle roles, with Axis-B-preserving convergence at slot resolution. Supersedes v1.
 - [docs/brand-intake-acquisition-and-blind-safety-v1.md](brand-intake-acquisition-and-blind-safety-v1.md): thin corpus-construction preflight before the visual-payload model is pressure-tested — acquisition-capability and blind-safety as orthogonal checks, provenance-at-acquisition, the contamination-location heuristic (presentation mode predicts where identity leaks first), crop-vs-drop, and a coverage-adequacy statement
+- [docs/authorized-transformation-and-target-specification-v1.md](authorized-transformation-and-target-specification-v1.md): bounded architecture pressure note on the conditional baseline-truth + authorized-transformation → target-specification seam; preserves product-truth invariance, separates conformance / selection / governance, and keeps depiction-role structure held pending operational need.
 
 ## Phase 2 Six-Category Completion Arc
 
