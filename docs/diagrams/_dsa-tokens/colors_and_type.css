@@ -112,8 +112,8 @@
   --fg-1: var(--ask-fg-light);                        /* default light-mode foreground — the approved dark purple #6A637F */
   --fg-2: #827399;                                    /* secondary text */
   --fg-3: rgba(130, 115, 153, 0.62);                  /* tertiary / hint */
-  --fg-on-card: var(--fg-1);                          /* text on solid/white surfaces — the approved default foreground (#6A637F) */
-  --fg-high-contrast: var(--ask-ink-light);           /* RESERVED opt-in high-contrast backup (#201D26); not reached by any approved surface — opt in explicitly, do not apply by font size */
+  --fg-on-card: var(--fg-high-contrast);              /* fixed high-contrast foreground for the FIXED --surface-solid fill. Theme-invariant on purpose: --surface-solid does not flip, so a foreground that did would fail against it in one mode */
+  --fg-high-contrast: var(--ask-ink-light);           /* OPT-IN high-contrast role (#201D26). It never rebinds the general gradient-surface foreground roles — --fg-1/-2/-3 stay as approved — is never the default foreground, and is never selected by font size. A bounded element or region may opt in only once registered: approved uses are listed in README.md under "High-contrast foreground — registered uses", and a new one requires measured need, explicit ASK authorization, and registration there before merge */
 
   --line-1: rgba(255, 255, 255, 0.45);                /* hairline divider */
   --line-2: rgba(255, 255, 255, 0.22);                /* fainter rule */
@@ -201,7 +201,6 @@
   --fg-1: var(--ask-lavender-dark);
   --fg-2: rgba(212, 198, 225, 0.72);
   --fg-3: rgba(212, 198, 225, 0.48);
-  --fg-on-card: var(--ask-lavender-dark);
 
   --line-1: rgba(212, 198, 225, 0.22);
   --line-2: rgba(212, 198, 225, 0.10);
@@ -227,7 +226,6 @@
     --fg-1: var(--ask-lavender-dark);
     --fg-2: rgba(212, 198, 225, 0.72);
     --fg-3: rgba(212, 198, 225, 0.48);
-    --fg-on-card: var(--ask-lavender-dark);
 
     --line-1: rgba(212, 198, 225, 0.22);
     --line-2: rgba(212, 198, 225, 0.10);
