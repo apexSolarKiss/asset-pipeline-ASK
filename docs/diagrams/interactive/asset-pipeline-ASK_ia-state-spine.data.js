@@ -7,9 +7,10 @@
 
    DISCIPLINE: color encodes STATE only. Everything else — evidence, qualifier,
    mode coverage, repo pointer — is metadata shown in the inspector panel, never
-   in hue. One state per node. States drawn from current repo truth (milestone 14
-   + evidence-depth brief + architecture.md); every state has an honest example,
-   none invented for palette coverage.
+   in hue. One state per node. States drawn from current repo truth (milestone 16
+   latest evidence plateau + milestone 14 governing posture + evidence-depth brief
+   + architecture.md); every state has an honest example, none invented for palette
+   coverage.
 
    Illustrative, not source truth — repo prose (docs/architecture.md) is
    authoritative.
@@ -23,7 +24,7 @@ window.IA_STATE_SPINE = {
   meta: {
     title: 'Layered IA — state',
     subtitle: 'Axis-independent state surface · what is earned / held / deflated, and where',
-    stamp: { source: 'source-v5', render: 'render-v7', date: '2026-06-18' },
+    stamp: { source: 'source-v6', render: 'render-v7', date: '2026-08-15' },
   },
 
   // Legend / state vocabulary (ASK Spectral State).
@@ -110,12 +111,16 @@ window.IA_STATE_SPINE = {
       qualifier: 'held for marketing / campaign modes', pointer: 'docs/collection-mode-operational-test-findings-v1.md',
       modes: ['m-collection'] },
     { id: 'q-portability', group: 'question', label: 'portable asset-definition package · extractability', state: 'partial',
-      evidence: 'Milestone 14 separated the frontier into three questions. Recovery: earned (2c package held in a file-bundle second substrate, recovered 8/8). Auditability: holds at carrier-class depth (no-image-byte boundary; hashes + durable pointers sufficient; gap is carrier-completeness, not byte-storage). Consumability: the deployment-diagnostic application grammar is category-mismatched to a package instance (10/10 FAIL) — the redirect.',
-      qualifier: 'narrow — one package, one second substrate; visual-payload work down-ranked as premature; package-shaped consumer design unauthorized',
+      evidence: 'Milestone 14 separated the frontier into three questions. Recovery: earned (2c package held in a file-bundle second substrate, recovered 8/8). Auditability: holds at carrier-class depth (no-image-byte boundary; hashes + durable pointers sufficient; gap is carrier-completeness, not byte-storage). Consumability: the deployment-diagnostic application grammar is category-mismatched to a package instance (10/10 FAIL) — the redirect. Milestone 16 adds one materially different relational target exercised at constructive-instantiation depth (PostgreSQL 17.11).',
+      qualifier: 'overall PARTIAL — one package evidenced across a file-bundle substrate and a materially different PostgreSQL relational target; general portability, a repeatable consumer, and a consuming grammar remain unearned; visual-payload work down-ranked as premature',
       pointer: 'docs/architecture.md §Portability / Extractability', modes: ['m-marketing'] },
+    { id: 'q-postgresql-second-target', group: 'question', label: 'PostgreSQL second target', state: 'partial',
+      evidence: 'One frozen package concretely instantiated in PostgreSQL 17.11; tested source semantics preserved and recoverable; no target incompatibility established.',
+      qualifier: 'constructive-instantiation depth · instruction-isolated assisted recovery · no calibrated consumer repetition · no consuming grammar',
+      pointer: 'docs/postgresql-constructive-instantiation-and-recovery-evidence-boundary-v1.md', modes: ['m-marketing'] },
     { id: 'q-package-consumer', group: 'question', label: 'what consumes a package?', state: 'partial',
       evidence: 'Milestone 15 names a first operational consumer — a package-instantiation planning agent — and formally calibrates it on one known-achievable filesystem target (run 1): a faithful dual-cited instantiation brief derived from the package alone, blind to the prior instantiation, classifying gaps instead of inventing.',
-      qualifier: 'first operational consumer calibrated at run-1 (one package, one target, two runners); no consuming grammar; next evidence = a materially different second target',
+      qualifier: 'first operational consumer calibrated at run-1 (one package, one target, two runners); second target since exercised by a constructive prototype (milestone 16); calibrated consumer repetition still not tested; consuming grammar still held',
       pointer: 'docs/package-instantiation-consumer-evidence-boundary-v1.md', modes: ['m-marketing'] },
 
     // ---- external ----

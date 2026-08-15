@@ -2,7 +2,17 @@
    Source data for the asset-pipeline-ASK architecture tree diagram.
    Renderable by diagrams-engine.js.
 
-   D04 // asset-pipeline-ASK architecture tree // source-v7 // 2026-07-25
+   D04 // asset-pipeline-ASK architecture tree // source-v8 // 2026-08-15
+   v8 (2026-08-15): milestone-16 state-surface refresh. The current-plateau carrier moves
+   to milestone 16 (PostgreSQL second target exercised at constructive-instantiation
+   depth) while milestone 14 remains the governing architecture posture. Adds the
+   PostgreSQL constructive-instantiation portability leg, the evidence-boundary routing
+   entry, and milestone 16 to the milestone routing list. Retires "next evidence = a
+   materially different second target" as an unperformed move and replaces it with the
+   target-exercised / consumer-repetition-untested split, partitioned so the earned
+   target-diversity + representation-legibility finding sits in the default-earned node and
+   only consumer repetition / consuming grammar carry status:'held'. State-surface data only;
+   no new architecture claim. Content-only; render held render-v16.
    v7 (2026-07-25): operating-model current truth per control-surface#171. The retired
    "single-node" label is removed from the root note and the AGENTS.md node, which now
    names the adversarial-collaboration operating model (ASK-apexed advisor-executor
@@ -41,7 +51,8 @@ window.TREE_D04 = {
     {
       kind: 'section', label: 'current plateau',
       children: [
-        { label: 'milestone 14', note: 'portability frontier separation · recovery (earned) / auditability (carrier-class) / consumability (redirect) · the deployment-diagnostic grammar is the wrong consumer for a package instance · open question: what consumes a package, and is one needed' },
+        { label: 'milestone 16 // latest evidence plateau', note: 'PostgreSQL second target exercised at constructive-instantiation depth · one frozen package concretely instantiated in PostgreSQL 17.11 · tested source semantics preserved and recoverable · no target incompatibility established · target diversity exercised; calibrated consumer repetition on target two NOT tested; consuming grammar NOT earned · no further PostgreSQL or generic portability run opens by default' },
+        { label: 'milestone 14 // governing architecture posture', note: 'portability frontier separation · recovery (earned) / auditability (carrier-class) / consumability (redirect) · the deployment-diagnostic grammar is the wrong consumer for a package instance · open question: what consumes a package, and is one needed' },
       ],
     },
     {
@@ -54,17 +65,21 @@ window.TREE_D04 = {
           { label: 'package extraction (proven 2c instance)', note: 'proven 2c marketing-hero package re-expressed outside Airtable · prose walk + tool-agnostic YAML · walked to instantiation-plan depth' },
           { label: 'worked package store · recovery 8/8', note: 'proven 2c package held in a file-bundle second substrate · recovered from the store alone (8/8 PASS) · substrate-neutral keys; Airtable couplings quarantined' },
         ]},
+        { kind: 'group', label: 'second target · PostgreSQL (milestone 16)', children: [
+          { label: 'constructive instantiation + assisted recovery · target diversity exercised', note: 'the same frozen package concretely instantiated in PostgreSQL 17.11 — a materially different, typed relational target · verified against the fixture (160 passed / 0 failed) · twelve executed recovery surfaces · one instruction-isolated assisted-recovery pass · tested source semantics preserved and recoverable · no target incompatibility established · the representation carried package→slot containment and the AP lifecycle classification but not the inheritance rule explaining lawful slot-level narrowing — representation legibility, not package contradiction' },
+          { label: 'consumer repetition NOT tested · consuming grammar NOT earned', note: 'the calibrated package-instantiation consumer was not rerun on PostgreSQL — this leg was an executor-authored prototype · no further PostgreSQL or generic portability run opens by default', status: 'held' },
+        ]},
         { label: 'auditability · carrier-class (byte-boundary run)', note: 'no-image-byte boundary holds at carrier-class depth · hashes + durable pointers sufficient · gap is carrier-completeness, not byte-storage' },
         { label: 'consumability · the redirect (consuming-artifact run)', note: 'deployment-diagnostic implementation-roadmap / system-map grammar is category-mismatched to a package instance · 0 PASS / 0 PARTIAL / 10 FAIL source-type mismatch · package is a governed-output instance, not a deployment intake', status: 'held' },
-        { label: 'claim boundary', note: 'earned: recovery (one package, one second substrate) + auditability (carrier-class) + a first operational consumer calibrated run-1 · not earned: a consuming grammar · package grammar · runtime consumer · image-byte storage · schema / v3' },
+        { label: 'claim boundary', note: 'earned: recovery (one package, one second substrate) + auditability (carrier-class) + a first operational consumer calibrated run-1 + one materially different relational target exercised at constructive-instantiation depth · not earned: a consuming grammar · repeatable package consumer · package grammar · runtime consumer · image-byte storage · schema / v3 · general PostgreSQL compatibility · all-package portability' },
         { kind: 'group', label: 'package-instantiation consumer (milestone 15)', children: [
           { label: 'first operational consumer · calibrated run-1', note: 'the consumability redirect named a first operational consumer — a package-instantiation planning agent · formally calibrated on one known-achievable filesystem target (run 1) · faithful dual-cited instantiation brief from the package alone, blind to the prior instantiation · gaps classified, not invented' },
-          { label: 'not earned (run-1 bounds)', note: 'no consuming grammar · no second-target portability · no general converter · no schema / runtime · next evidence = a materially different second target', status: 'held' },
+          { label: 'not earned (run-1 bounds)', note: 'no consuming grammar · no general converter · no schema / runtime · the materially-different-second-target condition has since been exercised at constructive depth (milestone 16), but calibrated consumer repetition on target two remains untested', status: 'held' },
         ]},
         { kind: 'group', label: 'next frontier questions', children: [
           { label: 'what consumes a package? · is one needed', note: 'milestone 15: answered at first-operational-consumer depth (package-instantiation planning agent, calibrated run-1); the consuming-grammar question stays open · or the package role may already be complete (portable / auditable / exemplary)', status: 'held' },
           { label: 'visual-payload portability (down-ranked as premature)', status: 'held' },
-          { label: 'package-shaped consumer / consuming grammar (unauthorized; needs a materially different second target)', status: 'held' },
+          { label: 'consuming grammar (needs calibrated consumer repetition, not another target)', note: 'milestone 16 exercised a materially different target; the remaining unearned step is repetition of the calibrated package-instantiation consumer on target two · no further PostgreSQL or generic portability run opens by default', status: 'held' },
         ]},
       ],
     },
@@ -125,6 +140,7 @@ window.TREE_D04 = {
       kind: 'section', label: 'source-of-truth routing',
       children: [
         { label: 'milestones', note: 'docs/milestones/', children: [
+          { label: 'milestone 16 // PostgreSQL second-target evidence plateau' },
           { label: 'milestone 15 // resolution calculus + package-instantiation consumer evidence plateau' },
           { label: 'milestone 14 // portability frontier separation' },
           { label: 'milestone 13 // portability evidence plateau' },
@@ -149,6 +165,7 @@ window.TREE_D04 = {
           { label: 'consuming-artifact-test-definition-v1.md' },
           { label: 'consuming-artifact-test-findings-v1.md' },
           { label: 'package-instantiation-consumer-evidence-boundary-v1.md' },
+          { label: 'postgresql-constructive-instantiation-and-recovery-evidence-boundary-v1.md' },
         ]},
         { label: 'architecture depth docs', note: 'docs/', children: [
           { label: 'architecture-apex-definition-layer-v1.md' },
