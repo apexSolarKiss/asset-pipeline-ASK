@@ -5,9 +5,9 @@ This repo's `AGENTS.md` is a **resolved carrier**: the shared execution protocol
 <!-- BEGIN carrier-metadata -->
 CARRIER_TYPE: resolved-local
 SHARED_BLOCK_SOURCE: apexSolarKiss/control-surface/protocol/AGENTS.shared.md
-SHARED_BLOCK_PIN: fab1de71833f0aac01778c4f7028975d2152eaa7
+SHARED_BLOCK_PIN: 5a3c7d8b2e72d71c0cf4bcce16879a3e7d7f16f9
 PROFILES: [advisor-project-surface]
-GRANT_FRAGMENT: standing-upstream-conformance-grant@fab1de71833f0aac01778c4f7028975d2152eaa7
+GRANT_FRAGMENT: standing-upstream-conformance-grant@5a3c7d8b2e72d71c0cf4bcce16879a3e7d7f16f9
 OPERATING_SURFACE: separately-operated
 <!-- END carrier-metadata -->
 
@@ -35,6 +35,44 @@ The split between repo, `AGENTS.md`, grounding note, ephemeral per-conversation 
 - A doc that mixes rules, context, and state ages at the rate of its fastest-aging contents — usually badly.
 
 If a statement would become stale when a PR lands, a chain closes, or a next path changes, it does not belong in this file or in the grounding note.
+
+**The same principle governs pointers and state.** A pointer that copies state it does not need becomes a tracker of state it does not own, and ages at that source's rate; a pointer that drops an identity something depends on removes the only means of noticing the source moved.
+
+1. A **discovery reference** names the exact locator, role and owner, and is read live.
+2. Where continuity, comparison, review, authorization or recovery depends on a particular prior state, **retain a sufficient identity of the exact bounded prior state the operation depends on, read the owner live at use, and reconcile any movement before proceeding.**
+3. **The governing gate or owner contract defines that identity.** Where neither does and the operation still depends on detecting movement from a prior state, use a **full SHA-256 of the exact bounded bytes**. Add byte size only where truncation or incomplete transport is a named failure mode. **If the operation needs only current truth, no prior-state pin is required** — ordinary discovery does not acquire a hash merely because its source is mutable. An identity used to satisfy a gate is full-length. **A prior pin is prospective evidence: never reconstruct a missing pin after the interval it was supposed to guard; where that interval matters to the decision, report it as unverified and stop.**
+4. A shorter owner-qualified provenance reference may aid navigation where the owning contract permits it, but it is **not gate evidence until resolved to the full identity**.
+5. A manifested package is normally referenced by its manifest identity; repeat a member identity only where that member independently changes the decision, or becomes the separately approved or landed byte source.
+6. Freeze mutable state only where comparability requires it — blind parallel reconstruction, for example — and freeze only the bounded state needed.
+7. Do not add metadata unless it changes a decision, detects a named failure mode, or supports recovery from a named failure.
+
+**Specialized contracts keep their own field sets.** This rule governs what a pointer carries in general. §PR Creation, §Advisor-Readable Review Objects, the inter-session coordination runbook, a registry's structural contract, and a package's own manifest each define the fields they require, and those govern where they apply.
+
+**Movement of a mutable source is classified on two axes — never from net growth, shrinkage, mtime, or actor attribution alone:**
+
+```text
+EVIDENCE
+  ACCOUNTED                  every changed limb is bounded and explained by a
+                             named durable owner, PR, receipt, restore operation
+                             or row-scoped state transition, and required
+                             structure and protected invariants still hold
+  UNACCOUNTED / DESTRUCTIVE  any changed limb lacks a durable explanation,
+                             expected material disappeared, structure, parity or
+                             identity failed, or the change escaped its claimed
+                             scope
+
+AUTHORITY
+  COVERED                    the current ASK envelope and applicable review
+                             window cover proceeding from the resulting live state
+  NOT COVERED                the movement may be legitimate, but it moved beyond
+                             the authorized or reviewed state
+```
+
+```text
+ACCOUNTED + COVERED          reconcile and proceed
+ACCOUNTED + NOT COVERED      stop for fresh ASK authority and/or review
+UNACCOUNTED / DESTRUCTIVE    stop, regardless of authority
+```
 
 ---
 
@@ -355,7 +393,7 @@ A verification statement is bounded by the evidence actually gathered.
 - the current ASK authorization and approved scope;
 - explicit non-actions;
 - the current gate and intended terminal state;
-- exact durable-owner, review-object, PR, and artifact locators, each carrying the load-bearing state identity that makes it reviewable — PR base and head SHA, commit, version, or hash, as applicable;
+- exact durable-owner, review-object, PR, and artifact locators, each carrying the load-bearing state identity that makes it reviewable — PR base and head SHA, commit, version, or hash, as applicable. Read mutable owners live at use, reconcile them against that pin, and classify the movement on the evidence and authority axes before proceeding (§Aging-Rate Principle);
 - unresolved blockers and write-aperture state.
 
 **Recovery is not uniform across that list, and conflating its limbs is itself a failure mode.** *Authority:* preserve the exact ASK relay or envelope; where it cannot be independently established after reduction, stop and obtain a fresh ASK relay. **Never reconstruct authority** from a program row, plan, recap, PR, review object, artifact, durable-state owner, or generated summary — those preserve evidence of the work, never ASK's authorization of it. *State and evidence:* re-read their durable owners. *Mutable objects:* re-verify the load-bearing state identity, because a locator without its approved identity does not preserve the reviewed state. A drifted head, version, or hash is outside the **previously established reviewed state**; it is outside **ASK authority** only where the current ASK envelope does not cover that drift. Re-establish both the authority boundary and any applicable review window before resuming. **A generated summary is continuation context, not an authoritative replacement for those owners.** The dangerous case is not detected loss but silent loss — an executor that has forgotten an authorization, a non-action, a blocker, or an aperture does not know anything is missing, so the set is re-established affirmatively rather than reported when noticed.
