@@ -5,9 +5,9 @@ This repo's `AGENTS.md` is a **resolved carrier**: the shared execution protocol
 <!-- BEGIN carrier-metadata -->
 CARRIER_TYPE: resolved-local
 SHARED_BLOCK_SOURCE: apexSolarKiss/control-surface/protocol/AGENTS.shared.md
-SHARED_BLOCK_PIN: 5a3c7d8b2e72d71c0cf4bcce16879a3e7d7f16f9
+SHARED_BLOCK_PIN: 02270768e768a83683ee97eb67d8d89205db7835
 PROFILES: [advisor-project-surface]
-GRANT_FRAGMENT: standing-upstream-conformance-grant@5a3c7d8b2e72d71c0cf4bcce16879a3e7d7f16f9
+GRANT_FRAGMENT: standing-upstream-conformance-grant@02270768e768a83683ee97eb67d8d89205db7835
 OPERATING_SURFACE: separately-operated
 <!-- END carrier-metadata -->
 
@@ -377,6 +377,7 @@ A verification statement is bounded by the evidence actually gathered.
 <!-- rule-id: verification-execution-completion -->
 - **The boundary of a search is the boundary of the claim.** Absence from one folder, one pattern, one connector result, or one carrier class is not absence from the corpus.
 - **A check verifies only its direct result.** Separate observation from inference; do not attach an inference to a checked fact and label the composite `verified`.
+- **A bounded-region or inverse-transform proof establishes only the transformation it directly checks.** It is not evidence that no intervening write was overwritten: the proof is evaluated against the operation's recorded preimage and resulting bytes, so it can pass even when a different state existed immediately before replacement.
 - Pattern lists are hypotheses about how a defect may appear, not exhaustive evidence. An exhaustive claim requires enumerating and dispositioning the actual occurrence or carrier set.
 - Where coverage is partial, state the result as: `no unexplained findings in <exact set tested>`.
 - **Frozen-record correction threshold.** If a **completed audit, closure, provenance record, or other frozen record** overstates its evidence in a way that can affect a future decision about action, authority, safety, recovery, or durable interpretation, preserve the original statement and append a correction — do not silently tidy the audit trail. A non-material imperfection — one below that threshold — is dispositioned in the current review or closure record as `NON-BLOCKING / NO ACTION` and does not reopen, append to, or generate a successor for the frozen object. A `MATERIAL NON-BLOCKING` finding is recorded once in the current record; append to the frozen object only where future readers materially depend on the corrected interpretation, not merely because the discrepancy exists.
@@ -664,6 +665,67 @@ Rules:
 - **Stop on suspected concurrent mutation.** If a working tree contains changes the current session did not make, do not overwrite. Re-orient against the repo before continuing.
 
 This rule applies whether the second session is the same agent, a different agent, or a human editor.
+
+### Write Guarantee Levels
+<!-- rule-id: write-guarantee-level-declaration -->
+
+A write to shared mutable state carries exactly one **declared guarantee level**. Name it; never imply a stronger one.
+
+```text
+LEVEL 0   observed-state checks only — NO exclusion
+          reads, hashes, and comparisons at named observation points.
+          Movement is detected only when an observation point sees it;
+          a write after the final check and before replacement may be
+          overwritten without detection.
+
+LEVEL 1   cooperative exclusion — among writers sharing ALL THREE of:
+            the same canonical target identity
+            the same exclusion primitive
+            the same lock plane
+          Excludes participants. Excludes nothing else.
+
+LEVEL 2   backend-enforced conditional mutation — the backend itself
+          rejects the write if the state moved. IMPLEMENTED and EXERCISED
+          per backend; never asserted from the existence of a revision token.
+```
+
+**No silent downgrade.** Where a caller requires a level the backend cannot provide, the operation **fails**. It never proceeds at a lower level and reports success — a downgrade that reports success is worse than no protection, because it manufactures confidence.
+
+**Level 1 is not compare-and-swap** and is never labeled as such. It makes the read-to-write interval irrelevant *for participants*. A non-participant is outside that exclusion guarantee: movement is detected only at the operation's named observation points, and a write after the final observation and before replacement may be overwritten without detection. Within this model, only an implemented Level 2 conditional write closes that interval against non-participants on the supported backend.
+
+Writers cooperate only where all three Level-1 identities match. Two writers resolving the same file to different canonical identities, or using different exclusion primitives or lock planes, do not exclude each other. The Level-1 primitive itself supplies no evidence that they are coordinating.
+
+### Bounded-Region Byte Contract
+<!-- rule-id: bounded-region-byte-contract -->
+
+A write that replaces **part** of a file, or an identity claim over part of a file, carries an explicit **operation-scoped byte contract**.
+
+**This rule creates no separate review window.** The contract travels with the operation and is reviewed at whatever gate the operation already has.
+
+**§Scope Discipline scales evidence depth, not whether a boundary category may remain implicit.** Every category is declared before the operation; where a category is inapplicable, that is declared explicitly rather than omitted or defaulted:
+
+```text
+source mode / encoding             declared and validated, or binary
+start + end resolution             the exact start anchor, and EVERY candidate end
+occurrence selection               which occurrence, where more than one exists
+inclusion                          whether each anchor falls inside the region
+separator bytes + ownership        the exact bytes, and which side owns them
+trailing bytes                     what else belongs to the region
+source + result + untargeted       the region before, the region after, and
+  identities                       everything outside it
+structure-aware resolution         a typed resolver for the source's structure,
+                                   or a fail-closed refusal
+```
+
+A default is a decision made by whoever wrote the tool, applied to a file they never saw.
+
+**Anchor resolution fails closed.** An anchor that is absent, whose occurrence count does not match the declaration, or whose declared end candidate is not found, is an error — never a scan that runs on to the end of the file.
+
+**Cross-field declarations must not contradict one another.** Where two fields could claim the same bytes, the contract states which one wins.
+
+**The untargeted identity is the operative proof that a bounded edit stayed bounded**: everything outside the region is byte-identical before and after. Establish it by comparing those exact bytes — a rendered or line-based view can agree while the bytes differ.
+
+This rule names the required **categories**. It fixes no implementation schema, API, or field count — those belong to whatever tool performs the write.
 
 ---
 
