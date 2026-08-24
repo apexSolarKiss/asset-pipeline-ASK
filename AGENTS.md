@@ -5,9 +5,9 @@ This repo's `AGENTS.md` is a **resolved carrier**: the shared execution protocol
 <!-- BEGIN carrier-metadata -->
 CARRIER_TYPE: resolved-local
 SHARED_BLOCK_SOURCE: apexSolarKiss/control-surface/protocol/AGENTS.shared.md
-SHARED_BLOCK_PIN: 02270768e768a83683ee97eb67d8d89205db7835
+SHARED_BLOCK_PIN: 90994e1a7c5ecfa1d1147335b9f62f1b2ed84a2c
 PROFILES: [advisor-project-surface]
-GRANT_FRAGMENT: standing-upstream-conformance-grant@02270768e768a83683ee97eb67d8d89205db7835
+GRANT_FRAGMENT: standing-upstream-conformance-grant@90994e1a7c5ecfa1d1147335b9f62f1b2ed84a2c
 OPERATING_SURFACE: separately-operated
 <!-- END carrier-metadata -->
 
@@ -271,7 +271,13 @@ Within the underlying filename the lifecycle suffix is last, and an addressee ma
 
 **This lifecycle grammar is prospective.** Historical filenames retain the conventions in force when they were created and are not normalized; legacy tokens do not acquire the meanings defined here.
 
-**The queue is logical, not a folder.** The outstanding feed-obligation queue may occupy more than one physical location — an ASK-side staging area, an origin's scratch space, a transit surface, and the recipient's declared intake path. The `-TBI` marker attaches when the artifact **enters the queue**, wherever that is; relocation *within* the queue is not a lifecycle event and neither applies nor re-applies a marker. Arriving in the intake folder is a move within the queue, not an entry into it and not an exit from it. A fresh routed handoff leaves the queue by ingestion (`-TBI` → `-ingested`) or by pre-ingestion retirement (`-TBI` → `-supersededA`); any other artifact leaves it when the overlay is resolved or canceled, its underlying filename unchanged.
+**The queue is logical, not a folder.** The one marked payload may sit in an ASK-side staging area, an origin scratch location, a transit surface, or the recipient's declared intake path. That describes where the **designated payload** may be located; it does not place a retained sender or provenance copy in the queue. The `-TBI` marker attaches when that payload **enters the queue**, wherever that is; relocation *within* the queue is not a lifecycle event and neither applies nor re-applies a marker. Arriving in the intake folder is a move within the queue, not an entry into it and not an exit from it. A fresh routed handoff leaves the queue by ingestion (`-TBI` → `-ingested`) or by pre-ingestion retirement (`-TBI` → `-supersededA`); any other artifact leaves it when the overlay is resolved or canceled, its underlying filename unchanged.
+
+**One obligation, one marked payload.** `-TBI` attaches only to the exact artifact instance ASK intends to feed. In a two-copy handoff, the retained origin or provenance copy stays unsuffixed; only the recipient-bound copy carries the overlay. Byte-identical files at two paths are **two artifact instances**. Location alone never creates queue membership, and one outstanding feed obligation is represented by exactly one live marked artifact instance.
+
+**Move is not copy.** A byte-preserving move or rename of the designated payload within the queue preserves the same marked instance and is not a lifecycle event. Copying creates another artifact instance and neither transfers nor duplicates designation by itself. If ASK designates the new copy as the payload, the same bounded operation must leave exactly one marked instance: a retained origin or provenance copy stays or becomes unsuffixed; any former temporary transport instance is removed or resolved according to its underlying role and prior state. A fresh routed handoff is never left bare merely to transfer designation. A file in origin scratch may carry `-TBI` only where that exact file is itself the designated payload — for example, a PTX, report, or other independently complete artifact ASK intends to feed — or a distinct temporary recipient-bound transport instance.
+
+**Recipient lifecycle does not mirror onto provenance.** `-ingested`, `-supersededA`, `-supersededP`, and terminal routed-handoff dispositions belong to the recipient routed instance. A retained origin or provenance copy is not renamed to match them; the recipient outcome is recorded through the recipient artifact and any separate lineage or disposition record.
 
 **Supersession has two phases, and the marker encodes which.** This applies to a **fresh routed handoff awaiting first ingestion**; anything not currently in that state exits the queue by overlay removal or cancellation, never by acquiring a supersession suffix. For such a handoff, ingestion is not the only exit: at any point before ingestion — including after a feed the recipient surface never ingested — ASK may instead retire it as `-supersededA`. A `-supersededA` artifact was never ingested and never absorbed; it carries no pending work and remains in the intake only as lineage, typically beside an active successor carrying its own `-TBI`. A `-supersededP` artifact *was* ingested — its lineage records that the recipient read it before a successor displaced it, which is a materially different history and is why the phase is encoded rather than flattened. Neither disposition authorizes implementation, and neither is reactivated, re-ingested, or renamed off merely because the file remains physically present in the intake.
 
