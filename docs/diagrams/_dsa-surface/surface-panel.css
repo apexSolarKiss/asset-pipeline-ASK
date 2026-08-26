@@ -1,0 +1,140 @@
+/* =========================================================================
+   surface-panel — shared visual contract for live content panels.
+
+   An OPT-IN LIVE-SURFACE VISUAL RULE under Foundations. It is not an artifact
+   scaffold, not a surface pattern, not a component, and it is deliberately
+   none of those: it owns PRESENTATION ONLY, and it owns no markup and no
+   semantics. There is no template here, no required element, and no generated
+   preview — a consuming surface writes its own markup and applies these
+   classes to it.
+
+   That boundary is the whole point. Two semantic forms share this appearance
+   while sharing neither structure nor behavior:
+
+     full-panel link    the panel element IS a native <a>; the whole panel is
+                        the hit target and it contains no other link
+     inert + internal   the panel is an <article> or <div> and carries its own
+       links            links inside it — nav, chips, or action rows
+
+   A component or a shared markup partial would have to either permit a link
+   nested inside a link — invalid, and an accessibility defect — or flatten a
+   difference that is real. A stylesheet does neither. It also means adopting
+   this costs a consumer nothing structurally: add the classes, delete the
+   local re-derivation.
+
+   What it does NOT own, on purpose:
+
+     support-copy foreground   each consuming surface owns its own; this
+                               module sets none.
+     interaction on inert      an <article> or <div> panel gets no hover, no
+       panels                  press, and no pointer affordance from here. Only
+                               a.surface-panel is given the repo's interaction
+                               contract, because only it is actually pressable.
+     layout of the payload     a consumer's own actions, chips, metadata rows,
+                               and grids stay the consumer's.
+
+   It introduces no token or new palette value. Geometry and the
+   README-specified focus glow retain raw literals where no role token exists —
+   the 20px blur and the focus ring's 1px / 4px translucent white are both
+   established values with no token to resolve through. Every text size
+   resolves through the foundation scale, and reusable colors resolve through
+   existing roles. An unruled raw color or raw text size here is a defect.
+
+   Scope: live content panels carrying a primary title, supporting copy, and
+   optionally metadata and actions. Shared rectangularity is not shared
+   semantics — token specimens, diagram nodes, artifact-scaffold cards, chips,
+   badges, lightboxes, and image cards are NOT this population and must not be
+   conformed to it.
+   ========================================================================= */
+
+/* The panel. A column, always: the support line sits BELOW its title rather
+   than beside it, which is what makes a title-plus-support pair read the same
+   way on every surface that adopts this. min-width: 0 is load-bearing beside
+   any flex or grid parent — without it a long unbreakable string sets the
+   panel's minimum size and pushes the row wider than its container. */
+.surface-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-width: 0;
+
+  background: var(--surface-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--line-1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+}
+
+/* The panel primary label — Inter, on the primary-label METRIC the
+   surface-shell's structural title also carries: the same size, weight,
+   line-height and tracking. The FAMILY is where the two part, and it is owned
+   by the SELECTOR, allocated per role: `.surface-panel-title` is Inter, the
+   foundation's default interface and display family; `.surface-title` is the
+   mono structural locator, in both of the shell's title forms.
+   `.surface-action` is a third role and a separate mono exception — not this
+   one.
+
+   The allocation holds regardless of what a panel label says. A panel title
+   may name something technical or structural, and may contain `//` or any
+   other terminalcore grammar, and it stays Inter, because the selector owns
+   the role. Nothing here licenses reading a payload string to pick a family.
+   The four shared metric declarations are what still make a primary label read
+   as one object across surfaces.
+
+   Do not conform either implementation to the other. */
+.surface-panel-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--tracking-tight);
+}
+
+/* Supporting copy, on the foundation's Small supporting-text role. The pair
+   separates on SIZE — 24 against 18 — not on weight. Foreground is the
+   consuming surface's, deliberately. */
+.surface-panel-support {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-body);
+  letter-spacing: var(--tracking-normal);
+}
+
+/* A panel that is ITSELF a link. Only this form gets interaction, and it takes
+   the repo README's hover/press/focus contract verbatim so every consumer
+   inherits it rather than re-deriving it. Hover spends both approved limbs:
+   the opacity drop, plus a real --line-2 -> --line-1 border brightening. No
+   hue shift — the two line roles are the same translucent value at different
+   strengths, so this brightens rather than recolors.
+
+   An inert panel gets none of this. A panel containing its own links is inert
+   HERE and its links carry their own affordances; nesting a link inside a
+   link is invalid, so this rule and that arrangement are mutually exclusive by
+   construction. */
+a.surface-panel {
+  text-decoration: none;
+  color: var(--fg-1);
+  /* NO `border-bottom: none` here. The foundation underlines anchors, but that
+     rule is element-level (0,0,1) and `.surface-panel`'s border shorthand is a
+     class (0,1,0), so the underline is already overridden — while a
+     `border-bottom: none` at (0,1,1) would outrank the shorthand and leave the
+     panel with three sides. Measured before this was removed: bottom width 0. */
+  border-color: var(--line-2);
+  transition:
+    border-color var(--dur-2) var(--ease-out),
+    opacity var(--dur-2) var(--ease-out),
+    transform var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out);
+}
+a.surface-panel:hover { opacity: 0.92; border-color: var(--line-1); }
+a.surface-panel:active { transform: scale(0.97); }
+a.surface-panel:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 1px var(--ask-white), 0 0 0 4px rgba(255, 255, 255, 0.25);
+}

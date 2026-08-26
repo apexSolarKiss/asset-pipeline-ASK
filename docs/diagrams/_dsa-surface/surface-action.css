@@ -1,0 +1,172 @@
+/* ============================================================
+   surface-action.css — the shared compact-action visual contract
+
+   An OPT-IN live-surface visual rule under Foundations, and the sibling of
+   surface-panel.css on the action axis. That module owns the container a
+   surface presents; this one owns the compact control a surface offers.
+
+   It exists because recurring compact controls had diverged in local geometry
+   and typography — the same object reached independently on each surface, each
+   version defensible where it stood. That is precisely why the grammar belongs
+   above all of them rather than inside any one.
+
+   Presentation and interaction only. It owns no markup, no semantics, no
+   destination, and no row layout, and it ships no template, catalog card, or
+   generated preview.
+
+   WHAT IT DOES NOT OWN, deliberately:
+
+     element type      <a> or <button> — the consumer decides whether the
+                       control navigates or acts, and the contract styles
+                       either without changing what it is
+     destination/copy  the consumer's
+     row layout        placement, gap, and vertical rhythm stay with the
+                       consuming card or band. Action rows legitimately differ
+                       between surfaces, and those differences do not alter the
+                       control contract — so no shared row class ships here.
+                       The module owns the controls, never the composition
+                       around them.
+     placement         inside a panel, outside one, several, one, or none
+
+   NOT for: full-panel links (a.surface-panel owns those), ordinary inline
+   text links, theme or mode selectors, lightbox and gallery-overlay triggers,
+   status notes, badges, or non-interactive labels. Being rectangular and
+   clickable is not the same role.
+
+   WHY THESE VALUES. The contract uses existing role tokens wherever the system
+   already owns a role: type, spacing, radius, surface, foreground, border
+   color, and motion timing/easing. It introduces no token and no palette role.
+
+   Established interaction literals retain their existing raw values where no
+   role token exists: the 1px border, the 1px/4px focus geometry, the 0.92
+   hover opacity, the 0.97 press scale, and the README-specified
+   translucent-white focus halo. Those are the family's existing interaction
+   contract, not ad-hoc measurements — do not invent tokens for them here, and
+   do not alter the interaction treatment to make them look tokenized.
+
+   Caption-sized mono at 300 keeps the control quieter than the primary label
+   it usually sits beneath, without becoming prose. It is Caption-SIZED, not
+   the Caption role: Caption is uppercase, widely tracked and heavier, and it
+   labels; this is sentence-cased on zero tracking, and it is clicked.
+
+   Five properties a consumer could otherwise decide are DECLARED here. Four of
+   them inherit, so a host surface can set them far above the control; the
+   fifth is a box model the two permitted element types do not share. All would
+   otherwise make the same control render differently per surface:
+
+     text-transform none. An ancestor that uppercases a region would uppercase
+                    the control with it, and a compact action is sentence-cased
+                    — that is one of the two things separating it from the
+                    Caption role it shares a size with.
+     text-align     center. A single-line label is centered by the flex box
+                    regardless, but `justify-content` centers the flex ITEM,
+                    not the lines of text inside it. The moment a label wraps —
+                    which this contract deliberately permits — an anchor
+                    inherits the host's alignment while a button keeps its
+                    user-agent centering, and the two semantic forms visibly
+                    diverge on the exact case the contract exists to allow.
+
+     line-height    --lh-tight. Line-height inherits, so an undeclared control
+                    takes whatever the host sets — 1.45 on a body-copy surface,
+                    something else on a mono surface — and the same pill would
+                    stand at a different height on each. A compact control's
+                    height must not be a property of the page it lands on.
+     white-space    normal. A long label wraps WITHIN the control in a narrow
+                    layout rather than forcing overflow, and the control stays
+                    whole inside a wrapping row. Canonical `nowrap` was
+                    rejected on measurement rather than taste: a compact label
+                    long enough to exceed its container is a real case, and
+                    `nowrap` resolves it by pushing past the container edge.
+     box-sizing     border-box. A consumer may give a control an explicit
+                    width, and an anchor and a button do not resolve one the
+                    same way by default — the same declared width would yield
+                    two different outer widths. Since the contract promises
+                    that both element types are interchangeable, it has to own
+                    the box model that promise depends on.
+
+   Hover, press and focus are one contract, inherited by every consumer, and
+   they live here rather than on any consuming surface. Press is scale(0.97);
+   focus is the white glow rather than the browser default.
+
+   HOVER RESOLVES THE BORDER TO `currentColor`, and that is deliberate. A
+   compact control is small, and its rest border is --line-2 — the faintest
+   line the system has. A hover that only brightened it to --line-1, still
+   translucent, is barely perceptible at this scale. Resolving to the control's
+   OWN governed foreground makes the outline legible: primary follows --fg-1,
+   the --secondary variant follows --fg-2, and a consumer that recolors a
+   control for its context gets a matching hover border for free.
+
+   This ALIGNS compact actions with the foundation's generic-anchor treatment,
+   which already hovers to `border-bottom-color: currentColor`. It is not an
+   exception carved out of a line-role norm — the line-role cases are the ones
+   that are specific, and they are named: FULL-PANEL LINKS (a.surface-panel)
+   take the --line-2 -> --line-1 brightening, and WRAPPING BREADCRUMB LINKS
+   (.surface-title a) take their own underline treatment. Mark and footer roles
+   change opacity only and leave their border alone. Do not conform any of them
+   to this rule, or this rule to them.
+
+   State it accurately: in light mode this visibly moves the border from a
+   translucent white to the foreground purple. That IS a color transition. What
+   the repo README forbids is introducing an ARBITRARY new hue, and this
+   introduces none — the border becomes a color the control is already
+   painted in.
+
+   The foundation underlines anchors, so text-decoration is held off at rest
+   and on hover — a compact control reads as a control, not as running text.
+
+   Requires colors_and_type.css. Layers on top of it and rebinds no token.
+   ============================================================ */
+
+.surface-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-normal);
+  white-space: normal;
+  text-decoration: none;
+  text-transform: none;
+  text-align: center;
+
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface-glass-2);
+  color: var(--fg-1);
+
+  cursor: pointer;
+  transition:
+    border-color var(--dur-2) var(--ease-out),
+    opacity var(--dur-2) var(--ease-out),
+    transform var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out);
+}
+
+/* The <button> form. A button carries user-agent font, background, border and
+   appearance that a class alone does not reach; the declarations above already
+   replace the paint, and these two remove what is left. Same contract, same
+   pixels — the consumer keeps a real button where the control acts rather than
+   navigates, instead of reaching for an anchor with no destination. */
+button.surface-action {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Secondary is a FOREGROUND variant, never a second geometry. Two controls
+   sitting in one row are the same kind of object at two priorities; giving the
+   quieter one its own size, padding or radius would make it a different object
+   that happens to be nearby. */
+.surface-action--secondary { color: var(--fg-2); }
+
+.surface-action:hover { opacity: 0.92; border-color: currentColor; text-decoration: none; }
+.surface-action:active { transform: scale(0.97); }
+.surface-action:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 1px var(--ask-white), 0 0 0 4px rgba(255, 255, 255, 0.25);
+}

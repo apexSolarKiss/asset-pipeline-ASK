@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>asset-pipeline-ASK // diagrams</title>
+<meta name="description" content="asset-pipeline-ASK // seven illustrative figures across four classes — the representation atlas that orients them, two structural axes, the repo architecture tree, the bounded-generativity system model, the visual-payload convergence flow, and the interactive architecture-state spine.">
+<meta name="color-scheme" content="light dark">
+<!-- ============================================================
+     DIAGRAM FRONT DOOR — asset-pipeline-ASK/docs/diagrams/index.html
+
+     A live navigation surface for the seven diagram pages in this folder. It
+     opens from the deployment or by double-click from a clean clone. Local
+     assets and destinations inside the deployed `docs/` root resolve relative
+     to this file. Repo-root owner documents outside that root, and fleet routes
+     to other repos or surfaces, use canonical external locators.
+
+     This page is ASSET-PIPELINE-ASK-OWNED composition over vendored
+     design-system-ASK carriers. The carriers under _dsa-surface/ are pinned
+     byte-identical copies and are never hand-edited here; the tokens and fonts
+     resolve from the existing _dsa-tokens/ mirror this folder already carries
+     for the diagrams, so no second token or font copy exists.
+
+     TIER BOUNDARY. This page is an ASK-branded surface and carries an
+     ASK-assigned Tier-3 value in the shell's mark slot. The seven figures it
+     indexes remain Tier 1 + Tier 2 only — the assignment does not propagate
+     into them, does not make asset-pipeline-ASK ASK-the-entity, and does not
+     come from surface-shell, which ships a slot and no mark. Any future
+     independent asset-pipeline-ASK brand is a separate identity migration.
+     See README.md.
+
+     ORDER IS SEMANTIC, NOT GEOMETRIC. The representation atlas leads because it
+     is the orientation layer over everything below it — it names, per view, the
+     object represented, the question it answers, and where that view's authority
+     ends. No single diagram is the master picture. It takes the same inert card
+     as every other figure: one grid, one panel class, no hero variant. The
+     remaining six hold the folder's existing inventory order.
+
+     The diagrams are ILLUSTRATIVE, not source of truth. Repo prose is
+     authoritative; each card links the document that owns what it draws, where a
+     current public owner exists. The atlas is an orientation aid over the other
+     views rather than a modelled object with its own doctrine owner, and the
+     state spine is authored in its own data carrier — so neither borrows a third
+     action it does not have. Two figures carry a committed raster because their
+     governing prose embeds it directly; those cards expose it.
+     ============================================================ -->
+<link rel="stylesheet" href="_dsa-tokens/colors_and_type.css">
+<link rel="stylesheet" href="_dsa-surface/surface-panel.css">
+<link rel="stylesheet" href="_dsa-surface/surface-action.css">
+<link rel="stylesheet" href="_dsa-surface/surface-shell.css">
+<style>
+  :root { --gap: 20px; }
+  /* Local delta only. The foundation already binds the gradient, the foreground
+     ramp, the sans default and antialiasing; restating them here would also
+     reset background-attachment and give this surface a different gradient
+     behavior from the rest of the family. What remains is a full-height field.
+
+     No page-wide font-family sits here. Mono is the earned exception, declared
+     by the roles that hold it — the shell title, badge and footer, the compact
+     actions, and code literals through the foundation — never a page default. */
+  body { min-height: 100vh; }
+
+  /* min(320px, 100%): keep the 320px track minimum wherever the content column
+     can hold it, but let the track shrink to the available width on a narrow
+     phone. A bare 320px minimum overflows the shell's content column at a 320px
+     viewport. */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: var(--gap); }
+
+  /* Card chrome and column rhythm resolve from the vendored surface-panel
+     contract. Only what that contract deliberately leaves to the consuming
+     surface stays here. */
+  .card .cls { font-size: var(--fs-caption); letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-3); }
+  .card p { color: var(--fg-2); }
+
+  /* The action ROW is this page's — where controls sit in the card, how they
+     wrap, and the rhythm above them. The controls themselves are the vendored
+     surface-action contract and declare their own type, geometry, paint and
+     interaction. Four actions is this page's maximum and wraps to a second line
+     before the card's own column narrows. */
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 6px; }
+
+  /* Repo-level destinations. Each has exactly one target, so each is a
+     full-panel link — the panel IS the anchor and carries no control inside it.
+     That is the opposite relationship from a diagram card, which is inert and
+     carries its own actions, and the two must not be conflated. */
+  .routes { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: var(--gap); margin-top: var(--space-8); }
+  .route { min-width: 0; }
+  .route .name { display: block; }
+  /* Two declarations the shared panel contract deliberately does NOT own: the
+     supporting foreground, which each consuming surface keeps, and the URL
+     break. Without the foreground these descriptions inherit
+     `a.surface-panel`'s --fg-1 and collapse onto the title's level; `anywhere`
+     gives the bare repository URL a break opportunity and lowers its
+     min-content contribution. */
+  .route .what { display: block; color: var(--fg-2); overflow-wrap: anywhere; }
+
+  .page-note { margin: 40px 0 0; color: var(--fg-3); font-size: var(--fs-caption); line-height: 1.7;
+               display: flex; flex-direction: column; gap: var(--space-3); }
+  /* The foundation styles bare `p` at Body size on its own line-height and
+     foreground, and an element rule outranks what a container passes down — so
+     size, line-height AND color are restated as `inherit`. Without color these
+     paragraphs render brighter than the code spans inside them. */
+  .page-note p { margin: 0; font-size: inherit; line-height: inherit; color: inherit; }
+  .page-note code { color: var(--fg-2); }
+</style>
+</head>
+<body>
+<div class="surface">
+
+  <header class="surface-head">
+    <div class="surface-head-main">
+      <a class="surface-mark" href="index.html" aria-label="asset-pipeline-ASK diagrams home">
+        <img class="surface-mark-light" src="_dsa-surface/assets/logo-ASK-white.png" alt="" aria-hidden="true" width="2160" height="974">
+        <img class="surface-mark-dark" src="_dsa-surface/assets/logo-ASK-lavender-ASK.png" alt="" aria-hidden="true" width="2160" height="974">
+      </a>
+      <h1 class="surface-title"><span class="org">apexSolarKiss</span> <span class="sep" aria-hidden="true">//</span> asset-pipeline-ASK <span class="sep" aria-hidden="true">//</span> diagrams</h1>
+      <p class="surface-lede">Seven figures across four classes — two structural axes, the repo architecture tree, a
+        system-model topology, a convergence flow, and one interactive state surface. They represent different objects
+        and must not be collapsed into one picture, so the representation atlas comes first and says what each one is
+        for. Diagrams are orientation aids and age; the repo prose is source of truth.</p>
+      <span class="surface-badge">illustrative &gt;&gt; not source of truth</span>
+    </div>
+  </header>
+
+  <hr class="surface-rule">
+
+  <main class="surface-payload">
+
+  <div class="grid">
+
+    <div class="card surface-panel">
+      <div class="cls">atlas // orientation — start here</div>
+      <h2 class="surface-panel-title">architectural representation atlas</h2>
+      <p class="surface-panel-support">The orientation layer over everything below. For each representation it names the object represented, the architectural question it answers, the live surface that carries it, and where that view's authority ends. Flat and non-causal — containment and <code>view of</code> relations, no flow. It is not another architecture model, and no single diagram is the master picture.</p>
+      <div class="actions">
+        <a class="surface-action" href="asset-pipeline-ASK_architectural-representation-atlas.html">open</a>
+        <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_architectural-representation-atlas.figure.js">source</a>
+      </div>
+    </div>
+
+    <div class="card surface-panel">
+      <div class="cls">tree // TREE_D04</div>
+      <h2 class="surface-panel-title">architecture tree</h2>
+      <p class="surface-panel-support">Where the repo's surfaces live — the current architecture front door, the plateau state, the portability and extractability arc, the structured form and its consumers, and the application-layer outputs. A structural atlas of the project, not a maturity claim.</p>
+      <div class="actions">
+        <a class="surface-action" href="asset-pipeline-ASK_architecture-tree.html">open</a>
+        <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_architecture-tree.source.js">source</a>
+        <a class="surface-action surface-action--secondary" href="../architecture.md">architecture</a>
+      </div>
+    </div>
+
+    <div class="card surface-panel">
+      <div class="cls">tree // TREE_ONTOLOGY</div>
+      <h2 class="surface-panel-title">ontology</h2>
+      <p class="surface-panel-support">Axis A — what kinds of information the definition layer structures: intent, inputs, constraints, creative discretion, required outputs, and governance. A branching classification, drawn as a horizontal cascade. Structural, asserting no maturity state.</p>
+      <div class="actions">
+        <a class="surface-action" href="asset-pipeline-ASK_ontology-tree.html">open</a>
+        <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_ontology-tree.source.js">source</a>
+        <a class="surface-action surface-action--secondary" href="../layer-disambiguation-note-v1.md">layer note</a>
+      </div>
+    </div>
+
+    <div class="card surface-panel">
+      <div class="cls">spine // TREE_INHERITANCE</div>
+      <h2 class="surface-panel-title">inheritance</h2>
+      <p class="surface-panel-support">Axis B — where information lives and how it inherits, overrides, and combines, from the brand-system layer down to the terminal slot. A linear chain, drawn as a centered vertical spine. The orthogonal partner to the ontology, deliberately a separate picture.</p>
+      <div class="actions">
+        <a class="surface-action" href="asset-pipeline-ASK_inheritance-spine.html">open</a>
+        <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_inheritance-spine.source.js">source</a>
+        <a class="surface-action surface-action--secondary" href="../layer-disambiguation-note-v1.md">layer note</a>
+      </div>
+    </div>
+
+    <div class="card surface-panel">
+      <div class="cls">system model // bespoke figure</div>
+      <h2 class="surface-panel-title">bounded generativity</h2>
+      <p class="surface-panel-support">The system-model topology this repo instantiates: a source of intent outside the frame, a creative brief that grants the aperture of permitted variance, a bounded realization chamber, discretion exercised within the aperture, selection that ratifies one candidate and closes it, and governance that binds the result. A bracketed topology, not a linear chain.</p>
+      <div class="actions">
+        <a class="surface-action" href="asset-pipeline-ASK_bounded-generativity.html">open</a>
+        <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_bounded-generativity.figure.js">source</a>
+        <a class="surface-action surface-action--secondary" href="../creative-discretion-doctrine-v1.md">doctrine</a>
+        <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_bounded-generativity-dark.png">PNG</a>
+      </div>
+    </div>
+
+    <div class="card surface-panel">
+      <div class="cls">flow // FLOW_DIAGRAM</div>
+      <h2 class="surface-panel-title">visual payload architecture</h2>
+      <p class="surface-panel-support">The convergence flow a commercial image's visual decisions move through — a reference carrier qualifying a normative-source field, the field converging into a resolved slot specification, realization reconverging into conformance, then selection, governance, and a return loop where a governed output can re-enter as a reference.</p>
+      <div class="actions">
+        <a class="surface-action" href="asset-pipeline-ASK_visual-payload-architecture.html">open</a>
+        <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_visual-payload-architecture.source.js">source</a>
+        <a class="surface-action surface-action--secondary" href="../visual-payload-architecture-v2.md">visual payload</a>
+        <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_visual-payload-architecture.png">PNG</a>
+      </div>
+    </div>
+
+    <div class="card surface-panel">
+      <div class="cls">interactive spine // IA_STATE_SPINE</div>
+      <h2 class="surface-panel-title">information architecture — state</h2>
+      <p class="surface-panel-support">The state view the structural diagrams deliberately omit: which surfaces, seams and open carrier-shape questions are earned, held or deflated, with the four workflow modes as orthogonal axes that selection isolates. Hover to preview, click to lock, and the inspector holds the evidence. Color encodes state only.</p>
+      <div class="actions">
+        <a class="surface-action" href="interactive/asset-pipeline-ASK_ia-state-spine.html">open</a>
+        <a class="surface-action surface-action--secondary" href="interactive/asset-pipeline-ASK_ia-state-spine.data.js">data</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="routes">
+    <a class="route surface-panel" href="https://github.com/apexSolarKiss/asset-pipeline-ASK" target="_blank" rel="noopener">
+      <span class="name surface-panel-title">repository</span>
+      <span class="what surface-panel-support">github.com/apexSolarKiss/asset-pipeline-ASK</span>
+    </a>
+    <a class="route surface-panel" href="https://github.com/apexSolarKiss/asset-pipeline-ASK/blob/main/README.md" target="_blank" rel="noopener">
+      <span class="name surface-panel-title">asset-pipeline-ASK</span>
+      <span class="what surface-panel-support">What the definition layer is, the claim it makes, and the reader path into the worked package.</span>
+    </a>
+    <a class="route surface-panel" href="https://github.com/apexSolarKiss/method-ASK" target="_blank" rel="noopener">
+      <span class="name surface-panel-title">method-ASK</span>
+      <span class="what surface-panel-support">The upstream methodology layer, and the origin of the bounded-generativity figure this repo adapts.</span>
+    </a>
+    <a class="route surface-panel" href="https://github.com/apexSolarKiss/design-system-ASK" target="_blank" rel="noopener">
+      <span class="name surface-panel-title">design-system-ASK</span>
+      <span class="what surface-panel-support">The visual authority. This surface vendors its carriers; it defines none of them.</span>
+    </a>
+    <a class="route surface-panel" href="https://a-s-k.studio/" target="_blank" rel="noopener">
+      <span class="name surface-panel-title">A-S-K.studio</span>
+      <span class="what surface-panel-support">The ASK meta-brand front door.</span>
+    </a>
+  </div>
+
+  <div class="page-note">
+    <p>Drag to pan, scroll to zoom, and use the HUD controls in the bottom-left; <code>⤢</code> fits the figure. Theme follows the operating system, and the diagrams default to dark as repository documentation.</p>
+    <p>Each figure carries its authored content beside it — <code>.source.js</code> for the three engine-rendered patterns and the flow, <code>.figure.js</code> for the two bespoke figures, <code>.data.js</code> for the state spine. Source advances when the authored content changes; the renderer advances only when its realization does.</p>
+    <p>Every figure exports on demand from its own HUD, in the resolved theme — <code>PNG page</code> for the chromed render and <code>PNG diagram</code> for the canvas alone. Two figures additionally keep one committed raster, because their governing prose embeds it directly; the <code>PNG</code> action on those two cards opens that committed file. The HTML and its authored content remain canonical, and the rasters are supplemental. See <code>README.md</code> for the full contents list and the refresh cadence each class follows.</p>
+    <p>These pages consume the vendored token mirror in <code>_dsa-tokens/</code> and the surface carriers in <code>_dsa-surface/</code>, both pinned byte-identical to <code>design-system-ASK</code> and never hand-edited here.</p>
+  </div>
+
+  </main>
+
+  <footer class="surface-footer">
+    <a href="README.md">README</a>
+    <a href="../architecture.md">architecture</a>
+    <a href="https://github.com/apexSolarKiss/asset-pipeline-ASK" target="_blank" rel="noopener">repository</a>
+    <a href="https://a-s-k.studio/" target="_blank" rel="noopener">A-S-K.studio</a>
+  </footer>
+
+</div>
+</body>
+</html>

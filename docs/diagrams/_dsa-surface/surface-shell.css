@@ -1,0 +1,437 @@
+/* =========================================================================
+   surface-shell — canonical implementation.
+
+   The shared page shell for a family of public surfaces: an identity mark,
+   surface identity, title, lede, an optional status badge, an optional
+   payload control slot, the rule that opens the payload, and the footer that
+   closes the page. The shell owns the chrome around the payload. It owns no
+   payload.
+
+   This is a canonical pattern, vendored downstream at a pinned commit. It
+   carries no organization's identity: a consuming project supplies its own
+   Tier 3 — the same boundary the output-artifact pattern already draws.
+
+   It composes existing var() roles and introduces no token and no palette
+   color. Two literal COLOR values appear, and only two: the focus glow's
+   translucent white, which the repo README's hover/press/focus contract
+   specifies verbatim and for which no token exists; and the `transparent`
+   keyword, which clears the breadcrumb's rest underline while its focus
+   indicator is showing — a keyword for the absence of paint, not a color drawn
+   from anywhere. Adding any other raw color value here is a defect.
+
+   That assertion governs color, and only color. Geometry, tracking, and border
+   widths do carry raw values where no token expresses them. Text size is the
+   one dimension held absolutely: every font-size in this file resolves through
+   the foundation's type scale, and a raw numeric size here is a defect.
+
+   Because it frames a whole page, this pattern owns that page's landmark
+   structure, and the required elements are part of the contract, not a
+   styling preference: <header class="surface-head">, <main
+   class="surface-payload">, <footer class="surface-footer">. One banner, one
+   main, one contentinfo per surface. Selectors below are class-based, so
+   restyling never depends on the element — but substituting a <div> for any
+   of the three removes a landmark a nonvisual reader navigates by.
+
+   Required markup, slots, and the vendoring contract: README.md in this
+   directory. Rendered specimen: patterns/_preview/surface-shell.html.
+   ========================================================================= */
+
+/* ---------- Page container ---------- */
+.surface {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6) var(--space-10);
+}
+
+/* The payload landmark. The shell requires the <main> element — it is the
+   page's one main landmark — and declares no layout for it, because payload
+   layout is the consuming surface's. The class exists as a stable hook for
+   that surface to target; the shell deliberately leaves it unstyled. */
+
+/* ---------- Header ---------- */
+.surface-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+/* Grows into the width the optional control slot does not take. min-width: 0 is
+   load-bearing beside flex-grow: without it a flex item's automatic minimum size
+   is its content, so a long unbreakable title would push the header wider than
+   the container instead of letting the lede wrap inside it. */
+.surface-head-main { flex: 1 1 auto; min-width: 0; }
+
+/* Optional right-hand control slot. A surface that needs no control omits the
+   element entirely, so nothing is reserved and the header does not shift. */
+.surface-head-aside { flex-shrink: 0; }
+
+/* ---------- Identity mark ----------
+   A SLOT, not a mark. The shell owns the width, the alignment, and the
+   optional mode-pairing mechanism. The consuming surface owns everything
+   inside it: the asset or inline SVG, whether there is a per-mode pairing,
+   and the accessible name.
+
+   The width is FIXED at every breakpoint. The same 116px on a 320px phone and
+   a 1280px desktop is what makes the mark read as the same object across a
+   fleet of surfaces; the narrow-viewport rule at the foot of this file
+   restacks the header, it does not rescale this. Rendered HEIGHT is the
+   consumer's, since the child keeps its own aspect ratio — a square mark is
+   taller here than a wide wordmark. A surface that wants its wordmark to
+   become the content column at a narrow viewport is describing a different
+   composition, and it owns that composition outside this generic shell rather
+   than redefining the slot.
+
+   The accessible name belongs on the WRAPPER and never on a child. A name
+   carried by the light mark disappears with that element when dark mode hides
+   it, leaving the visible mark unnamed; the wrapper's name is mode-independent,
+   so it survives every mode. Two wrapper forms are valid, and which one applies
+   depends on whether the mark is also navigation: a non-interactive
+   <div role="img" aria-label>, or a native <a href aria-label> with NO
+   role="img" on it. See README.md §The identity mark.
+
+   One mark or two: a single responsive SVG or <img> needs neither modifier
+   class and is always shown. A surface wanting a per-mode pairing supplies
+   both children, and the shell shows exactly one per resolved mode.
+
+   Why CSS and not <picture>/srcset: a <picture> does react to environment
+   changes — the HTML standard requires it — but its media queries can only
+   see the ENVIRONMENT. They cannot see this design system's explicit DOM
+   theme state, which is how a consumer forces a mode. CSS sees both. */
+.surface-mark {
+  display: block;
+  width: 116px;
+  margin-bottom: var(--space-5);
+}
+.surface-mark > * { display: block; width: 100%; height: auto; }
+
+/* A LINKED mark. The mark slot has two valid wrapper forms (README §The identity
+   mark): a non-interactive <div role="img">, or — where the mark is also home
+   navigation — a native <a> carrying the accessible name, with no role="img" on
+   it, because the image role makes descendants presentational and would prune
+   the link from the accessibility tree. The shell owns the anchor's chrome so
+   every consumer inherits it rather than re-deriving it: the foundation
+   underlines anchors, which reads as a rule under the wordmark, and the
+   interaction limbs are the repo README's contract. */
+a.surface-mark {
+  border-bottom: none;
+  transition:
+    opacity var(--dur-2) var(--ease-out),
+    transform var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out);
+}
+a.surface-mark:hover { opacity: 0.92; }
+a.surface-mark:active { transform: scale(0.97); }
+a.surface-mark:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 1px var(--ask-white), 0 0 0 4px rgba(255, 255, 255, 0.25);
+}
+
+/* Optional per-mode pairing. It must track EVERY dark path the foundation
+   defines, or a consumer gets dark tokens under a light mark. As of
+   colors_and_type.css there are exactly three, and all three are mirrored
+   below in the foundation's own order:
+
+     @media (prefers-color-scheme: dark)   OS, under the no-override guard
+     :root[data-theme="dark"]              explicit attribute
+     .theme-dark                           explicit class
+
+   Adding a fourth path to the foundation without adding it here is a defect.
+   These follow the base rule above deliberately: at equal specificity the
+   later declaration wins, which is what hides the dark mark by default. */
+.surface-mark-dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .surface-mark-light { display: none; }
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .surface-mark-dark { display: block; }
+}
+:root[data-theme="dark"] .surface-mark-light { display: none; }
+:root[data-theme="dark"] .surface-mark-dark { display: block; }
+.theme-dark .surface-mark-light { display: none; }
+.theme-dark .surface-mark-dark { display: block; }
+
+/* ---------- Identity ---------- */
+/* The structural identity line, on the STRUCTURAL-LOCATOR role: mono, Body
+   size, light weight, heading line-height, tight tracking. Mono belongs to
+   this role rather than to the whole primary-label family, and it belongs to
+   BOTH title forms — the root-level plain heading and the breadcrumbed subpage
+   title alike, since both carry `.surface-title`. A panel primary label
+   (`.surface-panel-title`) carries the same four METRIC declarations and takes
+   Inter. The split is allocated per selector; it is never derived from what an
+   instance happens to say. Shared metric, different family, on purpose: do not
+   conform either to the other. A title is a locator rather than a display
+   heading, which is why it sits on Body and not on an H-step; it is still a
+   title, which is why it does not sit on the supporting step its own lede
+   occupies.
+
+   Light weight is deliberate and is the foundation's, not a local choice: the
+   repo README calls the light weights deliberate, and a vendorable pattern
+   that shipped a heavier title would push it into every downstream consumer. */
+.surface-title {
+  font-family: var(--font-mono);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--tracking-tight);
+  margin: 0;
+}
+.surface-title .org { color: var(--fg-2); }   /* owning organization */
+.surface-title .page { color: var(--fg-3); }  /* payload name within the surface family */
+
+/* Breadcrumb grammar. Every structural separator is `//` — never a single
+   slash — and the separator is a decorative span, so the glyph is uniform while
+   segment color stays free to express hierarchy: those are separate decisions.
+   Linkability is decided by destination, not by segment class: a segment with a
+   real ancestor or home destination is a link, a segment with no destination of
+   its own stays static, and the current segment is inert and carries
+   aria-current="page". An organization segment may be either, depending on the
+   consuming surface's own topology. The separators are aria-hidden because the
+   crumb structure is conveyed by the nav landmark, not by punctuation read
+   aloud between every segment. */
+.surface-breadcrumb { display: block; }
+.surface-title .sep { color: var(--fg-3); }
+/* A breadcrumb ancestor wraps as ordinary inline text, which makes this the
+   shell's one deliberate exception to the repo README's scale press. A scale
+   press needs a transformable box, and `display: inline-block` is that box —
+   but it also shrink-to-fits: an ancestor segment wider than the content column
+   stops fragmenting, swells to the FULL column, wraps inside its own box, adds
+   a line to the header, and drags its underline across the whole column instead
+   of under the text. Transform wants the box; wrapping text wants the fragments.
+   Wrapping wins here, so the press is non-geometric: hover carries the
+   underline from --line-2 to --line-1, and press adds the 0.92 opacity limb on
+   top of the already-bright underline. Neither state changes display, box
+   construction, line breaking, measured width, or fragment count. The identity
+   mark is a block-level slot and the footer links declare display:inline-block,
+   so both are boxes a transform can act on rather than inline text that
+   fragments; both keep scale(0.97). That inline-block is load-bearing for the
+   footer for its own reason — see the note above .surface-footer a.
+   Both declarations on :hover are overrides, not defaults. The foundation binds
+   `a:hover { border-bottom-color: currentColor; opacity: 0.92 }` at (0,1,1).
+   Its opacity reaches these links outright and would make hover compute
+   identically to press. Its currentColor ties `.surface-title a`'s --line-2 at
+   (0,1,1) and loses only on source order — a dependency on load order rather
+   than on intent. Declaring both properties here at (0,2,1) settles each on
+   specificity: hover holds opacity at its rest value so press stays distinct,
+   and names --line-1 so the underline brightens within its own hue instead of
+   shifting toward the text color. The foundation rule stays untouched for every
+   other link. */
+.surface-title a {
+  color: inherit;
+  border-bottom-color: var(--line-2);
+  transition:
+    opacity var(--dur-1) var(--ease-out),
+    border-bottom-color var(--dur-2) var(--ease-out);
+}
+.surface-title a:hover {
+  opacity: 1;
+  border-bottom-color: var(--line-1);
+}
+.surface-title a:active {
+  opacity: 0.92;
+  border-bottom-color: var(--line-1);
+}
+/* Focus is a text-decoration underline here, and only here, because this link
+   fragments. Anything drawn around the BOX fails on fragmented inline text, and
+   all three were rendered before this rule was chosen: a box-shadow ring under
+   the default `slice` is drawn around the unbroken box and then cut, so it
+   opens on the cut edges; `box-decoration-break: clone` closes each fragment,
+   but the fragment boxes already overlap at this line-height, so the rings then
+   overlap each other; and a rectangular outline is a single shape only where
+   consecutive fragments overlap horizontally — at a 311px column the break is
+   `asymptotic system / key`, which does not, so it splits into one ring per
+   line. A text decoration is fragment-native: it follows each line's own text,
+   so there is no box to enclose and nothing to reach past.
+   --fg-1 is the existing theme-resolving default foreground role, so this needs
+   no new token, earns no --fg-high-contrast registration, and reads the same on
+   the quieter .org home link as on an ordinary ancestor. The rest underline is
+   a 1px border, so focus clears it to transparent rather than stacking two
+   rules; the border WIDTH is untouched, so nothing reflows. The clear is
+   transitioned with the rest of border-bottom-color, so the 1px border fades
+   out over --dur-2 rather than vanishing at t=0 — at steady state one underline
+   renders, during the transition both briefly do.
+   Two properties of the indicator are worth naming so they are not mistaken
+   for defects. `text-decoration-skip-ink` is left at its initial `auto`, so the
+   underline breaks around descenders: that is per-glyph typographic clearance,
+   not a contour opening at a line break. And `:focus-visible` sits last among
+   the equal-specificity state rules, so while a link is focused its underline
+   is the focus indicator and the hover/active border limbs are suppressed;
+   active still dims the whole element, because this rule sets no opacity.
+   Measured at 320 / 360 / 375 / 393 / 414 in both themes: every fragment
+   carries the indicator, zero indicator pixels land on neighboring glyph ink,
+   and contrast is 3.50:1 and 4.00:1 against the light gradient stops, 10.25:1
+   and 12.26:1 against the dark. The mark and the footer links do not fragment
+   and keep the box-shadow glow. */
+.surface-title a:focus-visible {
+  outline: none;
+  box-shadow: none;
+  border-bottom-color: transparent;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-color: var(--fg-1);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
+/* The lede is the foundation's SMALL supporting-text role: --fs-small /
+   --fw-light / --lh-body. It is supporting prose a reader is meant to read,
+   not a label, so it sits on the Small step rather than the Caption step —
+   Caption is the 14px uppercase role.
+
+   The footer below is a SEPARATE terminal role and it NO LONGER SHARES this
+   step: it sits on --fs-caption, alongside the compact action. What still ties
+   the two together is --fg-2 and normal tracking — the lede by inheriting the
+   foundation's, the footer by declaring it. That shared foreground is
+   continuity rather than a differentiator, and recoloring either one to
+   manufacture a distinction would still be a defect.
+
+   The footer takes Caption's SIZE, not the Caption ROLE, and the test is the
+   tokens Caption otherwise differs on: --fw-regular, --tracking-wide, and
+   uppercase transformation. It takes none of them. It shares --fg-2 with
+   Caption as well, so "shares no Caption token" would be false. What makes the
+   footer read as its own terminal role is its JetBrains Mono family, its right
+   alignment, and its terminal position.
+
+   Hierarchy here is role-driven: the defined scale steps distinguish semantic
+   roles, and more than one role may sit on a step — the footer and the compact
+   action now do. No ad-hoc size is introduced for emphasis. The lede's weight
+   stays at Light because 300 is where Small is defined.
+
+   `--lh-body` is the tokenized line-height nearest the README's 18 / 1.40
+   figure; the repo defines no 1.40 token, and the `.small` utility declares no
+   line-height of its own.
+
+   No max-width. The lede uses the full header-main width, which the flex rule
+   above grows into whatever the optional control slot leaves. A per-surface
+   measure is the consuming surface's call, not the shell's. */
+.surface-lede {
+  color: var(--fg-2);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-body);
+  margin: var(--space-3) 0 0;
+  font-family: var(--font-sans);
+}
+
+/* Optional status note beneath the lede — classification, environment, or
+   another short standing fact about the surface.
+
+   It carries no button geometry, because it is not a button: the repo README
+   puts pills on interactive elements only, and this slot is inert on every
+   surface that uses it. A decorative `///` opens the row instead, marking it
+   as a note rather than a control.
+
+   The marker is generated content, so no consuming surface edits its markup to
+   receive it. It is drawn with empty alt text where the browser supports the
+   `content: "…" / ""` alt syntax, so the note is announced as its own words
+   and not as three slashes; the plain declaration below it is the fallback for
+   browsers that do not, which take the marker with its slashes rather than
+   losing it. The `//` inside a payload string is the author's, not this
+   rule's — the shell prefixes, it never rewrites.
+
+   The marker takes `color: inherit`, so it is the same ink as the words it
+   opens. Giving it its own quieter foreground built a second hierarchy inside
+   a single short note, and it broke the one thing a consumer's color-only
+   override should be able to do: recolor the note whole. Inheriting means the
+   design system's gallery reads magenta throughout, and a consumer that sets
+   the note to a quieter foreground gets the marker at that foreground too,
+   with no page-specific exception anywhere.
+
+   `white-space: normal` is declared, not merely left undeclared. The property
+   inherits, so dropping the old `nowrap` would only mean "whatever the
+   consuming page happens to impose" — and a surface that nests this slot under
+   an inherited `nowrap` would still refuse to wrap while the contract claimed
+   otherwise. A vendorable pattern owns the behavior it documents. */
+.surface-badge {
+  display: block;
+  margin-top: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--ask-emphasis-magenta, var(--fg-1));
+  white-space: normal;
+}
+.surface-badge::before { content: "/// "; color: inherit; }
+@supports (content: "a" / "b") {
+  .surface-badge::before { content: "/// " / ""; }
+}
+
+.surface-rule {
+  border: 0;
+  border-top: 1px solid var(--line-1);
+  margin: var(--space-6) 0 var(--space-7);
+}
+
+/* ---------- Footer ----------
+   Right-aligned, always. The reader's eye travels top-left to bottom-right,
+   so the footer sits where the reading path ends — the mirror of the
+   flush-left header above. This is the shell's rule, not a per-surface
+   choice: a left-aligned footer restarts the eye at a column the page has
+   already finished with. The foundation underlines anchors; the footer
+   softens that to --line-2 so a row of links reads as one quiet band.
+
+   The footer sits on the CAPTION SIZE step — the same 14px the compact action
+   takes. Both are operative chrome a reader clicks rather than prose a reader
+   reads, so terminal navigation and compact controls measure alike. It shares
+   --fg-2 with the lede above it: that foreground is continuity across the
+   surface's open and its close, not a differentiator, and neither should be
+   recolored to invent one.
+
+   Sharing Caption's size is not becoming Caption. The footer is never
+   uppercased, does not take --fw-regular, and does not take wide tracking.
+   Sharing the compact action's size is not becoming one either: the footer has
+   no pill, no fill, no border, and none of surface-action.css's interaction
+   contract. It stays its own role through family, alignment and terminal
+   position.
+
+   Tracking is NORMAL, not wide. At this step wide tracking would add 1.12px
+   between letters — 0.08em of 14px. Mono's fixed advances already carry the
+   terminal distinction on their own, so normal tracking is what keeps the
+   footer from overstating it. */
+.surface-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-5);
+  margin-top: var(--space-9);
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  letter-spacing: var(--tracking-normal);
+  color: var(--fg-2);
+}
+
+/* Interaction — the repo README's hover/press/focus contract, which the shell
+   must carry rather than leave to each consumer. Hover takes the contract's
+   opacity limb, not its border-brightening limb: the softened --line-2
+   underline above is a deliberate base state, and in light mode the line
+   roles are translucent white while currentColor is a purple, so brightening
+   to currentColor would shift hue rather than brighten. display:inline-block
+   is load-bearing — transform does not apply to a non-replaced inline box,
+   so without it the press state is silently inert wherever a consumer wraps
+   these links in anything that is not the flex row itself. */
+.surface-footer a {
+  color: var(--fg-2);
+  border-bottom-color: var(--line-2);
+  display: inline-block;
+  transition:
+    opacity var(--dur-2) var(--ease-out),
+    transform var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out);
+}
+.surface-footer a:hover { opacity: 0.92; }
+.surface-footer a:active { transform: scale(0.97); }
+.surface-footer a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 1px var(--ask-white), 0 0 0 4px rgba(255, 255, 255, 0.25);
+}
+
+/* Narrow viewports. What changes here is the header's ARRANGEMENT, not the
+   identity mark's scale: the head stacks and .surface-head-main takes the full
+   width because a stacked column has no aside to share it with. The mark stays
+   at its fixed 116px — see §The identity mark. A consuming surface that wants
+   the wordmark to become the column at a narrow viewport is describing a
+   different composition, and it owns that composition outside this generic
+   shell rather than redefining the shell's slot. */
+@media (max-width: 640px) {
+  .surface-head { flex-direction: column; }
+  .surface-head-main { width: 100%; }
+  .surface-head-aside { align-self: flex-start; }
+}
