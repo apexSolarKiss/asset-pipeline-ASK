@@ -1,4 +1,4 @@
-/* asset-pipeline-ASK_architectural-representation-atlas.figure.js — bespoke orientation figure (source-v1 // render-v1, 2026-07-14)
+/* asset-pipeline-ASK_architectural-representation-atlas.figure.js — bespoke orientation figure (source-v2 // render-v1, 2026-09-02)
    An architecture-DECONFLICTION artifact, not another architecture model. It maps the repo's EXISTING
    architectural representations so a reader can tell, per view: the object it depicts, the question it
    answers, the live surface that carries it, and where that view's authority ends. Flat and non-causal —
@@ -59,61 +59,75 @@
 
   /* ---------- cards ---------- */
   function card(c) {
+    /* A card that names a destination IS a native SVG link. The whole card — box, labels,
+       question, path string and silhouette — is built inside the <a>, so the entire card is
+       the target rather than a hot strip inside it. Native <a href> is what preserves
+       modified-click, middle-click, context menu, status-bar preview and keyboard
+       activation; an onclick handler would reimplement a worse version of all of them.
+
+       The absent card has no destination and stays an ordinary <g>: not focusable, not
+       announced as a link, not styled as interactive. */
+    const host = c.path
+      ? el('a', { class: 'atlas-card atlas-card-link', href: c.path,
+                  'aria-label': c.name + ' — ' + c.path })
+      : el('g', { class: 'atlas-card' });
+    g.append(host);
+
     // uniform border weight across all live cards; dashed only for the no-live-diagram (absent) card
     const cls = c.kind === 'absent' ? 'node-box held' : 'node-box';
-    g.append(rect(c.x, c.y, c.w, c.h, cls, 6));
+    host.append(rect(c.x, c.y, c.w, c.h, cls, 6));
     const nameCls = c.kind === 'absent' ? 'node-label held' : 'node-label';
-    g.append(txt(c.x + 20, c.y + 28, c.name, nameCls));
-    g.append(txt(c.x + c.w - 18, c.y + 26, c.tagRight, 'flow-tag', 'end'));
+    host.append(txt(c.x + 20, c.y + 28, c.name, nameCls));
+    host.append(txt(c.x + c.w - 18, c.y + 26, c.tagRight, 'flow-tag', 'end'));
     let qy = c.y + 56;
-    for (const ql of c.q) { g.append(txt(c.x + 20, qy, ql, 'node-note')); qy += 18; }
-    if (c.path) g.append(txt(c.x + 20, c.y + c.h - 16, c.path, 'atlas-path'));
-    else if (c.absentNote) g.append(txt(c.x + 20, c.y + c.h - 16, c.absentNote, 'node-note legacy'));
+    for (const ql of c.q) { host.append(txt(c.x + 20, qy, ql, 'node-note')); qy += 18; }
+    if (c.path) host.append(txt(c.x + 20, c.y + c.h - 16, c.path, 'atlas-path'));
+    else if (c.absentNote) host.append(txt(c.x + 20, c.y + c.h - 16, c.absentNote, 'node-note legacy'));
     // silhouette — restrained geometry cue, right side, drawn AFTER the card fill so it reads on top
     const sx = c.x + c.w - 62, sy = c.y + c.h / 2 + 8;
-    (SIL[c.sil] || (() => {}))(sx, sy);
+    (SIL[c.sil] || (() => {}))(sx, sy, host);
   }
 
   /* ---------- restrained geometry silhouettes (cues, not reproductions) ---------- */
   const SIL = {
-    tree(cx, cy) {
+    tree(cx, cy, p = g) {
       const rootX = cx - 40, brX = cx - 2, leafX = cx + 24;
-      g.append(rect(rootX, cy - 7, 14, 14, 'atlas-sil', 2));
-      g.append(line(`M ${rootX + 14} ${cy} L ${brX} ${cy}`, 'atlas-sil'));
-      g.append(line(`M ${brX} ${cy - 18} L ${brX} ${cy + 18}`, 'atlas-sil'));
+      p.append(rect(rootX, cy - 7, 14, 14, 'atlas-sil', 2));
+      p.append(line(`M ${rootX + 14} ${cy} L ${brX} ${cy}`, 'atlas-sil'));
+      p.append(line(`M ${brX} ${cy - 18} L ${brX} ${cy + 18}`, 'atlas-sil'));
       [-18, 0, 18].forEach(dy => {
-        g.append(line(`M ${brX} ${cy + dy} L ${leafX} ${cy + dy}`, 'atlas-sil'));
-        g.append(rect(leafX, cy + dy - 5, 15, 10, 'atlas-sil', 2));
+        p.append(line(`M ${brX} ${cy + dy} L ${leafX} ${cy + dy}`, 'atlas-sil'));
+        p.append(rect(leafX, cy + dy - 5, 15, 10, 'atlas-sil', 2));
       });
     },
-    flow(cx, cy) {
+    flow(cx, cy, p = g) {
       const lX = cx - 40, mX = cx + 26;
-      g.append(circle(lX + 5, cy - 18, 5, 'atlas-sil'));
-      g.append(rect(lX, cy - 5, 11, 11, 'atlas-sil', 1));
-      g.append(el('path', { class: 'atlas-sil', fill: 'none', d: `M ${lX + 5} ${cy + 12} L ${lX + 12} ${cy + 24} L ${lX - 2} ${cy + 24} Z` }));
-      [-18, 0, 18].forEach(dy => g.append(line(`M ${lX + 14} ${cy + dy} L ${mX} ${cy}`, 'atlas-sil')));
-      g.append(rect(mX, cy - 9, 18, 18, 'atlas-sil', 2));
+      p.append(circle(lX + 5, cy - 18, 5, 'atlas-sil'));
+      p.append(rect(lX, cy - 5, 11, 11, 'atlas-sil', 1));
+      p.append(el('path', { class: 'atlas-sil', fill: 'none', d: `M ${lX + 5} ${cy + 12} L ${lX + 12} ${cy + 24} L ${lX - 2} ${cy + 24} Z` }));
+      [-18, 0, 18].forEach(dy => p.append(line(`M ${lX + 14} ${cy + dy} L ${mX} ${cy}`, 'atlas-sil')));
+      p.append(rect(mX, cy - 9, 18, 18, 'atlas-sil', 2));
     },
-    ladder(cx, cy) {
-      g.append(line(`M ${cx} ${cy - 26} L ${cx} ${cy + 26}`, 'atlas-sil'));
+    ladder(cx, cy, p = g) {
+      p.append(line(`M ${cx} ${cy - 26} L ${cx} ${cy + 26}`, 'atlas-sil'));
       [[-24, 50], [-8, 42], [8, 34], [24, 26]].forEach(([dy, w]) =>
-        g.append(rect(cx - w / 2, cy + dy - 5, w, 11, 'atlas-sil', 2)));
+        p.append(rect(cx - w / 2, cy + dy - 5, w, 11, 'atlas-sil', 2)));
     },
-    topology(cx, cy) {
-      g.append(rect(cx - 40, cy - 24, 80, 48, 'atlas-sil-soft', 8));
-      g.append(rect(cx - 22, cy - 12, 22, 24, 'atlas-sil', 3));
-      g.append(line(`M ${cx - 26} ${cy - 8} L ${cx - 26} ${cy + 8}`, 'atlas-sil'));   // aperture tick
-      g.append(line(`M ${cx} ${cy} L ${cx + 14} ${cy}`, 'atlas-sil'));
-      g.append(circle(cx + 24, cy, 8, 'atlas-sil'));
+    topology(cx, cy, p = g) {
+      p.append(rect(cx - 40, cy - 24, 80, 48, 'atlas-sil-soft', 8));
+      p.append(rect(cx - 22, cy - 12, 22, 24, 'atlas-sil', 3));
+      p.append(line(`M ${cx - 26} ${cy - 8} L ${cx - 26} ${cy + 8}`, 'atlas-sil'));   // aperture tick
+      p.append(line(`M ${cx} ${cy} L ${cx + 14} ${cy}`, 'atlas-sil'));
+      p.append(circle(cx + 24, cy, 8, 'atlas-sil'));
     },
-    spine(cx, cy) {
-      g.append(line(`M ${cx - 38} ${cy} L ${cx + 38} ${cy}`, 'atlas-sil'));
+    spine(cx, cy, p = g) {
+      p.append(line(`M ${cx - 38} ${cy} L ${cx + 38} ${cy}`, 'atlas-sil'));
       [[-30, 'atlas-dot'], [-10, 'atlas-sil'], [10, 'atlas-dot'], [30, 'atlas-dot']].forEach(([dx, k]) =>
-        g.append(circle(cx + dx, cy, 4.5, k)));
+        p.append(circle(cx + dx, cy, 4.5, k)));
     },
-    absent(cx, cy) {
-      g.append(rect(cx - 38, cy - 20, 76, 40, 'atlas-sil-soft', 6));
-      g.append(line(`M ${cx - 16} ${cy} L ${cx + 16} ${cy}`, 'atlas-sil-soft', '2 4'));
+    absent(cx, cy, p = g) {
+      p.append(rect(cx - 38, cy - 20, 76, 40, 'atlas-sil-soft', 6));
+      p.append(line(`M ${cx - 16} ${cy} L ${cx + 16} ${cy}`, 'atlas-sil-soft', '2 4'));
     },
   };
 
@@ -231,12 +245,57 @@
     if (zi) zi.onclick = () => { sc = Math.min(sc * 1.2, 4); apply(); };
     if (zo) zo.onclick = () => { sc = Math.max(sc / 1.2, fittedMinScale); apply(); };
     if (zf) zf.onclick = fit;
-    let dragging = false, px0 = 0, py0 = 0, tx0 = 0, ty0 = 0;
-    wrap.addEventListener('pointerdown', (ev) => { if (ev.target.closest('.hud, .legend, .caption')) return;
-      dragging = true; wrap.classList.add('dragging'); wrap.setPointerCapture(ev.pointerId); px0 = ev.clientX; py0 = ev.clientY; tx0 = tx; ty0 = ty; });
-    wrap.addEventListener('pointermove', (ev) => { if (!dragging) return; tx = tx0 + (ev.clientX - px0); ty = ty0 + (ev.clientY - py0); apply(); });
-    const endDrag = () => { dragging = false; wrap.classList.remove('dragging'); };
-    wrap.addEventListener('pointerup', endDrag); wrap.addEventListener('pointercancel', endDrag);
+    /* ---------- click versus pan ----------
+       The canvas pans from anywhere, and the cards are now native links, so one pointer
+       press is ambiguous until it moves. Capture is therefore DEFERRED: a press only ARMS
+       a pan, and the gesture becomes a pan when travel crosses PAN_THRESHOLD_PX. Below
+       that, nothing is captured and nothing is suppressed, so the browser's own link
+       activation runs untouched — which is what keeps modified-click, middle-click and
+       keyboard behaviour native.
+
+       Capturing on pointerdown, as this did before, would swallow every tap on a card. */
+    const PAN_THRESHOLD_PX = 4;
+    let armed = false, dragging = false, suppressClick = false;
+    let px0 = 0, py0 = 0, tx0 = 0, ty0 = 0, pid = null;
+
+    wrap.addEventListener('pointerdown', (ev) => {
+      if (ev.target.closest('.hud, .legend, .caption')) return;
+      armed = true; dragging = false; pid = ev.pointerId;
+      px0 = ev.clientX; py0 = ev.clientY; tx0 = tx; ty0 = ty;
+    });
+
+    wrap.addEventListener('pointermove', (ev) => {
+      if (!armed || ev.pointerId !== pid) return;
+      const dx = ev.clientX - px0, dy = ev.clientY - py0;
+      if (!dragging) {
+        if (Math.abs(dx) < PAN_THRESHOLD_PX && Math.abs(dy) < PAN_THRESHOLD_PX) return;
+        /* Commit to a pan: capture now, and suppress exactly ONE click — the one this
+           gesture will synthesize on release over whatever card it started on. */
+        dragging = true; suppressClick = true;
+        wrap.classList.add('dragging');
+        try { wrap.setPointerCapture(pid); } catch (err) { /* capture is best-effort */ }
+      }
+      tx = tx0 + dx; ty = ty0 + dy; apply();
+    });
+
+    const endDrag = (ev) => {
+      if (ev && pid !== null && ev.pointerId !== pid) return;
+      if (dragging) { try { wrap.releasePointerCapture(pid); } catch (err) { /* already gone */ } }
+      armed = false; dragging = false; pid = null;
+      wrap.classList.remove('dragging');
+    };
+    wrap.addEventListener('pointerup', endDrag);
+    wrap.addEventListener('pointercancel', endDrag);
+    wrap.addEventListener('lostpointercapture', endDrag);
+
+    /* Capture phase, so the click is stopped before it reaches the anchor. The flag is
+       consumed whether or not a link was under the pointer, so a pan can never suppress
+       the NEXT independent click. */
+    wrap.addEventListener('click', (ev) => {
+      if (!suppressClick) return;
+      suppressClick = false;
+      ev.preventDefault(); ev.stopPropagation();
+    }, true);
     wrap.addEventListener('wheel', (ev) => { ev.preventDefault(); const r = wrap.getBoundingClientRect(), mx = ev.clientX - r.left, my = ev.clientY - r.top;
       const ns = Math.max(fittedMinScale, Math.min(4, sc * (ev.deltaY > 0 ? 1 / 1.1 : 1.1))), k = ns / sc; tx = mx - (mx - tx) * k; ty = my - (my - ty) * k; sc = ns; apply(); }, { passive: false });
   }

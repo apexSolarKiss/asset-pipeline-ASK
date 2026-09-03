@@ -14,6 +14,21 @@
      export-png.js INLINE_PROPS so it survives the PNG raster; colors come from theme-flipping tokens. ===== */
   .atlas-path   { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.02em;
                   fill: var(--diagram-faint); dominant-baseline: middle; font-weight: 300; }
+  /* ---------- live card link states ----------
+     Interaction states ONLY. The default, unhovered, unfocused rendering is unchanged —
+     the path string already tells a reader where a card goes, so nothing new is drawn at
+     rest and the exported raster is unaffected. Existing diagram tokens only; no new
+     palette value, no geometry or text movement, no change to card dimensions. */
+  .atlas-card-link { cursor: pointer; }
+  .atlas-card-link .node-box { transition: stroke 120ms ease, fill 120ms ease; }
+  .atlas-card-link:hover .node-box { stroke: var(--diagram-ink); }
+  .atlas-card-link:focus { outline: none; }
+  .atlas-card-link:focus-visible .node-box { stroke: var(--diagram-ink); stroke-width: 2; }
+  /* The absent card carries no destination and must not read as interactive. */
+  .atlas-card:not(.atlas-card-link) { cursor: inherit; }
+  /* While a pan is committed the cursor is the canvas's, not the link's. */
+  .wrap.dragging .atlas-card-link { cursor: grabbing; }
+
   .atlas-sil      { fill: none; stroke: var(--diagram-line); stroke-width: 1.2; }
   .atlas-sil-soft { fill: none; stroke: var(--diagram-line-soft); stroke-width: 1.1; }
   .atlas-dot      { fill: var(--diagram-line); stroke: none; }
@@ -37,7 +52,7 @@
     </div>
     <div class="spacer"></div>
     <div class="stamp">
-      <div><span class="k">source-v1</span> // <span class="k">render-v1</span></div>
+      <div><span class="k">source-v2</span> // <span class="k">render-v1</span></div>
       <div>2026-07-14</div>
     </div>
   </div>
