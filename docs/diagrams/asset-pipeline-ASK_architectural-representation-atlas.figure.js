@@ -255,15 +255,40 @@
 
        Capturing on pointerdown, as this did before, would swallow every tap on a card. */
     const PAN_THRESHOLD_PX = 4;
-    let armed = false, dragging = false, suppressClick = false, suppressTimer = null;
+    /* A completed pan's associated click is not guaranteed to be the next thing that
+       happens. Under the default touch-action a user agent may hold the click back while
+       it finishes resolving the gesture — historically by around 300ms — and click
+       generation is implementation-dependent. Expiring suppression on a zero-delay timer
+       assumes the click beats the next task turn: true for the mouse, not safe for the
+       touch input this canvas accepts. Suppression is therefore a TOKEN with a bounded
+       lifetime, not a one-tick flag. */
+    const PAN_CLICK_GUARD_MS = 500;
+    let armed = false, dragging = false;
     let px0 = 0, py0 = 0, tx0 = 0, ty0 = 0, pid = null;
+    let panClickToken = false, panClickTimer = null;
 
-    const clearSuppression = () => {
-      suppressClick = false;
-      if (suppressTimer !== null) { clearTimeout(suppressTimer); suppressTimer = null; }
+    const clearPanClick = () => {
+      panClickToken = false;
+      if (panClickTimer !== null) { clearTimeout(panClickTimer); panClickTimer = null; }
     };
+    const armPanClick = () => {
+      clearPanClick();
+      panClickToken = true;
+      /* Backstop for engines that emit no click at all — NOT the independence guard. */
+      panClickTimer = setTimeout(clearPanClick, PAN_CLICK_GUARD_MS);
+    };
+    /* ONLY A POINTER-ORIGIN CLICK CAN BE THE PAN'S OWN. Keyboard and programmatic
+       activation dispatch a click carrying no pointer type and a zero click count; those
+       must never be consumed, or a live token would silently eat an Enter press. */
+    const isPointerOriginClick = (ev) =>
+      (typeof ev.pointerType === 'string' && ev.pointerType !== '') || ev.detail > 0;
 
     wrap.addEventListener('pointerdown', (ev) => {
+      /* ANY new pointer sequence is independent input, so a token left over from an
+         earlier pan is retired HERE rather than being allowed to reach this sequence's
+         click. This — not the timer — is what keeps the longer window from ever eating a
+         real activation. */
+      clearPanClick();
       if (ev.target.closest('.hud, .legend, .caption')) return;
       /* PRIMARY POINTER, PRIMARY BUTTON, ONE SEQUENCE AT A TIME. Middle-click,
          right-click, the pen barrel and a second finger must stay entirely native —
@@ -298,9 +323,9 @@
        would be eaten instead. The distinction is LIVENESS, NOT EVENT TYPE: the routine
        lostpointercapture that FOLLOWS a resolved pointerup is only a release
        notification — ordered before or after the associated click depending on the
-       engine — and must not be read as a cancellation. The timer is the backstop for
-       the same hazard: if the expected click never arrives, suppression expires before
-       any later input can meet it. */
+       engine — and must not be read as a cancellation. The bounded PAN_CLICK_GUARD_MS
+       expiry is the backstop for engines that emit no click at all; independence from
+       later input is carried by the new-pointer-sequence guard above, not by the timer. */
     const endDrag = (ev) => {
       /* FAIL CLOSED ON AN ALREADY-RESOLVED SEQUENCE. pointerup clears pid and then
          releases capture; the resulting lostpointercapture is delivered asynchronously,
@@ -321,11 +346,9 @@
         try { wrap.releasePointerCapture(hadPid); } catch (err) { /* already gone */ }
       }
       if (wasDragging && ev && ev.type === 'pointerup') {
-        suppressClick = true;
-        if (suppressTimer !== null) clearTimeout(suppressTimer);
-        suppressTimer = setTimeout(clearSuppression, 0);   /* expires after the click opportunity */
+        armPanClick();                    /* the only end that synthesizes a click */
       } else {
-        clearSuppression();                                 /* cancel / LIVE capture loss: no click is coming */
+        clearPanClick();                  /* cancel / LIVE capture loss: no click is coming */
       }
     };
     wrap.addEventListener('pointerup', endDrag);
@@ -334,8 +357,9 @@
 
     /* Capture phase, so the click is stopped before it reaches the anchor. */
     wrap.addEventListener('click', (ev) => {
-      if (!suppressClick) return;
-      clearSuppression();
+      if (!panClickToken) return;
+      if (!isPointerOriginClick(ev)) return;   /* keyboard / programmatic activation passes through */
+      clearPanClick();                         /* consumed exactly once, by the pan's own click */
       ev.preventDefault(); ev.stopPropagation();
     }, true);
     wrap.addEventListener('wheel', (ev) => { ev.preventDefault(); const r = wrap.getBoundingClientRect(), mx = ev.clientX - r.left, my = ev.clientY - r.top;
