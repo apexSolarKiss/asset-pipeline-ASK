@@ -291,18 +291,30 @@
 
     /* SUPPRESSION BELONGS TO ONE COMPLETED PAN SEQUENCE, AND ONLY TO ONE THAT CAN
        ACTUALLY PRODUCE A CLICK. A pan ended by pointerup synthesizes a click over the
-       card it started on, so exactly that click is suppressed. A pan ended by
-       pointercancel or by lost capture produces NO click — arming suppression there
-       would leave a flag with nothing to consume it, and the next independent
-       activation (pointer OR keyboard, both of which dispatch click) would be eaten
-       instead. The timer is the backstop for the same hazard: if the expected click
-       never arrives, suppression expires before any later input can meet it. */
+       card it started on, so exactly that click is suppressed. A pan cancelled, or one
+       whose capture is lost WHILE THE SEQUENCE IS STILL LIVE, produces no click —
+       arming suppression there would leave a flag with nothing to consume it, and the
+       next independent activation (pointer OR keyboard, both of which dispatch click)
+       would be eaten instead. The distinction is LIVENESS, NOT EVENT TYPE: the routine
+       lostpointercapture that FOLLOWS a resolved pointerup is only a release
+       notification — ordered before or after the associated click depending on the
+       engine — and must not be read as a cancellation. The timer is the backstop for
+       the same hazard: if the expected click never arrives, suppression expires before
+       any later input can meet it. */
     const endDrag = (ev) => {
-      if (ev && pid !== null && ev.pointerId !== pid) return;
+      /* FAIL CLOSED ON AN ALREADY-RESOLVED SEQUENCE. pointerup clears pid and then
+         releases capture; the resulting lostpointercapture is delivered asynchronously,
+         after the associated click in some engines and before it in others. Re-entering
+         cleanup on that expected notification would take the no-click branch below and
+         clear the suppression pointerup had just armed, releasing the pan's own click
+         onto the card the gesture started from. A notification arriving after the
+         sequence is over carries no state this handler still owns. */
+      if (pid === null) return;
+      if (ev && ev.pointerId !== pid) return;
       const wasDragging = dragging;
       const hadPid = pid;
-      /* Reset BEFORE releasing capture: the release itself fires lostpointercapture,
-         and a live state here would re-enter this handler mid-cleanup. */
+      /* Reset before releasing capture, so the release's own notification meets the
+         guard above instead of this handler's body. */
       armed = false; dragging = false; pid = null;
       wrap.classList.remove('dragging');
       if (wasDragging && hadPid !== null) {
@@ -313,7 +325,7 @@
         if (suppressTimer !== null) clearTimeout(suppressTimer);
         suppressTimer = setTimeout(clearSuppression, 0);   /* expires after the click opportunity */
       } else {
-        clearSuppression();                                 /* cancel / lost capture: no click is coming */
+        clearSuppression();                                 /* cancel / LIVE capture loss: no click is coming */
       }
     };
     wrap.addEventListener('pointerup', endDrag);
