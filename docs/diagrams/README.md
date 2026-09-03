@@ -29,7 +29,7 @@ The diagram conforms to [`apexSolarKiss/design-system-ASK`](https://github.com/a
 README.md                                       this file
 index.html                                      ASK-branded live navigation surface for the seven figures below
 _dsa-tokens/                                    pinned design-system-ASK Tier 1 + Tier 2 mirror (no CDN)
-_dsa-surface/                                   pinned surface-shell (css + navigation runtime) + surface-panel + surface-action + surface-text-link carriers and the mode-aware ASK wordmark pair — used ONLY by index.html
+_dsa-surface/                                   pinned surface-shell (css + navigation runtime) + surface-panel + surface-action carriers and the mode-aware ASK wordmark pair — used ONLY by index.html
 
 # Horizontal — Class A diagram-static-H (top-aligned cascade)
 asset-pipeline-ASK_architecture-tree.html       renders TREE_D04 (repo architecture / artifact structure)
@@ -100,7 +100,7 @@ Link styling is **interaction-state only** — cursor, hover and `:focus-visible
 
 ## Live navigation surface
 
-`index.html` is an **ASK-branded live navigation surface** for this folder's seven figures. It is asset-pipeline-ASK-owned composition over **pinned, byte-identical** `design-system-ASK` carriers vendored under `_dsa-surface/` — the `surface-shell` pattern with its optional navigation runtime, the `surface-panel` and `surface-action` visual rules, and the mode-aware `logo-ASK` wordmark pair. It **adopts the shell's responsive navigation**: the identity mark discloses one panel whose current path is derived from the visible breadcrumb, so the public ancestry is authored exactly once. It **hot-links nothing**, and it **reuses the existing `_dsa-tokens/` mirror** this folder already carries for the diagrams rather than adding a second token or font copy. The vendored carriers are never hand-edited here; re-sync them from the owner when the upstream contract changes. `surface-text-link.css` is vendored for pin parity with the rest of the set but is **not linked**: the module is opt-in by the `.surface-text-link` class, and this surface carries no unboxed inline prose link — its breadcrumb underline is the shell's own, and every other operable object here is a panel or a compact action.
+`index.html` is an **ASK-branded live navigation surface** for this folder's seven figures. It is asset-pipeline-ASK-owned composition over **pinned, byte-identical** `design-system-ASK` carriers vendored under `_dsa-surface/` — the `surface-shell` pattern with its optional navigation runtime, the `surface-panel` and `surface-action` visual rules, and the mode-aware `logo-ASK` wordmark pair. It **adopts the shell's responsive navigation**: the identity mark discloses one panel whose current path is derived from the visible breadcrumb, so the public ancestry is authored exactly once. It **hot-links nothing**, and it **reuses the existing `_dsa-tokens/` mirror** this folder already carries for the diagrams rather than adding a second token or font copy. The vendored carriers are never hand-edited here; re-sync them from the owner when the upstream contract changes.
 
 **Order is semantic, not geometric.** The architectural representation atlas comes **first** because it is the orientation layer over everything below it — per view it names the object represented, the question it answers, and where that view's authority ends, and *no single diagram is the master picture*. It takes the same inert card as every other figure: one grid, one panel class, no hero variant.
 
