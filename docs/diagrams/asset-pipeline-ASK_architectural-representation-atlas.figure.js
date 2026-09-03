@@ -1,4 +1,4 @@
-/* asset-pipeline-ASK_architectural-representation-atlas.figure.js — bespoke orientation figure (source-v2 // render-v1, 2026-09-02)
+/* asset-pipeline-ASK_architectural-representation-atlas.figure.js — bespoke orientation figure (source-v2 // render-v1, 2026-09-03)
    An architecture-DECONFLICTION artifact, not another architecture model. It maps the repo's EXISTING
    architectural representations so a reader can tell, per view: the object it depicts, the question it
    answers, the live surface that carries it, and where that view's authority ends. Flat and non-causal —
@@ -255,11 +255,24 @@
 
        Capturing on pointerdown, as this did before, would swallow every tap on a card. */
     const PAN_THRESHOLD_PX = 4;
-    let armed = false, dragging = false, suppressClick = false;
+    let armed = false, dragging = false, suppressClick = false, suppressTimer = null;
     let px0 = 0, py0 = 0, tx0 = 0, ty0 = 0, pid = null;
+
+    const clearSuppression = () => {
+      suppressClick = false;
+      if (suppressTimer !== null) { clearTimeout(suppressTimer); suppressTimer = null; }
+    };
 
     wrap.addEventListener('pointerdown', (ev) => {
       if (ev.target.closest('.hud, .legend, .caption')) return;
+      /* PRIMARY POINTER, PRIMARY BUTTON, ONE SEQUENCE AT A TIME. Middle-click,
+         right-click, the pen barrel and a second finger must stay entirely native —
+         they are how a reader opens a card in a new tab or reaches the context menu,
+         and a pan that armed on them would both scroll the canvas and leave a
+         native auxiliary activation running underneath it. A pointer arriving while
+         another sequence is live is ignored rather than overwriting it. */
+      if (!ev.isPrimary || ev.button !== 0) return;
+      if (armed || dragging) return;
       armed = true; dragging = false; pid = ev.pointerId;
       px0 = ev.clientX; py0 = ev.clientY; tx0 = tx; ty0 = ty;
     });
@@ -269,31 +282,48 @@
       const dx = ev.clientX - px0, dy = ev.clientY - py0;
       if (!dragging) {
         if (Math.abs(dx) < PAN_THRESHOLD_PX && Math.abs(dy) < PAN_THRESHOLD_PX) return;
-        /* Commit to a pan: capture now, and suppress exactly ONE click — the one this
-           gesture will synthesize on release over whatever card it started on. */
-        dragging = true; suppressClick = true;
+        dragging = true;
         wrap.classList.add('dragging');
         try { wrap.setPointerCapture(pid); } catch (err) { /* capture is best-effort */ }
       }
       tx = tx0 + dx; ty = ty0 + dy; apply();
     });
 
+    /* SUPPRESSION BELONGS TO ONE COMPLETED PAN SEQUENCE, AND ONLY TO ONE THAT CAN
+       ACTUALLY PRODUCE A CLICK. A pan ended by pointerup synthesizes a click over the
+       card it started on, so exactly that click is suppressed. A pan ended by
+       pointercancel or by lost capture produces NO click — arming suppression there
+       would leave a flag with nothing to consume it, and the next independent
+       activation (pointer OR keyboard, both of which dispatch click) would be eaten
+       instead. The timer is the backstop for the same hazard: if the expected click
+       never arrives, suppression expires before any later input can meet it. */
     const endDrag = (ev) => {
       if (ev && pid !== null && ev.pointerId !== pid) return;
-      if (dragging) { try { wrap.releasePointerCapture(pid); } catch (err) { /* already gone */ } }
+      const wasDragging = dragging;
+      const hadPid = pid;
+      /* Reset BEFORE releasing capture: the release itself fires lostpointercapture,
+         and a live state here would re-enter this handler mid-cleanup. */
       armed = false; dragging = false; pid = null;
       wrap.classList.remove('dragging');
+      if (wasDragging && hadPid !== null) {
+        try { wrap.releasePointerCapture(hadPid); } catch (err) { /* already gone */ }
+      }
+      if (wasDragging && ev && ev.type === 'pointerup') {
+        suppressClick = true;
+        if (suppressTimer !== null) clearTimeout(suppressTimer);
+        suppressTimer = setTimeout(clearSuppression, 0);   /* expires after the click opportunity */
+      } else {
+        clearSuppression();                                 /* cancel / lost capture: no click is coming */
+      }
     };
     wrap.addEventListener('pointerup', endDrag);
     wrap.addEventListener('pointercancel', endDrag);
     wrap.addEventListener('lostpointercapture', endDrag);
 
-    /* Capture phase, so the click is stopped before it reaches the anchor. The flag is
-       consumed whether or not a link was under the pointer, so a pan can never suppress
-       the NEXT independent click. */
+    /* Capture phase, so the click is stopped before it reaches the anchor. */
     wrap.addEventListener('click', (ev) => {
       if (!suppressClick) return;
-      suppressClick = false;
+      clearSuppression();
       ev.preventDefault(); ev.stopPropagation();
     }, true);
     wrap.addEventListener('wheel', (ev) => { ev.preventDefault(); const r = wrap.getBoundingClientRect(), mx = ev.clientX - r.left, my = ev.clientY - r.top;
