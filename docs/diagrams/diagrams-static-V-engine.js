@@ -39,6 +39,47 @@
   if (!window.DIAGRAM_FIT || typeof window.DIAGRAM_FIT.compute !== 'function') {
     throw new Error('Diagram fit support is missing. Load diagrams-fit.js before the diagram engine.');
   }
+  /* FAIL-CLOSED on the text-layout carrier, on the same terms as the fit carrier.
+     The INTERFACE is checked, not merely the global: a stale mirror that predates a
+     method would pass a truthiness test and then fail deep inside layout, where the
+     error names nothing useful. The check covers every CALLABLE member plus the
+     declared TARGETS, including members this engine never calls itself — `measure` is
+     the contract's measurement primitive, and SEQ gates `rendersTag` although it
+     renders no tags. A mirror missing any of them is incomplete, and an incomplete
+     mirror should fail here rather than in whichever consumer does use the missing
+     member. VERSION and EXCLUDED are published metadata, not gated: nothing branches
+     on them, so failing closed on them would be ceremony. */
+  if (!window.DIAGRAM_TEXT_LAYOUT
+      || typeof window.DIAGRAM_TEXT_LAYOUT.measure !== 'function'
+      || typeof window.DIAGRAM_TEXT_LAYOUT.layoutRole !== 'function'
+      || typeof window.DIAGRAM_TEXT_LAYOUT.roleFor !== 'function'
+      || typeof window.DIAGRAM_TEXT_LAYOUT.rendersNote !== 'function'
+      || typeof window.DIAGRAM_TEXT_LAYOUT.rendersTag !== 'function'
+      || typeof window.DIAGRAM_TEXT_LAYOUT.hasRenderedSecondary !== 'function'
+      || typeof window.DIAGRAM_TEXT_LAYOUT.emit !== 'function') {
+    throw new Error('Diagram text-layout support is missing or incomplete. Load diagrams-text-layout.js before the diagram engine.');
+  }
+  /* The helper DECLARES which patterns it serves. Check membership rather than
+     trusting the filename: a mirror can be complete, load cleanly, and still be
+     the wrong member — vendored from a sibling plane, or from a future version
+     that dropped this pattern. That case passes an interface check and fails
+     nowhere, so it is the one the metadata exists to catch. */
+  if (!Array.isArray(window.DIAGRAM_TEXT_LAYOUT.TARGETS)
+      || window.DIAGRAM_TEXT_LAYOUT.TARGETS.indexOf('diagram-static-V') === -1) {
+    throw new Error('Diagram text-layout support does not declare diagram-static-V as a target'
+      + ' (declared: ' + JSON.stringify(window.DIAGRAM_TEXT_LAYOUT.TARGETS) + ').'
+      + ' Re-vendor diagrams-text-layout.js from patterns/_diagram-shared/.');
+  }
+  const TL = window.DIAGRAM_TEXT_LAYOUT;
+  /* This engine's identity in the shared contract. Role caps, line heights and
+     the rendered-secondary predicate are RESOLVED BY THE HELPER against it —
+     this file deliberately keeps no copy of any of them. */
+  const TARGET = 'diagram-static-V';
+
+  /* Role caps and line heights are NOT defined here. They live in
+     diagrams-text-layout.js and are requested by role, because three engines
+     each holding their own copy is precisely the divergence the shared contract
+     exists to remove. */
   /* ---------- layout constants ---------- */
   const DEPTH_GAP = 58;      // vertical gap between depth bands (room for edges)
   const SIB_GAP   = 30;      // min horizontal gap between sibling boxes
@@ -68,13 +109,22 @@
   const LS_TAG     = 1.44;  // .section-tag         letter-spacing:0.16em × font-size:9px   (FONT_TAG)
   const LS_NOTE    = 0.2;   // .node-note           letter-spacing:0.02em × font-size:10px  (FONT_NOTE)
 
-  const measureCtx = document.createElement('canvas').getContext('2d');
-  function measure(text, font, ls = 0) {
-    measureCtx.font = font;
-    let w = measureCtx.measureText(text).width;
-    if (ls) w += text.length * ls;  // canvas.measureText ignores CSS letter-spacing
-    return w;
-  }
+  /* Text measurement lives ENTIRELY in diagrams-text-layout.js. This engine
+     keeps no local canvas context and no local measure(): a second
+     measurement path is exactly how a shared contract silently forks, and a
+     dead one is worse than none because it reads as available. */
+
+  /* ADDED height of a wrapped run — 0 when it did not wrap.
+
+     boxH already carries this growth, so a run anchored to the box CENTRE or
+     BOTTOM must subtract its own growth: anchoring the FIRST baseline to a
+     grown edge deposits the new height as dead space on one side and pushes
+     the run's remaining lines out the other. A label/note PAIR is centred as
+     one block, so each is offset by half the pair's combined growth and the
+     gap between them is preserved exactly. */
+  const gLabel = (n) => (n.lay && n.lay.label ? n.lay.label.addedHeight : 0);
+  const gNote  = (n) => (n.lay && n.lay.note  ? n.lay.note.addedHeight  : 0);
+  const gPair  = (n) => (gLabel(n) + gNote(n)) / 2;
 
   function fontFor(node) {
     const status = node.status || 'earned';
@@ -105,32 +155,67 @@
     function build(node, depth, parentIdx) {
       const kind = node.kind || 'node';
       const status = node.status || 'earned';
-      const hasNote = !!(node.note || (kind === 'section' && node.tag));
+      /* Resolved by the helper. This engine's own predicate used to count a note
+         on ANY kind while drawing one on neither a section nor a group. Measured
+         on the base engine: a GROUP note selected BOX_H_NOTE and grew the box
+         26 -> 44px; a SECTION note cost no height — a section takes SECTION_H /
+         SECTION_H_TAG — but was still measured into the band width. Two
+         symptoms, one drifted predicate. */
+      const hasNote = TL.hasRenderedSecondary(TARGET, node);
 
       // measured content width
       const padX = kind === 'root' ? ROOT_PAD_X : BOX_PAD_X;
       const displayLabel = kind === 'section' ? '/ ' + node.label.toUpperCase() : node.label;
-      const labelW = measure(displayLabel, fontFor(node), kind === 'section' ? LS_SECTION : 0);
-      let noteW = node.note ? measure(node.note, FONT_NOTE, LS_NOTE) : 0;
-      if (kind === 'section' && node.tag) {
-        noteW = Math.max(noteW, measure('// ' + node.tag, FONT_TAG, LS_TAG));
+      /* Measured through the shared helper. A non-wrapping string returns EXACTLY
+         what the local measure() returned before, letter-spacing compensation
+         included — that parity is what lets the no-wrap case prove identity. */
+      const labelLay = TL.layoutRole({ target: TARGET, role: TL.roleFor(TARGET, node),
+        text: displayLabel, font: fontFor(node),
+        letterSpacing: kind === 'section' ? LS_SECTION : 0 });
+      const labelW = labelLay.width;
+      let noteW = 0, noteLay = null, tagLay = null;
+      /* Only measure notes for kinds that actually render them. The section
+         branch draws label + rule + tag and never a note, so measuring one
+         here would widen the band and inflate boxH for text no reader ever
+         sees. H guards the same case for the same reason. */
+      if (TL.rendersNote(TARGET, node)) {
+        noteLay = TL.layoutRole({ target: TARGET, role: 'note',
+          text: node.note, font: FONT_NOTE, letterSpacing: LS_NOTE });
+        noteW = noteLay.width;
+      }
+      if (TL.rendersTag(TARGET, node)) {
+        tagLay = TL.layoutRole({ target: TARGET, role: 'sectionTag',
+          text: '// ' + node.tag, font: FONT_TAG, letterSpacing: LS_TAG });
+        noteW = Math.max(noteW, tagLay.width);
       }
       const contentW = Math.max(labelW, noteW);
+      const lay = { label: labelLay, note: noteLay, tag: tagLay };
+      /* Wrapped growth feeds this engine's OWN contract: band height takes the
+         max boxH at a depth, and horizontal packing takes boxW. Both absorb the
+         growth without any anchor solver — V has no same-depth vertical
+         adjacency to solve, because every depth IS one horizontal band. */
+      const grow = (labelLay.addedHeight) + (noteLay ? noteLay.addedHeight : 0) + (tagLay ? tagLay.addedHeight : 0);
 
       // box width / height per kind. Sections have no box; their footprint is
       // the wider of the centered label/tag and the centered rule.
       let boxW, boxH;
       if (kind === 'section') {
+        /* The box geometry is this engine's; the QUESTION "does a tag render"
+           is the shared contract's. A raw node.tag here would agree with the
+           helper only by accident of sitting inside a section branch on a
+           target whose shape declares sections — an equivalence nothing
+           enforces, and exactly the silent coupling that let the note
+           predicate drift. */
         boxW = Math.max(contentW, SECTION_RULE_HALF * 2);
-        boxH = node.tag ? SECTION_H_TAG : SECTION_H;
+        boxH = (TL.rendersTag(TARGET, node) ? SECTION_H_TAG : SECTION_H) + grow;
       } else {
         boxW = contentW + padX * 2;
-        boxH = kind === 'root' ? ROOT_BOX_H : (hasNote ? BOX_H_NOTE : BOX_H);
+        boxH = (kind === 'root' ? ROOT_BOX_H : (hasNote ? BOX_H_NOTE : BOX_H)) + grow;
       }
 
       const idx = nodes.length;
       nodes.push({
-        ...node, kind, status, depth, hasNote,
+        ...node, kind, status, depth, hasNote, lay,
         boxW, boxH, cx: 0, cy: 0, childIndices: [],
       });
       if (parentIdx !== null && parentIdx !== undefined) {
@@ -218,7 +303,14 @@
        stem and bus stay solid. A single-child parent has no bus → the stem and
        drop form one straight vertical line (the spine). */
     function bottomY(n) {
-      if (n.kind === 'section') return n.cy + (n.tag ? n.boxH / 2 : SECTION_H / 2 - 4);
+      /* Derive from FINAL geometry, not the legacy constant. A tagless section
+         grows boxH and moves its rule down when its label wraps; returning
+         SECTION_H/2 - 4 pinned the stem to the unwrapped bottom, so the
+         connector began ABOVE the rule and crossed it once the label took a
+         second line (measured -3.5px at two lines, -10px at three). Using
+         boxH/2 keeps the established 3px rule-to-stem gap at EVERY line count,
+         and at no wrap boxH === SECTION_H so the result is unchanged. */
+      if (n.kind === 'section') return n.cy + n.boxH / 2 - (TL.rendersTag(TARGET, n) ? 0 : 4);
       return n.cy + n.boxH / 2;
     }
     for (const p of nodes) {
@@ -257,24 +349,25 @@
       const top = n.cy - n.boxH / 2;
 
       if (n.kind === 'section') {
-        const labelY = n.tag ? top + 9 : n.cy - 3;
-        nodeLayer.appendChild(el('text', {
+        const labelY = TL.rendersTag(TARGET, n) ? top + 9 : n.cy - 3 - gLabel(n) / 2;
+        const labelDrop = gLabel(n);   // rule + tag sit below the whole label block
+        nodeLayer.appendChild(TL.emit(el('text', {
           x: n.cx, y: labelY,
           'text-anchor': 'middle',
           class: 'node-label section',
-        }, ['/ ' + n.label.toUpperCase()]));
+        }), n.lay.label.lines, { x: n.cx, lineHeight: n.lay.label.lineHeight }));
         nodeLayer.appendChild(el('line', {
-          x1: n.cx - SECTION_RULE_HALF, y1: labelY + 11,
-          x2: n.cx + SECTION_RULE_HALF, y2: labelY + 11,
+          x1: n.cx - SECTION_RULE_HALF, y1: labelY + 11 + labelDrop,
+          x2: n.cx + SECTION_RULE_HALF, y2: labelY + 11 + labelDrop,
           class: 'section-rule',
           'stroke-opacity': 0.4,
         }));
-        if (n.tag) {
-          nodeLayer.appendChild(el('text', {
-            x: n.cx, y: labelY + 24,
+        if (TL.rendersTag(TARGET, n)) {
+          nodeLayer.appendChild(TL.emit(el('text', {
+            x: n.cx, y: labelY + 24 + labelDrop,
             'text-anchor': 'middle',
             class: 'section-tag',
-          }, ['// ' + n.tag]));
+          }), n.lay.tag.lines, { x: n.cx, lineHeight: n.lay.tag.lineHeight }));
         }
         continue;
       }
@@ -286,22 +379,31 @@
           rx: 4, ry: 4,
           class: 'node-box root',
         }));
-        nodeLayer.appendChild(el('text', {
-          x: n.cx, y: n.hasNote ? n.cy - 8 : n.cy,
+        nodeLayer.appendChild(TL.emit(el('text', {
+          x: n.cx, y: n.hasNote ? n.cy - 8 - gPair(n) : n.cy - gLabel(n) / 2,
           'text-anchor': 'middle',
           class: 'node-label root',
-        }, [n.label]));
-        if (n.note) {
-          nodeLayer.appendChild(el('text', {
-            x: n.cx, y: n.cy + 12,
+        }), n.lay.label.lines, { x: n.cx, lineHeight: n.lay.label.lineHeight }));
+        if (TL.rendersNote(TARGET, n)) {
+          nodeLayer.appendChild(TL.emit(el('text', {
+            x: n.cx, y: n.cy + 12 + gLabel(n) - gPair(n),
             'text-anchor': 'middle',
             class: 'node-note',
-          }, [n.note]));
+          }), n.lay.note.lines, { x: n.cx, lineHeight: n.lay.note.lineHeight }));
         }
         continue;
       }
 
       if (n.kind === 'group') {
+        /* A group carries the ordinary label/note PAIR geometry while keeping its
+           own fill treatment. It also does not take the held/legacy status
+           modifiers the generic branch applies — pre-existing on both this
+           engine and H, unchanged here, and named so the omission reads as
+           inherited rather than introduced. The public tree grammar permits `note` on a
+           group, and the helper's predicate says a group note renders, so the
+           build path measures it and grows the box for it — a branch that then
+           emitted no note would reserve space for text no reader ever sees,
+           which is the exact defect this shared contract exists to remove. */
         nodeLayer.appendChild(el('rect', {
           x: n.cx - n.boxW / 2, y: top,
           width: n.boxW, height: n.boxH,
@@ -309,11 +411,18 @@
           class: 'node-box',
           'fill-opacity': 0.5,
         }));
-        nodeLayer.appendChild(el('text', {
-          x: n.cx, y: n.cy,
+        nodeLayer.appendChild(TL.emit(el('text', {
+          x: n.cx, y: n.hasNote ? n.cy - 7 - gPair(n) : n.cy - gLabel(n) / 2,
           'text-anchor': 'middle',
           class: 'node-label',
-        }, [n.label]));
+        }), n.lay.label.lines, { x: n.cx, lineHeight: n.lay.label.lineHeight }));
+        if (TL.rendersNote(TARGET, n)) {
+          nodeLayer.appendChild(TL.emit(el('text', {
+            x: n.cx, y: n.cy + 9 + gLabel(n) - gPair(n),
+            'text-anchor': 'middle',
+            class: 'node-note',
+          }), n.lay.note.lines, { x: n.cx, lineHeight: n.lay.note.lineHeight }));
+        }
         continue;
       }
 
@@ -325,18 +434,18 @@
         rx: 4, ry: 4,
         class: boxClass,
       }));
-      nodeLayer.appendChild(el('text', {
-        x: n.cx, y: n.hasNote ? n.cy - 7 : n.cy,
+      nodeLayer.appendChild(TL.emit(el('text', {
+        x: n.cx, y: n.hasNote ? n.cy - 7 - gPair(n) : n.cy - gLabel(n) / 2,
         'text-anchor': 'middle',
         class: labelClass,
-      }, [n.label]));
-      if (n.note) {
+      }), n.lay.label.lines, { x: n.cx, lineHeight: n.lay.label.lineHeight }));
+      if (TL.rendersNote(TARGET, n)) {
         const noteClass = 'node-note' + (n.status === 'legacy' ? ' legacy' : '');
-        nodeLayer.appendChild(el('text', {
-          x: n.cx, y: n.cy + 9,
+        nodeLayer.appendChild(TL.emit(el('text', {
+          x: n.cx, y: n.cy + 9 + gLabel(n) - gPair(n),
           'text-anchor': 'middle',
           class: noteClass,
-        }, [n.note]));
+        }), n.lay.note.lines, { x: n.cx, lineHeight: n.lay.note.lineHeight }));
       }
     }
 

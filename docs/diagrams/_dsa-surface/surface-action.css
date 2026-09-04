@@ -29,8 +29,9 @@
      placement         inside a panel, outside one, several, one, or none
 
    NOT for: full-panel links (a.surface-panel owns those), ordinary inline
-   text links, theme or mode selectors, lightbox and gallery-overlay triggers,
-   status notes, badges, or non-interactive labels. Being rectangular and
+   text links (surface-text-link.css owns those), theme or mode selectors,
+   lightbox and gallery-overlay triggers, status notes, badges, or
+   non-interactive labels. Being rectangular and
    clickable is not the same role.
 
    WHY THESE VALUES. The contract uses existing role tokens wherever the system
@@ -97,13 +98,34 @@
    control for its context gets a matching hover border for free.
 
    This ALIGNS compact actions with the foundation's generic-anchor treatment,
-   which already hovers to `border-bottom-color: currentColor`. It is not an
-   exception carved out of a line-role norm — the line-role cases are the ones
-   that are specific, and they are named: FULL-PANEL LINKS (a.surface-panel)
-   take the --line-2 -> --line-1 brightening, and WRAPPING BREADCRUMB LINKS
-   (.surface-title a) take their own underline treatment. Mark and footer roles
-   change opacity only and leave their border alone. Do not conform any of them
-   to this rule, or this rule to them.
+   which already hovers to `border-bottom-color: currentColor`. THREE GOVERNED
+   POPULATIONS now share that hover mechanism — generic anchors, compact
+   actions, and FULL-PANEL LINKS (a.surface-panel) — while keeping different
+   ANATOMY and different foreground priority:
+
+     generic anchor      a text-edge border, resolving to its inherited color
+     compact action      the complete pill border, --fg-1 or --fg-2 on
+                         --secondary
+     full-panel link     the complete panel border, --fg-1
+
+   Sharing the mechanism is not sharing the paint, and it is not a claim about
+   every bordered thing that might later become interactive. It names these
+   three and no others.
+
+   The remaining roles are governed elsewhere and are NOT conformed to this
+   rule: WRAPPING BREADCRUMB LINKS (.surface-title a) and the navigation
+   panel's hierarchy rows take the shell's magenta underline; ORDINARY INLINE
+   TEXT LINKS, excluded below, have their own owner — surface-text-link.css;
+   and the IDENTITY MARK changes opacity only, leaving its border alone.
+
+   THE SHELL FOOTER IS NOT AMONG THEM ANY MORE. It used to carry its own unboxed
+   terminal-link treatment; a footer destination is now a compact action, so it
+   is governed BY this rule rather than excluded from it. Nothing here changed
+   to accommodate it — the row is the shell's, the item is this module's, and
+   the split is the same one that already separates a gallery card's action row
+   from the control inside it. A footer destination stays an <a>: the shaped
+   geometry is what this module supplies, and it supplies it identically to an
+   anchor that navigates and a button that acts.
 
    State it accurately: in light mode this visibly moves the border from a
    translucent white to the foreground purple. That IS a color transition. What

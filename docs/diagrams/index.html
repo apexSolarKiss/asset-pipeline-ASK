@@ -6,6 +6,9 @@
 <title>asset-pipeline-ASK // diagrams</title>
 <meta name="description" content="asset-pipeline-ASK // seven illustrative figures across four classes — the representation atlas that orients them, two structural axes, the repo architecture tree, the bounded-generativity system model, the visual-payload convergence flow, and the interactive architecture-state spine.">
 <meta name="color-scheme" content="light dark">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <!-- ============================================================
      DIAGRAM FRONT DOOR — asset-pipeline-ASK/docs/diagrams/index.html
 
@@ -113,7 +116,18 @@
         <img class="surface-mark-light" src="_dsa-surface/assets/logo-ASK-white.png" alt="" aria-hidden="true" width="2160" height="974">
         <img class="surface-mark-dark" src="_dsa-surface/assets/logo-ASK-lavender-ASK.png" alt="" aria-hidden="true" width="2160" height="974">
       </a>
-      <h1 class="surface-title"><span class="org">apexSolarKiss</span> <span class="sep" aria-hidden="true">//</span> asset-pipeline-ASK <span class="sep" aria-hidden="true">//</span> diagrams</h1>
+      <!-- BREADCRUMB, not a plain title. This surface has real navigable public
+           ancestors above it, and the pattern's test is ancestry rather than local
+           rootedness, so the complete public path is shown: the meta-brand front
+           door, the apex solar kiss studio route, the repo that owns this folder,
+           and the current leaf. `asset-pipeline-ASK` is static because it has no
+           public page of its own — the GitHub repository is a UTILITY destination
+           and sits in the navigation panel, never in the ancestry. The chain is
+           authored once, visibly; the panel derives its path from it, which is why
+           there is no data-nav-root-* configuration below. -->
+      <nav class="surface-breadcrumb" aria-label="Breadcrumb">
+        <h1 class="surface-title"><a class="org" href="https://a-s-k.studio/">ASK</a> <span class="sep" aria-hidden="true">//</span> <a href="https://a-s-k.studio/apex-solar-kiss">apex solar kiss</a> <span class="sep" aria-hidden="true">//</span> asset-pipeline-ASK <span class="sep" aria-hidden="true">//</span> <span class="page" aria-current="page">diagrams</span></h1>
+      </nav>
       <p class="surface-lede">Seven figures across four classes — two structural axes, the repo architecture tree, a
         system-model topology, a convergence flow, and one interactive state surface. They represent different objects
         and must not be collapsed into one picture, so the representation atlas comes first and says what each one is
@@ -239,13 +253,48 @@
 
   </main>
 
+  <!-- Terminal destinations, as compact actions. The re-vendored shell retires
+       its former unboxed terminal-link role deliberately, so a footer item that
+       forgot its classes fails visibly rather than approximating the old look.
+       They remain anchors: each one has a destination, and two leave the origin. -->
   <footer class="surface-footer">
-    <a href="README.md">README</a>
-    <a href="../architecture.md">architecture</a>
-    <a href="https://github.com/apexSolarKiss/asset-pipeline-ASK" target="_blank" rel="noopener">repository</a>
-    <a href="https://a-s-k.studio/" target="_blank" rel="noopener">A-S-K.studio</a>
+    <a class="surface-action surface-action--secondary" href="README.md">README</a>
+    <a class="surface-action surface-action--secondary" href="../architecture.md">architecture</a>
+    <a class="surface-action surface-action--secondary" href="https://github.com/apexSolarKiss/asset-pipeline-ASK" target="_blank" rel="noopener">repository</a>
+    <a class="surface-action surface-action--secondary" href="https://a-s-k.studio/" target="_blank" rel="noopener">A-S-K.studio</a>
   </footer>
 
+  <!-- Responsive navigation. The identity mark discloses the panel, one meaning
+       for the mark wherever it appears.
+
+       PARENT FORM. This surface is the root of its own family: the seven figures
+       are its CHILDREN rather than its siblings, so the current-position marker
+       carries a nested list. The current label and its aria-current are authored
+       once, in the visible breadcrumb above — never repeated here — and
+       `diagrams` is deliberately not restated as an "overview" child, because two
+       rows reaching one destination is the defect this IA removes. The repository
+       is a utility destination and sits in the utility row, not in the ancestry. -->
+  <template class="surface-nav-source">
+    <ul class="surface-nav-local">
+      <li data-surface-nav-current>
+        <ul>
+          <li><a href="asset-pipeline-ASK_architectural-representation-atlas.html">architectural representation atlas</a></li>
+          <li><a href="asset-pipeline-ASK_architecture-tree.html">architecture tree</a></li>
+          <li><a href="asset-pipeline-ASK_ontology-tree.html">ontology</a></li>
+          <li><a href="asset-pipeline-ASK_inheritance-spine.html">inheritance</a></li>
+          <li><a href="asset-pipeline-ASK_bounded-generativity.html">bounded generativity</a></li>
+          <li><a href="asset-pipeline-ASK_visual-payload-architecture.html">visual payload architecture</a></li>
+          <li><a href="interactive/asset-pipeline-ASK_ia-state-spine.html">information architecture — state</a></li>
+        </ul>
+      </li>
+    </ul>
+    <p class="surface-nav-utilities">
+      <a class="surface-action surface-action--secondary" href="https://github.com/apexSolarKiss/asset-pipeline-ASK" target="_blank" rel="noopener">repository</a>
+    </p>
+  </template>
+
 </div>
+
+<script src="_dsa-surface/surface-shell.js"></script>
 </body>
 </html>

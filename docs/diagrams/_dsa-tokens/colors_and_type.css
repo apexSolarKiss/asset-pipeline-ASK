@@ -77,7 +77,7 @@
   /* ==== TIER 2 — ASK design language (palette values + named lavender-ASK) ==== */
   /* ---------- Core set — backgrounds, wordmark, dark-mode text ---------- */
   --ask-white:          #FFFFFF;   /* light-mode WORDMARK (brand mark) — not body text */
-  --ask-lavender-light: #E2D3F0;   /* light gradient, top-right */
+  --ask-lavender-light: #E2D3F0;   /* light gradient, top-right; also the light browser / under-page edge */
   --ask-lavender-dark:  #D4C6E1;   /* lavender-ASK — light gradient bottom-left + dark-mode text */
   --ask-ink-light:      #201D26;   /* dark gradient, bottom-left */
   --ask-ink-dark:       #0A090C;   /* dark gradient, top-right */
@@ -245,9 +245,46 @@
 /* =========================================================================
    Base resets + semantic typography
    ========================================================================= */
+/* ---------- Browser / under-page edge — ROOT-ONLY ----------
+   The browser derives its under-page area (the over-scroll pocket above and
+   below the document) from a SOLID background colour, and its scrollbar and
+   form-control rendering from `color-scheme`. Both are page-wide, so both are
+   owned by the ROOT and nowhere else.
+
+   `--bg-edge` is the Tier-1 semantic role; it binds the existing palette values
+   and creates none. The base reset below paints it on `html` UNDER the gradient,
+   so nothing on the page changes visually — the gradient still covers the
+   viewport, and the solid only shows where the browser reaches past the document.
+
+   Root-scoped on purpose. The general dark-mode blocks above deliberately also
+   match a DESCENDANT `.theme-dark`, which is correct for local subtree theming
+   but cannot be correct here: custom properties inherit downward, so a
+   `.theme-dark` on `body` would resolve dark for the subtree while `html` — the
+   element that actually owns the canvas — kept the light edge, giving dark
+   content inside the root-owned browser edge. These selectors therefore match the root
+   only, and a descendant `.theme-dark` deliberately leaves the canvas alone. */
+:root {
+  --bg-edge: var(--ask-lavender-light);
+  color-scheme: light;
+}
+:root[data-theme="dark"],
+:root.theme-dark {
+  --bg-edge: var(--ask-ink-dark);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]):not(.theme-dark) {
+    --bg-edge: var(--ask-ink-dark);
+    color-scheme: dark;
+  }
+}
+
 html, body {
   margin: 0;
-  background: var(--bg-gradient);
+  /* LONGHAND, deliberately. The `background` shorthand resets background-color to
+     transparent, which is what left the canvas with no solid layer to derive the
+     edge from. Written as longhands so a later edit cannot silently undo it. */
+  background-image: var(--bg-gradient);
   background-attachment: fixed;
   color: var(--fg-1);
   font-family: var(--font-sans);
@@ -258,6 +295,10 @@ html, body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
+/* The root carries the solid edge; the body stays transparent so the root's
+   background is what propagates to the canvas. */
+html { background-color: var(--bg-edge); }
+body { background-color: transparent; }
 
 h1, .h1 {
   font-family: var(--font-sans);
