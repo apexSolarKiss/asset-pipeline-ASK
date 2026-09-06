@@ -22,10 +22,11 @@
    resolution (`[data-theme]` + `prefers-color-scheme`) and its palette tokens.
    Offline; no CDN.
 
-   STATUS: v0.1 — first authored, awaiting first-consumer proving. Authorized by
-   ASK source-of-intent (2026-07-12). The first consumer will be method-ASK's
-   bounded-generativity figure (by reference); asset-pipeline-ASK is the intended
-   second consumer and the portability pressure test. Provisional-but-portable:
+   STATUS: v0.1 — first authored. Authorized by ASK source-of-intent
+   (2026-07-12). Landed public consumption is recorded in CONSUMERS.md; the
+   first consumer's binding is documented in the worked example in
+   three-functions.md. A landed consumption record is not, by itself, a
+   portability, usability, or generality verdict. Provisional-but-portable:
    the mappings are the stable part; the role list is fixed at three.
 
    ---------------------------------------------------------------------------
