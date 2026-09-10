@@ -270,8 +270,15 @@
     return {
       bgFrom:    v('--bg-from',   '#D4C6E1'),
       bgTo:      v('--bg-to',     '#E2D3F0'),
-      fg1:       v('--fg-1',      '#FFFFFF'),
-      fg2:       v('--fg-2',      'rgba(255,255,255,0.82)'),
+      /* Chrome text resolves the SEMANTIC diagram roles first, with the foundation roles
+         as backward-compatible fallback. diagrams.css aliases --diagram-ink / --diagram-muted
+         to --fg-1 / --fg-2 by default, so ordinary consumers render exactly as before; a
+         consumer that legitimately rebinds those roles for its own surface — an opt-in
+         high-contrast region, say — previously had its live page corrected while the exported
+         header, caption and legend silently kept the foundation values. The export is a
+         retained output of the live page, so it must not diverge from it. */
+      fg1:       v('--diagram-ink',   v('--fg-1', '#FFFFFF')),
+      fg2:       v('--diagram-muted', v('--fg-2', 'rgba(255,255,255,0.82)')),
       line1:     v('--line-1',    'rgba(255,255,255,0.45)'),
       nodeFill:  v('--node-fill', '#BFB3D4'),
       panelFill: v('--bg-from',   '#D4C6E1'),
