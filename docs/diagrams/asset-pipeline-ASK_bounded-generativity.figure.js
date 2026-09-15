@@ -1,4 +1,12 @@
-/* asset-pipeline-ASK_bounded-generativity.figure.js — AP instance (source-v1 // render-v2, ASK 2026-07-13)
+/* asset-pipeline-ASK_bounded-generativity.figure.js — AP instance (source-v2 // render-v2, ASK 2026-09-14)
+   source-v2: conforms to Three Functions v0.2. The source-of-intent / normative-apex ROLE is the
+   CONSTITUTIVE legislative source, so it now carries the role treatment in a role box on the main axis;
+   the creative brief stays DELEGATED legislative apparatus. Both take the same role value — their rank is
+   carried by topology (the source role outside the bounded-generativity bracket, the brief inside it),
+   never a second hue, an opacity rank or a fourth function. The figure draws the role, not an occupying
+   actor, so there is no actor envelope here. The role box and the shortened source beam follow the
+   method-ASK bounded-generativity figure's source-v5.
+   Carried from source-v1 (derivation and AP adaptations):
    Derived from the method-ASK bounded-generativity topology @ 2e5d8c4. Per ASK apex ruling (2026-07-13),
    AP copy AND geometry are adapted for the commercial image-production surface under ASK authorization — the
    shared invariant is the TOPOLOGY, the semantic-role mapping (legislative/executive/judicial), the Three
@@ -9,9 +17,13 @@
    (3) "permitted creative variance" raised to clear the aperture arrow; (4) the dotted authorized-judgment rail
    continued from the chamber to the selection ring (no arrowhead) — creative discretion is exercised in
    realization AND at selection (recovers the retired SEQ 2->4 "exercised at selection" relation).
-   Consumes design-system-ASK Three Functions by reference (_dsa-tokens/three-functions.css @ DS 8fb82b7):
-   legislative = creative-brief box · executive = the candidate-realization chamber (variance = negative cutouts)
-   · judicial = selection ring + ratified node. Everything else neutral. */
+   Consumes design-system-ASK Three Functions v0.2 by reference (_dsa-tokens/three-functions.css @ DS a7c5530):
+   legislative = the source-of-intent role box (constitutive) + the creative-brief box (delegated)
+   · executive = the candidate-realization chamber (variance = negative cutouts)
+   · judicial = selection ring + ratified node.
+   Everything else neutral — including the aperture, its dimension arrow and iris geometry (the
+   permission the grant produces, not apparatus), the dotted authorized-judgment rail and every
+   connecting beam. */
 (function () {
   /* FAIL CLOSED BEFORE ANY LAYOUT. diagrams-fit.js is a DS-owned support file that must be
      vendored alongside this figure and loaded immediately BEFORE it. Checked here, at the top
@@ -22,7 +34,7 @@
   }
 
   const M = {
-    apex:   { label: 'source of intent', sub: 'normative apex supplies', note1: 'purpose + governing standard' },
+    apex:   { label: 'source-of-intent role', sub: 'normative apex supplies', note1: 'purpose + governing standard' },
     grammar:{ label: 'creative brief', note1: 'carries creative intent', note2: 'grants the aperture' },
     field:  { tag: 'candidate realization  ·  image-production span', apertureLo: 'aperture', apertureHi: 'permitted creative variance', variance: 'candidate image variance', judgment: '· · ·  creative discretion where present  · · ·' },
     select: { tag: 'curatorial selection + closure', note1: 'ratifies one candidate', note2: 'aperture closes' },
@@ -57,18 +69,23 @@
   const note = (x, y, t, a='start') => el('text', { x, y, class:'node-note', 'text-anchor':a }, [t]);
   const tag = (x, y, t, a='middle') => el('text', { x, y, class:'flow-tag', 'text-anchor':a }, [t]);
 
-  /* ===== source of intent / normative apex — OUTSIDE the frame, left · NEUTRAL ===== */
-  nodes.append(lbl(140, 250, M.apex.label));
-  nodes.append(note(140, 268, M.apex.sub));
-  nodes.append(note(140, 286, M.apex.note1));
+  /* ===== source of intent / normative apex — OUTSIDE the frame, left · LEGISLATIVE (CONSTITUTIVE) =====
+     The role box sits ON the main axis so the source beam visibly leaves it. It carries the role label
+     only, on the theme foreground; the two descriptive lines sit below it as neutral captions rather
+     than on the role-bearing apparatus. */
+  nodes.append(box(124, YM-20, 172, 40, 'node-box fn-leg'));
+  nodes.append(lbl(140, YM, M.apex.label));
+  nodes.append(note(140, YM+36, M.apex.sub));
+  nodes.append(note(140, YM+54, M.apex.note1));
 
   /* ===== bounded generativity frame · NEUTRAL ===== */
   const FX = 340, FY = 112, FW = 930, FH = 402;   // x 340-1270, y 112-514; AP widened frame +14 (916->930) so the brief->aperture gap = the 36px frame inset — ASK-authorized accommodation for the AP surface
   nodes.append(el('rect', { x:FX, y:FY, width:FW, height:FH, rx:14, ry:14, class:'flow-group' }));
   nodes.append(tag(FX + FW/2, FY - 14, M.bracket));
 
-  /* ===== source beam · NEUTRAL → grammar/brief = LEGISLATIVE ===== */
-  edges.append(line(`M 146 ${YM} L 372 ${YM}`));
+  /* ===== source beam · NEUTRAL, from the source role → grammar/brief = LEGISLATIVE =====
+     Carriage takes no function color: the beam between two legislative elements stays neutral. */
+  edges.append(line(`M 296 ${YM} L 372 ${YM}`));
   edges.append(headR(372, YM));
   nodes.append(box(376, YM-38, 164, 76, 'node-box fn-leg'));   // AP three-line node (150->164 w, 58->76 h) to carry the brief's two-part note without loss — ASK-authorized label-accommodation for the AP surface
   nodes.append(lbl(392, YM-18, M.grammar.label));

@@ -22,19 +22,34 @@
    resolution (`[data-theme]` + `prefers-color-scheme`) and its palette tokens.
    Offline; no CDN.
 
-   STATUS: v0.1 — first authored. Authorized by ASK source-of-intent
-   (2026-07-12). Landed public consumption is recorded in CONSUMERS.md; the
-   first consumer's binding is documented in the worked example in
-   three-functions.md. A landed consumption record is not, by itself, a
-   portability, usability, or generality verdict. Provisional-but-portable:
-   the mappings are the stable part; the role list is fixed at three.
+   STATUS: v0.2 — semantic generation. Authorized by ASK source-of-intent
+   (2026-07-12; source-role correction 2026-09-11). Landed public consumption
+   is recorded in CONSUMERS.md, which remains the record of what consumers
+   have actually landed. three-functions.md documents the upstream
+   FUNCTION-ADMISSIBILITY CRITERIA and illustrates them through bounded
+   generativity; each consumer owns its CONCRETE ELEMENT BINDING under those
+   criteria. A landed consumption record is not, by itself, a portability,
+   usability, or generality verdict.
+   v0.2 CHANGES WHICH ELEMENTS QUALIFY FOR `legislative`, NOT HOW THE ROLE
+   RENDERS ONCE ASSIGNED. No role token, palette binding, selector, cascade
+   or resolved value changes — the two comment blocks are the whole
+   CSS-FILE change. The role list is fixed at three and the role-to-palette
+   mappings are unchanged and remain the portable part; the ADMISSIBLE
+   POPULATION OF `legislative` is what this generation revises.
 
    ---------------------------------------------------------------------------
    ROLE MAP
    ---------------------------------------------------------------------------
    Function       Meaning                                          ASK mapping
-     legislative  authors / carries the governing rule and the     --ask-emphasis-magenta
-                  grant of permitted variance (the aperture)         (#FF00FF)
+     legislative  adopts or authorizes the governing standard,     --ask-emphasis-magenta
+                  or carries it into operative scope through a       (#FF00FF)
+                  grammar, brief, rule or grant; the grant
+                  produces the aperture. The APERTURE itself is
+                  the permission produced — a neutral quantity,
+                  not apparatus. Standing intent, and passive
+                  storage / citation / routing / relay /
+                  preservation, take NO function color. See
+                  three-functions.md for the full boundary.
      executive    realizes candidates under the rule; does not     theme-neutral:
                   author it and does not judge the result            #FFFFFF light /
                                                                      lavender-ASK dark

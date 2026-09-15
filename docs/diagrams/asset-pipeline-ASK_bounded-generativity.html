@@ -15,7 +15,10 @@
 <!-- ASK Three Functions — opt-in semantic function-color primitive, vendored from design-system-ASK. See _dsa-tokens/MANIFEST.md -->
 <link rel="stylesheet" href="./_dsa-tokens/three-functions.css">
 <style>
-  /* ===== Three Functions consumption (source-v1 // render-v2): role stroke + 30% fill; executive = the chamber, variance = negative cutouts ===== */
+  /* ===== Three Functions consumption (source-v2 // render-v2 · primitive v0.2): role stroke + 30% fill; executive = the chamber, variance = negative cutouts.
+     legislative = the source-of-intent role box (constitutive) and the creative-brief box (delegated), one role value;
+     their rank is carried by topology — outside vs inside the bracket — not by a second hue. Labels stay on the theme
+     foreground. ===== */
   .node-box.fn-leg  { stroke: var(--function-legislative); fill: color-mix(in srgb, var(--function-legislative) 30%, transparent); }
   .node-box.fn-jud  { stroke: var(--function-judicial);    fill: color-mix(in srgb, var(--function-judicial) 30%, transparent); }
   .edge.fn-jud-ring { stroke: var(--function-judicial); }
@@ -40,8 +43,8 @@
     </div>
     <div class="spacer"></div>
     <div class="stamp">
-      <div><span class="k">source-v1</span> // <span class="k">render-v2</span></div>
-      <div>2026-07-13</div>
+      <div><span class="k">source-v2</span> // <span class="k">render-v2</span></div>
+      <div>2026-09-14</div>
     </div>
   </div>
 
@@ -59,7 +62,7 @@
       <div class="h"><span>Three functions</span><span class="fig">one spine</span></div>
       <div class="row">
         <div class="sw"><div class="box-solid fn-leg"></div></div>
-        <div><span class="lbl">legislative</span><span class="sub">creative brief · grants the aperture</span></div>
+        <div><span class="lbl">legislative</span><span class="sub">source-of-intent role · creative brief</span></div>
       </div>
       <div class="row">
         <div class="sw"><div class="box-solid fn-exe"></div></div>
