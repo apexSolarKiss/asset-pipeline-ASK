@@ -377,8 +377,8 @@ button.surface-mark[data-surface-nav-pointer-focus]:focus-visible {
    carries the indicator, zero indicator pixels land on neighboring glyph ink,
    and contrast is 3.50:1 and 4.00:1 against the light gradient stops, 10.25:1
    and 12.26:1 against the dark. The identity mark does not fragment and keeps
-   the box-shadow glow; footer destinations keep theirs through
-   surface-action.css. */
+   the box-shadow glow; footer destinations take surface-action.css's attention
+   edge instead. */
 .surface-title a:focus-visible {
   outline: none;
   box-shadow: none;
@@ -1050,9 +1050,21 @@ a.surface-nav-row:focus-visible {
    destination underline, its hover and active feedback, and its real focus —
    the driver removes the attribute on the first keydown, on blur, and on close,
    so a hardware keyboard on a phone or tablet gets the visible treatment the
-   moment it is used. */
-.surface-nav-panel [data-surface-nav-pointer-entry-focus]:focus-visible {
+   moment it is used.
+
+   The entry target is not always a row. With no link in the tree, the driver
+   focuses the first enabled button, which is the close control — a compact
+   action, whose keyboard indicator is surface-action.css's attention edge rather
+   than a ring. Suppressing only the shadow would leave that edge painted, so the
+   close control takes its own rule, which also restores surface-action.css's
+   resting border. It applies only while the control is not hovered: under hover
+   the same edge is hover's, and hover feedback is kept. */
+.surface-nav-panel [data-surface-nav-pointer-entry-focus]:focus-visible:not(.surface-action) {
   outline: none;
+  box-shadow: none;
+}
+.surface-nav-panel .surface-action[data-surface-nav-pointer-entry-focus]:focus-visible:not(:hover) {
+  border-color: var(--line-2);
   box-shadow: none;
 }
 

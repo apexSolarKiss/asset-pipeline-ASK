@@ -39,11 +39,17 @@
    color, and motion timing/easing. It introduces no token and no palette role.
 
    Established interaction literals retain their existing raw values where no
-   role token exists: the 1px border, the 1px/4px focus geometry, the 0.92
-   hover opacity, the 0.97 press scale, and the README-specified
-   translucent-white focus halo. Those are the family's existing interaction
-   contract, not ad-hoc measurements — do not invent tokens for them here, and
-   do not alter the interaction treatment to make them look tokenized.
+   role token exists: the 1px border, the 0.92 hover opacity and the 0.97 press
+   scale. Those are the family's existing interaction contract, not ad-hoc
+   measurements — do not invent tokens for them here, and do not alter the
+   interaction treatment to make them look tokenized. The 0.5px light-theme
+   attention ring is a raw literal on the same terms, but it is NEW: it arrived
+   with the selected hover and focus treatment rather than being inherited.
+
+   The README's 1px/4px translucent-white focus glow is NOT among this module's
+   literals any more. A compact action's focus limb takes the shared attention
+   edge instead; the glow remains the focus indicator for the populations that
+   keep it, and the README's focus contract names which.
 
    Caption-sized mono at 300 keeps the control quieter than the primary label
    it usually sits beneath, without becoming prose. It is Caption-SIZED, not
@@ -86,37 +92,56 @@
                     the box model that promise depends on.
 
    Hover, press and focus are one contract, inherited by every consumer, and
-   they live here rather than on any consuming surface. Press is scale(0.97);
-   focus is the white glow rather than the browser default.
+   they live here rather than on any consuming surface. Press is scale(0.97).
 
-   HOVER RESOLVES THE BORDER TO `currentColor`, and that is deliberate. A
-   compact control is small, and its rest border is --line-2 — the faintest
-   line the system has. A hover that only brightened it to --line-1, still
-   translucent, is barely perceptible at this scale. Resolving to the control's
-   OWN governed foreground makes the outline legible: primary follows --fg-1,
-   the --secondary variant follows --fg-2, and a consumer that recolors a
-   control for its context gets a matching hover border for free.
+   HOVER AND KEYBOARD-VISIBLE FOCUS TURN THE BORDER PURE MAGENTA
+   (--ask-emphasis-magenta). In this rule the magenta carries attention — this is
+   the object the reader is addressing — and nothing more: the same palette value
+   carries persistent, context-governed meanings elsewhere in the family, and hue
+   alone confers none of them. A compact control is small and its rest border is
+   --line-2, the faintest line the system has; brightening that line reads as
+   almost no response on the light gradient, and the magenta border gives a
+   shaped control one attention response in both themes.
 
-   This ALIGNS compact actions with the foundation's generic-anchor treatment,
-   which already hovers to `border-bottom-color: currentColor`. THREE GOVERNED
-   POPULATIONS now share that hover mechanism — generic anchors, compact
-   actions, and FULL-PANEL LINKS (a.surface-panel) — while keeping different
-   ANATOMY and different foreground priority:
+   The apparent edge is 1.5px in light and 1px in dark, and nothing moves: the
+   border stays 1px, and light mode adds a 0.5px zero-blur ring drawn outside
+   the box, as paint rather than layout. There is NO GLOW. Press keeps its scale.
 
-     generic anchor      a text-edge border, resolving to its inherited color
-     compact action      the complete pill border, --fg-1 or --fg-2 on
-                         --secondary
-     full-panel link     the complete panel border, --fg-1
+   ONE PAINT, TWO INDEPENDENT STATES. Hover and focus answer different questions
+   — where the pointer is, and where the keyboard is — and this module keeps that
+   logic separate while giving both the same edge. Focus persists after the
+   pointer leaves; hover disappears with it; a control that is both shows one
+   treatment rather than two competing ones. What is NOT shared is the 0.92
+   opacity drop, which belongs to hover alone: a keyboard user has not dimmed
+   anything by arriving. The consequence is stated plainly: two controls, one
+   hovered and one focused, show the same edge, and only hover's opacity drop
+   tells them apart.
 
-   Sharing the mechanism is not sharing the paint, and it is not a claim about
-   every bordered thing that might later become interactive. It names these
-   three and no others.
+   The magenta lasts only while the control is hovered or focused. It is not a
+   selected, current, filtered or error state, and a consumer must not use it as
+   one. No non-text contrast claim is made for the edge in either state.
+
+   TWO GOVERNED POPULATIONS share this treatment — compact actions and FULL-PANEL
+   LINKS (a.surface-panel) — with different ANATOMY:
+
+     compact action      the complete pill border
+     full-panel link     the complete panel border, its ring composed with the
+                         panel's resting --shadow-md rather than replacing it
+
+   It names these two and no others. A bordered thing that might later become
+   interactive does not inherit it by being interactive, and inert panels,
+   diagram marks and persistent states do not acquire it by analogy. A
+   persistent emphasis carried BY a member of these two populations is
+   overwritten by this paint while the object is hovered or focused; it needs
+   its own consumer composition rule.
 
    The remaining roles are governed elsewhere and are NOT conformed to this
-   rule: WRAPPING BREADCRUMB LINKS (.surface-title a) and the navigation
-   panel's hierarchy rows take the shell's magenta underline; ORDINARY INLINE
-   TEXT LINKS, excluded below, have their own owner — surface-text-link.css;
-   and the IDENTITY MARK changes opacity only, leaving its border alone.
+   rule: the foundation's GENERIC ANCHOR keeps its text-edge hover to
+   `currentColor`; WRAPPING BREADCRUMB LINKS (.surface-title a) and the
+   navigation panel's hierarchy rows take the shell's magenta underline;
+   ORDINARY INLINE TEXT LINKS, excluded below, have their own owner —
+   surface-text-link.css; and the IDENTITY MARK changes opacity only, leaving
+   its border alone and keeping the README's focus glow.
 
    THE SHELL FOOTER IS NOT AMONG THEM ANY MORE. It used to carry its own unboxed
    terminal-link treatment; a footer destination is now a compact action, so it
@@ -127,11 +152,9 @@
    geometry is what this module supplies, and it supplies it identically to an
    anchor that navigates and a button that acts.
 
-   State it accurately: in light mode this visibly moves the border from a
-   translucent white to the foreground purple. That IS a color transition. What
-   the repo README forbids is introducing an ARBITRARY new hue, and this
-   introduces none — the border becomes a color the control is already
-   painted in.
+   State it accurately: this IS a hue change, in both themes. In this module a
+   hover or focus border changes only to the palette's emphasis magenta, and the
+   module introduces no token and no palette role.
 
    The foundation underlines anchors, so text-decoration is held off at rest
    and on hover — a compact control reads as a control, not as running text.
@@ -186,9 +209,29 @@ button.surface-action {
    that happens to be nearby. */
 .surface-action--secondary { color: var(--fg-2); }
 
-.surface-action:hover { opacity: 0.92; border-color: currentColor; text-decoration: none; }
-.surface-action:active { transform: scale(0.97); }
+/* The SHARED paint. One declaration for both states, so they cannot drift apart
+   and neither can win the other's edge. */
+.surface-action:hover,
 .surface-action:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 1px var(--ask-white), 0 0 0 4px rgba(255, 255, 255, 0.25);
+  border-color: var(--ask-emphasis-magenta);
+  box-shadow: 0 0 0 0.5px var(--ask-emphasis-magenta);
 }
+/* Dark: the 1px magenta border alone. The trailing :where() keeps these at the
+   shared rule's own specificity (0,2,0) rather than raising it, so a consumer's
+   theme rule is not outranked by this module; source order is what makes them
+   apply. It also covers .theme-dark on the control itself. */
+.surface-action:hover:where(:root[data-theme="dark"] *, .theme-dark, .theme-dark *),
+.surface-action:focus-visible:where(:root[data-theme="dark"] *, .theme-dark, .theme-dark *) { box-shadow: none; }
+@media (prefers-color-scheme: dark) {
+  .surface-action:hover:where(:root:not([data-theme="light"]):not([data-theme="dark"]) *),
+  .surface-action:focus-visible:where(:root:not([data-theme="light"]):not([data-theme="dark"]) *) { box-shadow: none; }
+}
+
+/* The limbs that are NOT shared. The opacity drop is hover's; `outline: none` is
+   focus's, and the shared rule above paints the indicator in its place. A compact
+   action has no resting shadow, so its light ring stands alone; a consumer that
+   gives one a resting shadow restates it, composed with the ring, in its own hover
+   and focus rules. */
+.surface-action:hover { opacity: 0.92; text-decoration: none; }
+.surface-action:active { transform: scale(0.97); }
+.surface-action:focus-visible { outline: none; }

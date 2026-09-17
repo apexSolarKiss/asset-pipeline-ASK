@@ -33,12 +33,13 @@
      layout of the payload     a consumer's own actions, chips, metadata rows,
                                and grids stay the consumer's.
 
-   It introduces no token or new palette value. Geometry and the
-   README-specified focus glow retain raw literals where no role token exists —
-   the 20px blur and the focus ring's 1px / 4px translucent white are both
-   established values with no token to resolve through. Every text size
-   resolves through the foundation scale, and reusable colors resolve through
-   existing roles. An unruled raw color or raw text size here is a defect.
+   It introduces no token or new palette value. Geometry and the interaction
+   edge retain raw literals where no role token exists — the 20px blur, an
+   established value, and the 0.5px light-theme attention ring, new with the
+   hover and focus treatment; neither has a token to resolve through. Every text
+   size resolves through the foundation scale, and reusable colors resolve
+   through existing roles. An unruled raw color or raw text size here is a
+   defect.
 
    Scope: live content panels carrying a primary title, supporting copy, and
    optionally metadata and actions. Shared rectangularity is not shared
@@ -117,22 +118,25 @@
 /* A panel that is ITSELF a link. Only this form gets interaction, and it takes
    the repo README's hover/press/focus contract verbatim so every consumer
    inherits it rather than re-deriving it. Hover spends both approved limbs: the
-   opacity drop, plus the border resolving to the panel's OWN GOVERNED
-   FOREGROUND — the same hover mechanism a compact action uses, and the same one
-   the foundation's generic anchor already uses on its border-bottom.
+   opacity drop, plus the border turning PURE MAGENTA — the attention treatment a
+   compact action uses, shared with keyboard-visible focus. surface-action.css
+   carries the full account of both.
 
-   It previously brightened --line-2 to --line-1, two strengths of one
-   translucent value. That is a real change and it read as almost none: on the
-   light gradient a faint white line brightening slightly, under a simultaneous
-   opacity drop, is a response a reader can look straight past. Resolving to
-   currentColor is what makes the panel answer at the scale it occupies.
+   The apparent edge is 1.5px in light — the 1px border plus a 0.5px zero-blur
+   ring — and 1px in dark. There is no glow and no layout change. Press keeps its
+   scale.
 
-   SAME MECHANISM IS NOT THE SAME COLOR. currentColor here is --fg-1, the
-   panel's own governed foreground, while a --secondary compact action resolves
-   to --fg-2. The panel's hover border is therefore stronger than a secondary
-   button's, which is correct: one mechanism, two role priorities. Demoting the
-   panel to the quieter foreground to match a button pixel-for-pixel would be
-   matching the wrong thing.
+   THE RING COMPOSES WITH --shadow-md; IT NEVER REPLACES IT. A panel's resting
+   elevation is not an interaction state, so neither hover nor focus extinguishes
+   it: both restate the shadow and draw the ring outside it, and dark restates
+   the shadow alone. That is why the shadow appears in these rules at all. The
+   composition is with THIS module's resting shadow; a rule cannot read another
+   one. A consumer that gives a linked panel a different resting shadow restates
+   it in its own hover and focus rules — composed with the 0.5px ring in light,
+   alone under each dark path — later in source than this module.
+
+   The two states stay independent — focus persists after the pointer leaves —
+   and share only the paint. The 0.92 opacity drop remains hover's alone.
 
    An inert panel gets none of this. A panel containing its own links is inert
    HERE and its links carry their own affordances; nesting a link inside a
@@ -153,9 +157,22 @@ a.surface-panel {
     transform var(--dur-1) var(--ease-out),
     box-shadow var(--dur-2) var(--ease-out);
 }
-a.surface-panel:hover { opacity: 0.92; border-color: currentColor; }
-a.surface-panel:active { transform: scale(0.97); }
+/* The SHARED paint, composed with the resting shadow. */
+a.surface-panel:hover,
 a.surface-panel:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 1px var(--ask-white), 0 0 0 4px rgba(255, 255, 255, 0.25);
+  border-color: var(--ask-emphasis-magenta);
+  box-shadow: var(--shadow-md), 0 0 0 0.5px var(--ask-emphasis-magenta);
 }
+/* Dark: the 1px magenta border and the resting shadow, no ring. The trailing
+   :where() keeps these at the shared rule's own specificity (0,2,1). */
+a.surface-panel:hover:where(:root[data-theme="dark"] *, .theme-dark, .theme-dark *),
+a.surface-panel:focus-visible:where(:root[data-theme="dark"] *, .theme-dark, .theme-dark *) { box-shadow: var(--shadow-md); }
+@media (prefers-color-scheme: dark) {
+  a.surface-panel:hover:where(:root:not([data-theme="light"]):not([data-theme="dark"]) *),
+  a.surface-panel:focus-visible:where(:root:not([data-theme="light"]):not([data-theme="dark"]) *) { box-shadow: var(--shadow-md); }
+}
+
+/* The limbs that are NOT shared. */
+a.surface-panel:hover { opacity: 0.92; }
+a.surface-panel:active { transform: scale(0.97); }
+a.surface-panel:focus-visible { outline: none; }
