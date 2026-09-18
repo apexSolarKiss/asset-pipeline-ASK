@@ -235,3 +235,10 @@ button.surface-action {
 .surface-action:hover { opacity: 0.92; text-decoration: none; }
 .surface-action:active { transform: scale(0.97); }
 .surface-action:focus-visible { outline: none; }
+
+/* Reduced motion. Transitions and the press scale are removed; the shared hover
+   and focus paint still applies, without animation. */
+@media (prefers-reduced-motion: reduce) {
+  .surface-action { transition: none; }
+  .surface-action:active { transform: none; }
+}

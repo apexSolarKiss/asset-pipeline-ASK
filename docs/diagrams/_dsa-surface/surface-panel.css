@@ -46,6 +46,28 @@
    semantics — token specimens, diagram nodes, artifact-scaffold cards, chips,
    badges, lightboxes, and image cards are NOT this population and must not be
    conformed to it.
+
+   THE GLASS RECIPE IS AUTHORED HERE, ONCE. A panel selects three things that
+   are governed separately: the page material (the glass fill, the 20px blur and
+   the hairline edge), free attachment (every corner at --radius-lg) and raised
+   elevation (--shadow-md). surface-treatments.css offers each of those as its
+   own axis class, for a separate surface that is not a content panel. The axis
+   classes share these declarations by selector grouping and never restate
+   them, so a change to the recipe here reaches both. The panel material, which
+   does not blur, shares the fill and the edge the same way. Four rules name the
+   raised-elevation token again, because a box-shadow list cannot compose across
+   rules: the linked panel's hover and focus rules below (three, by theme) and
+   the composed emphasis shadow in surface-treatments.css. A change to the
+   raised elevation updates those rules as well.
+
+   Grouping changes nothing about a panel. Every selector in a list keeps its
+   own specificity, no two of these rules set the same property, and every
+   panel declaration stays in this file. It gives an axis class nothing else
+   either: a surface carrying one is not a content panel and takes none of the
+   panel's column, inset or interaction. The axis classes are defined here and
+   documented in surface-treatments.css, which a page loads after this file;
+   an artifact scaffold that inlines surface-treatments.css inlines this file
+   before it.
    ========================================================================= */
 
 /* The panel. A column, always: the support line sits BELOW its title rather
@@ -59,13 +81,30 @@
   align-items: flex-start;
   gap: var(--space-3);
   min-width: 0;
+  padding: var(--space-6);
+}
 
+/* The glass recipe, one axis per rule. MATERIAL: the page material blurs; the
+   panel material shares the fill and the edge and does not blur. */
+.surface-panel,
+.surface-material-page,
+.surface-material-panel {
   background: var(--surface-glass);
+  border: 1px solid var(--line-1);
+}
+.surface-panel,
+.surface-material-page {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--line-1);
+}
+/* ATTACHMENT: free-standing, every corner rounded. */
+.surface-panel,
+.surface-attach-free {
   border-radius: var(--radius-lg);
-  padding: var(--space-6);
+}
+/* ELEVATION: raised. */
+.surface-panel,
+.surface-elevation-raised {
   box-shadow: var(--shadow-md);
 }
 
@@ -176,3 +215,10 @@ a.surface-panel:focus-visible:where(:root[data-theme="dark"] *, .theme-dark, .th
 a.surface-panel:hover { opacity: 0.92; }
 a.surface-panel:active { transform: scale(0.97); }
 a.surface-panel:focus-visible { outline: none; }
+
+/* Reduced motion. Transitions and the press scale are removed; the shared hover
+   and focus paint still applies, without animation. */
+@media (prefers-reduced-motion: reduce) {
+  a.surface-panel { transition: none; }
+  a.surface-panel:active { transform: none; }
+}

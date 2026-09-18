@@ -158,6 +158,7 @@
   --tracking-tight: -0.02em;
   --tracking-normal: 0;
   --tracking-wide: 0.08em;
+  --tracking-caption: 0.14em;
   --tracking-display: -0.035em;
 
   /* ---------- Spacing (4-px base) ---------- */
@@ -342,7 +343,7 @@ p, .body {
 }
 
 .small  { font-size: var(--fs-small); font-weight: var(--fw-light); }
-.caption{ font-size: var(--fs-caption); font-weight: var(--fw-regular); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--fg-2); }
+.caption{ font-size: var(--fs-caption); font-weight: var(--fw-regular); letter-spacing: var(--tracking-caption); text-transform: uppercase; color: var(--fg-2); }
 
 .display {
   font-size: var(--fs-display);
