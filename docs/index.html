@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AP-ASK // An architecture for creative intent</title>
+<meta name="description" content="An architecture for creative intent. AP-ASK is an open-source reference architecture for carrying that intent into commercial image production.">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://asset-pipeline.a-s-k.studio/">
+<meta property="og:title" content="AP-ASK // An architecture for creative intent">
+<meta property="og:description" content="An architecture for creative intent. AP-ASK is an open-source reference architecture for carrying that intent into commercial image production.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://asset-pipeline.a-s-k.studio/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AP-ASK // An architecture for creative intent">
+<meta name="twitter:description" content="An architecture for creative intent. AP-ASK is an open-source reference architecture for carrying that intent into commercial image production.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<!-- ============================================================
+     AP-ASK LANDING PAGE — asset-pipeline-ASK/docs/index.html
+
+     The project's public introduction, served at the deployment root. AP-ASK is
+     the short public name of asset-pipeline-ASK; the repository name, the
+     domain and every technical identifier are unchanged. The page carries the
+     approved pitch in full, in its approved order and wording, and links the
+     diagram collection (diagrams/index.html) as its technical destination.
+
+     This page is ASSET-PIPELINE-ASK-OWNED content and composition over vendored
+     design-system-ASK carriers: the surface-shell pattern and its navigation
+     runtime, the surface-panel, surface-action and surface-text-link visual
+     rules, the document register (surface-document) and the surface treatments
+     (surface-treatments), all pinned byte-identical under diagrams/_dsa-surface/
+     and never hand-edited here. Tokens and fonts resolve from the existing
+     diagrams/_dsa-tokens/ mirror, so no second token or font copy exists.
+
+     COMPOSITION. Prose stays prose: the register's roles and compositions set
+     the type and the space between them — title, section titles, lede and body,
+     one flow of sections. The opening is one titled unit: the title, the
+     descriptor that heads the introduction, and the introduction, in the
+     approved order. The one set-apart passage is the document's own posed
+     question, an authorial callout on the magenta emphasis rail; bold words and
+     phrases inside paragraphs stay inline emphasis. Nothing is carded.
+
+     HEADINGS. The shell's structural title — the breadcrumbed h1, "ASK // apex
+     solar kiss // AP-ASK" — is the family locator every shell page carries. The
+     project's own heading is the document title, "AP-ASK", with nothing added.
+
+     SHELL LEDE, OMITTED. The shell's header carries a lede describing the
+     surface. This page leaves it out: any lede here would be copy beyond the
+     approved pitch, so the page opens on the approved text alone.
+
+     TIER BOUNDARY. As on the diagram collection, the shell's mark slot carries
+     the ASK-assigned Tier-3 wordmark. The assignment is a property of these
+     navigation surfaces and does not make asset-pipeline-ASK ASK-the-entity.
+     ============================================================ -->
+<link rel="stylesheet" href="diagrams/_dsa-tokens/colors_and_type.css">
+<link rel="stylesheet" href="diagrams/_dsa-surface/surface-panel.css">
+<link rel="stylesheet" href="diagrams/_dsa-surface/surface-action.css">
+<link rel="stylesheet" href="diagrams/_dsa-surface/surface-text-link.css">
+<link rel="stylesheet" href="diagrams/_dsa-surface/surface-shell.css">
+<link rel="stylesheet" href="diagrams/_dsa-surface/surface-document.css">
+<link rel="stylesheet" href="diagrams/_dsa-surface/surface-treatments.css">
+<style>
+  /* Local delta only: a full-height field, as on the diagram collection, and the
+     reading measure, which the shell leaves to the consumer by contract. The
+     measure is the one the family's other document page uses. */
+  body { min-height: 100vh; }
+  .ap-pitch { max-width: 68ch; }
+</style>
+</head>
+<body>
+<div class="surface">
+
+  <header class="surface-head">
+    <div class="surface-head-main">
+      <a class="surface-mark" href="index.html" aria-label="AP-ASK home">
+        <img class="surface-mark-light" src="diagrams/_dsa-surface/assets/logo-ASK-white.png" alt="" aria-hidden="true" width="2160" height="974">
+        <img class="surface-mark-dark" src="diagrams/_dsa-surface/assets/logo-ASK-lavender-ASK.png" alt="" aria-hidden="true" width="2160" height="974">
+      </a>
+      <!-- BREADCRUMB. The complete public path: the meta-brand front door, the
+           apex solar kiss studio route, and this page as the current leaf. The
+           panel derives its path from this chain. -->
+      <nav class="surface-breadcrumb" aria-label="Breadcrumb">
+        <h1 class="surface-title"><a class="org" href="https://a-s-k.studio/">ASK</a> <span class="sep" aria-hidden="true">//</span> <a href="https://a-s-k.studio/apex-solar-kiss">apex solar kiss</a> <span class="sep" aria-hidden="true">//</span> <span class="page" aria-current="page">AP-ASK</span></h1>
+      </nav>
+    </div>
+  </header>
+
+  <hr class="surface-rule">
+
+  <main class="surface-payload">
+    <article class="ap-pitch doc-flow" aria-labelledby="ap-ask-title">
+      <header class="doc-titled">
+        <h2 class="doc-title" id="ap-ask-title">AP-ASK</h2>
+        <h3 class="doc-section-title" id="ap-ask-intro">An architecture for creative intent</h3>
+        <div class="doc-prose">
+          <p class="doc-lede">Image-generation models are getting very good at making images. They still, however, need to be told what image to make.</p>
+          <p class="doc-lede">That requires more than a description of the scene. The brief must establish what the work is for, what it should express, what must remain true to the product, and where there is room for creative interpretation — and where there is not.</p>
+          <p class="doc-lede">AP-ASK is an open-source reference architecture for carrying that intent into commercial image production. It translates a brand’s visual language, references, creative choices, and business requirements into a structure for directing the work. Its purpose is to keep the brand’s intent in command of what gets made and selected, rather than let model defaults dictate the image and visual appeal alone determine which candidate becomes an approved asset.</p>
+        </div>
+      </header>
+      <section class="doc-section">
+        <h3 class="doc-section-title" id="ap-ask-resemblance-is-not-yet-direction">Resemblance is not yet direction</h3>
+        <div class="doc-prose">
+          <p class="doc-body">An image may resemble a previous campaign while failing to express the new idea. A product photograph may be visually accomplished yet obscure the detail a customer needs to see. A generated scene may look convincing while subtly changing the product’s construction.</p>
+          <p class="doc-body">Better rendering does not, by itself, resolve these failures. Indeed, it can make them harder to recognize: the image looks finished before anyone has established whether it fulfills the brief.</p>
+          <p class="doc-body">The production question is therefore more exacting than whether a model can reproduce a look. Rather, it asks which qualities of that look matter to this assignment, what must be preserved, what may be reinterpreted, and who has the authority to decide. AP-ASK’s work is to make those distinctions explicit enough to guide production and selection.</p>
+        </div>
+      </section>
+      <section class="doc-section">
+        <h3 class="doc-section-title" id="ap-ask-from-a-body-of-work-to-a-governing-standard">From a body of work to a governing standard</h3>
+        <div class="doc-prose">
+          <p class="doc-body">Much of a brand’s direction already exists, though rarely in one place. It lives across style guides, photography guides, libraries of existing assets, campaign decks, moodboards, and product specifications. Just as importantly, it lives in the accumulated, often unarticulated judgment of the creatives who have worked with the brand for years.</p>
+          <p class="doc-body">An experienced art director can read those materials through a history of decisions: which reference carries the light, which campaign was an exception, and how far “make it feel fresh” can go without losing the brand’s character. A machine, however, does not acquire that working understanding simply by receiving the same folder as context. AP-ASK’s task is to articulate the knowledge that lets the team interpret a brief, so that the same standards can guide machine-assisted production.</p>
+          <p class="doc-body">AP-ASK’s value proposition begins with the intake of that brand material, in both structured and unstructured forms, and its synthesis into a proposed visual brand system. The materials come as they are; making sense of them is the work, not preparation the brand must complete beforehand. The synthesis distinguishes enduring principles from campaign-specific choices, product facts from inspiration, and stated requirements from inferred patterns.</p>
+          <p class="doc-body">Yet a coherent synthesis is not automatically an authoritative one. The creative lead must first review the synthesis, correcting, refining, or rejecting its interpretations before validating what can govern subsequent work.</p>
+          <p class="doc-body">For an emerging brand, this process may articulate direction held largely in the founder’s eye. For an established team, it makes explicit the knowledge that already sustains its visual practice, often carried in the heads of art directors and long-standing collaborators rather than articulated in any guide. In either case, the brand retains the judgment; AP-ASK supplies the architecture for carrying that creative judgment into production.</p>
+        </div>
+      </section>
+      <section class="doc-section">
+        <h3 class="doc-section-title" id="ap-ask-the-brief-made-operable">The brief made operable</h3>
+        <div class="doc-prose">
+          <p class="doc-body">A brand does not have one image-production workflow — but rather, several. SKU-driven product imagery must describe a particular item accurately. Collection and merchandising work must make a group of products coherent. Marketing imagery serves a message or offer, while campaign and editorial work develops a broader creative idea.</p>
+          <p class="doc-body">These are different workflows, not simply different looks. They share a brand system, but differ in their inputs, required outputs, room for interpretation, and review decisions. A product-detail image and an editorial composition can therefore belong to the same brand without answering the same brief or following the same production process.</p>
+          <p class="doc-body">AP-ASK connects that shared direction to the requirements of each workflow and, within it, each assignment. It distinguishes brand-wide principles from campaign choices and individual shot requirements: what carries through, what the assignment adds, what may legitimately change, and who can authorize an exception.</p>
+          <p class="doc-body">For each assignment, AP-ASK connects the governing brief and its supporting material in what ASK calls a <strong>portable asset-definition package</strong>. This is a way of structuring the work, not a requirement to prepare a separate document for every image. The definition specifies what is to be made: the purpose of the image, the product facts that must remain accurate, references and their roles, required views or formats, permitted variation, and approval responsibility.</p>
+          <p class="doc-body">In a high-volume e-commerce studio, that direction can be built into the operating environment itself. An Airtable base, for example, can connect standing brand and category rules to product information, references, shot requirements, and review paths. The team can then work with the specifics of each item and any exceptions, rather than re-entering established direction or maintaining a second brief alongside the base.</p>
+          <p class="doc-body">A campaign or editorial assignment may instead benefit from a discrete brief. The package can support either form: what matters is that the governing direction is established and available when the work runs, not that someone writes a new document each time. Where the supplied material cannot settle a question, the uncertainty remains visible rather than quietly acquiring the force of a rule.</p>
+          <p class="doc-body">This is the brief made operable. It gives the people and systems doing the work a common basis for production and review, without forcing different workflows into one undifferentiated process.</p>
+        </div>
+      </section>
+      <section class="doc-section">
+        <h3 class="doc-section-title" id="ap-ask-what-a-reference-is-allowed-to-do">What a reference is allowed to do</h3>
+        <div class="doc-prose">
+          <p class="doc-body">Visual references carry relationships of light, proportion, material, atmosphere, and restraint that prose cannot fully encode. Yet that richness does not tell a production system which part of an image should govern the next one.</p>
+          <p class="doc-body">Someone supplies a photograph of a chair in a sunlit room and says, “Use this as a reference.”</p>
+          <p class="doc-body surface-emphasis-rail"><strong>A reference for what? The chair? The lighting? The room? The mood? The crop?</strong></p>
+          <p class="doc-body">The same photograph might establish the product’s silhouette and construction, guide only the light, or suggest an atmosphere without governing the object at all. It might even show something the brand wants to avoid. Nothing in the pixels settles which of those roles it has.</p>
+          <p class="doc-body">AP-ASK makes the role explicit, including what the reference does not govern. A lighting reference may guide the treatment of a scene without authorizing changes to the product. A campaign image may suggest atmosphere without turning last season’s styling into a permanent brand rule. Otherwise, a compelling mood can quietly displace product fidelity.</p>
+        </div>
+      </section>
+      <section class="doc-section">
+        <h3 class="doc-section-title" id="ap-ask-room-for-interpretation-grounds-for-acceptance">Room for interpretation, grounds for acceptance</h3>
+        <div class="doc-prose">
+          <p class="doc-body">The purpose of structure is not to prescribe every visual decision. Some assignments call for close fidelity; others invite a new composition, setting, or treatment. However, the latitude must be deliberate. An opening granted by the brief is not the same as an omission the generator happens to fill.</p>
+          <p class="doc-body">Selection (making “selects” and choosing the image for final approval) must then answer to that same brief. The question is not only whether a candidate is compelling, but whether it fulfills the intended expression, preserves product truth, and respects the requirements of its use. Creative judgment remains essential; the architecture makes explicit what that judgment is being exercised against.</p>
+          <p class="doc-body">Choosing a candidate, however, is not automatically approving its use. AP-ASK keeps the brief, the candidate images, the selection decision, and the accepted asset distinguishable. Acceptance binds the asset to its authorized use and responsibility; the record preserves the brief, the basis of the choice, and who stands behind it.</p>
+        </div>
+      </section>
+      <section class="doc-section">
+        <h3 class="doc-section-title" id="ap-ask-a-definition-independent-of-its-tools">A definition independent of its tools</h3>
+        <div class="doc-prose">
+          <p class="doc-body">AP-ASK is intentionally <strong>tool- and substrate-agnostic</strong>. The model that makes an image and the environment that organizes production are separate choices. The <strong>information architecture</strong> defines what that environment must carry and how the work is organized, rather than allowing one application’s structure to dictate the brand’s production logic.</p>
+          <p class="doc-body">AP-ASK uses that information architecture, together with the articulated brand system, workflow requirements, and creative and business constraints, as the <strong>blueprint for building the production system</strong>. AI coding and configuration agents then build and test the implementation against those requirements.</p>
+          <p class="doc-body">In Airtable, that means building the base’s schema, tables, field types, and data relationships, together with the working views, review paths, and automations the workflow requires. AP-ASK has already used agentic execution to build multiple prototype bases from architectural specifications.</p>
+          <p class="doc-body">For a team working on its own infrastructure, the same approach could instead guide, for example, a custom Python application backed by SQL. The execution tools may differ, but the requirements articulated through AP-ASK remain the basis for building and testing the system.</p>
+          <p class="doc-body">The repository develops the blueprints those builders need: which information belongs where, how instructions inherit or override one another, where creative latitude is granted, and how work moves through production and approval. Writing the code does not decide what the system ought to do; the architecture and the brand’s resolved requirements supply that direction.</p>
+          <p class="doc-body">Airtable is therefore a convenient implementation substrate, not AP-ASK’s product boundary. It is a powerful environment in its own right, combining data from multiple sources, relational structure, and collaborative workflows with image generation directly inside the platform. Production information, visual references, generated candidates, and review decisions can consequently remain connected in one integrated workflow. That being said, the larger aim is to make the architecture buildable on any substrate capable of supporting the work, while keeping the brand’s standards independent of the application chosen to implement them.</p>
+          <p class="doc-body">Within the resulting system, the package carries an assignment through production, whether embodied in connected records or presented as a discrete brief and record. The brief governs the run; the execution history relates candidates to that brief; and the acceptance record preserves the approved asset’s identity and decision basis. <strong>The architecture guides how the system is built; the package carries the work that system must perform.</strong></p>
+          <p class="doc-body">Portability thus concerns more than moving data. It means retaining the direction for future work as well as the record of completed work. A new model or application should be evaluated against the brand’s requirements, rather than quietly becoming the source of new ones.</p>
+        </div>
+      </section>
+      <section class="doc-section">
+        <h3 class="doc-section-title" id="ap-ask-the-project-today">The project today</h3>
+        <div class="doc-prose">
+          <p class="doc-body">AP-ASK is a developing reference architecture, not a finished production platform. Its worked examples span the four still-image workflows described above, at different depths.</p>
+          <p class="doc-body">The Airtable builds have combined agentic execution with manual configuration where platform-specific gaps required it. Within the prototype bases, bounded runs have carried image assignments through generation, human selection, and acceptance of the resulting assets.</p>
+          <p class="doc-body">One completed package has also been represented and recovered outside Airtable, in a file-based store and PostgreSQL. These are concrete implementation and portability proofs at bounded scope. The larger goal is to apply the same architecture-led approach to complete, brand-specific production systems across suitable environments.</p>
+        </div>
+      </section>
+      <section class="doc-section">
+        <h3 class="doc-section-title" id="ap-ask-developed-from-production-practice">Developed from production practice</h3>
+        <div class="doc-prose">
+          <p class="doc-body">AP-ASK is developed by <strong>Andrew S Klug // ASK</strong>, drawing on more than a decade producing photography and video for global brands and subsequent creative-operations and systems work, including Banana Republic and Williams-Sonoma.</p>
+          <p class="doc-body">AP-ASK is the short public name of the <a class="surface-text-link" href="https://github.com/apexSolarKiss/asset-pipeline-ASK" target="_blank" rel="noopener"><code class="doc-code">asset-pipeline-ASK</code></a> project.</p>
+          <p class="doc-body">The architecture, worked examples, and reasoning are being developed openly. The repository’s open-source materials are available under the <a class="surface-text-link" href="https://github.com/apexSolarKiss/asset-pipeline-ASK/blob/main/LICENSE" target="_blank" rel="noopener">Apache License 2.0</a>, allowing anyone to use, adapt, and build on the work, including for commercial purposes, subject to the license’s terms.</p>
+        </div>
+      </section>
+      <div class="doc-actions">
+        <a class="surface-action" href="diagrams/index.html">diagrams</a>
+        <a class="surface-action surface-action--secondary" href="https://github.com/apexSolarKiss/asset-pipeline-ASK" target="_blank" rel="noopener">repository</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="surface-footer">
+    <a class="surface-action surface-action--secondary" href="https://a-s-k.studio/" target="_blank" rel="noopener">A-S-K.studio</a>
+  </footer>
+
+  <!-- Responsive navigation. The identity mark discloses the panel. The diagram
+       collection is this page's child; the repository is a utility destination
+       and sits in the utility row, not in the ancestry. -->
+  <template class="surface-nav-source">
+    <ul class="surface-nav-local">
+      <li data-surface-nav-current>
+        <ul>
+          <li><a href="diagrams/index.html">diagrams</a></li>
+        </ul>
+      </li>
+    </ul>
+    <p class="surface-nav-utilities">
+      <a class="surface-action surface-action--secondary" href="https://github.com/apexSolarKiss/asset-pipeline-ASK" target="_blank" rel="noopener">repository</a>
+    </p>
+  </template>
+
+</div>
+
+<script src="diagrams/_dsa-surface/surface-shell.js"></script>
+</body>
+</html>

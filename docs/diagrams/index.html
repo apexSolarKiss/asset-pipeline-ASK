@@ -119,14 +119,16 @@
       <!-- BREADCRUMB, not a plain title. This surface has real navigable public
            ancestors above it, and the pattern's test is ancestry rather than local
            rootedness, so the complete public path is shown: the meta-brand front
-           door, the apex solar kiss studio route, the repo that owns this folder,
-           and the current leaf. `asset-pipeline-ASK` is static because it has no
-           public page of its own — the GitHub repository is a UTILITY destination
-           and sits in the navigation panel, never in the ancestry. The chain is
-           authored once, visibly; the panel derives its path from it, which is why
-           there is no data-nav-root-* configuration below. -->
+           door, the apex solar kiss studio route, the project's landing page at
+           the deployment root, and the current leaf. That ancestor is labeled
+           `AP-ASK`, the project's public name, because a segment names the place
+           it goes rather than a repository namespace; the GitHub repository is a
+           UTILITY destination and sits in the navigation panel, never in the
+           ancestry. The chain is authored once, visibly; the panel derives its
+           path from it, which is why there is no data-nav-root-* configuration
+           below. -->
       <nav class="surface-breadcrumb" aria-label="Breadcrumb">
-        <h1 class="surface-title"><a class="org" href="https://a-s-k.studio/">ASK</a> <span class="sep" aria-hidden="true">//</span> <a href="https://a-s-k.studio/apex-solar-kiss">apex solar kiss</a> <span class="sep" aria-hidden="true">//</span> asset-pipeline-ASK <span class="sep" aria-hidden="true">//</span> <span class="page" aria-current="page">diagrams</span></h1>
+        <h1 class="surface-title"><a class="org" href="https://a-s-k.studio/">ASK</a> <span class="sep" aria-hidden="true">//</span> <a href="https://a-s-k.studio/apex-solar-kiss">apex solar kiss</a> <span class="sep" aria-hidden="true">//</span> <a href="../index.html">AP-ASK</a> <span class="sep" aria-hidden="true">//</span> <span class="page" aria-current="page">diagrams</span></h1>
       </nav>
       <p class="surface-lede">Seven figures across four classes — two structural axes, the repo architecture tree, a
         system-model topology, a convergence flow, and one interactive state surface. They represent different objects
@@ -267,13 +269,13 @@
   <!-- Responsive navigation. The identity mark discloses the panel, one meaning
        for the mark wherever it appears.
 
-       PARENT FORM. This surface is the root of its own family: the seven figures
-       are its CHILDREN rather than its siblings, so the current-position marker
-       carries a nested list. The current label and its aria-current are authored
-       once, in the visible breadcrumb above — never repeated here — and
-       `diagrams` is deliberately not restated as an "overview" child, because two
-       rows reaching one destination is the defect this IA removes. The repository
-       is a utility destination and sits in the utility row, not in the ancestry. -->
+       PARENT FORM. The seven figures are this surface's CHILDREN rather than its
+       siblings, so the current-position marker carries a nested list. The
+       current label and its aria-current are authored once, in the visible
+       breadcrumb above — never repeated here — and `diagrams` is deliberately
+       not restated as an "overview" child, because two rows reaching one
+       destination is the defect this IA removes. The repository is a utility
+       destination and sits in the utility row, not in the ancestry. -->
   <template class="surface-nav-source">
     <ul class="surface-nav-local">
       <li data-surface-nav-current>

@@ -1,0 +1,682 @@
+/* =========================================================================
+   surface-document — the document register.
+
+   An OPT-IN VISUAL RULE under Foundations. It owns PRESENTATION ONLY: no
+   markup, no semantics, no template, and no generated preview. A consuming
+   surface writes its own markup and applies these classes to it, so two
+   semantic forms may share an appearance while sharing neither structure nor
+   behavior.
+
+   It serves BOTH lifecycles. A live surface references or vendors it and
+   re-syncs when it changes. An artifact scaffold may inline it at generation
+   time, after which the sealed copy does not re-sync. It carries no url() and
+   no @import, so it inlines verbatim.
+
+   LOAD ORDER   colors_and_type.css -> surface-document.css
+                A table of contents also needs surface-text-link.css, which its
+                entries compose for their interaction. An authorial callout or
+                a section synthesis also needs surface-panel.css ->
+                surface-treatments.css, loaded after this file.
+
+   It introduces no token and no palette value. Family, size, weight, leading,
+   tracking, foreground, space and rule color resolve through the foundation,
+   apart from the registered literals below.
+
+   ROLE OVER ELEMENT. Each text role is a complete text style — family, size,
+   weight, leading, tracking, foreground and margin — so the element carrying
+   it contributes nothing. An h2 carrying .doc-section-title is a section
+   title; an h4, h5, h6 or [role="heading"] carrying .doc-deep-title is the
+   same deep heading at every depth. Conforming a document role to the generic
+   heading metric of its element is a defect rather than a repair.
+
+   CATALOG
+
+   TEXT ROLE
+     meaning         a complete text style selected by what the text is in the
+                     document, never by its element, its size or its payload
+     population      document title, section / subsection / deep headings,
+                     lede, document body (in flow, in an authorial callout
+                     and in a section synthesis), entry title, quotation text,
+                     operative label, metadata, inline code, table-of-contents
+                     entry, dense table cell; Caption through the foundation's
+                     .caption
+     owner           this module; the Caption role stays the foundation's
+     reuses          foundation family, size, weight, leading, tracking and
+                     foreground tokens
+     variation       none per artifact; a new value enters with a named role
+     exclusions      display type, the structural locator, panel labels,
+                     compact actions and diagram chrome keep their own owners
+     example         an h4 and an h6 carrying .doc-deep-title render alike
+     counterexample  an uppercase mono label standing in for a content heading
+
+   THE LADDER. Document body is the foundation's Body step, the same 24 / 200
+   as a plain paragraph. Each heading role sits on one of the foundation's own
+   steps: the title on H1, the section on H2, the subsection on H3, and the
+   deep heading on Body itself, distinguished from body by weight (500 against
+   200) and by the space before it. No content heading is smaller than the
+   prose it governs. The ladder is checked, role by role, by tools/check-type-roles.mjs
+   (R7) and on rendered pages by tools/role-conformance.js.
+
+   TEXT RELATIONSHIP
+     meaning         the space between one role and the next, carried by a
+                     composition as a gap because every role sets margin 0
+     population      a document flow, its sections, prose runs, titled
+                     groups, groups, labeled values and action rows
+     owner           this module
+     reuses          foundation space tokens
+     variation       a section nested inside a section leads by --space-4
+     exclusions      page grid, column count, order and payload stay with the
+                     consuming surface
+     example         a heading and its body sit --space-3 apart wherever the
+                     pair occurs
+     counterexample  a hand-set margin on one subsection that its neighbors lack
+
+   HIERARCHY RAIL
+     meaning         "this belongs inside the level above" — indentation and
+                     hierarchy; it organizes and does not emphasize
+     population      nested sections to any depth, heading and content
+                     together; structured text whose indentation is structure
+     owner           this module; the rule and inset are the surface-shell
+                     navigation panel's nested level, without that row's margin
+     reuses          --space-4 inset, 1px --line-2 rule
+     variation       depth only; inside a structured block its gap is zero
+     exclusions      no wash, no blur, no shadow; spaces that only align
+                     columns are not levels
+     example         a level-7 heading nested one rail inside level 6, with the
+                     same heading treatment
+     counterexample  a smaller, lighter or recolored heading signaling depth
+
+   QUOTATION
+     meaning         represented voice: words presented as someone's — quoted,
+                     or introduced as what a speaker says — with optional
+                     attribution. It records whose words these are and nothing
+                     more: not verification, evidence, endorsement, agreement
+                     or approval
+     population      quoted statements in document text, long or short; an
+                     earlier statement by the same author, quoted; speech the
+                     prose introduces ("when another person says:"), including
+                     illustrative speech; a quoted code excerpt, set as a
+                     .doc-pre inside the .doc-quote
+     owner           this module; who is speaking is the consuming surface's
+                     editorial assignment, never inferred from the element, the
+                     font or the presence of quotation marks
+     reuses          the passage rail's geometry in the emphasis violet
+                     (--ask-emphasis-violet), document body metrics, metadata
+                     metrics for the attribution
+     variation       none. .doc-quote--display is RETIRED (2026-09-18): it set
+                     a short statement larger than the prose around it, while
+                     the plain quotation set smaller. A quotation is body-sized
+                     at every length. The neutral quotation rail is RETIRED
+                     (2026-09-19): too faint to read as a boundary in either
+                     theme, it made a set-apart passage look ghosted
+     exclusions      not a container: no wash, no blur, no shadow. The
+                     document's own thesis, question or contrast is not a
+                     quotation even when it contains quoted words; it is an
+                     authorial callout
+     example         a governing rule quoted with a footer naming its source
+     counterexample  a quotation smaller or larger than the prose it sits in;
+                     an authorial thesis set violet because it contains a
+                     phrase in quotation marks
+
+   AUTHORIAL CALLOUT
+     meaning         a passage the document states in its own voice and sets
+                     apart from the reading flow: a thesis, a posed question,
+                     an analytical contrast, a reasoning passage
+     population      p.doc-body.surface-emphasis-rail for one paragraph; a
+                     .doc-group.surface-emphasis-rail wrapping a lead-in and
+                     the block it introduces, as one unit
+     owner           surface-treatments.css owns the rail
+                     (.surface-emphasis-rail, magenta); this module owns the
+                     text role inside it, which stays document body
+     reuses          the passage rail's geometry in the emphasis magenta;
+                     document body metrics, authored inline emphasis included
+     variation       none: an authorial callout is always magenta. The
+                     rail's violet and cyan modifiers stay valid on any other
+                     emphasis rail; in a document the violet rail is the
+                     quotation's, so a callout never takes it. The rendered
+                     check treats an emphasis rail on document text as a
+                     callout
+     exclusions      assigned by the passage's role, never by boldness: a bold
+                     paragraph that labels the block after it, or an inline
+                     strong run, is not a callout. Not a quotation, not a
+                     container, never a heading. A preformatted block of the
+                     document's own is already magenta and takes no second
+                     class
+     example         "Across the subject boundary, proof becomes evidence." —
+                     the document's own compression of an argument, set apart
+     counterexample  the same statement on a neutral rail, or as plain prose
+                     after the reader has been told it is the point
+
+   SECTION SYNTHESIS
+     meaning         the synthesis of the sections before it — "what the part
+                     you just read comes to" — larger in scope than a callout,
+                     so it is contained rather than railed
+     population      a closing summary or compression of a document part
+     owner           this module for the composition; surface-panel.css and
+                     surface-treatments.css own the classes it composes
+     reuses          .surface-separate + .surface-material-panel +
+                     .surface-attach-free + .surface-elevation-flush +
+                     .doc-group: the panel's tint and neutral perimeter, free
+                     corners, no shadow. A .surface-emphasis-chip naming the
+                     synthesis, with .surface-emphasis--magenta on the chip
+                     itself so only its border takes the accent. The
+                     synthesis text stays .doc-body at the Body step, authored
+                     inline emphasis included
+     variation       none: every synthesis in a document takes the same
+                     composition, whatever the epistemic status of its text
+     exclusions      no rail inside it, no .surface-emphasis on the panel (that
+                     adds a bloom), no blur, no raised shadow, no hover, no
+                     disclosure, never .surface-panel-support for its text.
+                     The space before it is the consuming composition's; it
+                     must read as a new unit after the last section, not as
+                     a continuation of that section's closing passage
+     example         a compression closing an argument: a flat tinted panel, a
+                     magenta-bordered chip and the body-sized compression
+     counterexample  one synthesis on a magenta rail and another as plain
+                     prose; a synthesis in supporting-copy size inside a card
+
+   PREFORMATTED AND STRUCTURED TEXT
+     meaning         a block whose line structure is the content
+     population      diagrams, outlines and other passages whose line breaks
+                     carry meaning; .doc-pre--structured where indentation is
+                     structure
+     owner           this module
+     reuses          mono at the Small step, --lh-body, --fg-1; the passage
+                     rail in the magenta emphasis color outside the block; the
+                     hierarchy rail for structured levels inside it
+     variation       .doc-pre--structured; data-lead-lines 1, 2 or 3
+     exclusions      not a container; never assigned by a blanket pre or code
+                     selector; a block scrolls itself rather than widening its
+                     parent
+     example         lines beneath a label one rail in, a level beneath those
+                     one rail further
+     counterexample  leading spaces standing in for a level; a block with no
+                     rail, whose lines read as loose text in the prose
+
+   PASSAGE RAIL
+     meaning         "this passage is set apart from the reading flow and is
+                     one unit" — the outer rail of a quotation, a
+                     preformatted block and an authorial callout. The
+                     GEOMETRY is shared; the COLOR says whose passage it is
+     population      .doc-quote and .doc-pre, plain or structured, and
+                     .surface-emphasis-rail composed onto document text
+     owner           this module. Its geometry is surface-treatments'
+                     .surface-emphasis-rail geometry — one 2px solid rule,
+                     --space-4 inset — and an owner check (check-type-roles
+                     R7) keeps the two equal. Color identity is NOT shared,
+                     and every passage color is an emphasis accent:
+       quotation     violet, --ask-emphasis-violet: represented voice,
+                     declared as .surface-emphasis--violet declares it
+       preformatted  the magenta emphasis rail, declared exactly as
+                     .surface-emphasis-rail declares it: the line structure is
+                     the content and is set apart as such
+       callout       .surface-emphasis-rail itself, surface-treatments' own
+                     magenta rail: the document's own voice, set apart
+     reuses          2px solid, --space-4 inset; --surface-emphasis-accent set
+                     to --ask-emphasis-violet for a quotation and to
+                     --ask-emphasis-magenta for a preformatted block
+     variation       none: a quotation's rail is always violet, and a block's
+                     and a callout's always magenta
+     exclusions      a passage inside a railed passage (a .doc-quote, a
+                     .doc-pre or a .surface-emphasis-rail inside another of
+                     them) draws no rail of its own: the outer rail already
+                     carries the passage, so one logical passage has one outer
+                     rail and the outermost role names it — a quotation inside
+                     an authorial callout is carried by the callout's magenta
+                     rail. Two railed passages in a row are held apart by
+                     --space-5, as two emphasis rails are. NEUTRAL IS
+                     STRUCTURE ONLY: the 1px hierarchy rail structures a section,
+                     a list or a block, and is never the outer boundary of a
+                     set-apart passage. No wash, no
+                     blur, no shadow. The emphasis violet here is a document
+                     role; it names no review, proof or evidence state, and a
+                     surface's own labeled uses of the accents keep their own
+                     meanings
+     example         a structured block with the magenta rail outside and a
+                     neutral hierarchy rail for each level inside; a quotation
+                     beside it on the same geometry in violet; a posed question
+                     of the document's own on the magenta rail
+     counterexample  a neutral outer rail on a standalone passage, which reads
+                     as a ghost of a boundary; a quotation in magenta, or an
+                     authorial statement in violet; two rails on one passage
+
+   TABLE OF CONTENTS
+     meaning         structural navigation: where each part of this document
+                     starts
+     population      .doc-toc-list for the list, a nested .doc-toc-list that is
+                     also a .doc-hierarchy for each level beneath it, and
+                     .doc-toc-link for each entry
+     owner           this module for the entry's type and the list's rhythm;
+                     surface-text-link.css for the entry's interaction, composed
+                     as class="doc-toc-link surface-text-link"
+     reuses          the surface-shell navigation row's text metrics (mono,
+                     Small, 300, tight leading, tight tracking, --fg-1) without
+                     its padding, fill, radius or focus ring; the hierarchy
+                     rail for nested levels
+     variation       depth only
+     exclusions      a table-of-contents entry is never document body and never
+                     uppercase; its interaction is never restated here
+     example         a two-level contents list inside a disclosure, each entry
+                     with the partial magenta underline at rest
+     counterexample  a bare anchor inside a body-text list item
+
+   DENSE TABLE
+     meaning         a table whose values are tabular, technical payload — a
+                     review matrix, a status ledger — declared as such. Being a
+                     table does not make a table dense
+     population      table.doc-dense-table, a population marker the consumer
+                     sets. Its td carry .doc-table-cell and its th .doc-label;
+                     .doc-table-cell appears nowhere else
+     owner           this module for the cell's type only; the marker draws
+                     nothing. Table geometry — rules, padding, the stacked
+                     narrow-width layout — stays with the consuming surface,
+                     and a table without the marker (a narrative comparison, a
+                     prose table) is not this role; it stays outside the
+                     register until the shared table work admits a
+                     composition for it
+     reuses          mono at the Small step, 300, --lh-body, --fg-1, tabular
+                     numerals
+     variation       none
+     exclusions      a dense table's cell never carries the document body role;
+                     the marker is never implied by the td or th element
+     example         a status, a date and a digest in one row, all mono
+     counterexample  every table on a page set mono because it is a table; a
+                     dense table whose cells are set as body prose
+
+   ENTRY TITLE
+     meaning         the primary text of an operable entry in a result list or
+                     record index: the name or the statement of the one record
+                     the entry opens. It may be a short name or a full
+                     statement, and it may wrap
+     population      .doc-entry-title on the entry's primary text; the entry's
+                     identifier and supporting fields take .doc-meta
+     owner           this module for the text's type only. The entry element,
+                     its interaction and its row geometry stay with the
+                     consuming surface, as a dense table's geometry does
+     reuses          Inter at the Body step, --fw-light (300), --lh-body,
+                     --tracking-normal, --fg-1
+     variation       none
+     exclusions      an entry title is never a heading: it governs nothing
+                     beneath it and sits outside the ladder. It is never
+                     document body, never the panel's single-line primary
+                     label, never an uppercase operative label, and it never
+                     restates the entry's interaction
+     example         a search result: its identifier in .doc-meta above a
+                     finding's full statement wrapping across three lines
+     counterexample  a result's primary text set as document body; a wrapping
+                     statement set on the panel label's tight leading and
+                     tracking
+
+   OVERFLOW CUE
+     meaning         the block is wider than its box, and which side holds
+                     hidden content
+     population      a .doc-pre whose data-overflow attributes are set
+     owner           this module draws it; surface-document-overflow.js, an
+                     optional helper, reports the state
+     reuses          the operative label metrics, --space-2, --space-6
+     variation       "scroll >>", "<< scroll >>", "<< scroll"
+     exclusions      nothing is shrunk, wrapped, enclosed or reflowed; a block
+                     that fits shows nothing
+     example         a wide diagram at a narrow width: a right-edge fade and
+                     "scroll >>" held at the box's left edge
+     counterexample  shrinking a diagram's type until it fits
+
+   REGISTERED LITERALS — no token expresses these values
+     1.4                   metadata and quotation-attribution leading
+     1.3                   Caption leading inside document compositions
+     1px, 2px              hierarchy rail and passage rail widths
+     #000, transparent     overflow mask stops: alpha only, never paint
+     0.9em                 inline code, the foundation code rule's own size
+     1lh, 2lh, 3lh         blank source lines in structured text
+
+   LIMITS
+     - The blank-line slots use the lh unit. A browser without it drops those
+       margins; the lines themselves are unchanged.
+     - data-lead-lines records one to three blank lines. No rule reads a
+       larger value.
+     - Without the helper a block still scrolls and shows no cue. Keyboard
+       scrolling of a block is not claimed: nothing here sets a tabindex.
+   ========================================================================= */
+
+/* ---- Text roles ------------------------------------------------------- */
+
+.doc-title {
+  font-family: var(--font-sans);
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-1);
+  margin: 0;
+}
+.doc-section-title {
+  font-family: var(--font-sans);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-1);
+  margin: 0;
+}
+.doc-subsection-title {
+  font-family: var(--font-sans);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-1);
+  margin: 0;
+}
+/* The title, section and subsection roles sit on the foundation's H1, H2 and
+   H3 steps. The deep heading — h4 and every deeper level: h5, h6, and past h6
+   through role="heading" aria-level — shares the Body step with body copy and
+   stays distinct by weight (500 against 200) and by the section space before
+   it. It never changes with depth — no smaller size, no lighter weight, no
+   foreground step. Depth is the hierarchy rail's. */
+.doc-deep-title {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--tracking-normal);
+  color: var(--fg-1);
+  margin: 0;
+}
+/* Body copy is primary reading text: the foundation's Body step and --fg-1, the
+   same metric as a plain paragraph. Every heading above it is at least this
+   size. The lede shares the metric; composition, not size, makes it the lede. */
+.doc-body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-extralight);
+  line-height: var(--lh-body);
+  letter-spacing: var(--tracking-normal);
+  color: var(--fg-1);
+  margin: 0;
+}
+.doc-lede {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-extralight);
+  line-height: var(--lh-body);
+  letter-spacing: var(--tracking-normal);
+  color: var(--fg-1);
+  margin: 0;
+}
+/* The entry title is the primary text of an operable entry in a result list or
+   record index. It is neither a heading nor body. It takes Body's size, leading
+   and tracking, because it may wrap as a full statement, one weight step above
+   the body prose around the list. The entry element, its interaction and its
+   geometry stay the consumer's. */
+.doc-entry-title {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-body);
+  letter-spacing: var(--tracking-normal);
+  color: var(--fg-1);
+  margin: 0;
+}
+/* The operative register. The label is uppercase mono, for labels and status,
+   and is never a content heading. Metadata shares its family, size, weight and
+   tracking without the uppercase, on a looser leading. */
+.doc-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--fg-3);
+  margin: 0;
+}
+.doc-meta {
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-light);
+  line-height: 1.4;
+  letter-spacing: var(--tracking-wide);
+  color: var(--fg-3);
+  margin: 0;
+}
+/* Inside a sized document role, code is 0.9x its parent's computed font size.
+   Ordinary inline wrappers preserve that role's size. With no sized-role
+   ancestor, code falls back to the Caption step rather than the browser default. */
+.doc-code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  font-weight: var(--fw-light);
+  color: var(--fg-2);
+}
+.doc-code:where(:not(:is(.doc-body, .doc-meta, .doc-label, .doc-deep-title, .doc-subsection-title, .doc-section-title, .doc-lede, .doc-title, .doc-quote, .doc-toc-link, .doc-table-cell, .doc-entry-title) *)) {
+  font-size: var(--fs-caption);
+}
+
+/* Inline emphasis inside document text. Weight carries it: 500 against body
+   copy at 200, rather than the browser's bolder step. Scoped to the register,
+   so strong and em elsewhere keep their own styling. */
+:where(.doc-flow, .doc-title, .doc-section-title, .doc-subsection-title, .doc-deep-title, .doc-lede, .doc-body, .doc-label, .doc-meta, .doc-quote, .doc-pre, .doc-table-cell, .doc-toc-link, .doc-entry-title) strong {
+  font-weight: var(--fw-medium);
+  color: var(--fg-1);
+}
+:where(.doc-flow, .doc-title, .doc-section-title, .doc-subsection-title, .doc-deep-title, .doc-lede, .doc-body, .doc-label, .doc-meta, .doc-quote, .doc-pre, .doc-table-cell, .doc-toc-link, .doc-entry-title) em {
+  font-style: italic;
+}
+
+/* Caption inside a document composition. The foundation's .caption owns the
+   role's size, weight, tracking, case and foreground; this adds the family,
+   the leading and the margin a composition relies on. */
+:where(.doc-flow, .doc-section, .doc-prose, .doc-titled, .doc-group, .doc-labeled, .doc-hierarchy) > .caption {
+  font-family: var(--font-sans);
+  line-height: 1.3;
+  margin: 0;
+}
+
+/* Long unbroken tokens — digests, repository paths, URLs — never force a
+   horizontal scroll. */
+.doc-code, .doc-meta, .doc-body a { overflow-wrap: anywhere; }
+
+/* ---- Compositions: the space between roles ---------------------------- */
+
+.doc-flow    { display: flex; flex-direction: column; gap: var(--space-8); }
+.doc-section { display: flex; flex-direction: column; gap: var(--space-3); }
+.doc-prose   { display: flex; flex-direction: column; gap: var(--space-4); }
+.doc-titled  { display: flex; flex-direction: column; gap: var(--space-3); }
+.doc-group   { display: flex; flex-direction: column; gap: var(--space-3); }
+.doc-labeled { display: flex; flex-direction: column; gap: var(--space-2); }
+
+/* A section nested inside a section. The parent's gap is the heading-to-body
+   rhythm, too tight to read a new subsection as starting, so the nesting adds
+   one shared lead wherever it occurs — nested rail levels included. */
+.doc-section > .doc-section { margin-top: var(--space-4); }
+
+.doc-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+
+/* ---- Table of contents ------------------------------------------------ */
+
+/* Structural navigation. The entry takes the surface-shell navigation row's
+   text metrics — mono, Small, 300, tight leading and tracking — without the
+   row's padding, fill, radius or focus ring, and composes surface-text-link
+   for its interaction: class="doc-toc-link surface-text-link" — the partial
+   magenta underline at rest, the full magenta underline on hover and the
+   module's own keyboard-focus underline, all owned by surface-text-link.css
+   and checked in each state on rendered pages. The list
+   carries the same family, size and leading, so each entry's line box is the
+   tight one and a wrapped entry keeps it; the anchor stays inline so its
+   underline follows every line. A nested list that is also a .doc-hierarchy is
+   one level down; this rule sits before the hierarchy rail in source order, so
+   the rail's inset wins where both apply. */
+.doc-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  line-height: var(--lh-tight);
+}
+.doc-toc-list .doc-toc-list { margin-top: var(--space-2); }
+.doc-toc-link {
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-1);
+  margin: 0;
+}
+
+/* ---- Dense table ------------------------------------------------------ */
+
+/* A value in a dense table is tabular payload: mono at the Small step, with
+   tabular numerals. The population is declared, never inferred from the
+   element: the consumer marks the table table.doc-dense-table, puts
+   .doc-table-cell on its td and .doc-label on its th. The marker has no rule
+   here because it draws nothing; table geometry stays with the consuming
+   surface, and an unmarked table is not this role. */
+.doc-table-cell {
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-body);
+  letter-spacing: var(--tracking-normal);
+  color: var(--fg-1);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+
+/* ---- Hierarchy rail --------------------------------------------------- */
+
+/* The internal rhythm is a zero-specificity default, so a composition class
+   placed alongside (.doc-section, .doc-group, .doc-prose) sets its own gap
+   whatever the source order. */
+:where(.doc-hierarchy) { display: flex; flex-direction: column; gap: var(--space-3); }
+.doc-hierarchy {
+  padding-left: var(--space-4);
+  border-left: 1px solid var(--line-2);
+}
+
+/* ---- Passage rail ----------------------------------------------------- */
+
+/* A quotation, a preformatted block and an authorial callout are set apart from
+   the reading flow, each as one unit, on the geometry surface-treatments.css
+   gives .surface-emphasis-rail: a 2px solid rule and a --space-4 inset. The
+   color is the role's, not shared, and it is always an emphasis accent, so
+   every set-apart passage reads as a boundary in both themes. A quotation is
+   represented voice, so its rail is the emphasis violet, declared as the violet
+   accent modifier declares it. A preformatted block's line structure is the
+   content, so it takes the magenta emphasis rail, declared exactly as the
+   emphasis rail declares it. The document's own callout — a thesis, a posed
+   question, a contrast — is .surface-emphasis-rail itself, magenta, composed
+   onto a document text role. Neutral is structure only: the hierarchy rail. */
+.doc-quote {
+  --surface-emphasis-accent: var(--ask-emphasis-violet);
+  border-left: 2px solid var(--surface-emphasis-accent);
+  padding-left: var(--space-4);
+}
+.doc-pre {
+  --surface-emphasis-accent: var(--ask-emphasis-magenta);
+  border-left: 2px solid var(--surface-emphasis-accent);
+  padding-left: var(--space-4);
+}
+/* A passage inside a railed passage draws no rail of its own: the outer rail
+   already carries it, and a second rail would read as a second passage. So a
+   quoted block — a code excerpt someone else wrote, inside a .doc-quote — keeps
+   the one violet rail and takes no magenta rail, and a callout inside a
+   quotation draws no second rail. The selector is a descendant one, so it holds
+   through any container inside the outer passage; it outranks the emphasis
+   rail's own rule at (0,2,0). */
+:is(.doc-quote, .doc-pre, .surface-emphasis-rail) :is(.doc-quote, .doc-pre, .surface-emphasis-rail) {
+  border-left: none;
+  padding-left: 0;
+}
+/* Two railed passages in a row would read as one passage. A passage directly
+   after a railed passage takes the same buffer surface-treatments.css gives a
+   rail after a rail, added to whatever gap its parent supplies. Passages inside
+   a railed passage draw no rails, so they take no buffer. A consumer that sets
+   passages side by side in a row resets this margin. */
+:is(.doc-quote, .doc-pre, .surface-emphasis-rail):not(:is(.doc-quote, .doc-pre, .surface-emphasis-rail) *) + :is(.doc-quote, .doc-pre, .surface-emphasis-rail) { margin-top: var(--space-5); }
+
+/* ---- Quotation -------------------------------------------------------- */
+
+/* The quoted text is body-sized at every length: the rail sets it apart, not a
+   size step. The attribution takes the metadata metrics. */
+.doc-quote { margin: 0; }
+.doc-quote > p {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-extralight);
+  line-height: var(--lh-body);
+  letter-spacing: var(--tracking-normal);
+  color: var(--fg-1);
+  margin: 0;
+}
+.doc-quote > footer {
+  margin-top: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-light);
+  line-height: 1.4;
+  letter-spacing: var(--tracking-wide);
+  color: var(--fg-3);
+}
+
+/* ---- Preformatted and structured text --------------------------------- */
+
+/* The block takes the primary text role: a diagram that is the argument of its
+   passage is payload, not apparatus. It scrolls itself rather than widening
+   its parent. */
+.doc-pre {
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-body);
+  letter-spacing: var(--tracking-normal);
+  color: var(--fg-1);
+  white-space: pre;
+  overflow-x: auto;
+  margin: 0;
+}
+
+/* STRUCTURED. The block stays one scroll box; its parts carry the lines. Lines
+   that belong beneath a line sit in a .doc-hierarchy, one rail per level of
+   indentation, holding parts and further rails in source order. Inside the
+   block a rail's rhythm is the line slot, so its gap is zero. data-lead-lines
+   records the blank source lines before a part or a rail, at any depth, as
+   that many line heights. */
+.doc-pre--structured { white-space: normal; display: flex; flex-direction: column; }
+.doc-pre--structured .doc-hierarchy { gap: 0; }
+.doc-pre-part { margin: 0; font: inherit; color: inherit; white-space: pre; }
+.doc-pre--structured [data-lead-lines="1"] { margin-top: 1lh; }
+.doc-pre--structured [data-lead-lines="2"] { margin-top: 2lh; }
+.doc-pre--structured [data-lead-lines="3"] { margin-top: 3lh; }
+
+/* ---- Overflow cue ----------------------------------------------------- */
+
+/* Shown only while a block is wider than its box. Content hidden to the right
+   fades at the right edge, and an operative label beneath the block names the
+   direction it scrolls. The label is sticky at the box's left edge, and the
+   fade is right-edge only, so the fade never masks the label. */
+.doc-pre[data-overflow-end] {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - var(--space-6)), transparent);
+          mask-image: linear-gradient(to right, #000 calc(100% - var(--space-6)), transparent);
+}
+.doc-pre[data-overflow]::after {
+  display: block;
+  position: sticky;
+  left: 0;
+  margin-top: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--fg-3);
+  white-space: normal;
+  content: "scroll >>";
+}
+.doc-pre[data-overflow-start][data-overflow-end]::after { content: "<< scroll >>"; }
+.doc-pre[data-overflow-start]:not([data-overflow-end])::after { content: "<< scroll"; }

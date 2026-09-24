@@ -29,7 +29,7 @@ The diagram conforms to [`apexSolarKiss/design-system-ASK`](https://github.com/a
 README.md                                       this file
 index.html                                      ASK-branded live navigation surface for the seven figures below
 _dsa-tokens/                                    pinned design-system-ASK Tier 1 + Tier 2 mirror (no CDN)
-_dsa-surface/                                   pinned surface-shell (css + navigation runtime) + surface-panel + surface-action carriers and the mode-aware ASK wordmark pair — used ONLY by index.html
+_dsa-surface/                                   pinned surface-shell (css + navigation runtime) + surface-panel + surface-action + surface-text-link + surface-document + surface-treatments carriers and the mode-aware ASK wordmark pair — used ONLY by index.html and the AP-ASK landing page at the deployed root (../index.html)
 
 # Horizontal — Class A diagram-static-H (top-aligned cascade)
 asset-pipeline-ASK_architecture-tree.html       renders TREE_D04 (repo architecture / artifact structure)
@@ -109,7 +109,7 @@ Both panel forms are in use and divide as the modules intend: the seven diagram 
 
 **Tier boundary.** The page carries an **ASK-assigned Tier 3** value in the shell's mark slot. That is a property of the navigation surface: it does **not** propagate into the seven Tier 1 + Tier 2 figures it indexes, does **not** make asset-pipeline-ASK ASK-the-entity, and does **not** come from `surface-shell`, which ships a mark slot and no mark. ASK branding is the current settled assignment; any later independent asset-pipeline-ASK brand is a separate identity migration.
 
-`vercel.json` at the deployed `docs/` root states the deployment contract: `/` redirects to `/diagrams/`, four security headers apply across the surface, and the vendored font and wordmark paths revalidate rather than caching immutably.
+`vercel.json` at the deployed `docs/` root states the deployment contract: it declares no redirect, so `/` serves the AP-ASK landing page (`../index.html`) as the static index, and that page links this folder's `index.html` as its technical destination; four security headers apply across the surface, and the vendored font and wordmark paths revalidate rather than caching immutably.
 
 ## Theme by embedding surface (adopted convention)
 

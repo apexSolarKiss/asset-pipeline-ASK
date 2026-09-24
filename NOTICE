@@ -9,8 +9,9 @@ This product also includes unmodified components from design-system-ASK
 (github.com/apexSolarKiss/design-system-ASK), including the vendored Tier 1 +
 Tier 2 foundations, the Spectral State and Three Functions profiles, and
 design-system-owned static and interactive diagram render support under
-docs/diagrams/, the surface-shell pattern, the surface-panel and surface-action
-visual rules, and the ASK wordmark pair used by docs/diagrams/index.html.
+docs/diagrams/, the surface-shell pattern, the surface-panel, surface-action,
+surface-text-link, surface-document and surface-treatments visual rules, and
+the ASK wordmark pair used by docs/index.html and docs/diagrams/index.html.
 
 design-system-ASK
 Copyright 2026 Andrew S Klug // ASK

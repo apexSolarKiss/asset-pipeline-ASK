@@ -1,0 +1,137 @@
+/* ============================================================
+   surface-text-link.css — the unboxed textual traversal affordance
+
+   An OPT-IN live-surface visual rule under Foundations, and the third sibling
+   of surface-panel.css and surface-action.css. Those two own a container and a
+   compact control — objects whose GEOMETRY already announces that they are
+   operable. This one owns the link that has no geometry of its own: a word or
+   phrase inside running prose or a structural title, distinguished from the
+   text around it by a rule beneath it and by nothing else.
+
+   surface-action.css already names the gap in its own NOT-for list — "ordinary
+   inline text links". This is the module that is for them.
+
+   Presentation only. It owns no markup, no semantics, no destination, and no
+   layout, and it ships no template, catalog card, or generated preview.
+
+   OPT-IN BY CLASS, and that is a deliberate failure asymmetry. The excluded set
+   is open-ended — every shaped object whose geometry already communicates
+   interaction — and no finite deny-list tracks it as gallery launches, diagram
+   nodes, linked figures, cards, chips and tabs arrive. So the class is added to
+   the links that qualify rather than withheld from the ones that do not:
+
+     class omitted on a qualifying link   the foundation's border-bottom
+                                          remains — visible, usable, wrong only
+                                          in register
+     deny-list too narrow                 a shaped object silently acquires the
+                                          textual grammar
+
+   The first failure is legible. The second is not.
+
+   NOT for: full-panel links (a.surface-panel owns those), compact controls
+   (surface-action.css), identity marks, gallery or lightbox triggers, linked
+   figures and image links, panel titles, or any anchor wrapping replaced
+   content. Being a link is not the same role as being an unboxed textual link.
+
+   WHAT IT DOES NOT OWN, deliberately:
+
+     text color        the module declares NONE. The foundation already gives
+                       every anchor `color: inherit`, so an ordinary link takes
+                       its context's foreground; and an anchor a role has
+                       deliberately colored keeps that color, because there is
+                       no declaration here to overwrite it. Traversability is
+                       carried by the rule beneath the words, never by
+                       brightening the words.
+     shell link roles  TWO roles are owned by surface-shell.css through direct
+                       selectors and need no consumer class:
+                         .surface-title a    the breadcrumb
+                         a.surface-nav-row   an operable navigation-panel
+                                             hierarchy row
+                       Both carry the shell's own magenta rest underline. Do NOT
+                       add .surface-text-link to either — the grammar would be
+                       applied twice, by two separately pinned files, and the
+                       one that changed first would win silently. The shell
+                       FOOTER is not among them: its destinations are compact
+                       actions carrying surface-action's classes explicitly,
+                       which is why they appear in this module's NOT-for list
+                       above rather than in this note.
+
+   WHY THESE VALUES. The resting underline is the emphasis accent at partial
+   opacity — the accent's own hue, reduced in dose. It is NOT mixed toward the
+   foreground: mixing changes what color it is, and the resulting plum reads as
+   a darker text color rather than as a quieter magenta.
+
+   ACCESSIBILITY, STATED RATHER THAN ENGINEERED AWAY. This is the default-ASK
+   treatment. At the selected dose the resting underline measures 1.72:1 and
+   1.82:1 against the light gradient stops and 2.11:1 and 2.23:1 against the
+   dark, so it does NOT clear the strict 3:1 non-text contrast floor in either
+   theme, and no strict AA claim is made for it. The two themes fall short for
+   different reasons. In light the floor is UNREACHABLE — magenta's luminance
+   sits so close to the light gradient's that no opacity attains it, full
+   opacity included. In dark a higher opacity would reach it, but that would be
+   a different treatment from the single uniform default.
+
+   What the affordance rests on instead is the PRESENCE of a rule where the
+   surrounding prose has none — a non-color distinction — plus a keyboard-focus
+   indicator that is governed separately and does clear its own requirement
+   comfortably. Where a context genuinely requires the stricter floor it takes a
+   separately named alternate, on the default-ASK / AA-compliant pattern the
+   identity canonical already uses for the message-archive ramp. None ships here.
+
+   NO LITERAL FALLBACK is needed for color-mix(). Where it is unsupported the
+   declaration is invalid at computed-value time and text-decoration-color falls
+   back to its initial currentColor — a visible contextual underline. The
+   degradation loses the magenta, never the affordance.
+
+   Required markup: none beyond the class. Canonical specimen:
+   preview/styleguide.html.
+   ============================================================ */
+
+.surface-text-link {
+  /* Module-owned, and deliberately NOT shared with surface-shell.css's
+     --surface-shell-link-underline even though the formula is identical. The
+     two files are separately vendorable and separately pinned; a consumer that
+     updated this module while holding an older shell would silently inherit the
+     older value, and no audit of either file would show it. One formula, two
+     owners, and an owner check that they resolve equal.
+
+     Mixed with `transparent`, not with a foreground role: this is the accent's
+     own hue at half dose. It resolves identically to rgba(255,0,255,0.5) —
+     verified pixel-identical composited over all four gradient stops — while
+     staying derived from the token rather than restating its value. */
+  --surface-text-link-underline:
+    color-mix(in srgb, var(--ask-emphasis-magenta) 50%, transparent);
+
+  /* No `color` declaration — see WHAT IT DOES NOT OWN. */
+  border-bottom: none;                   /* retire the foundation rule locally */
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;         /* em, so the offset scales with the type */
+  text-decoration-skip-ink: auto;        /* per-glyph descender clearance */
+  text-decoration-color: var(--surface-text-link-underline);
+  transition:
+    opacity var(--dur-1) var(--ease-out),
+    text-decoration-color var(--dur-2) var(--ease-out);
+}
+
+/* opacity: 1 is REQUIRED, not decoration. The foundation binds
+   a:hover { opacity: 0.92 } at (0,1,1); without this override hover would
+   compute identically to press, and this link cannot use a transform press
+   because inline text fragments across lines. */
+.surface-text-link:hover  { opacity: 1;    text-decoration-color: var(--ask-emphasis-magenta); }
+.surface-text-link:active { opacity: 0.92; text-decoration-color: var(--ask-emphasis-magenta); }
+
+/* Focus is a SAFETY channel, not the link affordance: it answers "where am I",
+   is held to its own contrast requirement — --fg-1 measures 3.50:1 and 4.00:1
+   light, 10.25:1 and 12.26:1 dark — and REPLACES the native outline rather than
+   removing it. A text decoration is fragment-native: it follows each line's own
+   text, where a ring or outline drawn around a fragmented inline box either
+   opens at the cut edges or splits into one shape per line. */
+.surface-text-link:focus-visible {
+  outline: none;
+  box-shadow: none;
+  text-decoration-color: var(--fg-1);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
