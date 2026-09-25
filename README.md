@@ -8,7 +8,7 @@ An open-source information architecture for commercial visual-asset workflows: i
 
 This is not a better image-generation interface. It is a structured definition layer for making visual-production intent, constraints, references, outputs, and governance machine-usable.
 
-Image models provide latent image-making capacity; this repo structures the production ask around that capacity — what image is needed, why, under what constraints, with which references in which roles, and how the result becomes governable.
+Image models provide image-making capacity; this repo structures the production ask that directs it: what image is needed and why, what must remain true, which references govern which parts, what may vary, who may select, and who may accept the result. The aim is to carry creative intent through production, so acceptance rests on the governing brief rather than the persuasiveness of whatever was generated.
 
 The reusable object is a **portable asset-definition package** — the definition layer for a commercial visual-asset workflow, **designed to be substrate-independent**: product truth, business and creative intent, constraints, required outputs, slot variation, visual references, decision ownership, approval boundaries, capture/governance rules, and reuse/family-coherence rules, carried as each workflow needs them. The repository is a current worked reference architecture — a prototype proof of that layer, refined as evidence accumulates, not a finished product spec.
 
