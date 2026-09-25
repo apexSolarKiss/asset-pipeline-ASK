@@ -36,18 +36,18 @@
 
      COMPOSITION. Prose stays prose: the register's roles and compositions set
      the type and the space between them — title, section titles, lede and body,
-     one flow of sections. The opening is one titled unit: the title, the
-     descriptor that heads the introduction, the action row, and the
-     introduction. The reference-question passage is presented as a quotation
+     one flow of sections. The opening is one titled unit: the title with the
+     action pair at its right, the descriptor that heads the introduction, and
+     the introduction. The reference-question passage is presented as a quotation
      on the shared violet rail, with its wording and authored emphasis
      unchanged. Bold words and phrases inside paragraphs stay inline emphasis.
      Nothing is carded.
 
-     ACTIONS. The same diagrams + repository row appears twice: directly under
-     the descriptor, so the technical destinations are reachable without
-     reading on, and again at the end, after the last section. Both rows use
-     the shared action styles and the same destinations; there is no sticky or
-     additional navigation.
+     ACTIONS. The same diagrams + repository pair appears twice, right-aligned:
+     on the title's line, centered to it, so the technical destinations are
+     reachable without reading on, and in the footer, beside the A-S-K.studio
+     link. Both pairs use the shared action styles and the same destinations;
+     there is no sticky or additional navigation.
 
      HEADINGS. The shell's structural title — the breadcrumbed h1, "ASK // apex
      solar kiss // AP-ASK" — is the family locator every shell page carries. The
@@ -70,9 +70,16 @@
 <style>
   /* Local delta only: a full-height field, as on the diagram collection, and the
      reading measure, which the shell leaves to the consumer by contract. The
-     measure is the one the family's other document page uses. */
+     measure is the one the family's other document page uses; it applies to the
+     document's text, while the title's line spans the full width so its action
+     pair shares the footer's right edge. */
   body { min-height: 100vh; }
-  .ap-pitch { max-width: 68ch; }
+  .ap-pitch > :not(.doc-titled), .ap-pitch > .doc-titled > :not(.ap-title-line) { max-width: 68ch; }
+  /* The title's line carries the action pair at its right, centered to the title;
+     where the line is too narrow for both, the pair wraps below it, still at the
+     right. */
+  .ap-title-line { display: flex; flex-wrap: wrap; align-items: center; column-gap: var(--space-5); row-gap: var(--space-3); }
+  .ap-title-line > .doc-actions { margin-left: auto; }
 </style>
 </head>
 <body>
@@ -98,12 +105,14 @@
   <main class="surface-payload">
     <article class="ap-pitch doc-flow" aria-labelledby="ap-ask-title">
       <header class="doc-titled">
-        <h2 class="doc-title" id="ap-ask-title">AP-ASK</h2>
-        <h3 class="doc-section-title" id="ap-ask-intro">An architecture for creative intent</h3>
-        <div class="doc-actions">
-          <a class="surface-action" href="diagrams/index.html">diagrams</a>
-          <a class="surface-action surface-action--secondary" href="https://github.com/apexSolarKiss/asset-pipeline-ASK" target="_blank" rel="noopener">repository</a>
+        <div class="ap-title-line">
+          <h2 class="doc-title" id="ap-ask-title">AP-ASK</h2>
+          <div class="doc-actions">
+            <a class="surface-action" href="diagrams/index.html">diagrams</a>
+            <a class="surface-action surface-action--secondary" href="https://github.com/apexSolarKiss/asset-pipeline-ASK" target="_blank" rel="noopener">repository</a>
+          </div>
         </div>
+        <h3 class="doc-section-title" id="ap-ask-intro">An architecture for creative intent</h3>
         <div class="doc-prose">
           <p class="doc-lede">Image-generation models are getting very good at making images. They still, however, need to be told what image to make.</p>
           <p class="doc-lede">That requires more than a description of the scene. The brief must establish what the work is for, what it should express, what must remain true to the product, and where there is room for creative interpretation — and where there is not.</p>
@@ -189,14 +198,14 @@
           <p class="doc-body">The architecture, worked examples, and reasoning are being developed openly. The repository’s open-source materials are available under the <a class="surface-text-link" href="https://github.com/apexSolarKiss/asset-pipeline-ASK/blob/main/LICENSE" target="_blank" rel="noopener">Apache License 2.0</a>, allowing anyone to use, adapt, and build on the work, including for commercial purposes, subject to the license’s terms.</p>
         </div>
       </section>
-      <div class="doc-actions">
-        <a class="surface-action" href="diagrams/index.html">diagrams</a>
-        <a class="surface-action surface-action--secondary" href="https://github.com/apexSolarKiss/asset-pipeline-ASK" target="_blank" rel="noopener">repository</a>
-      </div>
     </article>
   </main>
 
   <footer class="surface-footer">
+    <div class="doc-actions">
+      <a class="surface-action" href="diagrams/index.html">diagrams</a>
+      <a class="surface-action surface-action--secondary" href="https://github.com/apexSolarKiss/asset-pipeline-ASK" target="_blank" rel="noopener">repository</a>
+    </div>
     <a class="surface-action surface-action--secondary" href="https://a-s-k.studio/" target="_blank" rel="noopener">A-S-K.studio</a>
   </footer>
 
