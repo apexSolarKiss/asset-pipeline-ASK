@@ -2,7 +2,7 @@
 
 ## The problem
 
-Commercial visual production rarely fails for lack of a good image. It fails because the structure that should govern production stays implicit — and "creative direction" is made to carry too much at once.
+A convincing image is not necessarily the image a commercial brief calls for. The production problem is to carry the brand's creative intent, product truth, reference roles, and permitted variation into the work, then judge the result against those same standards. When that structure stays implicit, "creative direction" is made to carry too much at once.
 
 "Creative direction" routinely fuses objects that do different jobs:
 
@@ -14,7 +14,7 @@ Commercial visual production rarely fails for lack of a good image. It fails bec
 - **artifact governance** — the mechanism that binds the accepted result to its claim, use, and answerability
 - **the governance record** — the durable trace of that mechanism, not the mechanism itself
 
-Collapse these into one "creative direction" field and the system can still produce images, but it can no longer say *how the creative work happened* — where authorship lived, what was bounded, who decided, what was governed. Generation produces *candidates*; it does not adjudicate. A generated image is not yet a governed asset. These distinctions are the difference between a prompt and an architecture.
+Collapse these into one "creative direction" field and the system can still produce convincing images while losing the standard that makes them right for the job. Model defaults can fill gaps the brief should resolve, and selection can favor an attractive result without establishing that it fulfills the creative intent. The definition layer makes the production ask explicit so generation and selection can be directed and judged against it. Generation produces candidates; it does not establish their fitness. A generated image is not yet a governed asset. Selection judges the realized alternatives; artifact governance binds the accepted result to its claim, permitted use, and answerability. The record preserves that basis. The purpose is to carry intent through production, not merely to explain an output after the fact. These distinctions are the difference between a prompt and an architecture.
 
 ## The approach
 
