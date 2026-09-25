@@ -29,7 +29,7 @@ The diagram conforms to [`apexSolarKiss/design-system-ASK`](https://github.com/a
 README.md                                       this file
 index.html                                      ASK-branded live navigation surface for the seven figures below
 _dsa-tokens/                                    pinned design-system-ASK Tier 1 + Tier 2 mirror (no CDN)
-_dsa-surface/                                   pinned surface-shell (css + navigation runtime) + surface-panel + surface-action + surface-text-link + surface-document + surface-treatments carriers and the mode-aware ASK wordmark pair — used ONLY by index.html and the AP-ASK landing page at the deployed root (../index.html)
+_dsa-surface/                                   pinned surface-shell (css + navigation runtime) + surface-panel + surface-action + surface-text-link + surface-document carriers and the mode-aware ASK wordmark pair — used ONLY by index.html and the AP-ASK landing page at the deployed root (../index.html)
 
 # Horizontal — Class A diagram-static-H (top-aligned cascade)
 asset-pipeline-ASK_architecture-tree.html       renders TREE_D04 (repo architecture / artifact structure)

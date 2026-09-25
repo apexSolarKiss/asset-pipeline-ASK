@@ -29,18 +29,25 @@
      This page is ASSET-PIPELINE-ASK-OWNED content and composition over vendored
      design-system-ASK carriers: the surface-shell pattern and its navigation
      runtime, the surface-panel, surface-action and surface-text-link visual
-     rules, the document register (surface-document) and the surface treatments
-     (surface-treatments), all pinned byte-identical under diagrams/_dsa-surface/
+     rules and the document register (surface-document), all pinned
+     byte-identical under diagrams/_dsa-surface/
      and never hand-edited here. Tokens and fonts resolve from the existing
      diagrams/_dsa-tokens/ mirror, so no second token or font copy exists.
 
      COMPOSITION. Prose stays prose: the register's roles and compositions set
      the type and the space between them — title, section titles, lede and body,
      one flow of sections. The opening is one titled unit: the title, the
-     descriptor that heads the introduction, and the introduction, in the
-     approved order. The one set-apart passage is the document's own posed
-     question, an authorial callout on the magenta emphasis rail; bold words and
-     phrases inside paragraphs stay inline emphasis. Nothing is carded.
+     descriptor that heads the introduction, the action row, and the
+     introduction. The reference-question passage is presented as a quotation
+     on the shared violet rail, with its wording and authored emphasis
+     unchanged. Bold words and phrases inside paragraphs stay inline emphasis.
+     Nothing is carded.
+
+     ACTIONS. The same diagrams + repository row appears twice: directly under
+     the descriptor, so the technical destinations are reachable without
+     reading on, and again at the end, after the last section. Both rows use
+     the shared action styles and the same destinations; there is no sticky or
+     additional navigation.
 
      HEADINGS. The shell's structural title — the breadcrumbed h1, "ASK // apex
      solar kiss // AP-ASK" — is the family locator every shell page carries. The
@@ -60,7 +67,6 @@
 <link rel="stylesheet" href="diagrams/_dsa-surface/surface-text-link.css">
 <link rel="stylesheet" href="diagrams/_dsa-surface/surface-shell.css">
 <link rel="stylesheet" href="diagrams/_dsa-surface/surface-document.css">
-<link rel="stylesheet" href="diagrams/_dsa-surface/surface-treatments.css">
 <style>
   /* Local delta only: a full-height field, as on the diagram collection, and the
      reading measure, which the shell leaves to the consumer by contract. The
@@ -94,6 +100,10 @@
       <header class="doc-titled">
         <h2 class="doc-title" id="ap-ask-title">AP-ASK</h2>
         <h3 class="doc-section-title" id="ap-ask-intro">An architecture for creative intent</h3>
+        <div class="doc-actions">
+          <a class="surface-action" href="diagrams/index.html">diagrams</a>
+          <a class="surface-action surface-action--secondary" href="https://github.com/apexSolarKiss/asset-pipeline-ASK" target="_blank" rel="noopener">repository</a>
+        </div>
         <div class="doc-prose">
           <p class="doc-lede">Image-generation models are getting very good at making images. They still, however, need to be told what image to make.</p>
           <p class="doc-lede">That requires more than a description of the scene. The brief must establish what the work is for, what it should express, what must remain true to the product, and where there is room for creative interpretation — and where there is not.</p>
@@ -135,7 +145,9 @@
         <div class="doc-prose">
           <p class="doc-body">Visual references carry relationships of light, proportion, material, atmosphere, and restraint that prose cannot fully encode. Yet that richness does not tell a production system which part of an image should govern the next one.</p>
           <p class="doc-body">Someone supplies a photograph of a chair in a sunlit room and says, “Use this as a reference.”</p>
-          <p class="doc-body surface-emphasis-rail"><strong>A reference for what? The chair? The lighting? The room? The mood? The crop?</strong></p>
+          <blockquote class="doc-quote">
+            <p><strong>A reference for what? The chair? The lighting? The room? The mood? The crop?</strong></p>
+          </blockquote>
           <p class="doc-body">The same photograph might establish the product’s silhouette and construction, guide only the light, or suggest an atmosphere without governing the object at all. It might even show something the brand wants to avoid. Nothing in the pixels settles which of those roles it has.</p>
           <p class="doc-body">AP-ASK makes the role explicit, including what the reference does not govern. A lighting reference may guide the treatment of a scene without authorizing changes to the product. A campaign image may suggest atmosphere without turning last season’s styling into a permanent brand rule. Otherwise, a compelling mood can quietly displace product fidelity.</p>
         </div>
