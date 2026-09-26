@@ -9,14 +9,17 @@
 
    It serves BOTH lifecycles. A live surface references or vendors it and
    re-syncs when it changes. An artifact scaffold may inline it at generation
-   time, after which the sealed copy does not re-sync. It carries no url() and
-   no @import, so it inlines verbatim.
+   time, after which the sealed copy does not re-sync. It loads no resource and
+   imports no stylesheet, so it inlines verbatim.
 
    LOAD ORDER   colors_and_type.css -> surface-document.css
                 A table of contents also needs surface-text-link.css, which its
-                entries compose for their interaction. An authorial callout or
-                a section synthesis also needs surface-panel.css ->
-                surface-treatments.css, loaded after this file.
+                entries compose for their interaction. An authorial callout, a
+                section framing or a section synthesis also needs
+                surface-panel.css and surface-treatments.css. A page that loads
+                them all loads them as surface-document.html does:
+                colors_and_type.css -> surface-panel.css -> surface-text-link.css
+                -> surface-document.css -> surface-treatments.css.
 
    It introduces no token and no palette value. Family, size, weight, leading,
    tracking, foreground, space and rule color resolve through the foundation,
@@ -35,11 +38,11 @@
      meaning         a complete text style selected by what the text is in the
                      document, never by its element, its size or its payload
      population      document title, section / subsection / deep headings,
-                     lede, document body (in flow, in an authorial callout
-                     and in a section synthesis), entry title, quotation text,
-                     operative label, metadata, inline code, table-of-contents
-                     entry, dense table cell; Caption through the foundation's
-                     .caption
+                     lede, document body (in flow, in an authorial callout,
+                     and in a section framing or synthesis), entry title,
+                     quotation text, operative label, metadata, inline code,
+                     table-of-contents entry, dense table cell; Caption
+                     through the foundation's .caption
      owner           this module; the Caption role stays the foundation's
      reuses          foundation family, size, weight, leading, tracking and
                      foreground tokens
@@ -112,7 +115,8 @@
      exclusions      not a container: no wash, no blur, no shadow. The
                      document's own thesis, question or contrast is not a
                      quotation even when it contains quoted words; it is an
-                     authorial callout
+                     authorial callout, or the section framing where it frames
+                     a whole part
      example         a governing rule quoted with a footer naming its source
      counterexample  a quotation smaller or larger than the prose it sits in;
                      an authorial thesis set violet because it contains a
@@ -121,7 +125,9 @@
    AUTHORIAL CALLOUT
      meaning         a passage the document states in its own voice and sets
                      apart from the reading flow: a thesis, a posed question,
-                     an analytical contrast, a reasoning passage
+                     an analytical contrast or a reasoning passage within the
+                     argument. A thesis or question that frames a whole part
+                     before its sections is the section framing, not a callout
      population      p.doc-body.surface-emphasis-rail for one paragraph; a
                      .doc-group.surface-emphasis-rail wrapping a lead-in and
                      the block it introduces, as one unit
@@ -169,11 +175,43 @@
                      disclosure, never .surface-panel-support for its text.
                      The space before it is the consuming composition's; it
                      must read as a new unit after the last section, not as
-                     a continuation of that section's closing passage
+                     a continuation of that section's closing passage. A
+                     statement that frames the sections after it is the
+                     section framing, not a synthesis
      example         a compression closing an argument: a flat tinted panel, a
                      magenta-bordered chip and the body-sized compression
      counterexample  one synthesis on a magenta rail and another as plain
                      prose; a synthesis in supporting-copy size inside a card
+
+   SECTION FRAMING
+     meaning         the statement that frames a whole part before its
+                     sections argue or ask it — the part's thesis, or the
+                     question space it opens. It looks forward where a
+                     synthesis looks back: it frames the sections after it and
+                     concludes nothing
+     population      the opening thesis or question of a document part, set
+                     out after the part's introduction and before its first
+                     section
+     owner           this module for the composition; surface-panel.css and
+                     surface-treatments.css own the classes it composes
+     reuses          the section synthesis's composition, unchanged: the flat
+                     panel, a .surface-emphasis-chip naming the framing with
+                     .surface-emphasis--magenta on the chip, and .doc-body
+                     text. Framing and synthesis share an appearance; the
+                     chip's word and the panel's place say which one it is
+     variation       none in presentation; the chip's word is the consuming
+                     surface's (a thesis, a question space)
+     exclusions      never a conclusion: not chipped or placed as a synthesis.
+                     A thesis, question or contrast set apart inside
+                     the argument stays an authorial callout on the magenta
+                     rail. No rail inside it, no bloom, no blur, no raised
+                     shadow, no hover, no disclosure. The space between the
+                     introduction and the framing is the consuming
+                     composition's; the two read as one opening
+     example         a part that opens on its thesis: the introduction, then a
+                     flat panel chipped "thesis", then the sections
+     counterexample  the same opening chipped "conclusion"; the same opening
+                     on the magenta callout rail among the sections
 
    PREFORMATTED AND STRUCTURED TEXT
      meaning         a block whose line structure is the content
@@ -184,7 +222,8 @@
      reuses          mono at the Small step, --lh-body, --fg-1; the passage
                      rail in the magenta emphasis color outside the block; the
                      hierarchy rail for structured levels inside it
-     variation       .doc-pre--structured; data-lead-lines 1, 2 or 3
+     variation       .doc-pre--structured; .doc-pre-group for declared peer
+                     groups; data-lead-lines 1, 2 or 3
      exclusions      not a container; never assigned by a blanket pre or code
                      selector; a block scrolls itself rather than widening its
                      parent
@@ -321,17 +360,52 @@
                      "scroll >>" held at the box's left edge
      counterexample  shrinking a diagram's type until it fits
 
+   PEER GROUPS IN STRUCTURED TEXT
+     meaning         a grouped diagram: peer groups, each a label with the
+                     lines beneath it, where the reader must see where one
+                     group ends and the next begins
+     population      .doc-pre-group, one per peer group, as the direct
+                     children of a .doc-pre--structured block. A group opens
+                     on its label, a .doc-pre-part; the lines beneath follow
+                     in parts and hierarchy rails. A block that declares groups
+                     holds nothing else at its top level
+     owner           this module owns the rhythm; the consuming surface
+                     declares the groups, and how it finds them in its own
+                     source is its adapter, not a shared rule
+     reuses          the block's one-line slot, 1lh: exactly one line between
+                     successive groups, whatever their number. Inside a group
+                     nothing is set apart: the label sits on its lines and the
+                     lines on each other. A blank-line record on a group's
+                     first line adds nothing: the one line between groups
+                     stands for it, and before the first group it is dropped
+     variation       none: every boundary between peer groups is one line, for
+                     two groups or ten
+     exclusions      groups are declared: no rule here and no check reads a
+                     group from blank lines, capitals, font or line count, and
+                     an adapter never finds one merely from capitals, font or
+                     line count; no group-count threshold; no foundation token; not for verbatim code or
+                     a quoted payload, whose blank lines are content; ordinary
+                     .doc-group prose, dense tables and drawn diagrams keep
+                     their own spacing. The hierarchy rails and the block's
+                     outer rail are unchanged
+     example         three groups, each a label with a line beneath it, one
+                     line apart
+     counterexample  a blank line between a label and its lines; two lines
+                     between two groups; a separator the source happened to
+                     type standing in for a declared group
+
    REGISTERED LITERALS — no token expresses these values
      1.4                   metadata and quotation-attribution leading
      1.3                   Caption leading inside document compositions
      1px, 2px              hierarchy rail and passage rail widths
      #000, transparent     overflow mask stops: alpha only, never paint
      0.9em                 inline code, the foundation code rule's own size
-     1lh, 2lh, 3lh         blank source lines in structured text
+     1lh, 2lh, 3lh         blank source lines in structured text; 1lh is also
+                           the one line between declared peer groups
 
    LIMITS
-     - The blank-line slots use the lh unit. A browser without it drops those
-       margins; the lines themselves are unchanged.
+     - The blank-line slots and the peer-group line use the lh unit. A browser
+       without it drops those margins; the lines themselves are unchanged.
      - data-lead-lines records one to three blank lines. No rule reads a
        larger value.
      - Without the helper a block still scrolls and shows no cue. Keyboard
@@ -645,13 +719,20 @@
    indentation, holding parts and further rails in source order. Inside the
    block a rail's rhythm is the line slot, so its gap is zero. data-lead-lines
    records the blank source lines before a part or a rail, at any depth, as
-   that many line heights. */
+   that many line heights.
+   PEER GROUPS. A .doc-pre-group is one declared peer group: its label, then
+   the lines beneath it. Successive groups sit exactly one line apart, whatever
+   their number, and inside a group nothing is set apart. A blank-line record
+   on a group's first line adds nothing: the one line between groups stands
+   for it, and before the first group it is dropped. */
 .doc-pre--structured { white-space: normal; display: flex; flex-direction: column; }
 .doc-pre--structured .doc-hierarchy { gap: 0; }
 .doc-pre-part { margin: 0; font: inherit; color: inherit; white-space: pre; }
 .doc-pre--structured [data-lead-lines="1"] { margin-top: 1lh; }
 .doc-pre--structured [data-lead-lines="2"] { margin-top: 2lh; }
 .doc-pre--structured [data-lead-lines="3"] { margin-top: 3lh; }
+.doc-pre--structured > .doc-pre-group + .doc-pre-group { margin-top: 1lh; }
+.doc-pre--structured > .doc-pre-group > :first-child { margin-top: 0; }
 
 /* ---- Overflow cue ----------------------------------------------------- */
 
