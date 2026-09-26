@@ -39,7 +39,8 @@
                      document, never by its element, its size or its payload
      population      document title, section / subsection / deep headings,
                      lede, document body (in flow, in an authorial callout,
-                     and in a section framing or synthesis), entry title,
+                     in a section framing or synthesis, and in a narrative
+                     table's cells), entry title,
                      quotation text, operative label, metadata, inline code,
                      table-of-contents entry, dense table cell; Caption
                      through the foundation's .caption
@@ -308,19 +309,75 @@
                      .doc-table-cell appears nowhere else
      owner           this module for the cell's type only; the marker draws
                      nothing. Table geometry — rules, padding, the stacked
-                     narrow-width layout — stays with the consuming surface,
+                     narrow-width layout — stays with the consuming surface
+                     unless the table adopts the document table composition,
                      and a table without the marker (a narrative comparison, a
-                     prose table) is not this role; it stays outside the
-                     register until the shared table work admits a
-                     composition for it
+                     prose table) is not this role; it takes the narrative
+                     table assignment
      reuses          mono at the Small step, 300, --lh-body, --fg-1, tabular
                      numerals
      variation       none
      exclusions      a dense table's cell never carries the document body role;
-                     the marker is never implied by the td or th element
+                     the marker is never implied by the td or th element; the
+                     marker never implies the document table composition. It
+                     sets technical type and is not a compact layout
      example         a status, a date and a digest in one row, all mono
      counterexample  every table on a page set mono because it is a table; a
                      dense table whose cells are set as body prose
+
+   NARRATIVE TABLE
+     meaning         a table whose cells are prose — a comparison, a list of
+                     dispositions — rather than tabular payload, set in the
+                     register without being declared dense
+     population      a table without table.doc-dense-table. Its th carry
+                     .doc-label and its td .doc-body
+     owner           this module for the type only; the assignment draws
+                     nothing. Table geometry stays with the consuming surface
+                     unless the table adopts the document table composition
+     reuses          the operative label and document body roles
+     variation       none
+     exclusions      a narrative cell never carries .doc-table-cell; being in a
+                     table never makes prose mono
+     example         catalog dispositions: an item, a disposition and a
+                     sentence of detail in each row
+     counterexample  a prose table set mono because it is a table
+
+   DOCUMENT TABLE
+     meaning         a shared table geometry a consumer adopts by class: row
+                     rules, spacing, numeral alignment, line breaking, and a
+                     table that scrolls sideways in its own box rather than
+                     widening the page
+     population      table.doc-table as the direct child of a .doc-table-scroll
+                     box, for a narrative or a dense table alike; both markers
+                     are needed. .doc-table-num on the th and td of a numeric
+                     column whose values share a format
+     owner           this module for the geometry of a table that adopts it.
+                     The consumer owns the content, the columns, which tables
+                     are dense, which columns are numeric, any per-table
+                     widths, a name for each scroll box (role="region" with a
+                     label), and whether a table adopts the composition at all
+     reuses          the --line-2 rule under every row and the --line-1 rule
+                     under the header row; --space-3 block padding and
+                     --space-5 between columns; tabular figures; the overflow
+                     cue
+     variation       a narrative table keeps a 32rem measure and scrolls below
+                     it; a dense value does not wrap; code in a cell breaks
+                     only at its own break opportunities
+     exclusions      never implied: not by table.doc-dense-table, not by a text
+                     role on a cell and not by the table element, so a table
+                     without both markers keeps its consumer's geometry, and a
+                     table nested inside a cell takes none of the cell rules. It is
+                     not a compact review density, and it has no stacked
+                     narrow-width layout: a surface that must not scroll a
+                     table sideways, or that stacks its rows, keeps its own
+                     geometry and does not adopt it. Text keeps its role: the
+                     composition sets no family, size, weight, leading,
+                     tracking or foreground
+     example         a dense table with an end-aligned count column, its header
+                     row on the --line-1 rule, scrolling in its box at a phone
+                     width with the cue beneath it
+     counterexample  every table on a page given the composition because it is
+                     a table; a compact layout made by overriding this padding
 
    ENTRY TITLE
      meaning         the primary text of an operable entry in a result list or
@@ -349,7 +406,8 @@
    OVERFLOW CUE
      meaning         the block is wider than its box, and which side holds
                      hidden content
-     population      a .doc-pre whose data-overflow attributes are set
+     population      a .doc-pre, or a document table's .doc-table-scroll box,
+                     whose data-overflow attributes are set
      owner           this module draws it; surface-document-overflow.js, an
                      optional helper, reports the state
      reuses          the operative label metrics, --space-2, --space-6
@@ -402,14 +460,16 @@
      0.9em                 inline code, the foundation code rule's own size
      1lh, 2lh, 3lh         blank source lines in structured text; 1lh is also
                            the one line between declared peer groups
+     32rem                 a narrative document table's minimum measure
 
    LIMITS
      - The blank-line slots and the peer-group line use the lh unit. A browser
        without it drops those margins; the lines themselves are unchanged.
      - data-lead-lines records one to three blank lines. No rule reads a
        larger value.
-     - Without the helper a block still scrolls and shows no cue. Keyboard
-       scrolling of a block is not claimed: nothing here sets a tabindex.
+     - Without the helper a block or a table's box still scrolls and shows no
+       cue. Keyboard scrolling of either is not claimed: nothing here sets a
+       tabindex.
    ========================================================================= */
 
 /* ---- Text roles ------------------------------------------------------- */
@@ -525,6 +585,11 @@
 .doc-code:where(:not(:is(.doc-body, .doc-meta, .doc-label, .doc-deep-title, .doc-subsection-title, .doc-section-title, .doc-lede, .doc-title, .doc-quote, .doc-toc-link, .doc-table-cell, .doc-entry-title) *)) {
   font-size: var(--fs-caption);
 }
+/* Code keeps its source case inside an operative label. The capitals are the
+   label's, and a literal set in them is a different literal: default-ASK is
+   not DEFAULT-ASK. Only the case changes; the code keeps its family, size,
+   weight and foreground, and plain text in a label keeps the capitals. */
+.doc-label :is(code, .doc-code) { text-transform: none; }
 
 /* Inline emphasis inside document text. Weight carries it: 500 against body
    copy at 200, rather than the browser's bolder step. Scoped to the register,
@@ -609,7 +674,8 @@
    element: the consumer marks the table table.doc-dense-table, puts
    .doc-table-cell on its td and .doc-label on its th. The marker has no rule
    here because it draws nothing; table geometry stays with the consuming
-   surface, and an unmarked table is not this role. */
+   surface unless the table adopts the document table composition below, and
+   an unmarked table is not this role. */
 .doc-table-cell {
   font-family: var(--font-mono);
   font-size: var(--fs-small);
@@ -620,6 +686,54 @@
   font-variant-numeric: tabular-nums;
   margin: 0;
 }
+
+/* ---- Document table --------------------------------------------------- */
+
+/* A composition a consumer adopts by class: table.doc-table as the direct child
+   of a .doc-table-scroll box. Both markers are needed; nothing implies either —
+   not the dense marker, not a text role on a cell, not the table element — so a
+   table without them and a table marked without its box keep their consumer's
+   geometry, and a table nested inside a cell takes none of the cell rules. The
+   box's own scroll, scroll padding and cue key on the box alone. It sets
+   geometry, line breaking and a numeric column's figures; text keeps its role. Every rule that reaches a
+   cell sits at zero specificity, except the code line-breaking rule, which must
+   outrank the register's own.
+
+   The box scrolls, so the page never does: a table wider than its column
+   scrolls inside it, and the header row stays in place and visible, so its
+   words, code and links are never hidden, clipped or repeated. scroll-padding
+   lands a control scrolled into view by the keyboard clear of the fade. */
+:where(.doc-table-scroll) { overflow-x: auto; scroll-padding-inline: var(--space-6); }
+:where(.doc-table-scroll > table.doc-table) { width: 100%; border-collapse: collapse; }
+/* The fainter rule (--line-2) under every row, and the hairline divider
+   (--line-1) under the header row, so the header reads as the table's head.
+   Header cells sit on the header rule. */
+:where(.doc-table-scroll > table.doc-table > * > tr, .doc-table-scroll > table.doc-table > tr) > :where(th, td) {
+  text-align: start;
+  vertical-align: top;
+  padding: var(--space-3) var(--space-5) var(--space-3) 0;
+  border-bottom: 1px solid var(--line-2);
+}
+:where(.doc-table-scroll > table.doc-table > * > tr, .doc-table-scroll > table.doc-table > tr) > :where(th:last-child, td:last-child) { padding-inline-end: 0; }
+:where(.doc-table-scroll > table.doc-table > thead > tr) > :where(th) { vertical-align: bottom; border-bottom-color: var(--line-1); }
+/* A narrative table keeps a readable measure: it never narrows below 32rem, and
+   inside that width its columns share space by their content. At a narrower
+   width it scrolls in its box rather than squeezing prose. */
+:where(.doc-table-scroll > table.doc-table:not(.doc-dense-table)) { min-width: 32rem; }
+/* A numeric column — its header and its cells — aligns to the end on tabular
+   figures, where its values share a format. */
+:where(.doc-table-scroll > table.doc-table > * > tr, .doc-table-scroll > table.doc-table > tr) > :where(.doc-table-num) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* A dense value keeps its line; a long one widens the table, which scrolls. */
+:where(.doc-table-scroll > table.doc-table > * > tr, .doc-table-scroll > table.doc-table > tr) > :where(td.doc-table-cell) { white-space: nowrap; }
+/* Code breaks only at its own opportunities — a hyphen, a slash, a space —
+   never between two letters. The register lets code break anywhere so that a
+   long token never forces a horizontal scroll; this table already scrolls in
+   its box. Line breaking only: the code's type is unchanged. */
+.doc-table-scroll > table.doc-table :is(code, .doc-code) { overflow-wrap: normal; }
 
 /* ---- Hierarchy rail --------------------------------------------------- */
 
@@ -736,15 +850,18 @@
 
 /* ---- Overflow cue ----------------------------------------------------- */
 
-/* Shown only while a block is wider than its box. Content hidden to the right
-   fades at the right edge, and an operative label beneath the block names the
-   direction it scrolls. The label is sticky at the box's left edge, and the
-   fade is right-edge only, so the fade never masks the label. */
-.doc-pre[data-overflow-end] {
+/* Shown only while a block, or a document table's box, is wider than its box.
+   Content hidden to the right fades at the right edge, and an operative label
+   beneath names the direction it scrolls. The label is sticky at the box's
+   left edge, and the fade is right-edge only, so the fade never masks the
+   label. */
+.doc-pre[data-overflow-end],
+.doc-table-scroll[data-overflow-end] {
   -webkit-mask-image: linear-gradient(to right, #000 calc(100% - var(--space-6)), transparent);
           mask-image: linear-gradient(to right, #000 calc(100% - var(--space-6)), transparent);
 }
-.doc-pre[data-overflow]::after {
+.doc-pre[data-overflow]::after,
+.doc-table-scroll[data-overflow]::after {
   display: block;
   position: sticky;
   left: 0;
@@ -759,5 +876,7 @@
   white-space: normal;
   content: "scroll >>";
 }
-.doc-pre[data-overflow-start][data-overflow-end]::after { content: "<< scroll >>"; }
-.doc-pre[data-overflow-start]:not([data-overflow-end])::after { content: "<< scroll"; }
+.doc-pre[data-overflow-start][data-overflow-end]::after,
+.doc-table-scroll[data-overflow-start][data-overflow-end]::after { content: "<< scroll >>"; }
+.doc-pre[data-overflow-start]:not([data-overflow-end])::after,
+.doc-table-scroll[data-overflow-start]:not([data-overflow-end])::after { content: "<< scroll"; }
