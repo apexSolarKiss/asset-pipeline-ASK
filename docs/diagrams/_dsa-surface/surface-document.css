@@ -16,7 +16,9 @@
                 A table of contents also needs surface-text-link.css, which its
                 entries compose for their interaction. An authorial callout, a
                 section framing or a section synthesis also needs
-                surface-panel.css and surface-treatments.css. A page that loads
+                surface-panel.css and surface-treatments.css, and so does the
+                main + inspector composition; a locator the reader follows
+                needs surface-text-link.css. A page that loads
                 them all loads them as surface-document.html does:
                 colors_and_type.css -> surface-panel.css -> surface-text-link.css
                 -> surface-document.css -> surface-treatments.css.
@@ -41,7 +43,8 @@
                      lede, document body (in flow, in an authorial callout,
                      in a section framing or synthesis, and in a narrative
                      table's cells), entry title,
-                     quotation text, operative label, metadata, inline code,
+                     quotation text, operative label, metadata, inline code
+                     (standing alone as a field value, the document locator),
                      table-of-contents entry, dense table cell; Caption
                      through the foundation's .caption
      owner           this module; the Caption role stays the foundation's
@@ -68,12 +71,52 @@
                      groups, groups, labeled values and action rows
      owner           this module
      reuses          foundation space tokens
-     variation       a section nested inside a section leads by --space-4
+     variation       a section nested inside a section leads by --space-4; an
+                     item's action row may sit at the item's end (below)
      exclusions      page grid, column count, order and payload stay with the
                      consuming surface
      example         a heading and its body sit --space-3 apart wherever the
                      pair occurs
      counterexample  a hand-set margin on one subsection that its neighbors lack
+
+   ACTION ROW AT AN ITEM'S END
+     meaning         in a repeated collection, each item's action row sits at
+                     the item's end, so the items of one grid row present
+                     their actions along one bottom edge however long their
+                     copy is
+     population      .doc-actions.doc-actions--end: the modifier on an item's
+                     action row, in an item that is a flex column and
+                     stretches to its grid row's height — a .surface-panel
+                     item in a grid that keeps the default align-items, as the
+                     key's repeated collection is
+     owner           this module for the row's place in its item. The grid,
+                     its columns, its rows and their heights, the order of
+                     the items and each item's height stay with the consuming
+                     surface; surface-action.css owns the controls and is not
+                     involved
+     reuses          an auto start margin inside the item's flex column: it
+                     takes whatever block-axis space the item leaves. In grid
+                     rows sized to their content that is only the space a
+                     taller neighbor leaves, so the tallest item's row still
+                     follows its copy by the item's gap; where the consumer
+                     sizes rows otherwise, every item's row may move, and the
+                     bottoms meet wherever each item is at least as tall as
+                     its content
+     variation       none
+     exclusions      adopted by class only, never through a bare element or
+                     through .doc-actions itself: a row without the modifier
+                     keeps its place after its copy. Where the row has no free
+                     block-axis space — in a block container, or in a column
+                     no taller than its content — the modifier moves nothing;
+                     in any flex or grid context that leaves it space, it
+                     takes that space. No fixed heights, filler or per-item
+                     offsets. The guarantee is a shared bottom edge, not a
+                     shared top: when one row's controls wrap to more lines
+                     than a neighbor's, its top sits higher by the extra lines
+     example         two items side by side, one with a sentence of copy and
+                     one with three, their actions on one line at the bottom
+     counterexample  a min-height or a spacer that makes every item as tall as
+                     the tallest; a margin tuned per item to line rows up
 
    HIERARCHY RAIL
      meaning         "this belongs inside the level above" — indentation and
@@ -403,6 +446,79 @@
                      statement set on the panel label's tight leading and
                      tracking
 
+   DOCUMENT LOCATOR
+     meaning         a source address, DOI or path standing as a field value:
+                     a literal string the reader copies or follows
+     population      a code.doc-code that is the value of a .doc-labeled field
+                     and stands inside no other text role; an address the
+                     reader follows is an a.surface-text-link inside it
+     owner           this module. It is an assignment of the inline-code role,
+                     as the narrative table is of the label and body roles,
+                     with no class, metric or foreground of its own
+     reuses          .doc-code standing alone: mono at the Caption step, 300,
+                     --fg-2, breaking anywhere, so a long address wraps inside
+                     its field rather than widening it; surface-text-link's
+                     interaction, which sets no foreground
+     variation       none
+     exclusions      .doc-code declares no leading, tracking or case, so a
+                     locator keeps its literal form only where its container
+                     sets none: as a field value. Inside a label it would take
+                     the label's tracking and a smaller size, 0.9em of the
+                     label's (the register keeps code's source case there);
+                     inside a caption or a disclosure trigger, their capitals
+                     and tracking; inside a panel title, its tracking. Apart
+                     from that one case rule, the role enforces none of this
+                     in any ancestry; the placement does. An address inside
+                     running prose stays a body link. An identifier that names
+                     a record stays .doc-meta, as an entry's does. Which tokens
+                     link is the consumer's rule. An address in a page
+                     header's chrome is outside this assignment
+     example         a record's source link: a 191-character address wrapping
+                     across several lines of its field at a phone width, in
+                     its source case, and opening its source
+     counterexample  an address set in an operative label's capitals and
+                     tracking; a source address field set as document body
+
+   MAIN + INSPECTOR
+     meaning         records in a main region beside an inspector that shows
+                     the one selected: two regions of one document, read
+                     together
+     population      a repeated collection or record index in the main
+                     region; one view per record in the inspector, a
+                     .doc-titled heading over its fields in .doc-group and
+                     .doc-labeled compositions
+     owner           this module for the text roles and relationships in both
+                     regions; surface-panel.css and surface-treatments.css own
+                     the classes composed. Everything that makes the second
+                     region an inspector is the consuming surface's
+     reuses          one set of text roles across both regions: a role keeps
+                     its treatment wherever it occurs, and the inspector's
+                     prose stays .doc-body at the Body step. A record's name
+                     is an entry title in the main region and the view's
+                     heading in the inspector — a difference of role, since
+                     the heading governs the fields beneath it, not of space.
+                     The inspector is a separate surface chosen on the three
+                     axes: .surface-separate + .surface-material-panel +
+                     .surface-attach-free + .surface-elevation-flush, the flat
+                     panel the section synthesis composes
+     variation       none shared
+     exclusions      no selector, layout or controller. The regions' grid,
+                     proportions and breakpoint; the inspector's sticky place
+                     and independent scroll; the regions' order at a narrow
+                     width; selection, the current-item indication, focus
+                     handling and the route back all stay with the consuming
+                     surface. Nothing shrinks for the narrower region.
+                     surface-action.css's magenta is attention only and never
+                     marks the current item. The register's compositions and
+                     .surface-action set display, so a consumer that hides a
+                     view or a control with the hidden attribute supplies its
+                     own guard
+     example         the key's records-and-inspector section: four public
+                     records and an inspector for the selected one, driven by
+                     a page-local script
+     counterexample  inspector prose set a step smaller than the records'; a
+                     selected item marked by the magenta action edge
+
    OVERFLOW CUE
      meaning         the block is wider than its box, and which side holds
                      hidden content
@@ -575,7 +691,8 @@
 }
 /* Inside a sized document role, code is 0.9x its parent's computed font size.
    Ordinary inline wrappers preserve that role's size. With no sized-role
-   ancestor, code falls back to the Caption step rather than the browser default. */
+   ancestor, code falls back to the Caption step rather than the browser default.
+   Standing alone as a field value, it is the document locator (catalog). */
 .doc-code {
   font-family: var(--font-mono);
   font-size: 0.9em;
@@ -630,6 +747,13 @@
 .doc-section > .doc-section { margin-top: var(--space-4); }
 
 .doc-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+
+/* An item's action row at the item's end, adopted by class on the row. In an
+   item that is a flex column and stretches to its grid row, the auto margin
+   takes the block-axis space the item leaves — in rows sized to their content,
+   the space a taller neighbor leaves. With no free space it moves nothing. The
+   guarantee is a shared bottom edge, not a shared top. */
+.doc-actions--end { margin-block-start: auto; }
 
 /* ---- Table of contents ------------------------------------------------ */
 
