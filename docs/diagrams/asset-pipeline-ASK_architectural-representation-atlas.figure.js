@@ -16,7 +16,8 @@
      muted historical note : Axis C / shared-versus-variable — historical / superseded, no live diagram
 
    Self-contained renderer (no shared layout engine, not engine-rendered) on the model's bespoke-figure
-   substrate; reuses the shared diagrams.css / export-png.js only. Neutral palette — no Three Functions
+   substrate; reuses the shared diagrams.css / diagrams-fit.js / export-png.js, and takes its cards'
+   attention edge from the vendored surface-action.css. Neutral palette — no Three Functions
    (this figure is classificatory, not causal). Bounded generativity remains the sole live system-model
    topology; this atlas does not create a second one, and does not collapse the architectural axes. */
 (function () {
@@ -68,13 +69,14 @@
        The absent card has no destination and stays an ordinary <g>: not focusable, not
        announced as a link, not styled as interactive. */
     const host = c.path
-      ? el('a', { class: 'atlas-card atlas-card-link', href: c.path,
+      ? el('a', { class: 'atlas-card atlas-card-link surface-attention-edge', href: c.path,
                   'aria-label': c.name + ' — ' + c.path })
       : el('g', { class: 'atlas-card' });
     g.append(host);
 
-    // uniform border weight across all live cards; dashed only for the no-live-diagram (absent) card
-    const cls = c.kind === 'absent' ? 'node-box held' : 'node-box';
+    // uniform border weight across all live cards; dashed only for the no-live-diagram (absent) card;
+    // a linked card's box is the shape the shared attention edge strokes
+    const cls = c.kind === 'absent' ? 'node-box held' : c.path ? 'node-box surface-attention-edge-shape' : 'node-box';
     host.append(rect(c.x, c.y, c.w, c.h, cls, 6));
     const nameCls = c.kind === 'absent' ? 'node-label held' : 'node-label';
     host.append(txt(c.x + 20, c.y + 28, c.name, nameCls));
@@ -217,7 +219,10 @@
        resize). */
     const BASE_MIN_SCALE = 0.2;
     let fittedMinScale = BASE_MIN_SCALE;
-    const apply = () => { stage.style.transform = `translate(${tx}px,${ty}px) scale(${sc})`; if (pct) pct.textContent = Math.round(sc * 100) + '%'; };
+    /* apply() also declares the current scale as --surface-attention-edge-scale, so the shared
+       attention edge (surface-action.css) keeps its on-screen stroke below 100% and scales with
+       the figure above it. */
+    const apply = () => { stage.style.transform = `translate(${tx}px,${ty}px) scale(${sc})`; stage.style.setProperty('--surface-attention-edge-scale', sc); if (pct) pct.textContent = Math.round(sc * 100) + '%'; };
     /* Fit comes from the design-system helper (diagrams-fit.js; presence checked at the top of
        this file). The figure previously carried its own copy of the DS fit arithmetic; the
        duplicated arithmetic is retired and its caller-owned inputs kept: 90px total clearance
