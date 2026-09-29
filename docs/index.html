@@ -11,9 +11,15 @@
 <meta property="og:description" content="An architecture for creative intent. AP-ASK is an open-source reference architecture for carrying that intent into commercial image production.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://asset-pipeline.a-s-k.studio/">
+<meta property="og:image" content="https://asset-pipeline.a-s-k.studio/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ASK wordmark on lavender background">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="AP-ASK // An architecture for creative intent">
 <meta name="twitter:description" content="An architecture for creative intent. AP-ASK is an open-source reference architecture for carrying that intent into commercial image production.">
+<meta name="twitter:image" content="https://asset-pipeline.a-s-k.studio/og-image.png">
+<meta name="twitter:image:alt" content="ASK wordmark on lavender background">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -50,6 +56,26 @@
      standard spacing and the same destinations; there is no sticky or
      additional navigation.
 
+     FIGURE. One image sits between "The project today" and the author section:
+     a conceptual illustration, presented without a heading or caption, so the
+     approved text is unchanged. It is presentation, not evidence. Like the
+     title's line, it is exempt from the reading measure and spans the content
+     width, so its embedded labels stay legible. The page shows one of two
+     resized copies, chosen by srcset; the link opens the original file under
+     images/, kept byte-identical to the source so its embedded content
+     credentials travel with it. The link takes surface-action.css's attention
+     edge on its own transparent border, so the edge appears on hover and
+     keyboard focus and moves nothing. The img's sizes attribute repeats the
+     shell's geometry as numbers, because sizes cannot read custom properties:
+     1100px is --surface-shell-content-max and 64px is twice --space-6, the
+     page's side padding. A re-vendor that changes either must update sizes.
+
+     SHARE CARD. Link previews carry the ASK card, og-image.png at the deployed
+     root, a byte-identical copy of the A-S-K.studio card. It is declared
+     explicitly so that a platform falling back to the page's own images never
+     picks the figure, and vercel.json serves the figure's files noindex so that
+     search results do not use it as the page's thumbnail.
+
      HEADINGS. The shell's structural title — the breadcrumbed h1, "ASK // apex
      solar kiss // AP-ASK" — is the family locator every shell page carries. The
      project's own heading is the document title, "AP-ASK", with nothing added.
@@ -73,9 +99,16 @@
      reading measure, which the shell leaves to the consumer by contract. The
      measure is the one the family's other document page uses; it applies to the
      document's text, while the title's line spans the full width so its action
-     pair shares the footer's right edge. */
+     pair shares the footer's right edge, and so does the figure. */
   body { min-height: 100vh; }
-  .ap-pitch > :not(.doc-titled), .ap-pitch > .doc-titled > :not(.ap-title-line) { max-width: 68ch; }
+  .ap-pitch > :not(.doc-titled):not(.ap-figure), .ap-pitch > .doc-titled > :not(.ap-title-line) { max-width: 68ch; }
+  /* The figure: no user-agent margin, since the flow's gap already spaces it. Its
+     link is an image object that adopts the attention edge by class, on the
+     bordered anatomy: a 1px border, transparent at rest, which the shared rule
+     turns magenta on hover and focus. The image fills the link at every width. */
+  .ap-figure { margin: 0; }
+  .ap-figure-link { display: block; border: 1px solid transparent; cursor: zoom-in; }
+  .ap-figure-link > img { display: block; width: 100%; height: auto; }
   /* The title's line carries the action pair at its right, centered to the title
      and spaced like the footer's actions (--space-5); where the line is too narrow
      for both, the pair wraps below it, still at the right. */
@@ -191,6 +224,11 @@
           <p class="doc-body">One completed package has also been represented and recovered outside Airtable, in a file-based store and PostgreSQL. These are concrete implementation and portability proofs at bounded scope. The larger goal is to apply the same architecture-led approach to complete, brand-specific production systems across suitable environments.</p>
         </div>
       </section>
+      <figure class="ap-figure">
+        <a class="ap-figure-link surface-attention-edge" href="images/intent-to-governed-asset.jpg">
+          <img src="images/intent-to-governed-asset-1376.jpg" srcset="images/intent-to-governed-asset-1376.jpg 1376w, images/intent-to-governed-asset-2200.jpg 2200w" sizes="(min-width: 1164px) 1100px, calc(100vw - 64px)" width="1376" height="768" loading="lazy" decoding="async" alt="Conceptual illustration. A violet beam labeled Creative Intent enters a transparent glass cylinder through a ring labeled Aperture. Inside the cylinder, labeled Execution Span, small glass cubes labeled Variance float beneath a handle-shaped bracket labeled Creative Discretion. A circular arrow labeled Selection marks one cube, and an arrow leads out of the cylinder to a nested cube labeled Governed Asset.">
+        </a>
+      </figure>
       <section class="doc-section">
         <h3 class="doc-section-title" id="ap-ask-developed-from-production-practice">Developed from production practice</h3>
         <div class="doc-prose">

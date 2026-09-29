@@ -13,6 +13,9 @@ docs/diagrams/, the surface-shell pattern, the surface-panel, surface-action,
 surface-text-link and surface-document visual rules, and
 the ASK wordmark pair used by docs/index.html and docs/diagrams/index.html.
 
+This product also includes the ASK social card, docs/og-image.png, copied
+unmodified from the ASK site (github.com/apexSolarKiss/ASK).
+
 design-system-ASK
 Copyright 2026 Andrew S Klug // ASK
 
