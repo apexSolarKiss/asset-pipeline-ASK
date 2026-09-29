@@ -58,14 +58,17 @@
 
      FIGURE. One image sits between "The project today" and the author section:
      a conceptual illustration, presented without a heading or caption, so the
-     approved text is unchanged. It is presentation, not evidence. It is the one
-     element of the document wider than the reading measure: it spans the
-     content width, as the title's line does, so its embedded labels stay
-     legible. The page shows one of two resized copies, chosen by srcset; the
-     link opens the original file under images/, kept byte-identical to the
-     source so its embedded content credentials travel with it. The link takes
-     surface-action.css's attention edge on its own transparent border, so the
-     edge appears on hover and keyboard focus and moves nothing.
+     approved text is unchanged. It is presentation, not evidence. Like the
+     title's line, it is exempt from the reading measure and spans the content
+     width, so its embedded labels stay legible. The page shows one of two
+     resized copies, chosen by srcset; the link opens the original file under
+     images/, kept byte-identical to the source so its embedded content
+     credentials travel with it. The link takes surface-action.css's attention
+     edge on its own transparent border, so the edge appears on hover and
+     keyboard focus and moves nothing. The img's sizes attribute repeats the
+     shell's geometry as numbers, because sizes cannot read custom properties:
+     1100px is --surface-shell-content-max and 64px is twice --space-6, the
+     page's side padding. A re-vendor that changes either must update sizes.
 
      SHARE CARD. Link previews carry the ASK card, og-image.png at the deployed
      root, a byte-identical copy of the A-S-K.studio card. It is declared

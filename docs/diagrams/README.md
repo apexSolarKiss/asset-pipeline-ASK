@@ -109,7 +109,7 @@ Both panel forms are in use and divide as the modules intend: the seven diagram 
 
 **Tier boundary.** The page carries an **ASK-assigned Tier 3** value in the shell's mark slot. That is a property of the navigation surface: it does **not** propagate into the seven Tier 1 + Tier 2 figures it indexes, does **not** make asset-pipeline-ASK ASK-the-entity, and does **not** come from `surface-shell`, which ships a mark slot and no mark. ASK branding is the current settled assignment; any later independent asset-pipeline-ASK brand is a separate identity migration.
 
-`vercel.json` at the deployed `docs/` root states the deployment contract: it declares no redirect, so `/` serves the AP-ASK landing page (`../index.html`) as the static index, and that page links this folder's `index.html` as its technical destination; four security headers apply across the surface, the vendored font and wordmark paths revalidate rather than caching immutably, and the landing page's figure files under `../images/` are served `noindex`, so search results keep the ASK card rather than the figure as the page's image.
+`vercel.json` at the deployed `docs/` root states the deployment contract: it declares no redirect, so `/` serves the AP-ASK landing page (`../index.html`) as the static index, and that page links this folder's `index.html` as its technical destination; four security headers apply across the surface, the vendored font and wordmark paths revalidate rather than caching immutably, and the landing page's figure files under `../images/` are served `noindex`, so search results do not use the figure as the page's image; the page's declared `og:image` is the ASK card.
 
 ## Theme by embedding surface (adopted convention)
 
