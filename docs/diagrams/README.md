@@ -29,7 +29,7 @@ The diagram conforms to [`apexSolarKiss/design-system-ASK`](https://github.com/a
 README.md                                       this file
 index.html                                      ASK-branded live navigation surface for the seven figures below
 _dsa-tokens/                                    pinned design-system-ASK Tier 1 + Tier 2 mirror (no CDN)
-_dsa-surface/                                   pinned surface-shell (css + navigation runtime) + surface-panel + surface-action + surface-text-link + surface-document carriers and the mode-aware ASK wordmark pair — used ONLY by index.html and the AP-ASK landing page at the deployed root (../index.html)
+_dsa-surface/                                   pinned surface-shell (css + navigation runtime) + surface-panel + surface-action + surface-text-link + surface-document carriers and the mode-aware ASK wordmark pair — used by index.html and the AP-ASK landing page at the deployed root (../index.html); the atlas also loads surface-action alone, for its cards' attention edge
 
 # Horizontal — Class A diagram-static-H (top-aligned cascade)
 asset-pipeline-ASK_architecture-tree.html       renders TREE_D04 (repo architecture / artifact structure)
@@ -56,7 +56,7 @@ diagrams-static-FLOW-engine.js                  convergence-flow layout engine (
 
 # Orientation / deconfliction — architectural-representation atlas (bespoke figure.js; not engine-rendered) — orientation across the repo's representations
 asset-pipeline-ASK_architectural-representation-atlas.html          renders the atlas — orientation across the repo's existing representations (per view: object · question · live surface · authority boundary)
-asset-pipeline-ASK_architectural-representation-atlas.figure.js     bespoke self-contained renderer; reuses the shared diagrams.css / export-png.js only; neutral palette (no Three Functions); source-v2 — the six live cards are native SVG links, with deferred pointer capture arbitrating tap against pan
+asset-pipeline-ASK_architectural-representation-atlas.figure.js     bespoke self-contained renderer; reuses the shared diagrams.css / diagrams-fit.js / export-png.js and the vendored surface-action.css; neutral palette (no Three Functions); source-v2 — the six live cards are native SVG links, with deferred pointer capture arbitrating tap against pan
 
 # Shared scaffold files — one copy each; diagrams-fit.js, diagrams.css and export-png.js are byte-identical across the three Class A static patterns and reused by both bespoke figures (bounded-generativity + architectural-representation-atlas); diagrams-text-layout.js serves the H and V patterns only
 diagrams-fit.js                                 DS-owned shared fit contract (#77-#80); vendored + loaded BEFORE each engine; engines fail closed without it
@@ -97,7 +97,7 @@ Because the canvas also pans from anywhere, one pointer press is ambiguous until
 
 **The token outlives one event-loop turn, because the associated click may not arrive within one.** Under the default `touch-action` a user agent may hold a touch-generated click back while it finishes resolving the gesture — historically by around 300ms — and click generation is implementation-dependent, so expiring on a zero-delay timer is a mouse-only assumption. The token therefore lives for a bounded `PAN_CLICK_GUARD_MS` (500ms). Three guards stop that longer window ever eating a real activation: only a **pointer-origin** click can consume it, so keyboard and programmatic activation pass through untouched; **any new pointer sequence retires it** at `pointerdown`, so the next tap or click is never mistaken for the pan's; and it is consumed **exactly once**. The timer is only the backstop for engines that generate no click at all. Panning from blank canvas, wheel zoom, the HUD controls and Fit are unchanged.
 
-Link styling is **interaction-state only** — cursor, hover and `:focus-visible` on existing diagram tokens. Nothing new is drawn at rest, so `render-v1` **holds**: after fonts settle and the fit lands, all 111 primitives are identical to `source-v1` in both themes — geometry, text, and computed fill, stroke, stroke-width, opacity, font and visibility.
+Link styling is **interaction-state only** — the cursor, plus the shared attention edge on hover and `:focus-visible`, which the cards take from the vendored `surface-action.css` by class at the figure's declared scale. Nothing new is drawn at rest, so `render-v1` **holds**: after fonts settle and the fit lands, all 111 primitives are identical to `source-v1` in both themes — geometry, text, and computed fill, stroke, stroke-width, opacity, font and visibility.
 
 ## Live navigation surface
 
