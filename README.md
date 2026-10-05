@@ -86,6 +86,7 @@ Background article series, in chronological order:
 - [Provenance Is Not Authorship](https://atomicspacekitten.substack.com/p/provenance-is-not-authorship)
 - [The Camera Was Not Welcomed](https://atomicspacekitten.substack.com/p/the-camera-was-not-welcomed)
 - [The Middle Was Never Neutral](https://atomicspacekitten.substack.com/p/the-middle-was-never-neutral)
+- [An Architecture for Creative Intent](https://atomicspacekitten.substack.com/p/an-architecture-for-creative-intent)
 
 ## License
 
