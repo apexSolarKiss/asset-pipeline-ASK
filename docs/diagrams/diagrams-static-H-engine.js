@@ -575,34 +575,86 @@
        clamping it would restore the panel collision this engine exists to avoid. */
     const BASE_MIN_SCALE = 0.15;
     let fittedMinScale = BASE_MIN_SCALE;
+    /* FIT MODE. The view is "at Fit" after a fit and until the reader zooms, drags or
+       wheels. Only a view at Fit follows a resize or a change in the chrome
+       (`diagram-chrome-change`, from diagrams-chrome.js: a panel opening or closing, the
+       compact layout switching on or off, its control band changing). A reader's own pan
+       and zoom is never reset by a browser-toolbar resize or a disclosure. */
+    let atFit = true;
     function apply() {
       stage.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
       zoomPct.textContent = Math.round(scale * 100) + '%';
     }
-    function fit() {
-      /* Shared DS fit contract (diagrams-fit.js): reserves the measured caption/legend
-         and HUD bands, then centres in the remainder. With no visible panels both bands
-         are 0 and this is arithmetically identical to the previous formula. clearance is
-         TOTAL (the value formerly subtracted from the viewport), not per-side padding. */
-      const f = window.DIAGRAM_FIT.compute({
-        wrap: canvasWrap,
-        bounds: { minX: 0, minY: 0, maxX: width, maxY: height },
-        clearanceX: 80, clearanceY: 80, maxScale: 1.2, gutter: 26
-      });
+    /* Shared DS fit contract (diagrams-fit.js): reserves the measured caption/legend
+       and HUD bands, then centres in the remainder. With no visible panels both bands
+       are 0 and this is arithmetically identical to the previous formula. clearance is
+       TOTAL (the value formerly subtracted from the viewport), not per-side padding. */
+    const fitResult = () => window.DIAGRAM_FIT.compute({
+      wrap: canvasWrap,
+      bounds: { minX: 0, minY: 0, maxX: width, maxY: height },
+      clearanceX: 80, clearanceY: 80, maxScale: 1.2, gutter: 26
+    });
+    function applyFit(f) {
       fittedMinScale = Math.min(BASE_MIN_SCALE, f.scale);
       scale = f.scale; tx = f.tx; ty = f.ty;
+      atFit = true;
       apply();
     }
+    /* The page's responsive chrome (diagrams-chrome.js), where it has one: its open compact
+       panel, the Fit the reader returns to when that panel closes, and its one truthful way
+       to close it. */
+    const chrome = window.DIAGRAM_CHROME || null;
+    /* FAIL-CLOSED with the chrome, on the same terms as the carriers above: the chrome
+       declares its control area's edge, which only diagrams-fit.js v2 reads. An older copy
+       would count an open compact panel as top chrome. */
+    if (chrome && !(window.DIAGRAM_FIT.VERSION >= 2)) {
+      throw new Error('The responsive chrome needs the current diagrams-fit.js. Re-vendor it with diagrams-chrome.js.');
+    }
+    const panelOpen = () => !!(chrome && chrome.openPanel(canvasWrap));
+    const closedFit = () => (chrome ? chrome.withoutOpenPanel(canvasWrap, fitResult) : fitResult());
+    /* The Fit while a compact panel is open. The drawing moves clear of the panel only where
+       it keeps the size it has with the panel closed; otherwise it keeps that closed-panel
+       Fit, and the panel, which the reader opened, overlays it until it closes. */
+    const keepsSize = (f, c) => f.clear && f.scale >= c.scale * (1 - 1e-6);
+    const fitAround = () => {
+      const f = fitResult();
+      if (!panelOpen()) return f;
+      const c = closedFit();
+      return keepsSize(f, c) ? f : c;
+    };
+    /* FIT, the reader's request, always ends at a usable fitted view: when the open compact
+       panel would cover the drawing, Fit closes it through the chrome's state controller
+       (trigger and panel together) and fits against the chrome that remains. */
+    function fit() {
+      if (panelOpen()) {
+        const f = fitResult();
+        if (keepsSize(f, closedFit())) { applyFit(f); return; }
+        chrome.close(canvasWrap);
+      }
+      applyFit(fitResult());
+    }
     fit();
-    window.addEventListener('resize', fit);
+    /* An automatic refit (a resize or a chrome change) applies only to a view at Fit, and
+       follows the same rule: clear of an open panel at the closed-panel size, or that
+       closed-panel Fit with the panel overlaying it. A reader's own pan and zoom stay. */
+    const refitAtFit = () => {
+      if (!atFit) return;
+      applyFit(fitAround());
+    };
+    window.addEventListener('resize', refitAtFit);
+    canvasWrap.addEventListener('diagram-chrome-change', refitAtFit);
 
-    document.getElementById('zoomIn').onclick  = () => { scale = Math.min(scale * 1.2, 4); apply(); };
-    document.getElementById('zoomOut').onclick = () => { scale = Math.max(scale / 1.2, fittedMinScale); apply(); };
+    /* The view leaves Fit only when the reader actually moves it: a zoom already at its limit
+       changes nothing, and a press that travels less than DRAG_START is a tap, not a pan. */
+    const DRAG_START = 3;
+    const zoomTo = (s) => { if (s === scale) return; scale = s; atFit = false; apply(); };
+    document.getElementById('zoomIn').onclick  = () => zoomTo(Math.min(scale * 1.2, 4));
+    document.getElementById('zoomOut').onclick = () => zoomTo(Math.max(scale / 1.2, fittedMinScale));
     document.getElementById('zoomFit').onclick = fit;
 
     let dragging = false, sx0, sy0, tx0, ty0;
     canvasWrap.addEventListener('pointerdown', (ev) => {
-      if (ev.target.closest('.hud, .legend, .caption')) return;
+      if (ev.target.closest('.hud, .legend, .caption, .diagram-info')) return;
       dragging = true;
       canvasWrap.classList.add('dragging');
       canvasWrap.setPointerCapture(ev.pointerId);
@@ -610,8 +662,11 @@
     });
     canvasWrap.addEventListener('pointermove', (ev) => {
       if (!dragging) return;
-      tx = tx0 + (ev.clientX - sx0);
-      ty = ty0 + (ev.clientY - sy0);
+      const dx = ev.clientX - sx0, dy = ev.clientY - sy0;
+      if (!dx && !dy) return;
+      tx = tx0 + dx;
+      ty = ty0 + dy;
+      if (Math.abs(dx) >= DRAG_START || Math.abs(dy) >= DRAG_START) atFit = false;
       apply();
     });
     canvasWrap.addEventListener('pointerup', () => {
@@ -619,15 +674,20 @@
       canvasWrap.classList.remove('dragging');
     });
     canvasWrap.addEventListener('wheel', (ev) => {
+      /* Over the chrome block a wheel scrolls an open panel and leaves the drawing alone; a
+         pinch (a wheel carrying ctrlKey) still zooms the drawing, never the page. */
+      if (!ev.ctrlKey && ev.target.closest('.diagram-info')) return;
       ev.preventDefault();
       const rect = canvasWrap.getBoundingClientRect();
       const mx = ev.clientX - rect.left, my = ev.clientY - rect.top;
       const factor = ev.deltaY > 0 ? 1 / 1.1 : 1.1;
       const newScale = Math.max(fittedMinScale, Math.min(4, scale * factor));
+      if (newScale === scale) return;
       const k = newScale / scale;
       tx = mx - (mx - tx) * k;
       ty = my - (my - ty) * k;
       scale = newScale;
+      atFit = false;
       apply();
     }, { passive: false });
   }

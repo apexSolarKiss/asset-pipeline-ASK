@@ -43,7 +43,7 @@ body {
 
 /* ---- canvas ---- */
 .canvas-wrap { position: relative; overflow: hidden; }
-#stage { position: absolute; inset: 0; cursor: grab; }
+#stage { position: absolute; inset: 0; cursor: grab; touch-action: none; }
 #stage.panning { cursor: grabbing; }
 svg { width: 100%; height: 100%; display: block; }
 
@@ -91,7 +91,7 @@ svg { width: 100%; height: 100%; display: block; }
 .legend .row .lbl { color: var(--fg-1); }
 .legend .row .sub { color: var(--fg-2); font-size: 10px; }
 
-.hud { bottom: 18px; left: 18px; display: flex; align-items: center; gap: 4px; padding: 6px; }
+.hud { bottom: 18px; left: 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; padding: 6px; max-width: calc(100% - 36px); }
 .hud button { font-family: var(--font-mono); font-size: 14px; width: 30px; height: 30px; border: none; border-radius: 8px; background: transparent; color: var(--fg-1); cursor: pointer; }
 .hud button:hover { background: var(--surface-glass-2); }
 .hud .pct { font-family: var(--font-mono); font-size: 10px; color: var(--fg-2); width: 40px; text-align: center; }
@@ -106,3 +106,54 @@ svg { width: 100%; height: 100%; display: block; }
 .corner-tick.tr { top: 8px; right: 8px; border-left: 0; border-bottom: 0; }
 .corner-tick.bl { bottom: 8px; left: 8px; border-right: 0; border-top: 0; }
 .corner-tick.br { bottom: 8px; right: 8px; border-left: 0; border-top: 0; }
+
+/* ---- responsive chrome ----
+   The engine composes the inspector, legend, caption and HUD as one arrangement and records it on
+   the canvas as data-spine-chrome (diagrams-interactive-spine-engine.js, RESPONSIVE CHROME).
+
+   WIDE, where the canvas holds them apart and keeping them open costs the drawing little: each
+   panel keeps its place. The caption is centered in the slot between the HUD at its widest and the
+   legend, never under either; the inspector keeps the top-right corner and scrolls inside the room
+   above the legend.
+
+   COMPACT, everywhere else: the inspector, legend and caption close behind About, Legend and
+   Inspector triggers in the shared disclosure grammar (surface-treatments.css), which join the
+   HUD at the bottom of the canvas, beside it where the band has room and directly above it where
+   it does not. At most one panel is open; it opens upward from the band across the canvas and
+   scrolls inside the room between the canvas top and the band.
+
+   The engine creates the trigger row and sets every measured value as a custom property on the
+   canvas. Until it records an arrangement, the corner panels above apply unchanged. */
+.canvas-wrap > [hidden] { display: none; }
+.spine-triggers { display: none; }
+
+.canvas-wrap[data-spine-chrome="wide"] .caption {
+  left: var(--spine-caption-left, 50%); width: var(--spine-caption-w, auto); transform: none;
+}
+.canvas-wrap[data-spine-chrome="wide"] .inspector {
+  max-height: var(--spine-inspector-max, none); overflow-y: auto; overscroll-behavior: contain;
+}
+
+.canvas-wrap[data-spine-chrome="compact"] .spine-triggers {
+  position: absolute; right: 18px; bottom: var(--spine-row-bottom, 18px); z-index: 5;
+  display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: stretch; gap: 8px;
+  max-width: calc(100% - 36px);
+}
+/* Beside the HUD the triggers take exactly its height, so the band is one row. */
+.canvas-wrap[data-spine-chrome-band="beside"] .spine-triggers { height: var(--spine-row-band, auto); }
+.canvas-wrap[data-spine-chrome-band="beside"] .spine-trigger { padding-top: 0; padding-bottom: 0; }
+/* The trigger's grammar (label, indicator, hover, focus) is the shared disclosure's; its surface
+   is this pattern's glass, restated because the trigger resets a button's own chrome. */
+.spine-triggers > .spine-trigger {
+  padding: 8px 10px; border-radius: 14px;
+  background: var(--surface-glass);
+  -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+  border: 1px solid var(--surface-glass-2);
+}
+.canvas-wrap[data-spine-chrome="compact"] :is(.inspector, .legend, .caption) {
+  top: auto; left: 18px; right: 18px; width: auto; transform: none; z-index: 5;
+  bottom: var(--spine-panel-bottom, 18px);
+  max-height: var(--spine-panel-max, 50%); overflow-y: auto; overscroll-behavior: contain;
+}
+.canvas-wrap[data-spine-chrome="compact"] .caption { text-align: left; }
+

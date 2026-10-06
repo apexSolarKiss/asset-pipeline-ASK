@@ -226,6 +226,156 @@ body {
 }
 
 /* =========================================================================
+   Responsive chrome — opt in by wrapping the caption and the legend in
+   .diagram-info (diagrams-chrome.js drives it; see the pattern README).
+
+   The corner rules above place the caption and the legend independently, so
+   on a narrow or short canvas they land on top of each other and over the
+   drawing. Inside .diagram-info they are laid out TOGETHER: side by side
+   while both fit the canvas width, the legend wrapping below the caption
+   when they do not, never overlapping. That is the WIDE layout.
+
+   Every narrow canvas, and any canvas where the open panels would still take
+   too much room, is COMPACT (data-diagram-chrome="compact"): the header keeps
+   identity, title and the illustrative cue; the subtitle and stamp move into
+   About; each panel closes behind a trigger in the shared disclosure grammar
+   (surface-treatments.css); and the triggers join the HUD in one control
+   area at the bottom of the canvas, from which at most one panel opens
+   upward. The panels are the same authored elements in every state —
+   nothing is duplicated for a small screen, and the PNG export reads them
+   unchanged.
+
+   A page without the wrapper keeps the corner panels above and the header
+   below, unchanged.
+   ========================================================================= */
+.diagram-info {
+  position: absolute; top: 18px; left: 18px; right: 18px; z-index: 4;
+  display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between;
+  gap: 12px 24px;
+  pointer-events: none;                 /* the gaps stay part of the canvas: pan works there */
+}
+.diagram-info > .caption,
+.diagram-info > .legend { position: static; pointer-events: auto; }
+.diagram-info > .caption { flex: 0 1 360px; min-width: min(240px, 100%); max-width: none; }
+.diagram-info > .legend  { flex: 0 1 auto; margin-left: auto; min-width: min(248px, 100%); max-width: 100%; }
+.diagram-info > [hidden] { display: none; }
+.diagram-info-triggers { display: none; }
+
+/* Compact: one control area at the bottom of the canvas. The triggers take the
+   HUD's band — beside the HUD when the band has room, directly above it when
+   it does not — and at most one panel opens upward from them, inside the
+   region between the canvas top and the band. diagrams-chrome.js measures
+   the HUD and sets --diagram-info-bottom, --diagram-info-band and
+   --diagram-info-open-max; diagrams-fit.js reserves the whole area as bottom
+   chrome. */
+.diagram-info[data-diagram-chrome="compact"] {
+  top: auto; bottom: var(--diagram-info-bottom, 18px);
+  flex-direction: column-reverse; flex-wrap: nowrap; align-items: stretch; gap: 8px;
+}
+.diagram-info[data-diagram-chrome="compact"] > .diagram-info-triggers {
+  display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; align-self: flex-end;
+}
+/* Beside the HUD, the triggers take exactly the HUD's height, so the band is one row. */
+.diagram-info[data-diagram-chrome-band="beside"] > .diagram-info-triggers { height: var(--diagram-info-band, auto); }
+.diagram-info[data-diagram-chrome-band="beside"] > .diagram-info-triggers > .diagram-info-trigger { padding-top: 0; padding-bottom: 0; }
+/* The trigger's grammar (label, indicator, hover, focus) is the shared disclosure's;
+   its surface is this chrome's glass, restated here because the trigger resets a
+   button's own chrome. */
+.diagram-info-triggers > .diagram-info-trigger {
+  pointer-events: auto;
+  padding: 8px 14px 8px 12px; border-radius: var(--radius-md);
+  background: var(--surface-glass);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--line-1);
+}
+.diagram-info[data-diagram-chrome="compact"] > :not(.diagram-info-triggers) {
+  flex: 0 0 auto; min-width: 0; max-width: none; margin-left: 0;
+  max-height: var(--diagram-info-open-max, 50vh);
+  overflow-y: auto; overscroll-behavior: contain;
+}
+/* A panel the page authors outside the block but controls from the trigger row
+   (FLOW's explanatory panel) joins the block in compact, keeping its own surface. */
+.diagram-info > [data-diagram-info-guest] {
+  position: static; width: auto; max-width: none; z-index: auto; pointer-events: auto;
+}
+
+/* About, in compact, opens with the header's subtitle and stamp: the same nodes,
+   moved there by diagrams-chrome.js and returned to the header in wide. */
+.diagram-info-meta {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--line-1);
+}
+.diagram-info-meta > .s,
+.diagram-info-meta > .stamp {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--diagram-muted); font-weight: 300; line-height: 1.55;
+}
+.diagram-info-meta > .stamp { display: flex; flex-wrap: wrap; gap: 0 12px; }
+.diagram-info-meta > .stamp .k { color: var(--diagram-ink); font-weight: 500; }
+
+/* The header, for the same opted-in pages.
+   Wide: the stamp never breaks inside a version token; where identity, title and
+   stamp cannot share one row at a readable measure, the stamp stays beside the
+   identity and the title block takes the full width below — no narrow, tall column,
+   and the subtitle keeps every word. The threshold is the header's own measure: at
+   960px or narrower a single row leaves the title block too narrow to read.
+   Compact: identity and the illustrative cue share the first row and the title
+   takes the second; on a short canvas they share one row where they fit. The cue
+   is the page's own visible qualification while the caption that carries it sits
+   behind About; it is hidden in every other state. */
+.bar .diagram-cue { display: none; }
+.shell:has(> .canvas-wrap > .diagram-info) > .bar .stamp { white-space: nowrap; }
+@media (max-height: 520px) {
+  .shell:has(> .canvas-wrap > .diagram-info) > .bar { padding-top: 10px; padding-bottom: 10px; }
+}
+@media (max-width: 960px) {
+  .shell:has(> .canvas-wrap > .diagram-info) > .bar {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "mark stamp" "title title";
+    align-items: start; gap: 8px 16px; padding: 12px 16px;
+  }
+  .shell:has(> .canvas-wrap > .diagram-info) > .bar .mark { grid-area: mark; min-width: 0; }
+  .shell:has(> .canvas-wrap > .diagram-info) > .bar .title-block { grid-area: title; margin-left: 0; min-width: 0; }
+  .shell:has(> .canvas-wrap > .diagram-info) > .bar .spacer { display: none; }
+  .shell:has(> .canvas-wrap > .diagram-info) > .bar .stamp {
+    grid-area: stamp; flex-direction: column; align-items: flex-end; gap: 2px; text-align: right;
+  }
+  /* The HUD wraps inside the canvas rather than running past its edge. */
+  .shell:has(> .canvas-wrap > .diagram-info) .hud {
+    flex-wrap: wrap; max-width: calc(100% - 36px);
+  }
+}
+/* A short canvas (a phone in landscape) keeps the two-row header as low as it can:
+   the stamp's version and date share one line and the rows sit closer. */
+@media (max-width: 960px) and (max-height: 520px) {
+  .shell:has(> .canvas-wrap > .diagram-info) > .bar { row-gap: 4px; }
+  .shell:has(> .canvas-wrap > .diagram-info) > .bar .stamp { flex-direction: row; align-items: baseline; gap: 12px; }
+}
+.shell:has(> .canvas-wrap > .diagram-info[data-diagram-chrome="compact"]) > .bar {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "mark cue" "title title";
+  align-items: center; gap: 6px 16px; padding: 10px 16px;
+}
+.shell:has(> .canvas-wrap > .diagram-info[data-diagram-chrome="compact"]) > .bar .mark { grid-area: mark; min-width: 0; }
+.shell:has(> .canvas-wrap > .diagram-info[data-diagram-chrome="compact"]) > .bar .title-block { grid-area: title; margin-left: 0; min-width: 0; }
+.shell:has(> .canvas-wrap > .diagram-info[data-diagram-chrome="compact"]) > .bar .spacer { display: none; }
+.shell:has(> .canvas-wrap > .diagram-info[data-diagram-chrome="compact"]) > .bar .diagram-cue {
+  grid-area: cue; display: block; justify-self: end; white-space: nowrap;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--diagram-muted); font-weight: 400;
+  padding: 4px 10px;
+  border: 1px solid var(--line-1);
+  border-radius: var(--radius-sm);
+}
+@media (max-height: 520px) {
+  .shell:has(> .canvas-wrap > .diagram-info[data-diagram-chrome="compact"]) > .bar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px;
+  }
+  .shell:has(> .canvas-wrap > .diagram-info[data-diagram-chrome="compact"]) > .bar .diagram-cue { margin-left: auto; }
+}
+
+/* =========================================================================
    SVG node + edge styles — driven by CSS variables so theme flips.
    TEXT uses --diagram-ink / --diagram-muted; STROKES use --diagram-line /
    --diagram-line-soft (white in light, lavender in dark).

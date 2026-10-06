@@ -1,4 +1,4 @@
-/* diagrams-fit.js — design-system-ASK shared fit contract (v1, 2026-07-18)
+/* diagrams-fit.js — design-system-ASK shared fit contract (v2, 2026-09-28: declared edges; v1, 2026-07-18)
 
    DS-OWNED SUPPORT FILE. Do not hand-edit in a consumer; re-vendor byte-identical.
 
@@ -98,15 +98,24 @@
     clearanceY: 80,
     maxScale: 1.2,
     gutter: 26,
-    topSelector: '.caption, .legend',
-    bottomSelector: '.hud',
+    topSelector: '.caption:not([data-diagram-fit-edge]), .legend:not([data-diagram-fit-edge]), [data-diagram-fit-edge="top"]',
+    bottomSelector: '.hud, [data-diagram-fit-edge="bottom"]',
     leftSelector: null,
     rightSelector: null,
     minAvailable: 120
   };
 
   /* A panel counts only if it is actually rendered: display:none, visibility:hidden,
-     opacity:0, and zero-area elements are ignored rather than reserving a phantom band. */
+     opacity:0, and zero-area elements are ignored rather than reserving a phantom band.
+     Chrome may also declare the edge it is anchored to with data-diagram-fit-edge="top" or
+     "bottom"; a declared caption or legend counts only at its declared edge. On a page
+     using diagrams-chrome.js, the compact trigger row and open panel declare "bottom", so
+     the control area they share with the HUD is reserved as one bottom band. Any other
+     declared value ("none") takes a caption, legend or declared element out of both
+     edges; the HUD is bottom chrome whatever it declares. With no declaration present,
+     the defaults select exactly the panels they always did. VERSION 2 marks this
+     contract: an engine driving diagrams-chrome.js requires it and fails closed on an
+     older copy. */
   function isVisible(el) {
     if (!el) return false;
     var cs = (el.ownerDocument.defaultView || window).getComputedStyle(el);
@@ -324,5 +333,5 @@
              reserved: true, clear: clear, degradedX: degradedX, degradedY: degradedY };
   }
 
-  window.DIAGRAM_FIT = { compute: compute, VERSION: 1 };
+  window.DIAGRAM_FIT = { compute: compute, VERSION: 2 };
 })();
