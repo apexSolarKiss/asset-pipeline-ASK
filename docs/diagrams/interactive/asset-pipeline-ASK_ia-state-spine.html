@@ -13,6 +13,11 @@
 <link rel="stylesheet" href="../_dsa-tokens/colors_and_type.css">
 <link rel="stylesheet" href="../_dsa-tokens/spectral-state.css">
 <link rel="stylesheet" href="diagrams-interactive-spine.css">
+<!-- design-system-ASK disclosure grammar for the About, Legend and Inspector triggers the engine adds
+     on a narrow or short canvas, from the consumer's surface-module mirror. surface-panel.css loads
+     first, as surface-treatments.css requires. -->
+<link rel="stylesheet" href="../_dsa-surface/surface-panel.css">
+<link rel="stylesheet" href="../_dsa-surface/surface-treatments.css">
 </head>
 <body>
 
@@ -61,6 +66,9 @@
 </div>
 
 <script src="asset-pipeline-ASK_ia-state-spine.data.js"></script>
+<!-- DS-owned shared pointer controller (pan, pinch, tap, wheel) — must load BEFORE the engine.
+     A generated mirror of patterns/_diagram-shared/diagrams-pointer.js; re-vendor byte-identical, never hand-edit. -->
+<script src="diagrams-pointer.js"></script>
 <script src="../diagrams-fit.js"></script>
 <script src="diagrams-interactive-spine-engine.js"></script>
 <script>

@@ -57,6 +57,19 @@
    fallback. The largest collision-free candidate wins, so a portrait can only grow or
    stay the same (the below-panel candidate reproduces the prior placement exactly).
    Landscape placement remains unchanged.
+
+   Caption and legend share the page (2026-09-28). The caption keeps every line; it was
+   cut at three. Caption and legend share one width budget: side by side at their natural
+   widths when both fit, as before; otherwise the caption wraps into the width beside the
+   legend; where that leaves it too narrow, the caption takes the full width and the legend
+   drops below it, right-aligned. A landscape figure keeps its low-anchored placement when
+   no DRAWN mark comes within the panel gutter (GUT, as the portrait fit uses) of either
+   panel — each node, label and edge is tested by its own box, not the authored box or
+   their union, whose margins and corners carry nothing drawn; otherwise it is fitted into
+   the region below the panel band, so it is never drawn under the chrome. The header subtitle and stamp are
+   read wherever they sit — in the header, or in About while diagrams-chrome.js has the page
+   compact — and the caption is read without that block, so the export does not depend on
+   the live layout.
 */
 (function () {
   'use strict';
@@ -285,9 +298,16 @@
     };
   }
 
-  /* ---------- chrome readers ---------- */
+  /* ---------- chrome readers ----------
+     The header's subtitle and stamp sit in the header, or — while diagrams-chrome.js has
+     the page compact — in About's .diagram-info-meta block: the same nodes, moved. The
+     readers find them in either place, and read the caption without that block, so the
+     page export is the same whatever the live layout. */
+  function headerNode(sel) {
+    return document.querySelector('.bar ' + sel) || document.querySelector('.diagram-info-meta > ' + sel.split(' ').pop());
+  }
   function getStamp() {
-    var stamp = document.querySelector('.bar .stamp');
+    var stamp = headerNode('.stamp');
     if (!stamp) return ['', ''];
     var divs = stamp.querySelectorAll(':scope > div');
     return [text(divs[0]).toUpperCase(), text(divs[1])];
@@ -295,17 +315,23 @@
   function getCaveat() {
     var cap = document.querySelector('.caption');
     if (!cap) return { title: '', lines: [] };
+    cap = cap.cloneNode(true);
+    var metas = cap.querySelectorAll('.diagram-info-meta');
+    for (var mi = 0; mi < metas.length; mi++) metas[mi].parentNode.removeChild(metas[mi]);
     var b = cap.querySelector('b');
     var title = (b ? text(b) : '').toUpperCase();
     var html = cap.innerHTML;
     var after = html.replace(/^[\s\S]*?<\/b>/i, '').replace(/<br\s*\/?>/gi, '\n');
     var body = after.replace(/<[^>]+>/g, '').replace(/[ \t]+/g, ' ').trim();
     var explicit = body.split('\n').map(function (s) { return s.trim(); }).filter(Boolean);
-    if (explicit.length >= 2) return { title: title, lines: explicit.slice(0, 3) };
+    /* Every line is kept: the page export is the complete caption whatever the live
+       disclosure state, so nothing is cut at a line count. Width is handled by the joint
+       caption + legend layout in buildSvg, which wraps a line that would not fit. */
+    if (explicit.length >= 2) return { title: title, lines: explicit };
     var max = 58;
     var out = [];
     var rem = body;
-    while (rem && out.length < 3) {
+    while (rem) {
       if (rem.length <= max) { out.push(rem); break; }
       var cut = rem.lastIndexOf(' ', max);
       if (cut < 16) cut = max;
@@ -313,6 +339,38 @@
       rem = rem.slice(cut + 1).trim();
     }
     return { title: title, lines: out };
+  }
+  /* The drawn marks of the live diagram, each as its own box in the SVG's viewport units
+     (origin at the viewBox minimum), so a placement test can ask whether anything DRAWN
+     meets a panel: a node, a label, an edge — not the authored box or the marks' union,
+     whose margins and corners carry nothing drawn. A shape with neither a visible fill nor a
+     visible stroke (a hit area) is left out. Where the browser cannot measure, the authored
+     box stands in. */
+  function drawnMarks(svg, diagW, diagH) {
+    var whole = [{ l: 0, t: 0, r: diagW, b: diagH }];
+    try {
+      var out = [];
+      var els = svg.querySelectorAll('rect, text, path, line, polyline, polygon, circle, ellipse, image, use');
+      for (var i = 0; i < els.length; i++) {
+        var el = els[i];
+        if (el.closest('defs, clipPath, mask, marker, pattern, symbol')) continue;
+        var cs = getComputedStyle(el);
+        if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) === 0) continue;
+        var tag = el.tagName.toLowerCase();
+        var painted = tag === 'text' || tag === 'image' || tag === 'use' ||
+          (cs.fill !== 'none' && !isTransparentColor(cs.fill)) ||
+          (cs.stroke !== 'none' && !isTransparentColor(cs.stroke) && parseFloat(cs.strokeWidth) > 0);
+        if (!painted) continue;
+        var b = el.getBBox(), m = el.getCTM();
+        if (!m || !(b.width > 0 || b.height > 0)) continue;
+        var xs = [], ys = [];
+        [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].forEach(function (q) {
+          xs.push(m.a * q[0] + m.c * q[1] + m.e); ys.push(m.b * q[0] + m.d * q[1] + m.f);
+        });
+        out.push({ l: Math.min.apply(null, xs), t: Math.min.apply(null, ys), r: Math.max.apply(null, xs), b: Math.max.apply(null, ys) });
+      }
+      return out.length ? out : whole;
+    } catch (e) { return whole; }
   }
   // A CSS color is "no fill" when it is transparent / none / zero-alpha. Used to
   // decide whether a swatch draws a filled rect or an open (stroke-only) one.
@@ -414,7 +472,8 @@
     return items;
   }
   function getVersionParts() {
-    return Array.prototype.slice.call(document.querySelectorAll('.bar .stamp .k')).map(function (e) { return text(e); });
+    var stamp = headerNode('.stamp');
+    return stamp ? Array.prototype.slice.call(stamp.querySelectorAll('.k')).map(function (e) { return text(e); }) : [];
   }
   function getFilenameBase() {
     var file = (location.pathname.split('/').pop() || 'diagram.html');
@@ -468,7 +527,7 @@
     // Header content (read live, drawn with inline fonts).
     var mark = text(document.querySelector('.bar .mark'));
     var title = text(document.querySelector('.bar .title-block .t'));
-    var subtitle = text(document.querySelector('.bar .title-block .s')).toUpperCase();
+    var subtitle = text(headerNode('.title-block .s')).toUpperCase();
     var themeTag = getThemeTag();
     var stamp = getStamp(), stamp1 = stamp[0], stamp2 = stamp[1];
     var caveat = getCaveat();
@@ -528,19 +587,26 @@
     var F_CAV_T = '500 28px ' + MONO, LS_CAV_T = 3.9;
     var F_CAV_B = '300 26px ' + MONO;
     var caveatSvg = '';
-    var cavH = 0;
-    if (caveat.title || caveat.lines.length) {
-      var cavW = Math.ceil(Math.max.apply(null, [textW(caveat.title, F_CAV_T, LS_CAV_T)].concat(
-        caveat.lines.map(function (l) { return textW(l, F_CAV_B); })
+    var cavH = 0, cavW = 0;
+    var cavTitle = caveat.title ? [caveat.title] : [], cavLines = caveat.lines.slice();
+    var hasCaveat = !!(caveat.title || caveat.lines.length);
+    var cavNaturalW = function () {
+      return Math.ceil(Math.max.apply(null, cavTitle.map(function (l) { return textW(l, F_CAV_T, LS_CAV_T); }).concat(
+        cavLines.map(function (l) { return textW(l, F_CAV_B); }), [0]
       ))) + PAD * 2;
-      cavH = 160 + Math.max(0, caveat.lines.length - 1) * 52 + 56;
-      caveatSvg =
-        '<rect x="' + M + '" y="' + overlayY + '" width="' + cavW + '" height="' + cavH + '" fill="' + T.panelFill + '" fill-opacity="' + PANEL_OPACITY + '" stroke="' + T.line1 + '" rx="' + PANEL_RX + '"/>\n' +
-        '  <text x="' + (M + PAD) + '" y="' + (overlayY + 92) + '" font-family="' + MONO + '" font-size="28" font-weight="500" fill="' + T.fg1 + '" letter-spacing="3.9">' + xml(caveat.title) + '</text>\n';
-      caveat.lines.forEach(function (line, li) {
-        caveatSvg += '  <text x="' + (M + PAD) + '" y="' + (overlayY + 160 + li * 52) + '" font-family="' + MONO + '" font-size="26" font-weight="300" fill="' + T.fg2 + '">' + xml(line) + '</text>\n';
-      });
-    }
+    };
+    /* Re-wrap the caveat to a text width. Title and body wrap on words; nothing is dropped. */
+    var wrapCaveat = function (textMaxW) {
+      cavTitle = caveat.title ? wrapToWidth(caveat.title, F_CAV_T, LS_CAV_T, textMaxW) : [];
+      cavLines = [];
+      caveat.lines.forEach(function (l) { cavLines = cavLines.concat(wrapToWidth(l, F_CAV_B, 0, textMaxW)); });
+    };
+    /* Page-scale panel height: the pre-joint single-title-line panel exactly, plus 44 per
+       extra title line. */
+    var cavHeight = function () {
+      return 160 + Math.max(0, cavTitle.length - 1) * 44 + Math.max(0, cavLines.length - 1) * 52 + 56;
+    };
+    if (hasCaveat) { cavW = cavNaturalW(); cavH = cavHeight(); }
 
     var legendBody = '';
     var legendH = 0;
@@ -577,6 +643,7 @@
       });
       var legendW = Math.max(subOff + Math.ceil(maxSubW) + PAD, PAD + Math.ceil(grpMaxW) + PAD);
       var legendX = PAGE_W - M - legendW;
+      var legY = overlayY;
 
       // Vertical rhythm (page scale). Rows keep the prior cadence (first center at
       // +152, 96 per row, +44 per extra sub line), so a plain row-only legend lays
@@ -600,14 +667,32 @@
       var header = document.querySelector('.legend .h');
       var headerLbl = header ? text(header.querySelector('span')) : 'Legend';
       var headerFig = header ? text(header.querySelector('.fig')) : (rows.length + ' states');
+      /* ---------- joint caption + legend layout ----------
+         The caption and the legend share the page width. Side by side when both fit at
+         their natural widths (the prior layout, unchanged); otherwise the caption wraps
+         to the width left beside the legend; and where that would leave the caption too
+         narrow to read, the caption takes the full width and the legend drops below it,
+         right-aligned. The panels never intersect, and nothing is dropped. */
+      var JOINT_GAP = 64, CAV_MIN_TEXT = 900, AVAIL = PAGE_W - 2 * M;
+      if (hasCaveat && cavW + JOINT_GAP + legendW > AVAIL) {
+        var besideText = AVAIL - JOINT_GAP - legendW - 2 * PAD;
+        if (besideText >= CAV_MIN_TEXT) {
+          wrapCaveat(besideText);
+        } else {
+          wrapCaveat(AVAIL - 2 * PAD);
+          cavH = cavHeight();
+          legY = overlayY + cavH + JOINT_GAP;
+        }
+        cavW = cavNaturalW(); cavH = cavHeight();
+      }
       legendBody =
-        '<rect x="' + legendX + '" y="' + overlayY + '" width="' + legendW + '" height="' + legendH + '" fill="' + T.panelFill + '" fill-opacity="' + PANEL_OPACITY + '" stroke="' + T.line1 + '" rx="' + PANEL_RX + '"/>' +
-        '<text x="' + (legendX + PAD) + '" y="' + (overlayY + 80) + '" font-family="' + MONO + '" font-size="26" fill="' + T.fg2 + '" letter-spacing="4.2">' + xml(headerLbl.toUpperCase()) + '</text>' +
-        '<text x="' + (legendX + legendW - PAD) + '" y="' + (overlayY + 80) + '" text-anchor="end" font-family="' + MONO + '" font-size="26" font-weight="500" fill="' + T.fg1 + '" letter-spacing="2.1">' + xml(headerFig.toUpperCase()) + '</text>';
+        '<rect x="' + legendX + '" y="' + legY + '" width="' + legendW + '" height="' + legendH + '" fill="' + T.panelFill + '" fill-opacity="' + PANEL_OPACITY + '" stroke="' + T.line1 + '" rx="' + PANEL_RX + '"/>' +
+        '<text x="' + (legendX + PAD) + '" y="' + (legY + 80) + '" font-family="' + MONO + '" font-size="26" fill="' + T.fg2 + '" letter-spacing="4.2">' + xml(headerLbl.toUpperCase()) + '</text>' +
+        '<text x="' + (legendX + legendW - PAD) + '" y="' + (legY + 80) + '" text-anchor="end" font-family="' + MONO + '" font-size="26" font-weight="500" fill="' + T.fg1 + '" letter-spacing="2.1">' + xml(headerFig.toUpperCase()) + '</text>';
 
       legendItems.forEach(function (it) {
         if (it.type === 'divider') {
-          var dy = overlayY + it.y;
+          var dy = legY + it.y;
           var dd = it.style === 'dotted' ? ' stroke-dasharray="2 10" stroke-linecap="round"'
                  : it.style === 'dashed' ? ' stroke-dasharray="10 8"' : '';   // solid → no dasharray
           legendBody += '<line x1="' + (legendX + PAD) + '" y1="' + dy + '" x2="' + (legendX + legendW - PAD) + '" y2="' + dy +
@@ -615,13 +700,13 @@
           return;
         }
         if (it.type === 'grouplabel') {
-          legendBody += '<text x="' + (legendX + PAD) + '" y="' + (overlayY + it.baseline) +
+          legendBody += '<text x="' + (legendX + PAD) + '" y="' + (legY + it.baseline) +
             '" font-family="' + MONO + '" font-size="24" font-weight="400" fill="' + (it.color || T.fg2) + '" letter-spacing="3.4">' + xml(it.text) + '</text>';
           return;
         }
         // row
         var row = it;
-        var y = overlayY + row.cy;
+        var y = legY + row.cy;
         var swX = legendX + swOff;
         if (row.swatch) {
           if (row.swatch.kind === 'legacy') {
@@ -646,10 +731,26 @@
       });
     }
 
+    if (hasCaveat && !legendItems.length && cavW > PAGE_W - 2 * M) {
+      wrapCaveat(PAGE_W - 2 * M - 2 * PAD); cavW = cavNaturalW(); cavH = cavHeight();
+    }
+    if (hasCaveat) {
+      caveatSvg =
+        '<rect x="' + M + '" y="' + overlayY + '" width="' + cavW + '" height="' + cavH + '" fill="' + T.panelFill + '" fill-opacity="' + PANEL_OPACITY + '" stroke="' + T.line1 + '" rx="' + PANEL_RX + '"/>\n';
+      cavTitle.forEach(function (line, ti) {
+        caveatSvg += '  <text x="' + (M + PAD) + '" y="' + (overlayY + 92 + ti * 44) + '" font-family="' + MONO + '" font-size="28" font-weight="500" fill="' + T.fg1 + '" letter-spacing="3.9">' + xml(line) + '</text>\n';
+      });
+      var bodyTop = overlayY + 160 + Math.max(0, cavTitle.length - 1) * 44;
+      cavLines.forEach(function (line, li) {
+        caveatSvg += '  <text x="' + (M + PAD) + '" y="' + (bodyTop + li * 52) + '" font-family="' + MONO + '" font-size="26" font-weight="300" fill="' + T.fg2 + '">' + xml(line) + '</text>\n';
+      });
+    }
+
     /* ---------- fit the diagram content ----------
-       LANDSCAPE diagrams (wider than tall) retain the established low-anchored
-       composition: they start below the header, scale using the full band above, and
-       are anchored LOW so the top panels breathe and the page is not bottom-heavy.
+       LANDSCAPE diagrams (wider than tall) keep the established low-anchored
+       composition — they start below the header, scale using the full band above, and
+       are anchored LOW so the top panels breathe and the page is not bottom-heavy —
+       unless their drawn extent would meet a panel; then they fit below the panel band.
        PORTRAIT diagrams are fitted against the actual caveat and legend rectangles
        (overlap-gated): a narrow portrait may rise through the clear center lane between
        the corner panels, while a wider portrait falls back to the historical region
@@ -657,7 +758,9 @@
        diagram body uses a tighter side margin than the page chrome (M), so it renders
        larger; the header and corner panels keep the page margin M. (Computed after the
        panels.) */
-    var panelBand = Math.max(cavH, legendH);
+    var cavRectP = cavH > 0 ? { l: M, r: M + cavW, t: overlayY, b: overlayY + cavH } : null;
+    var legRectP = legendH > 0 ? { l: legendX, r: legendX + legendW, t: legY, b: legY + legendH } : null;
+    var panelBand = Math.max(cavRectP ? cavRectP.b : overlayY, legRectP ? legRectP.b : overlayY) - overlayY;
     var landscape = diagW >= diagH;
     var DIAG_M = 40;                                    // diagram-body side margin (< page M) → larger render
     var diagBot = PAGE_H - M, diagLeft = DIAG_M, diagRight = PAGE_W - DIAG_M;
@@ -665,7 +768,7 @@
     var scale, sx, sy;
 
     if (landscape) {
-      // LANDSCAPE (unchanged): wide diagrams have empty top corners, so they start
+      // LANDSCAPE: wide diagrams usually have empty top corners, so they start
       // below the header, scale using the full band above, and are anchored LOW — the
       // top panels breathe and the page is not bottom-heavy with dead space below.
       var diagTop = overlayY + 120;
@@ -677,6 +780,26 @@
       sy = (bandTop + sh <= diagBot)
         ? bandTop + ((diagBot - bandTop) - sh) / 2
         : diagTop + (availH - sh) / 2;
+      /* Kept exactly when no DRAWN mark comes within the gutter of either panel: each mark's
+         own box is tested (drawnMarks). Otherwise the figure is fitted into the region below
+         the actual panel band, so it is never drawn under the chrome. */
+      var marks = drawnMarks(svg, diagW, diagH);
+      var hitL = function (p) {
+        if (!p) return false;
+        for (var mi = 0; mi < marks.length; mi++) {
+          var k = marks[mi];
+          if (sx + k.l * scale < p.r + GUT && sx + k.r * scale > p.l - GUT &&
+              sy + k.t * scale < p.b + GUT && sy + k.b * scale > p.t - GUT) return true;
+        }
+        return false;
+      };
+      if (hitL(cavRectP) || hitL(legRectP)) {
+        var belowTop = overlayY + panelBand + GUT;
+        scale = Math.min(availW / diagW, (diagBot - belowTop) / diagH);
+        sw = diagW * scale; sh = diagH * scale;
+        sx = diagLeft + (availW - sw) / 2;
+        sy = belowTop + ((diagBot - belowTop) - sh) / 2;
+      }
     } else {
       /* PORTRAIT (overlap-gated page fit). A tall / narrow tree must NOT be pushed
          below a full-width band equal to the taller corner panel — it can rise through
@@ -688,9 +811,8 @@
            A  full width, below the band     — the prior behaviour (wide-enough trees)
          Each candidate is collision-free by construction (B/A) or tested (C); A exactly
          reproduces the previous portrait placement, so a tree too wide for the lane is
-         byte-unchanged. Landscape (above) is untouched. */
-      var cavRect = cavH > 0 ? { l: M, r: M + cavW, t: overlayY, b: overlayY + cavH } : null;
-      var legRect = legendH > 0 ? { l: legendX, r: legendX + legendW, t: overlayY, b: overlayY + legendH } : null;
+         byte-unchanged. Landscape is handled above. */
+      var cavRect = cavRectP, legRect = legRectP;
       var hitP = function (r, p) { return !!p && r.l < p.r + GUT && r.r > p.l - GUT && r.t < p.b + GUT && r.b > p.t - GUT; };
       var fullW = diagRight - diagLeft, fullH = diagBot - overlayY, pageCx = (diagLeft + diagRight) / 2;
 

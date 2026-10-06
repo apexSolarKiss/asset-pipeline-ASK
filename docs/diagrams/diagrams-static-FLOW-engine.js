@@ -320,7 +320,12 @@
         r.addEventListener('click', (ev) => {
           ev.stopPropagation();
           if (pinned === b.id) { pinned = null; hi(b.id, false); clear(); }
-          else { if (pinned) hi(pinned, false); pinned = b.id; fill(b); }
+          else {
+            if (pinned) hi(pinned, false); pinned = b.id; fill(b);
+            /* In the compact chrome the panel sits behind its Detail trigger: a pinned node
+               opens it there, through the chrome's own state controller. */
+            if (panel && window.DIAGRAM_CHROME) window.DIAGRAM_CHROME.open(panel);
+          }
         });
       });
       if (panel) { panel.dataset.hint = panel.innerHTML; }
@@ -340,43 +345,86 @@
        clamping it would restore the panel collision this engine exists to avoid. */
     const BASE_MIN_SCALE = 0.15;
     let fittedMinScale = BASE_MIN_SCALE;
+    /* FIT MODE, as in the sibling engines: the view is "at Fit" after a fit and until the
+       reader zooms, drags or wheels, and only a view at Fit follows a resize or a change in
+       the responsive chrome (`diagram-chrome-change`, from diagrams-chrome.js). */
+    let atFit = true;
     function apply() { stage.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`; if (pct) pct.textContent = Math.round(scale * 100) + '%'; }
     /* Shared DS fit contract (diagrams-fit.js). Origin is 0, not the viewBox origin:
        the transform targets the stage div and the svg is sized width x height, so the
        element box starts at 0 in CSS space and the viewBox origin never enters it. */
-    function fit() {
-      const f = window.DIAGRAM_FIT.compute({
-        wrap: wrap,
-        bounds: { minX: 0, minY: 0, maxX: width, maxY: height },
-        clearanceX: 80, clearanceY: 80, maxScale: 1.2, gutter: 26,
-        /* The full-chrome shell carries an always-visible explanatory side panel
-           (.flow-panel) in addition to the HUD. It is anchored bottom-RIGHT with a fixed
-           300px width and a height that grows with its explanatory content, so it is a
-           RIGHT-SIDE EXCLUSION LANE, not a bottom band. Classifying it as bottom chrome
-           reserved a full-width strip as tall as the panel and collapsed the figure —
-           6.4x at a short viewport. As a right lane its fixed width bounds the cost, and
-           the panel's height growth no longer consumes page height.
+    const fitResult = () => window.DIAGRAM_FIT.compute({
+      wrap: wrap,
+      bounds: { minX: 0, minY: 0, maxX: width, maxY: height },
+      clearanceX: 80, clearanceY: 80, maxScale: 1.2, gutter: 26,
+      /* The full-chrome shell carries an explanatory side panel (.flow-panel) in addition
+         to the HUD. In the wide chrome it is anchored bottom-RIGHT with a fixed 300px width
+         and a height that grows with its explanatory content, so it is a RIGHT-SIDE
+         EXCLUSION LANE, not a bottom band. Classifying it as bottom chrome reserved a
+         full-width strip as tall as the panel and collapsed the figure — 6.4x at a short
+         viewport. As a right lane its fixed width bounds the cost, and the panel's height
+         growth no longer consumes page height. In the compact chrome it joins the control
+         area behind its Detail trigger and declares the bottom edge itself, like every
+         compact panel, so the lane selector leaves it out.
 
-           One engine serves both shells: the chrome-free static shell contains none of
-           these elements, so no panel is found, no band is reserved, and its transform
-           is unchanged. */
-        bottomSelector: '.hud',
-        rightSelector: '.flow-panel'
-      });
+         One engine serves both shells: the chrome-free static shell contains none of
+         these elements, so no panel is found, no band is reserved, and its transform
+         is unchanged. */
+      bottomSelector: '.hud, [data-diagram-fit-edge="bottom"]',
+      rightSelector: '.flow-panel:not([data-diagram-fit-edge])'
+    });
+    function applyFit(f) {
       fittedMinScale = Math.min(BASE_MIN_SCALE, f.scale);
       scale = f.scale; tx = f.tx; ty = f.ty;
+      atFit = true;
       apply();
     }
-    fit(); window.addEventListener('resize', fit);
+    /* The responsive chrome, where the shell has one: the same open-panel rules as the
+       sibling engines. An open compact panel moves the drawing only where the drawing keeps
+       its closed-panel size, and otherwise overlays that closed-panel Fit; Fit closes a
+       panel that would cover the drawing. */
+    const chrome = window.DIAGRAM_CHROME || null;
+    /* FAIL-CLOSED with the chrome, as in the sibling engines: its edge declaration needs
+       diagrams-fit.js v2. */
+    if (chrome && !(window.DIAGRAM_FIT.VERSION >= 2)) {
+      throw new Error('The responsive chrome needs the current diagrams-fit.js. Re-vendor it with diagrams-chrome.js.');
+    }
+    const panelOpen = () => !!(chrome && chrome.openPanel(wrap));
+    const closedFit = () => (chrome ? chrome.withoutOpenPanel(wrap, fitResult) : fitResult());
+    const keepsSize = (f, c) => f.clear && f.scale >= c.scale * (1 - 1e-6);
+    const fitAround = () => {
+      const f = fitResult();
+      if (!panelOpen()) return f;
+      const c = closedFit();
+      return keepsSize(f, c) ? f : c;
+    };
+    function fit() {
+      if (panelOpen()) {
+        const f = fitResult();
+        if (keepsSize(f, closedFit())) { applyFit(f); return; }
+        chrome.close(wrap);
+      }
+      applyFit(fitResult());
+    }
+    fit();
+    const refitAtFit = () => { if (atFit) applyFit(fitAround()); };
+    window.addEventListener('resize', refitAtFit);
+    wrap.addEventListener('diagram-chrome-change', refitAtFit);
     const zi = document.getElementById('zoomIn'), zo = document.getElementById('zoomOut'), zf = document.getElementById('zoomFit');
-    if (zi) zi.onclick = () => { scale = Math.min(scale * 1.2, 4); apply(); };
-    if (zo) zo.onclick = () => { scale = Math.max(scale / 1.2, fittedMinScale); apply(); };
+    /* The view leaves Fit only when the reader actually moves it: a zoom at its limit changes
+       nothing, and a press that travels less than DRAG_START is a tap (unpinning a node is one). */
+    const DRAG_START = 3;
+    const zoomTo = (s) => { if (s === scale) return; scale = s; atFit = false; apply(); };
+    if (zi) zi.onclick = () => zoomTo(Math.min(scale * 1.2, 4));
+    if (zo) zo.onclick = () => zoomTo(Math.max(scale / 1.2, fittedMinScale));
     if (zf) zf.onclick = fit;
     let drag = false, sx0, sy0, tx0, ty0;
-    wrap.addEventListener('pointerdown', (ev) => { if (ev.target.closest('.hud, .legend, .caption') || (ev.target.classList && ev.target.classList.contains('node-hit'))) return; drag = true; wrap.classList.add('dragging'); wrap.setPointerCapture(ev.pointerId); sx0 = ev.clientX; sy0 = ev.clientY; tx0 = tx; ty0 = ty; });
-    wrap.addEventListener('pointermove', (ev) => { if (!drag) return; tx = tx0 + (ev.clientX - sx0); ty = ty0 + (ev.clientY - sy0); apply(); });
+    wrap.addEventListener('pointerdown', (ev) => { if (ev.target.closest('.hud, .legend, .caption, .diagram-info') || (ev.target.classList && ev.target.classList.contains('node-hit'))) return; drag = true; wrap.classList.add('dragging'); wrap.setPointerCapture(ev.pointerId); sx0 = ev.clientX; sy0 = ev.clientY; tx0 = tx; ty0 = ty; });
+    wrap.addEventListener('pointermove', (ev) => { if (!drag) return; const dx = ev.clientX - sx0, dy = ev.clientY - sy0; if (!dx && !dy) return; tx = tx0 + dx; ty = ty0 + dy; if (Math.abs(dx) >= DRAG_START || Math.abs(dy) >= DRAG_START) atFit = false; apply(); });
     wrap.addEventListener('pointerup', () => { drag = false; wrap.classList.remove('dragging'); });
-    wrap.addEventListener('wheel', (ev) => { ev.preventDefault(); const r = wrap.getBoundingClientRect(); const mx = ev.clientX - r.left, my = ev.clientY - r.top; const f = ev.deltaY > 0 ? 1 / 1.1 : 1.1; const ns = Math.max(fittedMinScale, Math.min(4, scale * f)); const k = ns / scale; tx = mx - (mx - tx) * k; ty = my - (my - ty) * k; scale = ns; apply(); }, { passive: false });
+    /* A wheel over the chrome block scrolls an open panel and leaves the drawing alone; a pinch
+       (a wheel carrying ctrlKey) still zooms the drawing, never the page. */
+    wrap.addEventListener('wheel', (ev) => { if (!ev.ctrlKey && ev.target.closest('.diagram-info')) return; ev.preventDefault(); const r = wrap.getBoundingClientRect(); const mx = ev.clientX - r.left, my = ev.clientY - r.top; const f = ev.deltaY > 0 ? 1 / 1.1 : 1.1; const ns = Math.max(fittedMinScale, Math.min(4, scale * f)); if (ns === scale) return; const k = ns / scale; tx = mx - (mx - tx) * k; ty = my - (my - ty) * k; scale = ns; atFit = false; apply(); }, { passive: false });
   }
 
   function renderWhenFontsReady(DATA) {
