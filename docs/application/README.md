@@ -13,6 +13,13 @@ Application-layer grammars for generated-output substrates produced by applying 
 - [`implementation-roadmap-system-map-artifact-grammar-v1.md`](implementation-roadmap-system-map-artifact-grammar-v1.md): first generated-output artifact grammar — fixes a ten-section skeleton, per-section content rules, source-to-section mapping, repo-concept consumption map, translation rules, provenance / confidence grammar, system-map grammar, roadmap grammar, substrate-recommendation grammar, and application-consumer-distance guidance
 - [`artifact-grammar-consumer-pressure-v1.md`](artifact-grammar-consumer-pressure-v1.md): application-consumer pressure pass against the above grammar — sorts repo concepts by form of consumer pull (cleanly consumed; consumed only as translated or author-side substrate; not consumed / parked relative to this consumer); surfaces the conceptual-vs-vocabular split as an architectural category; observational, not directive
 
+## Intake Output Contracts
+
+The authored outputs of brand intake: which artifact carries which statements, and how content is kept apart from evidence, authority and review. Application-layer contracts, not generated-output grammars, architecture front-door doctrine, schema or implementation.
+
+- [`brand-intake-artifact-contract-v1.md`](brand-intake-artifact-contract-v1.md): three output artifacts (brand image system, image-production profile, production brief) mapped onto the existing architecture as artifact roles, not layers; placement by what a statement governs and at what scope; content, evidence, authority and review presentation as separate concerns; one maintained source per artifact; per-artifact adoption; trial direction; skeletons
+- [`brand-intake-artifact-contract-boundary-cases-v1.md`](brand-intake-artifact-contract-boundary-cases-v1.md): synthetic boundary cases with expected placements, a run procedure, a negative control, and the bounded composition-check procedure for worked-artifact checks
+
 ## Examples
 
 - [`examples/README.md`](examples/README.md): compact application example sets that pressure-test the discovery -> diagnosis -> redesign sequence against abstract workflow modes

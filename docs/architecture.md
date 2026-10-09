@@ -109,6 +109,8 @@ The headline target is a durable definition layer above changing tools and model
 
 **Sibling substrates implied but not authored.** Airtable base-plan grammar, Python scaffold grammar, DAM taxonomy grammar, operating-documentation grammar, hybrid grammars — each would be a separate application-layer artifact at the same depth as the implementation-roadmap-system-map grammar. None authorized.
 
+**One intake output contract.** The brand-intake artifact contract ([brand-intake-artifact-contract-v1.md](application/brand-intake-artifact-contract-v1.md)) names the authored outputs of brand intake (brand image system, image-production profile, production brief) as artifact roles mapped onto the existing architecture, not as layers, and keeps their content apart from evidence, authority and review presentation. It is a contract, not a generated-output grammar.
+
 Application sub-tree navigation: [docs/application/README.md](application/README.md).
 
 ## Held Questions / Parked Surfaces
