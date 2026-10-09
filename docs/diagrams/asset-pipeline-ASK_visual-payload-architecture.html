@@ -12,6 +12,10 @@
 <!-- design-system-ASK foundations — local mirror (Tier 1 + Tier 2), no CDN. See _dsa-tokens/MANIFEST.md -->
 <link rel="stylesheet" href="./_dsa-tokens/colors_and_type.css">
 <link rel="stylesheet" href="diagrams.css">
+<!-- design-system-ASK disclosure grammar for the compact chrome triggers, from the local surface-module
+     mirror. surface-panel.css loads first, as surface-treatments.css requires. -->
+<link rel="stylesheet" href="./_dsa-surface/surface-panel.css">
+<link rel="stylesheet" href="./_dsa-surface/surface-treatments.css">
 </head>
 <body>
 
@@ -23,6 +27,7 @@
       <div class="s">carriers, convergence, realization · reference carrier → source field → resolved spec → realization → conformance → governance → reuse</div>
     </div>
     <div class="spacer"></div>
+    <div class="diagram-cue">illustrative</div>
     <div class="stamp">
       <div><span class="k">source-v1</span> // <span class="k">render-v2 · flow</span></div>
       <div>2026-10-06</div>
@@ -39,19 +44,31 @@
     <div class="corner-tick bl"></div>
     <div class="corner-tick br"></div>
 
-    <div class="legend glass">
-      <div class="h"><span>Legend</span><span class="fig">3 states</span></div>
-      <div class="row">
-        <div class="sw"><div class="box-solid"></div></div>
-        <div><span class="lbl">earned</span><span class="sub">live today</span></div>
+    <div class="diagram-info" data-diagram-chrome>
+      <div class="diagram-info-triggers">
+        <button class="diagram-info-trigger surface-disclosure-trigger glass" type="button" aria-controls="diagramCaption" aria-expanded="true"><span class="surface-disclosure-label">About</span><span class="surface-disclosure-indicator" aria-hidden="true">&#9660;</span></button>
+        <button class="diagram-info-trigger surface-disclosure-trigger glass" type="button" aria-controls="diagramLegend" aria-expanded="true"><span class="surface-disclosure-label">Legend</span><span class="surface-disclosure-indicator" aria-hidden="true">&#9660;</span></button>
+        <button class="diagram-info-trigger surface-disclosure-trigger glass" type="button" aria-controls="flowPanel" aria-expanded="true"><span class="surface-disclosure-label">Detail</span><span class="surface-disclosure-indicator" aria-hidden="true">&#9660;</span></button>
       </div>
-      <div class="row">
-        <div class="sw"><div class="box-dashed"></div></div>
-        <div><span class="lbl">held</span><span class="sub">e.g. context-profile IA home</span></div>
+      <div class="caption glass" id="diagramCaption">
+        <b>illustrative</b><br>
+        repo prose (docs/visual-payload-architecture-v2.md) is source truth.<br>
+        the diagram may lag the repo; trust the prose.
       </div>
-      <div class="row">
-        <div class="sw"><span class="legacy-txt">legacy</span></div>
-        <div><span class="lbl">legacy</span><span class="sub">residue / superseded</span></div>
+      <div class="legend glass" id="diagramLegend">
+        <div class="h"><span>Legend</span><span class="fig">3 states</span></div>
+        <div class="row">
+          <div class="sw"><div class="box-solid"></div></div>
+          <div><span class="lbl">earned</span><span class="sub">live today</span></div>
+        </div>
+        <div class="row">
+          <div class="sw"><div class="box-dashed"></div></div>
+          <div><span class="lbl">held</span><span class="sub">e.g. context-profile IA home</span></div>
+        </div>
+        <div class="row">
+          <div class="sw"><span class="legacy-txt">legacy</span></div>
+          <div><span class="lbl">legacy</span><span class="sub">residue / superseded</span></div>
+        </div>
       </div>
     </div>
 
@@ -62,12 +79,6 @@
       <button id="zoomFit" title="Fit">⤢</button>
     </div>
 
-    <div class="caption glass">
-      <b>illustrative</b><br>
-      repo prose (docs/visual-payload-architecture-v2.md) is source truth.<br>
-      the diagram may lag the repo; trust the prose.
-    </div>
-
     <div class="flow-panel glass" id="flowPanel">
       <div class="fp-hint">Hover a node for its definition · click to pin. The static export carries the topology only; this panel carries the explanation.</div>
     </div>
@@ -75,6 +86,10 @@
 </div>
 
 <script src="asset-pipeline-ASK_visual-payload-architecture.source.js"></script>
+<!-- DS-owned responsive chrome — after the chrome markup, before the fit contract. Re-vendor byte-identical. -->
+<script src="diagrams-chrome.js"></script>
+<!-- DS-owned gesture controller — must load BEFORE the fit contract and the engine. Re-vendor byte-identical. -->
+<script src="diagrams-pointer.js"></script>
 <script src="diagrams-fit.js"></script>
 <script src="diagrams-static-FLOW-engine.js"></script>
 <script src="./_dsa-tokens/fonts-embedded.js"></script>

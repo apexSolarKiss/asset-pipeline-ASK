@@ -45,6 +45,21 @@
   if (!window.DIAGRAM_FIT || typeof window.DIAGRAM_FIT.compute !== 'function') {
     throw new Error('Diagram fit support is missing. Load diagrams-fit.js before the diagram engine.');
   }
+  /* The Fit's v3 placement options (balance, compactClearance, marks) are not read by an older
+     diagrams-fit.js, which would silently keep the old geometry. FAIL CLOSED instead. */
+  if (!(window.DIAGRAM_FIT.VERSION >= 3)) {
+    throw new Error('diagrams-fit.js is older than v3. Re-vendor it from design-system-ASK with this engine.');
+  }
+  /* The gesture carrier. diagrams-pointer.js is a generated mirror of patterns/_diagram-shared/,
+     copied alongside this engine and loaded BEFORE it; with it, touch pans and pinches the
+     drawing (see GESTURES below). A page that does not load it keeps the legacy mouse drag and
+     wheel and is told so in the console, so a page generated from an older shell still draws and
+     pans exactly as before. A copy older than v2 FAILS CLOSED: it cannot leave the panels laid
+     over the canvas native, so it would pan the drawing from a panel. */
+  const POINTER = window.DIAGRAM_POINTER || null;
+  if (POINTER && !(typeof POINTER.attach === 'function' && POINTER.VERSION >= 2)) {
+    throw new Error('diagrams-pointer.js is older than v2. Re-vendor it from design-system-ASK with this engine.');
+  }
   /* ---------- constants ---------- */
   const PAGE_PAD = 84;                                   // canvas padding
   const BOX_PAD_X = 20, BOX_H = 40, BOX_H_NOTE = 48;    // BIGGER boxes / more padding (ASK)
@@ -295,18 +310,41 @@
     svg.setAttribute('viewBox', `${minX} ${minY} ${width} ${height}`);
 
     /* ---------- interactive explanatory panel (mode = interactive only) ---------- */
+    /* The tallest the side panel grows to: measured on an off-screen copy filled with each
+       node's definition in turn. The Fit tests the drawing against that height (see the
+       fit call below), so a definition shown on hover or pin never covers another node. */
+    let tallestPanel = () => 0;
     if (MODE === 'interactive') {
       const panel = document.getElementById('flowPanel');
       const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
       const hi = (id, on) => svg.querySelectorAll(`.node-box[data-id="${id}"], .flow-ribbon[data-id="${id}"]`).forEach((n) => n.classList.toggle('hi', on));
-      const fill = (b) => {
-        if (!panel) return;
+      const detailHtml = (b) => {
         const d = b.detail || {};
         let h = `<div class="fp-title">${esc(b.label)}</div>`;
         if (d.def) h += `<div class="fp-def">${esc(d.def)}</div>`;
         if (d.eg) h += `<div class="fp-eg"><span class="fp-k">e.g.</span> ${esc(d.eg)}</div>`;
         if (d.not) h += `<div class="fp-not"><span class="fp-k">not</span> ${esc(d.not)}</div>`;
-        panel.innerHTML = h; panel.classList.add('active');
+        return h;
+      };
+      const fill = (b) => {
+        if (!panel) return;
+        panel.innerHTML = detailHtml(b); panel.classList.add('active');
+      };
+      tallestPanel = () => {
+        if (!panel || !panel.parentNode) return 0;
+        const probe = panel.cloneNode(false);
+        probe.removeAttribute('id'); probe.setAttribute('aria-hidden', 'true');
+        probe.classList.add('active');
+        probe.style.visibility = 'hidden'; probe.style.pointerEvents = 'none';
+        panel.parentNode.appendChild(probe);
+        let tallest = 0;
+        Object.values(byId).forEach((b) => {
+          if (!b.detail) return;
+          probe.innerHTML = detailHtml(b);
+          tallest = Math.max(tallest, probe.getBoundingClientRect().height);
+        });
+        probe.remove();
+        return tallest;
       };
       const clear = () => { if (!panel) return; panel.classList.remove('active'); panel.innerHTML = panel.dataset.hint || ''; };
       let pinned = null;
@@ -353,17 +391,38 @@
     /* Shared DS fit contract (diagrams-fit.js). Origin is 0, not the viewBox origin:
        the transform targets the stage div and the svg is sized width x height, so the
        element box starts at 0 in CSS space and the viewBox origin never enters it. */
-    const fitResult = () => window.DIAGRAM_FIT.compute({
+    const fitBounds = { minX: 0, minY: 0, maxX: width, maxY: height };
+    /* The side panel in its wide lane declares the tallest it grows to (the v3
+       data-diagram-fit-max-height); in the compact chrome it sits behind its Detail trigger and
+       declares nothing. */
+    const declarePanelHeight = () => {
+      const panel = document.getElementById('flowPanel');
+      if (!panel) return;
+      const tallest = panel.hasAttribute('data-diagram-fit-edge') ? 0 : tallestPanel();
+      if (tallest > 0) panel.setAttribute('data-diagram-fit-max-height', String(Math.ceil(tallest)));
+      else panel.removeAttribute('data-diagram-fit-max-height');
+    };
+    const fitResult = () => (declarePanelHeight(), window.DIAGRAM_FIT.compute({
       wrap: wrap,
-      bounds: { minX: 0, minY: 0, maxX: width, maxY: height },
+      bounds: fitBounds,
       clearanceX: 80, clearanceY: 80, maxScale: 1.2, gutter: 26,
+      /* v3 options. A FLOW figure is sparse: a source rail, a spine and feedback loops
+         leave wide empty corners. `marks` tests the panels against what is actually drawn,
+         so an empty corner under a panel costs no scale while every mark keeps the gutter.
+         `balance` centres the drawing vertically in the free range left by the chrome above
+         and below it; `compactClearance` is the smaller clearance of the compact chrome. */
+      marks: window.DIAGRAM_FIT.marksOf(svg, fitBounds),
+      balance: true, compactClearance: 32,
       /* The full-chrome shell carries an explanatory side panel (.flow-panel) in addition
          to the HUD. In the wide chrome it is anchored bottom-RIGHT with a fixed 300px width
          and a height that grows with its explanatory content, so it is a RIGHT-SIDE
          EXCLUSION LANE, not a bottom band. Classifying it as bottom chrome reserved a
          full-width strip as tall as the panel and collapsed the figure — 6.4x at a short
          viewport. As a right lane its fixed width bounds the cost, and the panel's height
-         growth no longer consumes page height. In the compact chrome it joins the control
+         growth no longer consumes page height. On the v3 `marks` path the panel counts at
+         the tallest height it grows to (declarePanelHeight above) rather than as a full-height
+         lane, so drawn marks may sit above it but never where a definition will appear. In
+         the compact chrome it joins the control
          area behind its Detail trigger and declares the bottom edge itself, like every
          compact panel, so the lane selector leaves it out.
 
@@ -372,7 +431,7 @@
          is unchanged. */
       bottomSelector: '.hud, [data-diagram-fit-edge="bottom"]',
       rightSelector: '.flow-panel:not([data-diagram-fit-edge])'
-    });
+    }));
     function applyFit(f) {
       fittedMinScale = Math.min(BASE_MIN_SCALE, f.scale);
       scale = f.scale; tx = f.tx; ty = f.ty;
@@ -418,13 +477,51 @@
     if (zi) zi.onclick = () => zoomTo(Math.min(scale * 1.2, 4));
     if (zo) zo.onclick = () => zoomTo(Math.max(scale / 1.2, fittedMinScale));
     if (zf) zf.onclick = fit;
-    let drag = false, sx0, sy0, tx0, ty0;
-    wrap.addEventListener('pointerdown', (ev) => { if (ev.target.closest('.hud, .legend, .caption, .diagram-info') || (ev.target.classList && ev.target.classList.contains('node-hit'))) return; drag = true; wrap.classList.add('dragging'); wrap.setPointerCapture(ev.pointerId); sx0 = ev.clientX; sy0 = ev.clientY; tx0 = tx; ty0 = ty; });
-    wrap.addEventListener('pointermove', (ev) => { if (!drag) return; const dx = ev.clientX - sx0, dy = ev.clientY - sy0; if (!dx && !dy) return; tx = tx0 + dx; ty = ty0 + dy; if (Math.abs(dx) >= DRAG_START || Math.abs(dy) >= DRAG_START) atFit = false; apply(); });
-    wrap.addEventListener('pointerup', () => { drag = false; wrap.classList.remove('dragging'); });
-    /* A wheel over the chrome block scrolls an open panel and leaves the drawing alone; a pinch
-       (a wheel carrying ctrlKey) still zooms the drawing, never the page. */
-    wrap.addEventListener('wheel', (ev) => { if (!ev.ctrlKey && ev.target.closest('.diagram-info')) return; ev.preventDefault(); const r = wrap.getBoundingClientRect(); const mx = ev.clientX - r.left, my = ev.clientY - r.top; const f = ev.deltaY > 0 ? 1 / 1.1 : 1.1; const ns = Math.max(fittedMinScale, Math.min(4, scale * f)); if (ns === scale) return; const k = ns / scale; tx = mx - (mx - tx) * k; ty = my - (my - ty) * k; scale = ns; atFit = false; apply(); }, { passive: false });
+    if (POINTER) {
+      /* GESTURES, through the shared DS pointer controller: one pointer pans from anywhere on the
+         drawing region, nodes included; two pinch about their centroid; a wheel zooms about the
+         pointer, one 1.1 step per event. The controller marks the canvas it owns, and diagrams.css
+         gives that canvas `touch-action: none`, so a touch gesture there moves the drawing, never
+         the page. A press that starts on a panel, the HUD or the chrome block stays native — the
+         panels keep their taps and their own scrolling — and a wheel over one scrolls it unless it
+         is a trackpad pinch (ctrlKey), which zooms the drawing. A press that stays inside the
+         controller's tap slop is a tap, and a moved gesture swallows its own click, so the view
+         leaves Fit only when the reader actually moves it. */
+      const clampK = (k) => Math.max(fittedMinScale, Math.min(4, k));
+      POINTER.attach({
+        stage: wrap,
+        exclude: '.hud, .legend, .caption, .diagram-info, .flow-panel',
+        wheelStep: 1.1,
+        clampK: clampK,
+        getView: () => ({ k: scale, x: tx, y: ty }),
+        setView: (v) => {
+          /* A gesture that moves the view takes it off Fit; float noise from a still pinch does not. */
+          if (Math.abs(v.k - scale) > 1e-9 * scale || Math.abs(v.x - tx) > 1e-6 || Math.abs(v.y - ty) > 1e-6) atFit = false;
+          scale = v.k; tx = v.x; ty = v.y; apply();
+        },
+        zoomAt: (f, mx, my) => {
+          const ns = clampK(scale * f);
+          if (ns === scale) return;
+          const k = ns / scale;
+          tx = mx - (mx - tx) * k;
+          ty = my - (my - ty) * k;
+          scale = ns;
+          atFit = false;
+          apply();
+        }
+      });
+    } else {
+      /* LEGACY PATH, for a page without the gesture carrier: the mouse drag and wheel this engine
+         has always had. Touch keeps the browser's own gestures there. */
+      if (window.console) console.warn('diagrams-static-FLOW-engine.js: load diagrams-pointer.js (v2) before the engine for touch pan and pinch.');
+      let drag = false, sx0, sy0, tx0, ty0;
+      wrap.addEventListener('pointerdown', (ev) => { if (ev.target.closest('.hud, .legend, .caption, .diagram-info') || (ev.target.classList && ev.target.classList.contains('node-hit'))) return; drag = true; wrap.classList.add('dragging'); wrap.setPointerCapture(ev.pointerId); sx0 = ev.clientX; sy0 = ev.clientY; tx0 = tx; ty0 = ty; });
+      wrap.addEventListener('pointermove', (ev) => { if (!drag) return; const dx = ev.clientX - sx0, dy = ev.clientY - sy0; if (!dx && !dy) return; tx = tx0 + dx; ty = ty0 + dy; if (Math.abs(dx) >= DRAG_START || Math.abs(dy) >= DRAG_START) atFit = false; apply(); });
+      wrap.addEventListener('pointerup', () => { drag = false; wrap.classList.remove('dragging'); });
+      /* A wheel over the chrome block scrolls an open panel and leaves the drawing alone; a pinch
+         (a wheel carrying ctrlKey) still zooms the drawing, never the page. */
+      wrap.addEventListener('wheel', (ev) => { if (!ev.ctrlKey && ev.target.closest('.diagram-info')) return; ev.preventDefault(); const r = wrap.getBoundingClientRect(); const mx = ev.clientX - r.left, my = ev.clientY - r.top; const f = ev.deltaY > 0 ? 1 / 1.1 : 1.1; const ns = Math.max(fittedMinScale, Math.min(4, scale * f)); if (ns === scale) return; const k = ns / scale; tx = mx - (mx - tx) * k; ty = my - (my - ty) * k; scale = ns; atFit = false; apply(); }, { passive: false });
+    }
   }
 
   function renderWhenFontsReady(DATA) {

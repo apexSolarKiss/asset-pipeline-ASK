@@ -1,4 +1,5 @@
-/* diagrams-fit.js — design-system-ASK shared fit contract (v2, 2026-09-28: declared edges; v1, 2026-07-18)
+/* diagrams-fit.js — design-system-ASK shared fit contract (v3, 2026-10-08: opt-in placement; v2, 2026-09-28:
+   declared edges; v1, 2026-07-18)
 
    DS-OWNED SUPPORT FILE. Do not hand-edit in a consumer; re-vendor byte-identical.
 
@@ -43,7 +44,9 @@
 
    It is also NOT a layout solver. There is no maximal-empty-rectangle search, no arbitrary
    obstacle avoidance, no iterative packing. The panel system is edge-anchored, so a
-   four-edge safe rectangle covers it while staying deterministic and inspectable.
+   four-edge safe rectangle covers it while staying deterministic and inspectable. The v3
+   options below add one bounded, deterministic step: a vertical free-range calculation, and
+   for `marks` a descending scale search over at most three horizontal centres.
 
    LEGACY EQUIVALENCE — the binding contract, by region
    Fit behaviour is preserved exactly in the ordinary case and degrades continuously only
@@ -83,8 +86,54 @@
        themselves from clientWidth/clientHeight rather than getBoundingClientRect().
      - the four edge selectors name each pattern's own chrome anatomy. Panel classes are
        NOT uniform across patterns — see the per-adapter comments.
-   This file changes fit geometry in exactly two ways: reserving the panel band, and
-   degrading clearance continuously on a constrained axis. Nothing else.
+   Without the v3 options below, this file changes fit geometry in exactly two ways:
+   reserving the panel band, and degrading clearance continuously on a constrained axis.
+   Nothing else.
+
+   V3 PLACEMENT OPTIONS — opt-in per caller; a caller that passes none of them receives the
+   v2 result above, unchanged
+     balance           Centre the content VERTICALLY in the free range it occupies: the
+                       range between the nearest chrome above it and the nearest chrome
+                       below it (each kept at `gutter`), or the canvas margin where there is
+                       none. Scale and horizontal position are the v2 result's (see
+                       data-diagram-fit-max-height for which v2 pass). Before v3 a figure
+                       that already cleared the panels stayed centred on the WHOLE canvas,
+                       so a short wide figure sat closer to its top panels than to the HUD.
+                       Only placements the panels actually bound move: a panel beside the
+                       content, not above or below it, shapes the free range only where it
+                       overlaps the content horizontally.
+     marks             The content rectangles actually drawn (see marksOf), in bounds
+                       coordinates. Collision is tested against these instead of the one
+                       bounds rectangle, so a sparse figure whose empty corners sit under a
+                       panel is not shrunk to clear chrome that covers nothing. When the
+                       full-canvas candidate collides, scales are tried in 1% steps from it,
+                       centred on the canvas or on a v2 pass's reserved rectangle, and the
+                       first with a clear vertical position wins. Every drawn mark then keeps
+                       `gutter` from every panel. The search stops at the scale of the larger
+                       v2 pass whose placement has a clear vertical position against the same
+                       marks and panels, and otherwise at 40% of the full-canvas scale or the
+                       smaller pass's scale, whichever is lower. When none clears, that pass's
+                       placement is used at its clear position; where no pass has one, the
+                       declared-height pass's placement comes back reporting `clear: false`.
+     data-diagram-fit-max-height
+                       A bottom-anchored panel whose content changes after the fit — a
+                       definition filled in on hover or pin — declares the tallest height it
+                       reaches, measured up from its bottom edge. With either option above, the
+                       panel counts at that height in the search and in every `clear` reported,
+                       even while it is empty or hidden at rest, as long as it is laid out.
+                       The options start from two v2 passes, one with the panels at their
+                       declared heights and one at rest, each tested against the declared
+                       heights, so a declared height does at least as well as the same panel
+                       already that tall and never drops a placement the pass at rest keeps
+                       clear of it. Nothing refits when the content changes, so the drawing
+                       never moves under the reader's pointer, and while the result reports
+                       `clear` no definition covers a mark. Without either option the
+                       attribute is ignored.
+     compactClearance  A cap on the total clearance per axis while the wrap's responsive
+                       chrome (diagrams-chrome.js) is compact. The compact chrome already folds
+                       the panels away, and a fixed 80-90px clearance cost a phone canvas a
+                       fifth of its width. On its own it changes only the clearance: the result
+                       is otherwise the v2 contract and does not read the declared heights.
 
    DISTRIBUTION
    Self-contained by convention, like diagrams.css and export-png.js: a byte-identical copy
@@ -106,7 +155,9 @@
   };
 
   /* A panel counts only if it is actually rendered: display:none, visibility:hidden,
-     opacity:0, and zero-area elements are ignored rather than reserving a phantom band.
+     opacity:0, and zero-area elements are ignored rather than reserving a phantom band
+     (the v3 placement also counts a laid-out panel that declares its height; see
+     panelRects).
      Chrome may also declare the edge it is anchored to with data-diagram-fit-edge="top" or
      "bottom"; a declared caption or legend counts only at its declared edge. On a page
      using diagrams-chrome.js, the compact trigger row and open panel declare "bottom", so
@@ -115,7 +166,8 @@
      edges; the HUD is bottom chrome whatever it declares. With no declaration present,
      the defaults select exactly the panels they always did. VERSION 2 marks this
      contract: an engine driving diagrams-chrome.js requires it and fails closed on an
-     older copy. */
+     older copy. VERSION 3 adds the opt-in placement options; it changes nothing for a
+     caller that does not pass them, and a caller that passes them requires it. */
   function isVisible(el) {
     if (!el) return false;
     var cs = (el.ownerDocument.defaultView || window).getComputedStyle(el);
@@ -125,20 +177,27 @@
     return true;
   }
 
-  /* Visible panels for one selector, as rectangles in WRAP-LOCAL coordinates. */
-  function panelRects(wrap, wrapRect, selector) {
+  /* Visible panels for one selector, as rectangles in WRAP-LOCAL coordinates. With `grow`
+     (the v3 placement only), a panel that declares data-diagram-fit-max-height counts at
+     that height, measured up from its bottom edge, and counts even while it is empty or
+     hidden at rest, as long as it is laid out: the declared state is the one that matters. */
+  function panelRects(wrap, wrapRect, selector, grow) {
     if (!selector) return [];
     var els;
     try { els = wrap.querySelectorAll(selector); } catch (e) { return []; }
     var list = [];
     for (var i = 0; i < els.length; i++) {
       var el = els[i];
-      if (!isVisible(el)) continue;
+      var mh = grow ? parseFloat(el.getAttribute('data-diagram-fit-max-height')) : NaN;
+      var declared = isFinite(mh) && mh > 0;
+      if (!declared && !isVisible(el)) continue;
       var r = el.getBoundingClientRect();
-      if (!(r.width > 0) || !(r.height > 0)) continue;
+      if (!(r.width > 0) || (!declared && !(r.height > 0))) continue;
+      var top = r.top;
+      if (declared && mh > r.height) top = r.bottom - mh;
       list.push({
         left:   r.left   - wrapRect.left,
-        top:    r.top    - wrapRect.top,
+        top:    top      - wrapRect.top,
         right:  r.right  - wrapRect.left,
         bottom: r.bottom - wrapRect.top
       });
@@ -206,8 +265,10 @@
            reserved,               // a band was applied (NOT a claim of success)
            clear,                  // the returned placement intersects no visible chrome
            degradedX, degradedY }  // a nonzero reservation was discarded under minAvailable
-     A caller that must clear the chrome checks `clear`, not `reserved`. */
-  function compute(opts) {
+     A caller that must clear the chrome checks `clear`, not `reserved`.
+     This is the v2 contract; compute() below adds the v3 options on top of it. With `grow`
+     (the v3 placement only) every panel counts at its declared height. */
+  function computeV2(opts, grow) {
     opts = opts || {};
     var wrap = opts.wrap;
     var maxScale   = num(opts.maxScale,   DEFAULTS.maxScale);
@@ -252,10 +313,10 @@
     };
 
     var sel = function (k, d) { return opts[k] !== undefined ? opts[k] : d; };
-    var top    = panelRects(wrap, rect, sel('topSelector',    DEFAULTS.topSelector));
-    var bottom = panelRects(wrap, rect, sel('bottomSelector', DEFAULTS.bottomSelector));
-    var left   = panelRects(wrap, rect, sel('leftSelector',   DEFAULTS.leftSelector));
-    var right  = panelRects(wrap, rect, sel('rightSelector',  DEFAULTS.rightSelector));
+    var top    = panelRects(wrap, rect, sel('topSelector',    DEFAULTS.topSelector),    grow);
+    var bottom = panelRects(wrap, rect, sel('bottomSelector', DEFAULTS.bottomSelector), grow);
+    var left   = panelRects(wrap, rect, sel('leftSelector',   DEFAULTS.leftSelector),   grow);
+    var right  = panelRects(wrap, rect, sel('rightSelector',  DEFAULTS.rightSelector),  grow);
 
     var all = top.concat(bottom, left, right);
     var collides = false;
@@ -333,5 +394,228 @@
              reserved: true, clear: clear, degradedX: degradedX, degradedY: degradedY };
   }
 
-  window.DIAGRAM_FIT = { compute: compute, VERSION: 2 };
+  /* ---------- v3: opt-in placement ---------- */
+
+  /* Allowed translateY ranges for `shapes` at scale `s` and translateX `tx`, inside
+     [lo, hi]. A shape collides with a panel exactly when intersects() says so; for a shape
+     that overlaps the gutter-inflated panel horizontally, that is an OPEN interval of ty,
+     so a range may end exactly where a collision begins (touching is clear). */
+  function freeRanges(shapes, s, tx, panels, g, lo, hi) {
+    if (!(hi >= lo)) return [];
+    var bad = [];
+    for (var i = 0; i < shapes.length; i++) {
+      var m = shapes[i];
+      var x0 = m.minX * s + tx, x1 = m.maxX * s + tx;
+      for (var j = 0; j < panels.length; j++) {
+        var p = panels[j];
+        if (x0 < p.right + g && x1 > p.left - g) bad.push([p.top - g - m.maxY * s, p.bottom + g - m.minY * s]);
+      }
+    }
+    bad.sort(function (a, b) { return a[0] - b[0]; });
+    var out = [], cur = lo;
+    for (var k = 0; k < bad.length; k++) {
+      var a = bad[k][0], b = bad[k][1];
+      if (b <= cur) continue;
+      if (a >= hi) break;
+      if (a >= cur) out.push([cur, a]);
+      if (b > cur) cur = b;
+      if (cur > hi) break;
+    }
+    if (cur <= hi) out.push([cur, hi]);
+    return out;
+  }
+
+  /* The range containing `t`, or else the nearest one. */
+  function nearestRange(ranges, t) {
+    var best = null, bd = Infinity;
+    for (var i = 0; i < ranges.length; i++) {
+      var r = ranges[i], d = t < r[0] ? r[0] - t : (t > r[1] ? t - r[1] : 0);
+      if (d < bd) { bd = d; best = r; }
+    }
+    return best;
+  }
+
+  /* Whether the wrap's responsive chrome is in its compact mode. */
+  function isCompact(wrap) {
+    var info;
+    try { info = wrap.querySelector('.diagram-info[data-diagram-chrome]'); } catch (e) { return false; }
+    return !!(info && info.getAttribute('data-diagram-chrome') === 'compact');
+  }
+
+  function paints(v, op) {
+    if (!v || v === 'none' || v === 'transparent' || /rgba\([^)]*,\s*0\)$/.test(v)) return false;
+    return !(parseFloat(op) === 0);
+  }
+
+  /* marksOf(svg, bounds) -> [{minX,minY,maxX,maxY}] | null
+     The rendered marks of `svg` in BOUNDS coordinates: every painted graphic element outside
+     <defs>, measured from the screen and mapped back through the svg element's own box, so
+     the stage transform in force at measurement time does not matter. Unpainted hit layers
+     and a full-size background are left out; a path contributes its bounding box, which can
+     only over-state what it covers. Measurement only: it changes nothing. */
+  function marksOf(svg, bounds) {
+    if (!svg || typeof svg.getBoundingClientRect !== 'function' || !bounds) return null;
+    var sr = svg.getBoundingClientRect();
+    if (!(sr.width > 0) || !(sr.height > 0)) return null;
+    var minX = num(bounds.minX, 0), minY = num(bounds.minY, 0);
+    var fx = (num(bounds.maxX, 0) - minX) / sr.width, fy = (num(bounds.maxY, 0) - minY) / sr.height;
+    if (!(fx > 0) || !(fy > 0)) return null;
+    var win = svg.ownerDocument.defaultView || window, out = [];
+    var els = svg.querySelectorAll('rect, text, path, line, polyline, polygon, circle, ellipse, image, use');
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (el.closest('defs, clipPath, mask, marker, pattern, symbol')) continue;
+      var cs = win.getComputedStyle(el);
+      if (!cs || cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) === 0) continue;
+      var tag = el.tagName.toLowerCase();
+      if (tag !== 'image' && tag !== 'use' &&
+          !paints(cs.fill, cs.fillOpacity) && !(paints(cs.stroke, cs.strokeOpacity) && parseFloat(cs.strokeWidth) > 0)) continue;
+      var r = el.getBoundingClientRect();
+      if (!(r.width > 0) && !(r.height > 0)) continue;
+      if (r.width >= sr.width * 0.98 && r.height >= sr.height * 0.98) continue;
+      out.push({ minX: minX + (r.left - sr.left) * fx, minY: minY + (r.top - sr.top) * fy,
+                 maxX: minX + (r.right - sr.left) * fx, maxY: minY + (r.bottom - sr.top) * fy });
+    }
+    return out.length ? out : null;
+  }
+
+  /* compute(opts) — the v2 contract, plus the v3 options `balance`, `marks` and
+     `compactClearance` (see the header). Same result shape. */
+  function compute(opts) {
+    opts = opts || {};
+    var compactC = num(opts.compactClearance, NaN);
+    var useMarks = Array.isArray(opts.marks) && opts.marks.length > 0;
+    if (!opts.balance && !useMarks && !isFinite(compactC)) return computeV2(opts);
+
+    var wrap = opts.wrap;
+    if (isFinite(compactC) && wrap && typeof wrap.querySelector === 'function' && isCompact(wrap)) {
+      opts = Object.assign({}, opts, {
+        clearanceX: Math.min(num(opts.clearanceX, DEFAULTS.clearanceX), compactC),
+        clearanceY: Math.min(num(opts.clearanceY, DEFAULTS.clearanceY), compactC) });
+    }
+    if (!opts.balance && !useMarks) return computeV2(opts);
+    /* Two v2 passes: one with every panel at its declared height, the inventory these options
+       test, and one at rest. They differ only where a panel declares a height. Each is tested
+       against the declared heights before it is used (clearTy below): the larger one that
+       clears sets the search floor and the fallback, and both reserved centres are tried. A
+       declared height therefore does at least as well as the same panel already that tall,
+       and never drops a placement the pass at rest keeps clear of it. */
+    var v2 = computeV2(opts, true), atRest = computeV2(opts);
+    if (!wrap || typeof wrap.getBoundingClientRect !== 'function') return v2;
+
+    var b = opts.bounds || {};
+    var minX = num(b.minX, 0), minY = num(b.minY, 0), maxX = num(b.maxX, 0), maxY = num(b.maxY, 0);
+    if (!(maxX - minX > 0) || !(maxY - minY > 0)) return v2;
+    var rect = wrap.getBoundingClientRect();
+    var vp = opts.viewport;
+    var W = (vp && isFinite(vp.width)) ? +vp.width : rect.width;
+    var H = (vp && isFinite(vp.height)) ? +vp.height : rect.height;
+    if (!(W > 0) || !(H > 0)) return v2;
+    var g = num(opts.gutter, DEFAULTS.gutter);
+    var clearanceX = num(opts.clearanceX, DEFAULTS.clearanceX), clearanceY = num(opts.clearanceY, DEFAULTS.clearanceY);
+    var sel = function (k, d) { return opts[k] !== undefined ? opts[k] : d; };
+    var panels = panelRects(wrap, rect, sel('topSelector', DEFAULTS.topSelector), true)
+      .concat(panelRects(wrap, rect, sel('bottomSelector', DEFAULTS.bottomSelector), true),
+              panelRects(wrap, rect, sel('leftSelector', DEFAULTS.leftSelector), true),
+              panelRects(wrap, rect, sel('rightSelector', DEFAULTS.rightSelector), true));
+    var box = { minX: minX, minY: minY, maxX: maxX, maxY: maxY };
+    var shapes = useMarks ? opts.marks : [box];
+    /* The canvas margin the base candidate keeps: half the effective clearance per side. */
+    var mX = Math.min(clearanceX, W / 2) / 2, mY = Math.min(clearanceY, H / 2) / 2;
+    var cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+    var tyRange = function (s, t) {
+      return [Math.min(mY - minY * s, t), Math.max(H - mY - maxY * s, t)];
+    };
+    var place = function (s, tx, target) {
+      var lim = tyRange(s, target);
+      var r = nearestRange(freeRanges(shapes, s, tx, panels, g, lim[0], lim[1]), target);
+      if (!r) return null;
+      return opts.balance ? (r[0] + r[1]) / 2 : Math.min(r[1], Math.max(r[0], target));
+    };
+    /* The result describes the placement actually returned: the bands of the v2 pass it
+       started from (its reserved centre or its fallback; zero otherwise), and `clear`
+       re-tested on that placement against this inventory: the shapes, and every panel at its
+       declared height. Below, v2 is returned as it is only where its own `clear`, tested
+       against those same panels, is false (balance only) or the maxScale is degenerate. */
+    var clearAt = function (s, tx, ty) {
+      for (var i = 0; i < shapes.length; i++) {
+        var m = shapes[i], r = { left: m.minX * s + tx, top: m.minY * s + ty, right: m.maxX * s + tx, bottom: m.maxY * s + ty };
+        for (var j = 0; j < panels.length; j++) if (intersects(r, panels[j], g)) return false;
+      }
+      return true;
+    };
+    var done = function (s, tx, ty, from) {
+      var r = from && from.reserved ? from : null;
+      return { scale: s, tx: tx, ty: ty,
+               topBand: r ? r.topBand : 0, bottomBand: r ? r.bottomBand : 0,
+               leftBand: r ? r.leftBand : 0, rightBand: r ? r.rightBand : 0,
+               reserved: !!r, clear: clearAt(s, tx, ty),
+               degradedX: !!r && r.degradedX, degradedY: !!r && r.degradedY };
+    };
+    /* A v2 pass's placement moved to a clear vertical position against this inventory, or
+       null where it has none. */
+    var clearTy = function (p) {
+      var t = place(p.scale, p.tx, p.ty);
+      return t !== null && clearAt(p.scale, p.tx, t) ? t : null;
+    };
+    var passes = [v2];
+    if (atRest.scale !== v2.scale || atRest.tx !== v2.tx || atRest.ty !== v2.ty || atRest.clear !== v2.clear ||
+        atRest.reserved !== v2.reserved || atRest.leftBand !== v2.leftBand || atRest.rightBand !== v2.rightBand) passes.push(atRest);
+    /* The larger pass, among those `ok` admits, whose placement has a clear position. */
+    var best = function (ok) {
+      var pick = null, ty = null;
+      for (var k = 0; k < passes.length; k++) {
+        if (!ok(passes[k])) continue;
+        var t = clearTy(passes[k]);
+        if (t !== null && (!pick || passes[k].scale > pick.scale)) { pick = passes[k]; ty = t; }
+      }
+      return pick ? { pass: pick, ty: ty } : null;
+    };
+
+    if (!useMarks) {
+      /* balance only: keep a v2 pass's scale and horizontal position; move only vertically,
+         and only from a pass that was already clear. Where neither clears, the pass at the
+         declared heights comes back as it is. */
+      var b0 = best(function (p) { return p.clear; });
+      if (b0) return done(b0.pass.scale, b0.pass.tx, b0.ty, b0.pass);
+      return v2.clear ? done(v2.scale, v2.tx, v2.ty, v2) : v2;
+    }
+
+    /* marks: the largest scale, in 1% steps from the full-canvas candidate, that has a clear
+       vertical position at the canvas centre or at either pass's reserved centre. The search
+       stops at the scale of the larger pass whose placement has a clear position (ref), and
+       otherwise at 40% of the full-canvas scale or the smaller pass's scale, whichever is
+       lower. */
+    var maxScale = num(opts.maxScale, DEFAULTS.maxScale);
+    var effX = Math.min(clearanceX, W / 2), effY = Math.min(clearanceY, H / 2);
+    var s0 = Math.min((W - effX) / (maxX - minX), (H - effY) / (maxY - minY), maxScale);
+    if (!isFinite(s0) || s0 <= 0) return v2;
+    var ref = best(function () { return true; });
+    var floor = s0 * 0.4;
+    for (var k0 = 0; k0 < passes.length; k0++) floor = Math.min(floor, passes[k0].scale);
+    if (ref) floor = ref.pass.scale;
+    var centres = [{ x: W / 2, from: null }];
+    for (var k = 0; k < passes.length; k++) {
+      var p = passes[k];
+      if (!p.reserved) continue;
+      var rc = (p.leftBand + W - p.rightBand) / 2, seen = false;
+      for (var q = 0; q < centres.length; q++) if (Math.abs(centres[q].x - rc) <= 0.5) seen = true;
+      if (!seen) centres.push({ x: rc, from: p });
+    }
+    for (var i = 0; i < 100; i++) {
+      var s = s0 * (1 - i * 0.01);
+      if (s < floor - 1e-9) break;
+      for (var c = 0; c < centres.length; c++) {
+        var tx = centres[c].x - cx * s;
+        tx = Math.min(W - mX - maxX * s, Math.max(mX - minX * s, tx));
+        var ty = place(s, tx, H / 2 - cy * s);
+        if (ty !== null && clearAt(s, tx, ty)) return done(s, tx, ty, centres[c].from);
+      }
+    }
+    /* Nothing larger cleared: ref's placement at its clear position, or, where no pass has
+       one, the pass at the declared heights as it is, reporting `clear: false`. */
+    return ref ? done(ref.pass.scale, ref.pass.tx, ref.ty, ref.pass) : done(v2.scale, v2.tx, v2.ty, v2);
+  }
+
+  window.DIAGRAM_FIT = { compute: compute, marksOf: marksOf, VERSION: 3 };
 })();

@@ -32,6 +32,16 @@
   if (!window.DIAGRAM_FIT || typeof window.DIAGRAM_FIT.compute !== 'function') {
     throw new Error('Diagram fit support is missing. Load diagrams-fit.js before the figure builder.');
   }
+  /* The Fit's v3 placement options (balance, compactClearance) are not read by an older
+     diagrams-fit.js, which would silently keep the old geometry. FAIL CLOSED instead. */
+  if (!(window.DIAGRAM_FIT.VERSION >= 3)) {
+    throw new Error('diagrams-fit.js is older than v3. Re-vendor it from design-system-ASK with this figure builder.');
+  }
+  /* FAIL-CLOSED on the design-system gesture carrier, on the same terms: diagrams-pointer.js
+     (v2) is vendored alongside this figure and loaded BEFORE it. */
+  if (!window.DIAGRAM_POINTER || typeof window.DIAGRAM_POINTER.attach !== 'function' || !(window.DIAGRAM_POINTER.VERSION >= 2)) {
+    throw new Error('Diagram gesture support is missing. Load diagrams-pointer.js (v2) before the figure builder.');
+  }
 
   const M = {
     apex:   { label: 'source-of-intent role', sub: 'normative apex supplies', note1: 'purpose + governing standard' },
@@ -189,7 +199,7 @@
   svg.setAttribute('width', vbW);
   svg.setAttribute('height', vbH);
 
-  /* ---- pan / zoom / fit + drag + wheel (interaction is local; FIT is DS-owned) ---- */
+  /* ---- pan / zoom / fit + drag + wheel (the camera is local; FIT and gestures are DS-owned) ---- */
   const wrap = document.getElementById('canvasWrap'), stage = document.getElementById('stage'), pct = document.getElementById('zoomPct');
   if (wrap && stage) {
     let tx=0, ty=0, sc=1;
@@ -200,43 +210,78 @@
        resize). */
     const BASE_MIN_SCALE = 0.2;
     let fittedMinScale = BASE_MIN_SCALE;
+    /* FIT MODE (design-system-ASK responsive chrome). The view is at Fit after fit() and until
+       the reader zooms, pans or pinches. Only a view at Fit follows a resize, the webfonts
+       landing, or `diagram-chrome-change` from diagrams-chrome.js (a panel opening or closing,
+       the compact layout switching, its control band changing). A reader's own pan and zoom is
+       not reset by a browser-toolbar resize or a disclosure. */
+    let atFit = true;
     const apply = () => { stage.style.transform = `translate(${tx}px,${ty}px) scale(${sc})`; if (pct) pct.textContent = Math.round(sc*100)+'%'; };
     /* Fit comes from the design-system helper (diagrams-fit.js; presence checked at the top of
-       this file). This figure previously carried its own copy of the DS fit arithmetic — which is
-       exactly why the panel-band defect had to be fixed per-figure. The duplicated arithmetic is
-       retired; the figure's caller-owned inputs are kept: 90px total clearance (DS default 80),
+       this file), with the figure's caller-owned inputs: 90px total clearance (DS default 80),
        1.3 max scale (DS default 1.2), and ZERO-origin bounds even though the tightened viewBox
        origin is negative — the transform target is the stage div, whose box starts at 0 in CSS
        space, so the viewBox origin never enters it. */
-    const fit = () => {
-      const f = window.DIAGRAM_FIT.compute({
+    const fitResult = () => window.DIAGRAM_FIT.compute({
         wrap,
         bounds: { minX: 0, minY: 0, maxX: vbW, maxY: vbH },
-        clearanceX: 90, clearanceY: 90, maxScale: 1.3, gutter: 26
-      });
-      fittedMinScale = Math.min(BASE_MIN_SCALE, f.scale);
-      sc = f.scale; tx = f.tx; ty = f.ty; apply();
+        clearanceX: 90, clearanceY: 90, maxScale: 1.3, gutter: 26,
+        /* v3 (diagrams-fit.js): centre vertically between the chrome above and below the figure,
+           and cap the clearance while the responsive chrome is compact. */
+        balance: true, compactClearance: 32
+    });
+    const applyFit = (f) => { fittedMinScale = Math.min(BASE_MIN_SCALE, f.scale); sc = f.scale; tx = f.tx; ty = f.ty; atFit = true; apply(); };
+    /* The page's responsive chrome (diagrams-chrome.js): its open compact panel, the Fit the
+       reader returns to when that panel closes, and its one truthful way to close it. An open
+       panel moves the drawing only where the drawing keeps its closed-panel size; otherwise
+       the drawing keeps that closed-panel Fit and the panel overlays it until it closes. */
+    const chrome = window.DIAGRAM_CHROME || null;
+    /* FAIL-CLOSED with the chrome: its edge declaration needs diagrams-fit.js v2. */
+    if (chrome && !(window.DIAGRAM_FIT.VERSION >= 2)) throw new Error('The responsive chrome needs the current diagrams-fit.js. Re-vendor it with diagrams-chrome.js.');
+    const panelOpen = () => !!(chrome && chrome.openPanel(wrap));
+    const closedFit = () => (chrome ? chrome.withoutOpenPanel(wrap, fitResult) : fitResult());
+    const keepsSize = (f, c) => f.clear && f.scale >= c.scale * (1 - 1e-6);
+    const fitAround = () => { const f = fitResult(); if (!panelOpen()) return f; const c = closedFit(); return keepsSize(f, c) ? f : c; };
+    /* FIT, the reader's request, always ends at a usable fitted view: when the open compact
+       panel would cover the drawing, Fit closes it through the chrome's state controller and
+       fits against the chrome that remains. */
+    const fit = () => {
+      if (panelOpen()) { const f = fitResult(); if (keepsSize(f, closedFit())) { applyFit(f); return; } chrome.close(wrap); }
+      applyFit(fitResult());
     };
-    /* Fit immediately so the figure is never left unpositioned, then refit once the webfonts land:
-       the vendored faces use font-display:swap and the DS helper measures the LIVE caption / legend
-       / HUD rectangles, which change size across the swap. */
+    /* A resize, the webfonts landing or a chrome change refits only a view at Fit, by the
+       same open-panel rule. */
+    const refitAtFit = () => { if (atFit) applyFit(fitAround()); };
     fit();
     const fonts = document.fonts;
     if (fonts && fonts.ready && typeof fonts.ready.then === 'function') {
-      fonts.ready.then(fit).catch(() => {});
+      fonts.ready.then(refitAtFit).catch(() => {});
     }
-    window.addEventListener('resize', fit);
+    window.addEventListener('resize', refitAtFit);
+    wrap.addEventListener('diagram-chrome-change', refitAtFit);
     const zi=document.getElementById('zoomIn'), zo=document.getElementById('zoomOut'), zf=document.getElementById('zoomFit');
-    if (zi) zi.onclick=()=>{sc=Math.min(sc*1.2,4);apply();};
-    if (zo) zo.onclick=()=>{sc=Math.max(sc/1.2,fittedMinScale);apply();};
+    /* The view leaves Fit only when the reader moves it: a zoom at its limit changes nothing,
+       and a press that stays inside the pointer controller's tap slop is a tap. */
+    const zoomTo = (s) => { if (s === sc) return; sc = s; atFit = false; apply(); };
+    if (zi) zi.onclick=()=>zoomTo(Math.min(sc*1.2,4));
+    if (zo) zo.onclick=()=>zoomTo(Math.max(sc/1.2,fittedMinScale));
     if (zf) zf.onclick=fit;
-    let dragging=false, px0=0, py0=0, tx0=0, ty0=0;
-    wrap.addEventListener('pointerdown', (ev)=>{ if (ev.target.closest('.hud, .legend, .caption')) return;
-      dragging=true; wrap.classList.add('dragging'); wrap.setPointerCapture(ev.pointerId); px0=ev.clientX; py0=ev.clientY; tx0=tx; ty0=ty; });
-    wrap.addEventListener('pointermove', (ev)=>{ if(!dragging) return; tx=tx0+(ev.clientX-px0); ty=ty0+(ev.clientY-py0); apply(); });
-    const endDrag=()=>{ dragging=false; wrap.classList.remove('dragging'); };
-    wrap.addEventListener('pointerup', endDrag); wrap.addEventListener('pointercancel', endDrag);
-    wrap.addEventListener('wheel', (ev)=>{ ev.preventDefault(); const r=wrap.getBoundingClientRect(), mx=ev.clientX-r.left, my=ev.clientY-r.top;
-      const ns=Math.max(fittedMinScale, Math.min(4, sc*(ev.deltaY>0 ? 1/1.1 : 1.1))), k=ns/sc; tx=mx-(mx-tx)*k; ty=my-(my-ty)*k; sc=ns; apply(); }, { passive:false });
+    /* GESTURES through the design-system pointer controller (diagrams-pointer.js, checked at the
+       top of this file): one pointer pans from anywhere on the drawing, two pinch about their
+       centroid, a wheel zooms about the pointer. The canvas carries `touch-action: none`
+       (diagrams.css), so a touch gesture there moves the drawing, never the page. A press on the
+       HUD or the chrome block stays native, and a wheel over the chrome block scrolls an open
+       panel unless it is a trackpad pinch (ctrlKey). A moved gesture swallows its own click. */
+    const clampK = (k) => Math.max(fittedMinScale, Math.min(4, k));
+    window.DIAGRAM_POINTER.attach({
+      stage: wrap, exclude: '.hud, .legend, .caption, .diagram-info', wheelStep: 1.1, clampK,
+      getView: () => ({ k: sc, x: tx, y: ty }),
+      setView: (v) => {
+        /* A gesture that moves the view takes it off Fit; float noise from a still pinch does not. */
+        if (Math.abs(v.k - sc) > 1e-9 * sc || Math.abs(v.x - tx) > 1e-6 || Math.abs(v.y - ty) > 1e-6) atFit = false;
+        sc = v.k; tx = v.x; ty = v.y; apply();
+      },
+      zoomAt: (f, mx, my) => { const ns = clampK(sc*f); if (ns === sc) return; const k = ns/sc; tx = mx-(mx-tx)*k; ty = my-(my-ty)*k; sc = ns; atFit = false; apply(); }
+    });
   }
 })();
