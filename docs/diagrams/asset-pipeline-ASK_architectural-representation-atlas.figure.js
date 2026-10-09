@@ -28,6 +28,16 @@
   if (!window.DIAGRAM_FIT || typeof window.DIAGRAM_FIT.compute !== 'function') {
     throw new Error('Diagram fit support is missing. Load diagrams-fit.js before the figure builder.');
   }
+  /* The Fit's v3 placement options (balance, compactClearance) are not read by an older
+     diagrams-fit.js, which would silently keep the old geometry. FAIL CLOSED instead. */
+  if (!(window.DIAGRAM_FIT.VERSION >= 3)) {
+    throw new Error('diagrams-fit.js is older than v3. Re-vendor it from design-system-ASK with this figure builder.');
+  }
+  /* FAIL-CLOSED on the design-system gesture carrier, on the same terms: diagrams-pointer.js
+     (v2) is vendored alongside this figure and loaded BEFORE it. */
+  if (!window.DIAGRAM_POINTER || typeof window.DIAGRAM_POINTER.attach !== 'function' || !(window.DIAGRAM_POINTER.VERSION >= 2)) {
+    throw new Error('Diagram gesture support is missing. Load diagrams-pointer.js (v2) before the figure builder.');
+  }
 
   const NS = 'http://www.w3.org/2000/svg';
   const svg = document.getElementById('svg');
@@ -219,155 +229,85 @@
        resize). */
     const BASE_MIN_SCALE = 0.2;
     let fittedMinScale = BASE_MIN_SCALE;
+    /* FIT MODE (design-system-ASK responsive chrome). The view is at Fit after fit() and until
+       the reader zooms, pans or pinches. Only a view at Fit follows a resize, the webfonts
+       landing, or `diagram-chrome-change` from diagrams-chrome.js (a panel opening or closing,
+       the compact layout switching, its control band changing). A reader's own pan and zoom is
+       not reset by a browser-toolbar resize or a disclosure. */
+    let atFit = true;
     /* apply() also declares the current scale as --surface-attention-edge-scale, so the shared
        attention edge (surface-action.css) keeps its on-screen stroke below 100% and scales with
        the figure above it. */
     const apply = () => { stage.style.transform = `translate(${tx}px,${ty}px) scale(${sc})`; stage.style.setProperty('--surface-attention-edge-scale', sc); if (pct) pct.textContent = Math.round(sc * 100) + '%'; };
     /* Fit comes from the design-system helper (diagrams-fit.js; presence checked at the top of
-       this file). The figure previously carried its own copy of the DS fit arithmetic; the
-       duplicated arithmetic is retired and its caller-owned inputs kept: 90px total clearance
-       (DS default 80), 1.3 max scale (DS default 1.2), and ZERO-origin bounds even though the
-       tightened viewBox origin is negative — the transform target is the stage div, whose box
-       starts at 0 in CSS space, so the viewBox origin never enters it. */
-    const fit = () => {
-      const f = window.DIAGRAM_FIT.compute({
+       this file), with the figure's caller-owned inputs: 90px total clearance (DS default 80),
+       1.3 max scale (DS default 1.2), and ZERO-origin bounds even though the tightened viewBox
+       origin is negative — the transform target is the stage div, whose box starts at 0 in CSS
+       space, so the viewBox origin never enters it. */
+    const fitResult = () => window.DIAGRAM_FIT.compute({
         wrap,
         bounds: { minX: 0, minY: 0, maxX: vbW, maxY: vbH },
-        clearanceX: 90, clearanceY: 90, maxScale: 1.3, gutter: 26
-      });
-      fittedMinScale = Math.min(BASE_MIN_SCALE, f.scale);
-      sc = f.scale; tx = f.tx; ty = f.ty; apply();
+        clearanceX: 90, clearanceY: 90, maxScale: 1.3, gutter: 26,
+        /* v3 (diagrams-fit.js): centre vertically between the chrome above and below the figure,
+           and cap the clearance while the responsive chrome is compact. */
+        balance: true, compactClearance: 32
+    });
+    const applyFit = (f) => { fittedMinScale = Math.min(BASE_MIN_SCALE, f.scale); sc = f.scale; tx = f.tx; ty = f.ty; atFit = true; apply(); };
+    /* The page's responsive chrome (diagrams-chrome.js): its open compact panel, the Fit the
+       reader returns to when that panel closes, and its one truthful way to close it. An open
+       panel moves the drawing only where the drawing keeps its closed-panel size; otherwise
+       the drawing keeps that closed-panel Fit and the panel overlays it until it closes. */
+    const chrome = window.DIAGRAM_CHROME || null;
+    /* FAIL-CLOSED with the chrome: its edge declaration needs diagrams-fit.js v2. */
+    if (chrome && !(window.DIAGRAM_FIT.VERSION >= 2)) throw new Error('The responsive chrome needs the current diagrams-fit.js. Re-vendor it with diagrams-chrome.js.');
+    const panelOpen = () => !!(chrome && chrome.openPanel(wrap));
+    const closedFit = () => (chrome ? chrome.withoutOpenPanel(wrap, fitResult) : fitResult());
+    const keepsSize = (f, c) => f.clear && f.scale >= c.scale * (1 - 1e-6);
+    const fitAround = () => { const f = fitResult(); if (!panelOpen()) return f; const c = closedFit(); return keepsSize(f, c) ? f : c; };
+    /* FIT, the reader's request, always ends at a usable fitted view: when the open compact
+       panel would cover the drawing, Fit closes it through the chrome's state controller and
+       fits against the chrome that remains. */
+    const fit = () => {
+      if (panelOpen()) { const f = fitResult(); if (keepsSize(f, closedFit())) { applyFit(f); return; } chrome.close(wrap); }
+      applyFit(fitResult());
     };
-    /* Fit immediately so the figure is never left unpositioned, then refit once the webfonts land:
-       font-display:swap changes the caption / legend / HUD metrics the DS helper measures. */
+    /* A resize, the webfonts landing or a chrome change refits only a view at Fit, by the
+       same open-panel rule. */
+    const refitAtFit = () => { if (atFit) applyFit(fitAround()); };
     fit();
     const fonts = document.fonts;
     if (fonts && fonts.ready && typeof fonts.ready.then === 'function') {
-      fonts.ready.then(fit).catch(() => {});
+      fonts.ready.then(refitAtFit).catch(() => {});
     }
-    window.addEventListener('resize', fit);
-    const zi = document.getElementById('zoomIn'), zo = document.getElementById('zoomOut'), zf = document.getElementById('zoomFit');
-    if (zi) zi.onclick = () => { sc = Math.min(sc * 1.2, 4); apply(); };
-    if (zo) zo.onclick = () => { sc = Math.max(sc / 1.2, fittedMinScale); apply(); };
-    if (zf) zf.onclick = fit;
-    /* ---------- click versus pan ----------
-       The canvas pans from anywhere, and the cards are now native links, so one pointer
-       press is ambiguous until it moves. Capture is therefore DEFERRED: a press only ARMS
-       a pan, and the gesture becomes a pan when travel crosses PAN_THRESHOLD_PX. Below
-       that, nothing is captured and nothing is suppressed, so the browser's own link
-       activation runs untouched — which is what keeps modified-click, middle-click and
-       keyboard behaviour native.
-
-       Capturing on pointerdown, as this did before, would swallow every tap on a card. */
-    const PAN_THRESHOLD_PX = 4;
-    /* A completed pan's associated click is not guaranteed to be the next thing that
-       happens. Under the default touch-action a user agent may hold the click back while
-       it finishes resolving the gesture — historically by around 300ms — and click
-       generation is implementation-dependent. Expiring suppression on a zero-delay timer
-       assumes the click beats the next task turn: true for the mouse, not safe for the
-       touch input this canvas accepts. Suppression is therefore a TOKEN with a bounded
-       lifetime, not a one-tick flag. */
-    const PAN_CLICK_GUARD_MS = 500;
-    let armed = false, dragging = false;
-    let px0 = 0, py0 = 0, tx0 = 0, ty0 = 0, pid = null;
-    let panClickToken = false, panClickTimer = null;
-
-    const clearPanClick = () => {
-      panClickToken = false;
-      if (panClickTimer !== null) { clearTimeout(panClickTimer); panClickTimer = null; }
-    };
-    const armPanClick = () => {
-      clearPanClick();
-      panClickToken = true;
-      /* Backstop for engines that emit no click at all — NOT the independence guard. */
-      panClickTimer = setTimeout(clearPanClick, PAN_CLICK_GUARD_MS);
-    };
-    /* ONLY A POINTER-ORIGIN CLICK CAN BE THE PAN'S OWN. Keyboard and programmatic
-       activation dispatch a click carrying no pointer type and a zero click count; those
-       must never be consumed, or a live token would silently eat an Enter press. */
-    const isPointerOriginClick = (ev) =>
-      (typeof ev.pointerType === 'string' && ev.pointerType !== '') || ev.detail > 0;
-
-    wrap.addEventListener('pointerdown', (ev) => {
-      /* ANY new pointer sequence is independent input, so a token left over from an
-         earlier pan is retired HERE rather than being allowed to reach this sequence's
-         click. This — not the timer — is what keeps the longer window from ever eating a
-         real activation. */
-      clearPanClick();
-      if (ev.target.closest('.hud, .legend, .caption')) return;
-      /* PRIMARY POINTER, PRIMARY BUTTON, ONE SEQUENCE AT A TIME. Middle-click,
-         right-click, the pen barrel and a second finger must stay entirely native —
-         they are how a reader opens a card in a new tab or reaches the context menu,
-         and a pan that armed on them would both scroll the canvas and leave a
-         native auxiliary activation running underneath it. A pointer arriving while
-         another sequence is live is ignored rather than overwriting it. */
-      if (!ev.isPrimary || ev.button !== 0) return;
-      if (armed || dragging) return;
-      armed = true; dragging = false; pid = ev.pointerId;
-      px0 = ev.clientX; py0 = ev.clientY; tx0 = tx; ty0 = ty;
+    window.addEventListener('resize', refitAtFit);
+    wrap.addEventListener('diagram-chrome-change', refitAtFit);
+    const zi=document.getElementById('zoomIn'), zo=document.getElementById('zoomOut'), zf=document.getElementById('zoomFit');
+    /* The view leaves Fit only when the reader moves it: a zoom at its limit changes nothing,
+       and a press that stays inside the pointer controller's tap slop is a tap. */
+    const zoomTo = (s) => { if (s === sc) return; sc = s; atFit = false; apply(); };
+    if (zi) zi.onclick=()=>zoomTo(Math.min(sc*1.2,4));
+    if (zo) zo.onclick=()=>zoomTo(Math.max(sc/1.2,fittedMinScale));
+    if (zf) zf.onclick=fit;
+    /* GESTURES through the design-system pointer controller (diagrams-pointer.js, checked at the
+       top of this file): one pointer pans from anywhere on the drawing, two pinch about their
+       centroid, a wheel zooms about the pointer. The canvas carries `touch-action: none`
+       (diagrams.css), so a touch gesture there moves the drawing, never the page. A press on the
+       HUD or the chrome block stays native, and a wheel over the chrome block scrolls an open
+       panel unless it is a trackpad pinch (ctrlKey). A moved gesture swallows its own click.
+       THE CARDS ARE NATIVE LINKS. The controller captures nothing until a press leaves its tap
+       slop, so a tap, a modified click, a middle click and keyboard activation all reach the
+       link natively; only a pan's or a pinch's own pointer click is swallowed, and a keyboard
+       or programmatic activation never is. */
+    const clampK = (k) => Math.max(fittedMinScale, Math.min(4, k));
+    window.DIAGRAM_POINTER.attach({
+      stage: wrap, exclude: '.hud, .legend, .caption, .diagram-info', wheelStep: 1.1, clampK,
+      getView: () => ({ k: sc, x: tx, y: ty }),
+      setView: (v) => {
+        /* A gesture that moves the view takes it off Fit; float noise from a still pinch does not. */
+        if (Math.abs(v.k - sc) > 1e-9 * sc || Math.abs(v.x - tx) > 1e-6 || Math.abs(v.y - ty) > 1e-6) atFit = false;
+        sc = v.k; tx = v.x; ty = v.y; apply();
+      },
+      zoomAt: (f, mx, my) => { const ns = clampK(sc*f); if (ns === sc) return; const k = ns/sc; tx = mx-(mx-tx)*k; ty = my-(my-ty)*k; sc = ns; atFit = false; apply(); }
     });
-
-    wrap.addEventListener('pointermove', (ev) => {
-      if (!armed || ev.pointerId !== pid) return;
-      const dx = ev.clientX - px0, dy = ev.clientY - py0;
-      if (!dragging) {
-        if (Math.abs(dx) < PAN_THRESHOLD_PX && Math.abs(dy) < PAN_THRESHOLD_PX) return;
-        dragging = true;
-        wrap.classList.add('dragging');
-        try { wrap.setPointerCapture(pid); } catch (err) { /* capture is best-effort */ }
-      }
-      tx = tx0 + dx; ty = ty0 + dy; apply();
-    });
-
-    /* SUPPRESSION BELONGS TO ONE COMPLETED PAN SEQUENCE, AND ONLY TO ONE THAT CAN
-       ACTUALLY PRODUCE A CLICK. A pan ended by pointerup synthesizes a click over the
-       card it started on, so exactly that click is suppressed. A pan cancelled, or one
-       whose capture is lost WHILE THE SEQUENCE IS STILL LIVE, produces no click —
-       arming suppression there would leave a flag with nothing to consume it, and the
-       next independent activation (pointer OR keyboard, both of which dispatch click)
-       would be eaten instead. The distinction is LIVENESS, NOT EVENT TYPE: the routine
-       lostpointercapture that FOLLOWS a resolved pointerup is only a release
-       notification — ordered before or after the associated click depending on the
-       engine — and must not be read as a cancellation. The bounded PAN_CLICK_GUARD_MS
-       expiry is the backstop for engines that emit no click at all; independence from
-       later input is carried by the new-pointer-sequence guard above, not by the timer. */
-    const endDrag = (ev) => {
-      /* FAIL CLOSED ON AN ALREADY-RESOLVED SEQUENCE. pointerup clears pid and then
-         releases capture; the resulting lostpointercapture is delivered asynchronously,
-         after the associated click in some engines and before it in others. Re-entering
-         cleanup on that expected notification would take the no-click branch below and
-         clear the suppression pointerup had just armed, releasing the pan's own click
-         onto the card the gesture started from. A notification arriving after the
-         sequence is over carries no state this handler still owns. */
-      if (pid === null) return;
-      if (ev && ev.pointerId !== pid) return;
-      const wasDragging = dragging;
-      const hadPid = pid;
-      /* Reset before releasing capture, so the release's own notification meets the
-         guard above instead of this handler's body. */
-      armed = false; dragging = false; pid = null;
-      wrap.classList.remove('dragging');
-      if (wasDragging && hadPid !== null) {
-        try { wrap.releasePointerCapture(hadPid); } catch (err) { /* already gone */ }
-      }
-      if (wasDragging && ev && ev.type === 'pointerup') {
-        armPanClick();                    /* the only end that synthesizes a click */
-      } else {
-        clearPanClick();                  /* cancel / LIVE capture loss: no click is coming */
-      }
-    };
-    wrap.addEventListener('pointerup', endDrag);
-    wrap.addEventListener('pointercancel', endDrag);
-    wrap.addEventListener('lostpointercapture', endDrag);
-
-    /* Capture phase, so the click is stopped before it reaches the anchor. */
-    wrap.addEventListener('click', (ev) => {
-      if (!panClickToken) return;
-      if (!isPointerOriginClick(ev)) return;   /* keyboard / programmatic activation passes through */
-      clearPanClick();                         /* consumed exactly once, by the pan's own click */
-      ev.preventDefault(); ev.stopPropagation();
-    }, true);
-    wrap.addEventListener('wheel', (ev) => { ev.preventDefault(); const r = wrap.getBoundingClientRect(), mx = ev.clientX - r.left, my = ev.clientY - r.top;
-      const ns = Math.max(fittedMinScale, Math.min(4, sc * (ev.deltaY > 0 ? 1 / 1.1 : 1.1))), k = ns / sc; tx = mx - (mx - tx) * k; ty = my - (my - ty) * k; sc = ns; apply(); }, { passive: false });
   }
 })();

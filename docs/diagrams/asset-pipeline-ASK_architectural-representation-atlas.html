@@ -12,6 +12,10 @@
 <!-- design-system-ASK foundations — local mirror (Tier 1 + Tier 2), no CDN. See _dsa-tokens/MANIFEST.md -->
 <link rel="stylesheet" href="./_dsa-tokens/colors_and_type.css">
 <link rel="stylesheet" href="diagrams.css">
+<!-- design-system-ASK disclosure grammar for the compact chrome triggers, from the local surface-module
+     mirror. surface-panel.css loads first, as surface-treatments.css requires. -->
+<link rel="stylesheet" href="./_dsa-surface/surface-panel.css">
+<link rel="stylesheet" href="./_dsa-surface/surface-treatments.css">
 <link rel="stylesheet" href="./_dsa-surface/surface-action.css">
 <style>
   /* ===== atlas-only presentational classes (scoped; no shared-file edits). Every property here is in
@@ -30,7 +34,7 @@
   /* The absent card carries no destination and must not read as interactive. */
   .atlas-card:not(.atlas-card-link) { cursor: inherit; }
   /* While a pan is committed the cursor is the canvas's, not the link's. */
-  .canvas-wrap.dragging .atlas-card-link { cursor: grabbing; }
+  .canvas-wrap.panning .atlas-card-link { cursor: grabbing; }
 
   .atlas-sil      { fill: none; stroke: var(--diagram-line); stroke-width: 1.2; }
   .atlas-sil-soft { fill: none; stroke: var(--diagram-line-soft); stroke-width: 1.1; }
@@ -40,8 +44,9 @@
                     fill: var(--diagram-ink); dominant-baseline: middle; letter-spacing: 0.005em; }
   .atlas-gov-em   { font-family: var(--font-sans); font-size: 13px; font-weight: 500;
                     fill: var(--diagram-ink); dominant-baseline: middle; letter-spacing: 0.005em; }
-  /* dense corner-to-corner content: widen the caption so its lines don't wrap into the region headers */
-  .caption { max-width: 470px; }
+  /* dense corner-to-corner content: widen the caption so its lines don't wrap into the region headers
+     (inside the responsive chrome block, whose wide layout otherwise sizes the caption at 360px) */
+  .diagram-info > .caption { flex-basis: auto; max-width: 470px; }
 </style>
 </head>
 <body>
@@ -54,6 +59,7 @@
       <div class="s">The distinct objects, axes, topologies, and states represented across asset-pipeline-ASK</div>
     </div>
     <div class="spacer"></div>
+    <div class="diagram-cue">orientation</div>
     <div class="stamp">
       <div><span class="k">source-v2</span> // <span class="k">render-v1</span></div>
       <div>2026-09-03</div>
@@ -70,6 +76,16 @@
     <div class="corner-tick bl"></div>
     <div class="corner-tick br"></div>
 
+    <div class="diagram-info" data-diagram-chrome>
+      <div class="diagram-info-triggers">
+        <button class="diagram-info-trigger surface-disclosure-trigger glass" type="button" aria-controls="diagramCaption" aria-expanded="true"><span class="surface-disclosure-label">About</span><span class="surface-disclosure-indicator" aria-hidden="true">&#9660;</span></button>
+      </div>
+      <div class="caption glass" id="diagramCaption">
+        <b>architecture deconfliction</b><br>
+        orientation — not another architecture model.
+      </div>
+    </div>
+
     <div class="hud glass">
       <button id="zoomOut" title="Zoom out">−</button>
       <div class="pct" id="zoomPct">100%</div>
@@ -77,13 +93,13 @@
       <button id="zoomFit" title="Fit">⤢</button>
     </div>
 
-    <div class="caption glass">
-      <b>architecture deconfliction</b><br>
-      orientation — not another architecture model.
-    </div>
   </div>
 </div>
 
+<!-- DS-owned responsive chrome — after the chrome markup, before the fit contract. Re-vendor byte-identical. -->
+<script src="diagrams-chrome.js"></script>
+<!-- DS-owned gesture controller — must load BEFORE the fit contract and the figure builder. Re-vendor byte-identical. -->
+<script src="diagrams-pointer.js"></script>
 <script src="diagrams-fit.js"></script>
 <script src="asset-pipeline-ASK_architectural-representation-atlas.figure.js"></script>
 <!-- DS embedded-font carrier — lets PNG export embed fonts with no server (file://).

@@ -116,7 +116,16 @@ body {
   position: relative; overflow: hidden;
   cursor: grab;
 }
+/* A canvas whose gestures the shared pointer controller owns (diagrams-pointer.js marks it,
+   and lays its own touch-action: none surface under the drawing and the panels): a finger on
+   the drawing or the empty canvas pans and pinches the drawing and never scrolls or zooms the
+   page. The panels laid over the canvas, and the header above it, keep the browser's own
+   touch behavior — their scrolling and the page's zoom. A page that has not loaded the
+   controller keeps the browser's touch behavior everywhere. */
+.canvas-wrap[data-diagram-pointer] > .stage { touch-action: none; }
+.canvas-wrap.panning,
 .canvas-wrap.dragging { cursor: grabbing; }
+.canvas-wrap.panning *,
 .canvas-wrap.dragging * { user-select: none; }
 
 .stage { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; }

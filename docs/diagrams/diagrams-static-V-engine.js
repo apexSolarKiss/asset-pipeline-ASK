@@ -39,6 +39,21 @@
   if (!window.DIAGRAM_FIT || typeof window.DIAGRAM_FIT.compute !== 'function') {
     throw new Error('Diagram fit support is missing. Load diagrams-fit.js before the diagram engine.');
   }
+  /* The Fit's v3 placement options (balance, compactClearance) are not read by an older
+     diagrams-fit.js, which would silently keep the old geometry. FAIL CLOSED instead. */
+  if (!(window.DIAGRAM_FIT.VERSION >= 3)) {
+    throw new Error('diagrams-fit.js is older than v3. Re-vendor it from design-system-ASK with this engine.');
+  }
+  /* The gesture carrier. diagrams-pointer.js is a generated mirror of patterns/_diagram-shared/,
+     copied alongside this engine and loaded BEFORE it; with it, touch pans and pinches the
+     drawing (see GESTURES below). A page that does not load it keeps the legacy mouse drag and
+     wheel and is told so in the console, so a page generated from an older shell still draws and
+     pans exactly as before. A copy older than v2 FAILS CLOSED: it cannot leave the panels laid
+     over the canvas native, so it would pan the drawing from a panel. */
+  const POINTER = window.DIAGRAM_POINTER || null;
+  if (POINTER && !(typeof POINTER.attach === 'function' && POINTER.VERSION >= 2)) {
+    throw new Error('diagrams-pointer.js is older than v2. Re-vendor it from design-system-ASK with this engine.');
+  }
   /* FAIL-CLOSED on the text-layout carrier, on the same terms as the fit carrier.
      The INTERFACE is checked, not merely the global: a stale mirror that predates a
      method would pass a truthiness test and then fail deep inside layout, where the
@@ -477,11 +492,15 @@
     /* Shared DS fit contract (diagrams-fit.js): reserves the measured caption/legend
        and HUD bands, then centres in the remainder. With no visible panels both bands
        are 0 and this is arithmetically identical to the previous formula. clearance is
-       TOTAL (the value formerly subtracted from the viewport), not per-side padding. */
+       TOTAL (the value formerly subtracted from the viewport), not per-side padding.
+       v3 options: `balance` centres the drawing vertically between the chrome above and
+       below it at the fitted scale, rather than on the whole canvas; `compactClearance`
+       is the smaller total clearance used while the responsive chrome is compact. */
     const fitResult = () => window.DIAGRAM_FIT.compute({
       wrap: canvasWrap,
       bounds: { minX: 0, minY: 0, maxX: width, maxY: height },
-      clearanceX: 80, clearanceY: 80, maxScale: 1.2, gutter: 26
+      clearanceX: 80, clearanceY: 80, maxScale: 1.2, gutter: 26,
+      balance: true, compactClearance: 32
     });
     function applyFit(f) {
       fittedMinScale = Math.min(BASE_MIN_SCALE, f.scale);
@@ -541,44 +560,82 @@
     document.getElementById('zoomOut').onclick = () => zoomTo(Math.max(scale / 1.2, fittedMinScale));
     document.getElementById('zoomFit').onclick = fit;
 
-    let dragging = false, sx0, sy0, tx0, ty0;
-    canvasWrap.addEventListener('pointerdown', (ev) => {
-      if (ev.target.closest('.hud, .legend, .caption, .diagram-info')) return;
-      dragging = true;
-      canvasWrap.classList.add('dragging');
-      canvasWrap.setPointerCapture(ev.pointerId);
-      sx0 = ev.clientX; sy0 = ev.clientY; tx0 = tx; ty0 = ty;
-    });
-    canvasWrap.addEventListener('pointermove', (ev) => {
-      if (!dragging) return;
-      const dx = ev.clientX - sx0, dy = ev.clientY - sy0;
-      if (!dx && !dy) return;
-      tx = tx0 + dx;
-      ty = ty0 + dy;
-      if (Math.abs(dx) >= DRAG_START || Math.abs(dy) >= DRAG_START) atFit = false;
-      apply();
-    });
-    canvasWrap.addEventListener('pointerup', () => {
-      dragging = false;
-      canvasWrap.classList.remove('dragging');
-    });
-    canvasWrap.addEventListener('wheel', (ev) => {
-      /* Over the chrome block a wheel scrolls an open panel and leaves the drawing alone; a
-         pinch (a wheel carrying ctrlKey) still zooms the drawing, never the page. */
-      if (!ev.ctrlKey && ev.target.closest('.diagram-info')) return;
-      ev.preventDefault();
-      const rect = canvasWrap.getBoundingClientRect();
-      const mx = ev.clientX - rect.left, my = ev.clientY - rect.top;
-      const factor = ev.deltaY > 0 ? 1 / 1.1 : 1.1;
-      const newScale = Math.max(fittedMinScale, Math.min(4, scale * factor));
-      if (newScale === scale) return;
-      const k = newScale / scale;
-      tx = mx - (mx - tx) * k;
-      ty = my - (my - ty) * k;
-      scale = newScale;
-      atFit = false;
-      apply();
-    }, { passive: false });
+    if (POINTER) {
+      /* GESTURES, through the shared DS pointer controller: one pointer pans from anywhere on the
+         drawing region, nodes included; two pinch about their centroid; a wheel zooms about the
+         pointer, one 1.1 step per event. The controller marks the canvas it owns, and diagrams.css
+         gives that canvas `touch-action: none`, so a touch gesture there moves the drawing, never
+         the page. A press that starts on a panel, the HUD or the chrome block stays native — the
+         panels keep their taps and their own scrolling — and a wheel over one scrolls it unless it
+         is a trackpad pinch (ctrlKey), which zooms the drawing. A press that stays inside the
+         controller's tap slop is a tap, and a moved gesture swallows its own click, so the view
+         leaves Fit only when the reader actually moves it. */
+      const clampK = (k) => Math.max(fittedMinScale, Math.min(4, k));
+      POINTER.attach({
+        stage: canvasWrap,
+        exclude: '.hud, .legend, .caption, .diagram-info',
+        wheelStep: 1.1,
+        clampK: clampK,
+        getView: () => ({ k: scale, x: tx, y: ty }),
+        setView: (v) => {
+          /* A gesture that moves the view takes it off Fit; float noise from a still pinch does not. */
+          if (Math.abs(v.k - scale) > 1e-9 * scale || Math.abs(v.x - tx) > 1e-6 || Math.abs(v.y - ty) > 1e-6) atFit = false;
+          scale = v.k; tx = v.x; ty = v.y; apply();
+        },
+        zoomAt: (f, mx, my) => {
+          const ns = clampK(scale * f);
+          if (ns === scale) return;
+          const k = ns / scale;
+          tx = mx - (mx - tx) * k;
+          ty = my - (my - ty) * k;
+          scale = ns;
+          atFit = false;
+          apply();
+        }
+      });
+    } else {
+      /* LEGACY PATH, for a page without the gesture carrier: the mouse drag and wheel this engine
+         has always had. Touch keeps the browser's own gestures there. */
+      if (window.console) console.warn('diagrams-static-V-engine.js: load diagrams-pointer.js (v2) before the engine for touch pan and pinch.');
+      let dragging = false, sx0, sy0, tx0, ty0;
+      canvasWrap.addEventListener('pointerdown', (ev) => {
+        if (ev.target.closest('.hud, .legend, .caption, .diagram-info')) return;
+        dragging = true;
+        canvasWrap.classList.add('dragging');
+        canvasWrap.setPointerCapture(ev.pointerId);
+        sx0 = ev.clientX; sy0 = ev.clientY; tx0 = tx; ty0 = ty;
+      });
+      canvasWrap.addEventListener('pointermove', (ev) => {
+        if (!dragging) return;
+        const dx = ev.clientX - sx0, dy = ev.clientY - sy0;
+        if (!dx && !dy) return;
+        tx = tx0 + dx;
+        ty = ty0 + dy;
+        if (Math.abs(dx) >= DRAG_START || Math.abs(dy) >= DRAG_START) atFit = false;
+        apply();
+      });
+      canvasWrap.addEventListener('pointerup', () => {
+        dragging = false;
+        canvasWrap.classList.remove('dragging');
+      });
+      canvasWrap.addEventListener('wheel', (ev) => {
+        /* Over the chrome block a wheel scrolls an open panel and leaves the drawing alone; a
+           pinch (a wheel carrying ctrlKey) still zooms the drawing, never the page. */
+        if (!ev.ctrlKey && ev.target.closest('.diagram-info')) return;
+        ev.preventDefault();
+        const rect = canvasWrap.getBoundingClientRect();
+        const mx = ev.clientX - rect.left, my = ev.clientY - rect.top;
+        const factor = ev.deltaY > 0 ? 1 / 1.1 : 1.1;
+        const newScale = Math.max(fittedMinScale, Math.min(4, scale * factor));
+        if (newScale === scale) return;
+        const k = newScale / scale;
+        tx = mx - (mx - tx) * k;
+        ty = my - (my - ty) * k;
+        scale = newScale;
+        atFit = false;
+        apply();
+      }, { passive: false });
+    }
   }
 
   /* Public entry. Gate the first measure/layout on web-font load so per-box
