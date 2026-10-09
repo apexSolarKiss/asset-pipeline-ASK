@@ -940,6 +940,8 @@ For Airtable prototype work, also read:
 
 Before schema setup, field-agent setup, attachment handling, record mutation, generation/capture, or cross-base operationalization, confirm which steps are connector-supported and which require Airtable UI / manual hybrid execution. This is a pointer rule — the limitations doc remains the refreshable source for current tool-layer constraints; do not duplicate them here.
 
+For brand-intake work that authors brand-facing image guidance, recurring production requirements, or the ask for one production, also read the intake output contracts listed in `docs/application/README.md` §Intake Output Contracts. This is a pointer rule — the contracts remain the source; do not duplicate them here.
+
 ## Inbound handoff intake (AP layer)
 
 The generic `-TBI` overlay, ingestion, resolution, and disposition mechanics
