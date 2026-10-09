@@ -295,11 +295,11 @@ PRODUCTION BRIEF
 
 ## Boundary cases
 
-[`brand-intake-artifact-contract-boundary-cases-v1.md`](brand-intake-artifact-contract-boundary-cases-v1.md) holds synthetic cases with expected placements. A reader places each case using this contract alone, without the companion; the placements are then compared with the expected ones. Because the expected placements are written down before the run, the cases can fail.
+[`brand-intake-artifact-contract-boundary-cases-v1.md`](brand-intake-artifact-contract-boundary-cases-v1.md) holds synthetic cases with expected placements. A reader places each case using this contract alone, without the companion; the placements are then compared with the expected ones. Because the expected placements are written down before the run, the cases can fail. The companion also defines the bounded composition-check procedure used for worked-artifact checks ([Checking a composed production ask](brand-intake-artifact-contract-boundary-cases-v1.md#checking-a-composed-production-ask)).
 
 ## Earned and held
 
-- **Pressured at proposal depth:** the companion cases, placed by independent readers of this contract; and one composition check, in which a fresh reader worked through one planned output using a worked artifact set and this contract alone. The run results are recorded with the change that introduces this contract, not here. The worked set is held outside the repo and cannot be inspected from it.
+- **Pressured at proposal depth:** the companion cases, placed in three isolated reader runs of this contract; and one composition check, in which a fresh reader worked through one planned output using this contract, a worked artifact set, and that set's accompanying evidence-and-authority record. The run results are recorded with the change that introduces this contract, not here. The worked set is held outside the repo and cannot be inspected from it.
 - **Not earned:** reuse with a second brand; any operational benefit; any carrier.
 - **Held:**
   - a carrier for any of this, and the form of the evidence-and-authority record, including the clause-level granularity Option F holds;

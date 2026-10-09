@@ -18,7 +18,7 @@ Application-layer grammars for generated-output substrates produced by applying 
 The authored outputs of brand intake: which artifact carries which statements, and how content is kept apart from evidence, authority and review. Application-layer contracts, not generated-output grammars, architecture front-door doctrine, schema or implementation.
 
 - [`brand-intake-artifact-contract-v1.md`](brand-intake-artifact-contract-v1.md): three output artifacts (brand image system, image-production profile, production brief) mapped onto the existing architecture as artifact roles, not layers; placement by what a statement governs and at what scope; content, evidence, authority and review presentation as separate concerns; one maintained source per artifact; per-artifact adoption; trial direction; skeletons
-- [`brand-intake-artifact-contract-boundary-cases-v1.md`](brand-intake-artifact-contract-boundary-cases-v1.md): synthetic boundary cases with expected placements, a run procedure and a negative control
+- [`brand-intake-artifact-contract-boundary-cases-v1.md`](brand-intake-artifact-contract-boundary-cases-v1.md): synthetic boundary cases with expected placements, a run procedure, a negative control, and the bounded composition-check procedure for worked-artifact checks
 
 ## Examples
 

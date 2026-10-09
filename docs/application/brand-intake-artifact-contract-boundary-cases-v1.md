@@ -6,7 +6,8 @@
 companion to brand-intake-artifact-contract-v1.md
 synthetic cases with expected placements, written before the run that tests them
 fictive brands only · invented content · no real-brand material
-not a validator · not a schema · not a scoring standard beyond these cases
+not a validator · not a schema · not a general scoring standard;
+the composition-check procedure below is bounded to worked-artifact checks
 self-superseding with the contract
 ```
 
@@ -24,7 +25,7 @@ self-superseding with the contract
    - retired.
 
    Where the case asks, the reader also states the authority effect.
-3. Compare the reader's placements with the expected ones. A case passes when every required limb lands where expected, nothing lands outside the expected or allowed destinations, and any stated authority effect matches.
+3. Compare the reader's placements with the expected ones. A case passes when every required limb lands where expected, nothing lands outside the expected or allowed destinations, and, where the case asks for an authority effect, the answer states one and it matches. Omitting a requested authority effect fails that case.
 4. **A failing case is evidence against the contract's clarity, or against the case, not against the reader.** Record it, and correct the contract or the case. Do not quietly re-run until it passes.
 
 The brands are fictive:
@@ -68,11 +69,12 @@ The brands are fictive:
 
 - **Visual grammar versus delivery requirements:** cases 1–4, 15, 18–21 and 24 (a set-level relationship stated with a number, against case 18's allocation).
 - **Instance facts versus recurring design vocabulary:** cases 5–7 and 23.
-- **Review notes kept out of content:** cases 8–9.
+- **Review requests kept out of normative content:** case 8.
+- **Evidence and certainty kept in the evidence-and-authority record:** case 9.
 - **Authorization unchanged after faithful relocation or rewording:** cases 10 and 28.
 - **No authority gained through clean rendering:** case 11.
 - **Format changes without image-system changes:** cases 3 and 15.
-- **Trial-scoped direction without automatic promotion:** cases 12–13.
+- **Placement of trial-scoped and bound production direction:** cases 12–13. The recorded 28-case run did not exercise their authority effects.
 - **Recurrence diagnosed, not promoted:** case 25.
 - **Use within scope versus a change of scope:** cases 26 and 27.
 - **A depiction target drawn from several sources, with no redundant authorization:** case 17.
