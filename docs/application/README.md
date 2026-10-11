@@ -20,6 +20,12 @@ The authored outputs of brand intake: which artifact carries which statements, a
 - [`brand-intake-artifact-contract-v1.md`](brand-intake-artifact-contract-v1.md): three output artifacts (brand image system, image-production profile, production brief) mapped onto the existing architecture as artifact roles, not layers; placement by what a statement governs and at what scope; content, evidence, authority and review presentation as separate concerns; one maintained source per artifact; per-artifact adoption; trial direction; skeletons
 - [`brand-intake-artifact-contract-boundary-cases-v1.md`](brand-intake-artifact-contract-boundary-cases-v1.md): synthetic boundary cases with expected placements, a run procedure, a negative control, and the bounded composition-check procedure for worked-artifact checks
 
+## Review-Artifact Rendering
+
+How an intake output is rendered for review: one semantic source plus its review record, sealed as one self-contained file with its review presentation. A maintained tool and its usage contract; the intake output contracts above stay the owners of content and authority.
+
+- [`review-artifact-rendering.md`](review-artifact-rendering.md): usage contract for `scripts/render_review_artifact.py`: inputs, placement of review marks, the conditions on which it fails closed, supported and unexercised compositions, and how a rendered artifact is verified
+
 ## Examples
 
 - [`examples/README.md`](examples/README.md): compact application example sets that pressure-test the discovery -> diagnosis -> redesign sequence against abstract workflow modes

@@ -942,6 +942,8 @@ Before schema setup, field-agent setup, attachment handling, record mutation, ge
 
 For brand-intake work that authors brand-facing image guidance, recurring production requirements, or the ask for one production, also read the intake output contracts listed in `docs/application/README.md` §Intake Output Contracts. This is a pointer rule — the contracts remain the source; do not duplicate them here.
 
+For work that renders such an artifact for review, also read `docs/application/review-artifact-rendering.md`. This is a pointer rule — the usage contract remains the source.
+
 ## Inbound handoff intake (AP layer)
 
 The generic `-TBI` overlay, ingestion, resolution, and disposition mechanics
