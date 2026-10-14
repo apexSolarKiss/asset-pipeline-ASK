@@ -1331,6 +1331,49 @@ def test_manifest_refuses_evidence_of_another_output_or_build(tmp_path):
         rra.manifest(out, checks, [str(report)], [])
 
 
+def bound_reports(tmp_path, page: str, build_sha: str, pin: str, failing: bool = True) -> tuple:
+    """An owner-check and a probe report, each bound to this output, its name and its build record, in the
+    shape the tools write, reduced to the fields the manifest reads. With failing, each records a failure: the
+    owner checker ran from a checkout whose tools/ is not the pin's, and the probe found page overflow."""
+    run = lambda scheme: {"scheme": scheme, "status": "pass", "governed": 1, "findings": [], "unmapped": []}
+    owner = {"tool": "owner-check", "out": "out.html", "out_sha256": sha(page), "build_sha256": build_sha,
+             "design_system": {"checkout_head": "c" * 40, "pin": pin, "tools_identical_to_pin": not failing},
+             "runs": [{"viewport": "1440x900", "exit": 0, "report": {"runs": [run("dark"), run("light")]}}],
+             "fails": [f"the checkout's tools/ is not the build's pinned commit {pin}: ['tools/check-role-conformance.mjs']"]
+             if failing else []}
+    view = {"pageOverflow": failing, "broken": 0, "deadLinks": 0, "tablesScrolling": 0}
+    probe = {"tool": "probe", "out": "out.html", "out_sha256": sha(page), "views": {"desktop_light": view},
+             "fails": ["desktop_light: page overflow, a wide element, a broken image or a dead link"] if failing else []}
+    paths = []
+    for name, rep in (("owner-check.json", owner), ("probe.json", probe)):
+        (tmp_path / name).write_text(json.dumps(rep), encoding="utf-8")
+        paths.append(tmp_path / name)
+    return tuple(paths)
+
+
+def verdict(text: str, label: str, path) -> str:
+    """The overall result the manifest gives a report: the word after its file name and hash."""
+    digest = hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    m = re.search(r"^- \*\*" + re.escape(label) + r":\*\* " + re.escape(Path(path).name) + " · `" + digest + r"`: (\w+);", text, re.M)
+    assert m, (label, text)
+    return m.group(1)
+
+
+def test_a_correctly_bound_failing_report_is_recorded_as_fail_not_refused(tmp_path):
+    page, build, _ = render()
+    out, checks, res = manifest_files(tmp_path, page, build)
+    owner, probe = bound_reports(tmp_path, page, res["build_sha256"], build["commit"])
+    text = rra.manifest(out, checks, [str(owner), str(probe)], [])
+    assert verdict(text, "Owner checker", owner) == "FAIL" and verdict(text, "Layout probe", probe) == "FAIL"
+    assert f"tools/ at the pin {build['commit'][:7]}: no (checkout ccccccc)" in text
+    # the primary check passed and is recorded as such; the failing reports stay failures beside it
+    assert "Renderer checks** (`check`): pass" in text
+    # control: the same reports without their failures are recorded as passes
+    owner, probe = bound_reports(tmp_path, page, res["build_sha256"], build["commit"], failing=False)
+    text = rra.manifest(out, checks, [str(owner), str(probe)], [])
+    assert verdict(text, "Owner checker", owner) == "pass" and verdict(text, "Layout probe", probe) == "pass"
+
+
 # ---------------------------------------------------------------- the command line
 
 def test_command_line_round_trip(tmp_path):
@@ -1389,6 +1432,28 @@ def test_command_line_round_trip(tmp_path):
     assert rra.main(["manifest", "--out", str(out), "--checks", str(checks),
                      "--manifest", str(tmp_path / "STALE.md")]) == 1
     assert not (tmp_path / "STALE.md").exists()
+
+
+def test_command_line_manifest_with_failing_reports_succeeds_and_records_fail(tmp_path):
+    # writing the record succeeds; it does not make either failing report a pass
+    page, build, _ = render()
+    out, checks, res = manifest_files(tmp_path, page, build)
+    owner, probe = bound_reports(tmp_path, page, res["build_sha256"], build["commit"])
+    record = tmp_path / "MANIFEST.md"
+    assert rra.main(["manifest", "--out", str(out), "--checks", str(checks), "--report", str(owner),
+                     "--report", str(probe), "--manifest", str(record)]) == 0
+    text = record.read_text(encoding="utf-8")
+    assert verdict(text, "Owner checker", owner) == "FAIL" and verdict(text, "Layout probe", probe) == "FAIL"
+    # a report bound to another build record, or to another design-system pin, is still refused, and
+    # nothing is written
+    bound = json.loads(owner.read_text(encoding="utf-8"))
+    for name, stale in (("build", dict(bound, build_sha256="0" * 64)),
+                        ("pin", dict(bound, design_system=dict(bound["design_system"], pin="b" * 40)))):
+        owner.write_text(json.dumps(stale), encoding="utf-8")
+        refused = tmp_path / f"REFUSED-{name}.md"
+        assert rra.main(["manifest", "--out", str(out), "--checks", str(checks), "--report", str(owner),
+                         "--manifest", str(refused)]) == 1, name
+        assert not refused.exists(), name
 
 
 @pytest.mark.skipif(shutil.which("node") is None, reason="node is needed to stand in for the owner checker")
@@ -1451,3 +1516,30 @@ def test_owner_check_is_bound_to_the_output_and_the_pinned_tools(tmp_path):
     res = rra.owner_check(out, str(ds))
     assert res["design_system"]["tools_identical_to_pin"] is False
     assert any("not the build's pinned commit" in f for f in res["fails"])
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node is needed to stand in for the owner checker")
+def test_owner_check_compares_tools_not_the_checkout_head(tmp_path):
+    # a checkout that has moved past the pin, with tools/ byte-identical to the pin's, passes
+    ds = tmp_path / "ds"
+    (ds / "tools").mkdir(parents=True)
+    run = '{"scheme":"%s","status":"pass","governed":1,"findings":[],"unmapped":[],"counts":{"doc-mark":0,"doc-passage-mark":0,"doc-annotation-note":0}}'
+    (ds / rra.OWNER_TOOL).write_text("console.log(JSON.stringify({tool:'check-role-conformance',pass:true,runs:["
+                                     + run % "dark" + "," + run % "light" + "]}));\n", encoding="utf-8")
+    git = ["git", "-C", str(ds), "-c", "user.email=t@example.com", "-c", "user.name=t"]
+    subprocess.run(["git", "init", "-q", str(ds)], check=True)
+    subprocess.run(git + ["add", "."], check=True)
+    subprocess.run(git + ["commit", "-qm", "pin"], check=True)
+    pin = subprocess.run(git + ["rev-parse", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
+    (ds / "notes.md").write_text("a later change outside tools/\n", encoding="utf-8")
+    subprocess.run(git + ["add", "notes.md"], check=True)
+    subprocess.run(git + ["commit", "-qm", "later"], check=True)
+    head = subprocess.run(git + ["rev-parse", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
+    assert head != pin
+    out = tmp_path / "out.html"
+    out.write_text("<!doctype html><title>x</title>", encoding="utf-8")
+    (tmp_path / "out.html.build.json").write_text(json.dumps({"commit": pin, "out_sha256": hashlib.sha256(out.read_bytes()).hexdigest()}),
+                                                  encoding="utf-8")
+    res = rra.owner_check(out, str(ds))
+    assert res["fails"] == []
+    assert res["design_system"] == {"checkout_head": head, "pin": pin, "tools_identical_to_pin": True}
