@@ -69,6 +69,10 @@ def ds_files() -> dict:
              rra.TEMPLATE: ("<html><head><style>\n    .artifact{}\n" + rra.TIER3_MARK + " */\n  </style></head></html>").encode()}
     files.update({f"fonts/{f}": b"stub-" + f.encode() for f in rra.FONTS})
     files.update({m: f"/* stand-in for {m} */\n".encode() for m in rra.REGISTER + rra.SEMANTIC})
+    # the selectors the renderer's preflight looks for in the owner files it seals
+    files["surface-treatments.css"] += b".surface-bordered-label {}\n.surface-labeled-range::before {}\n"
+    files["review-semantics.css"] += (b".doc-mark[data-review] { --surface-bordered-label-color: x; }\n"
+                                      b".doc-annotation-range:has(> .doc-annotations) {}\n")
     return files
 
 
@@ -196,7 +200,7 @@ def test_state_evidence_check_and_declined_items_render_in_the_owners_order():
     page, build, _ = render(record=rec)
     row = re.search(r'<strong>Light:</strong>.*?<div class="doc-annotations">(.*?)</div>', page, re.S).group(1)
     assert row.index('data-state="earned"') < row.index('data-evidence="supported"') < row.index('<span class="doc-label">Check</span>')
-    assert '<span class="doc-meta">Contrast · passed</span>' in row
+    assert '<span class="doc-meta">Contrast // passed</span>' in row
     assert 'data-review="declined">Declined</span><span class="doc-meta">the opening statement · studio lead · this test</span>' in page
     assert 'data-review="proposed">Correction requested</span>' in page
     assert check(page, build, record=rec)["fails"] == []
@@ -459,14 +463,14 @@ def test_check_detects_a_changed_header_or_a_missing_title():
 
 def test_check_detects_a_missing_annotation():
     page, build, _ = render()
-    gone = re.sub(r'<span class="doc-annotation-item"><span class="doc-mark doc-label" data-review="open">.*?</span></span>', "", page, count=1)
+    gone = re.sub(r'<span class="doc-annotation-item"><span class="doc-mark doc-label surface-bordered-label" data-review="open">.*?</span></span>', "", page, count=1)
     assert any("missing, changed or not at its scope" in f for f in check(gone, build)["fails"])
 
 
 def test_check_detects_items_out_of_order():
     page, build, _ = render()
     basis = '<span class="doc-annotation-item"><span class="doc-label">Basis</span><span class="doc-meta">our test design</span></span>'
-    accepted = ('<span class="doc-annotation-item"><span class="doc-mark doc-label" data-review="accepted">Accepted</span>'
+    accepted = ('<span class="doc-annotation-item"><span class="doc-mark doc-label surface-bordered-label" data-review="accepted">Accepted</span>'
                 '<span class="doc-meta">the registers in this plan · studio lead · this test only</span></span>')
     swapped = edit(page, basis + accepted, accepted + basis)
     assert any("owner's order" in f for f in check(swapped, build)["fails"])
@@ -474,7 +478,7 @@ def test_check_detects_items_out_of_order():
 
 def test_check_detects_an_item_moved_to_another_row():
     page, build, _ = render()
-    accepted = ('<span class="doc-annotation-item"><span class="doc-mark doc-label" data-review="accepted">Accepted</span>'
+    accepted = ('<span class="doc-annotation-item"><span class="doc-mark doc-label surface-bordered-label" data-review="accepted">Accepted</span>'
                 '<span class="doc-meta">the registers in this plan · studio lead · this test only</span></span>')
     moved = edit(page, accepted, "")
     moved = moved.replace("<strong>Light:</strong> warm inside, bright outside.</p>",
@@ -498,7 +502,7 @@ def test_check_detects_an_orphan_note_or_a_row_in_the_key():
     page, build, _ = render()
     orphan = edit(page, "<strong>Light:</strong> warm inside, bright outside.</p>",
                   '<strong>Light:</strong> warm inside, bright outside.</p><div class="doc-hierarchy doc-group doc-annotation-note" id="review-note-7"><div class="doc-annotations">'
-                  '<span class="doc-annotation-item"><span class="doc-mark doc-label" data-review="accepted">Accepted</span>'
+                  '<span class="doc-annotation-item"><span class="doc-mark doc-label surface-bordered-label" data-review="accepted">Accepted</span>'
                   '<span class="doc-meta">the whole plan · the reviewer · production</span></span></div></div>')
     fails = check(orphan, build)["fails"]
     assert any("no passage mark points to" in f for f in fails) and not any(f.startswith("structure") for f in fails), fails
@@ -630,29 +634,229 @@ def test_a_list_items_row_moved_to_an_identical_item_fails():
 
 
 def test_a_rows_scope_is_its_cell_or_its_block_not_both():
-    # the fixture's XX-1.3 row is for the lead paragraph and its whole list: inside the last item it is the item's
+    # the fixture's XX-1.3 row opens the range over the lead paragraph and its whole list: inside the last
+    # item it is the item's
     page, build, _ = render()
-    row = re.search(r'<div class="doc-annotations"><span class="doc-annotation-item"><span class="doc-mark doc-label" '
-                    r'data-review="open">.*?</div>', page).group(0)
+    row = re.search(r'<div class="doc-annotations"><span class="doc-annotation-item"><span class="doc-mark doc-label '
+                    r'surface-bordered-label" data-review="open">.*?</div>', page).group(0)
     last = '<li class="doc-body">the door color to show.</li>'
     moved = edit(edit(page, row, ""), last, '<li><p class="doc-body">the door color to show.</p>' + row + "</li>")
     fails = check(moved, build)["fails"]
     assert any("not at its scope" in f and "XX-1.3" in f for f in fails), fails
 
 
+TWO = ("# Sample guide\n\n## Plan\n\n<!-- XX-3.1 -->The first paragraph.\n\nThe second paragraph.\n\n"
+       "<!-- XX-3.2 -->A closing paragraph.\n")
+RANGE_OPEN = '<div class="doc-group doc-annotation-range surface-labeled-range">'
+
+
 def test_a_groups_row_outside_or_before_the_last_row_of_its_group_fails():
-    src = ("# Sample guide\n\n## Plan\n\n<!-- XX-3.1 -->The first paragraph.\n\nThe second paragraph.\n\n"
-           "<!-- XX-3.2 -->A closing paragraph.\n")
-    rec = twin_record("| XX-3.1 | whole | review | accepted | Accepted | both paragraphs · reviewer · this production |\n"
-                      '| XX-3.1 | "The second paragraph." | basis | | | our test design |\n')
-    page, build, _ = render(source=src, record=rec, cfg=plain_cfg())
-    assert placed(page, build, src, rec) == []
+    # a group of blocks with no review judgment keeps its row after the last block
+    rec = twin_record("| XX-3.1 | whole | basis | | | our test design |\n"
+                      '| XX-3.1 | "The second paragraph." | check | | Contrast | passed |\n')
+    page, build, _ = render(source=TWO, record=rec, cfg=plain_cfg())
+    assert placed(page, build, TWO, rec) == [] and RANGE_OPEN not in page
     group = re.search(r'<div class="doc-group">(.*?)</div>\s*<p class="doc-body">A closing', page, re.S).group(1)
     own, whole = re.findall(r'<div class="doc-annotations">.*?</span></span></div>', group)
     swapped = edit(page, own + whole, whole + own)
-    assert any("out of the composition's order" in f for f in placed(swapped, build, src, rec))
+    assert any("out of the composition's order" in f for f in placed(swapped, build, TWO, rec))
     outside = edit(page, whole + "</div>", "</div>" + whole)
-    assert any("not at its scope" in f for f in placed(outside, build, src, rec))
+    assert any("not at its scope" in f for f in placed(outside, build, TWO, rec))
+
+
+def test_a_ranges_row_must_open_it_from_inside():
+    rec = twin_record("| XX-3.1 | whole | basis | | | our test design |\n"
+                      "| XX-3.1 | whole | review | accepted | Accepted | both paragraphs · reviewer · this production |\n"
+                      '| XX-3.1 | "The second paragraph." | basis | | | our test design |\n')
+    page, build, _ = render(source=TWO, record=rec, cfg=plain_cfg())
+    assert placed(page, build, TWO, rec) == []
+    body = re.search(re.escape(RANGE_OPEN) + r'(.*?)</div>\s*<p class="doc-body">A closing', page, re.S).group(1)
+    head, own = re.findall(r'<div class="doc-annotations">.*?</span></span></div>', body)
+    # the range opens on its row, the review item first; the inner block's row keeps the owner's order
+    assert body.startswith(head) and head.index('data-review="accepted"') < head.index("Basis")
+    last = edit(page, head + '<p class="doc-body">The first', '<p class="doc-body">The first').replace(own, own + head, 1)
+    fails = placed(last, build, TWO, rec)
+    assert any("does not open with its row" in f for f in fails) and any("not at its scope" in f for f in fails), fails
+    outside = edit(page, head + '<p class="doc-body">The first', '<p class="doc-body">The first').replace(
+        own + "</div>", own + "</div>" + head, 1)
+    assert any("not at its scope" in f for f in placed(outside, build, TWO, rec))
+    basis_first = edit(page, head, re.sub(r'(<span class="doc-annotation-item">.*?</span></span>)(<span class="doc-annotation-item">.*?</span></span>)',
+                                          r"\2\1", head, count=1))
+    assert any("owner's order" in f for f in placed(basis_first, build, TWO, rec))
+
+
+def test_a_judgment_on_several_blocks_or_a_whole_list_opens_a_range_and_a_single_block_does_not():
+    page, _, r = render()
+    # the fixture's XX-1.3 covers a paragraph and its list; XX-2.1 judges one table, so its row follows it
+    assert page.count(RANGE_OPEN) == 1
+    assert {a["key"]: a["anchor"] for a in r.applied if a["key"] in ("XX-1.3", "XX-2.1")} == {"XX-1.3": "range", "XX-2.1": "blocks"}
+    src = "# Sample guide\n\n## Points\n\n- <!-- XX-5.1 -->show the floor finish;\n- show the door.\n\n<!-- XX-5.2 -->One paragraph.\n"
+    rec = twin_record("| XX-5.1 | whole | review | proposed | Proposed | |\n"
+                      "| XX-5.2 | whole | review | accepted | Accepted | this paragraph · reviewer · this production |\n")
+    page, build, r = render(source=src, record=rec, cfg=plain_cfg())
+    assert placed(page, build, src, rec) == []
+    assert page.count(RANGE_OPEN) == 1 and page.index(RANGE_OPEN) < page.index("show the floor finish") < page.index("One paragraph")
+    assert {a["key"]: a["anchor"] for a in r.applied} == {"XX-5.1": "range", "XX-5.2": "blocks"}
+
+
+def test_notes_on_words_inside_a_range_follow_it():
+    src = "# Sample guide\n\n## Points\n\n<!-- XX-6.1 -->Keep two props or fewer.\n- show the floor finish;\n- show the door.\n"
+    rec = twin_record("| XX-6.1 | whole | review | accepted | Accepted | the list · reviewer · this production |\n"
+                      '| XX-6.1 | "two props" | review | proposed | Proposed | |\n'
+                      '| XX-6.1 | "the door" | review | open | Open question | reviewer |\n')
+    page, build, _ = render(source=src, record=rec, cfg=plain_cfg())
+    assert placed(page, build, src, rec) == []
+    rng = re.search(re.escape(RANGE_OPEN) + r".*?</ul></div></div>", page, re.S).group(0)
+    assert "doc-annotation-note" not in rng and rng.count("doc-passage-mark") == 2
+    after = page[page.index(rng) + len(rng):]
+    assert re.findall(r'doc-annotation-note" id="(review-note-\d)"', after) == ["review-note-1", "review-note-2"]
+    note = re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note" id="review-note-2">.*?</div></div>', page).group(0)
+    item = re.search(r'<li class="doc-body">show <mark[^>]*>the door</mark>\.</li>', page).group(0)
+    back = edit(edit(page, note, ""), item, item.replace('<li class="doc-body">', '<li><p class="doc-body">').replace("</li>", "</p>" + note + "</li>"))
+    fails = placed(back, build, src, rec)
+    assert any("a review mark inside an annotation range outside the row that opens it" in f for f in fails), fails
+    assert any("not after its block" in f for f in fails), fails
+    # at the range's end but inside it, a note is not after the range
+    first = re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note" id="review-note-1">.*?</div></div>', page).group(0)
+    inside = edit(page, rng + "\n      " + first, rng[:-len("</div>")] + first + "</div>\n      ")
+    fails = placed(inside, build, src, rec)
+    assert any("an annotation note inside an annotation range" in f for f in fails), fails
+    assert any("not after its block" in f for f in fails), fails
+
+
+def test_a_second_review_judgment_inside_a_range_is_refused():
+    base = "| XX-3.1 | whole | review | accepted | Accepted | both paragraphs · reviewer · this production |\n"
+    for extra, why in (('| XX-3.1 | "The second paragraph." | review | accepted | Accepted | the second paragraph · reviewer · this production |\n',
+                        "inside the blocks its annotation range covers"),
+                       ("| XX-3.1 | whole | review | proposed | Proposed | |\n", "range carries one judgment")):
+        with pytest.raises(rra.RecordError, match=why):
+            render(source=TWO, record=twin_record(base + extra), cfg=plain_cfg())
+    src = "# Sample guide\n\n## Points\n\n- <!-- XX-5.1 -->show the floor finish;\n- show the door.\n"
+    rec = twin_record('| XX-5.1 | whole | review | proposed | Proposed | |\n'
+                      '| XX-5.1 | "show the door." | review | accepted | Accepted | this item · reviewer · this production |\n')
+    with pytest.raises(rra.RecordError, match="inside the blocks its annotation range covers"):
+        render(source=src, record=rec, cfg=plain_cfg())
+
+
+def test_a_moved_extended_or_shortened_range_fails():
+    rec = twin_record("| XX-3.1 | whole | review | accepted | Accepted | both paragraphs · reviewer · this production |\n")
+    page, build, _ = render(source=TWO, record=rec, cfg=plain_cfg())
+    assert placed(page, build, TWO, rec) == []
+    head = re.search(re.escape(RANGE_OPEN) + r'(<div class="doc-annotations">.*?</div>)', page).group(1)
+    p1, p2 = '<p class="doc-body">The first paragraph.</p>', '<p class="doc-body">The second paragraph.</p>'
+    p3 = '<p class="doc-body">A closing paragraph.</p>'
+    whole = RANGE_OPEN + head + p1 + p2 + "</div>\n      " + p3
+    for name, changed in (("shortened", RANGE_OPEN + head + p1 + "</div>" + p2 + "\n      " + p3),
+                          ("extended", RANGE_OPEN + head + p1 + p2 + "\n      " + p3 + "</div>"),
+                          ("moved", p1 + RANGE_OPEN + head + p2 + "\n      " + p3 + "</div>")):
+        fails = placed(edit(page, whole, changed), build, TWO, rec)
+        assert any("not at its scope" in f and "XX-3.1" in f for f in fails), (name, fails)
+
+
+def test_a_range_is_never_nested_or_inside_a_group():
+    page, build, _ = render()
+    start = page.index(RANGE_OPEN)
+    end = page.index("</section>", start)
+    rng = page[start:end].rstrip()
+    for name, changed in (("nested", RANGE_OPEN + rng + "</div>"), ("in a group", '<div class="doc-group">' + rng + "</div>")):
+        fails = check(page.replace(rng, changed, 1), build)["fails"]
+        assert any(f.startswith("structure") for f in fails), (name, fails)
+
+
+def test_a_range_replaced_by_a_plain_group_fails():
+    # the same blocks in a plain group draw no scope rail: placement names the range, not only its extent
+    for source, record, cfg in ((SOURCE, RECORD, config()),
+                                (TWO, twin_record("| XX-3.1 | whole | review | accepted | Accepted | both paragraphs · reviewer · this production |\n"), plain_cfg())):
+        page, build, _ = render(source=source, record=record, cfg=cfg)
+        fails = check(edit(page, RANGE_OPEN, '<div class="doc-group">'), build, cfg=cfg, source=source, record=record)["fails"]
+        assert any("not at its scope" in f for f in fails), fails
+
+
+def test_a_ranges_element_is_exactly_the_owners():
+    page, build, _ = render()
+    for changed in (RANGE_OPEN.replace('">', '" aria-hidden="true">'), RANGE_OPEN.replace('">', '" id="r1">'),
+                    RANGE_OPEN.replace('">', '" title="x">'), RANGE_OPEN + "Accepted: "):
+        fails = check(edit(page, RANGE_OPEN, changed), build)["fails"]
+        assert any(f.startswith("structure") for f in fails), (changed, fails)
+
+
+def test_an_opening_rows_items_follow_the_review_item_in_the_owners_order():
+    rec = twin_record("| XX-3.1 | whole | check | | Contrast | passed |\n| XX-3.1 | whole | evidence | supported | Supported | the plan |\n"
+                      "| XX-3.1 | whole | basis | | | our test design |\n| XX-3.1 | whole | state | earned | Earned | two passes |\n"
+                      "| XX-3.1 | whole | review | accepted | Accepted | both paragraphs · reviewer · this production |\n")
+    page, build, _ = render(source=TWO, record=rec, cfg=plain_cfg())
+    assert placed(page, build, TWO, rec) == []
+    head = re.search(re.escape(RANGE_OPEN) + r'(<div class="doc-annotations">.*?</div>)', page).group(1)
+    order = [head.index(x) for x in ('data-review="accepted"', 'data-state="earned"', ">Basis<", 'data-evidence="supported"', ">Check<")]
+    assert order == sorted(order), order
+    state = re.search(r'<span class="doc-annotation-item"><span class="doc-mark doc-label" data-state="earned">.*?</span></span>', head).group(0)
+    evidence = re.search(r'<span class="doc-annotation-item"><span class="doc-mark doc-label" data-evidence="supported">.*?</span></span>', head).group(0)
+    swapped = edit(page, head, head.replace(state, "\0").replace(evidence, state).replace("\0", evidence))
+    assert any("owner's order" in f for f in placed(swapped, build, TWO, rec))
+
+
+def test_a_ranges_statements_and_figures_stay_inside_it():
+    rec = twin_record("| XX-3.1 | whole | review | accepted | Accepted | both paragraphs · reviewer · this production |\n"
+                      "| XX-3.1 | whole | statement | | | Applies to both paragraphs. |\n")
+    page, build, _ = render(source=TWO, record=rec, cfg=plain_cfg())
+    assert placed(page, build, TWO, rec) == []
+    stm = '<p class="doc-meta review-statement">Applies to both paragraphs.</p>'
+    assert stm + "</div>" in page and page.index(RANGE_OPEN) < page.index(stm)
+    out = edit(page, stm + "</div>", "</div>" + stm)
+    assert any("statement missing or not at its scope" in f for f in placed(out, build, TWO, rec))
+    src = TWO.replace("The second paragraph.", "The second paragraph, as `F101` shows.")
+    cfg = config(exclusions=[])
+    page, build, _ = render(source=src, record=rec, cfg=cfg)
+    assert check(page, build, cfg=cfg, source=src, record=rec)["fails"] == []
+    grid = re.search(r'<div class="review-figures">.*?</div>', page).group(0)
+    assert grid + "</div>" in page
+    out = edit(page, grid + "</div>", "</div>" + grid)
+    fails = check(out, build, cfg=cfg, source=src, record=rec)["fails"]
+    assert any("not after the block that first references them" in f for f in fails), fails
+
+
+def test_review_marks_carry_the_shared_bordered_label_and_other_marks_do_not():
+    rec = edit(RECORD, "| basis | Basis | Where a marked statement comes from. | always |\n",
+               "| basis | Basis | Where a marked statement comes from. | always |\n"
+               "| evidence:supported | Supported | The evidence named beside it supports the statement. | used |\n"
+               "| state:earned | Earned | Established by the work named beside it. | used |\n")
+    rec = edit(rec, "| XX-1.3 | whole |", "| XX-1.1 | whole | evidence | supported | Supported | the input photographs |\n"
+               "| XX-1.1 | whole | state | earned | Earned | two test passes |\n| XX-1.3 | whole |")
+    page, build, _ = render(record=rec)
+    marks = re.findall(r'<span class="([^"]*)" data-(review|evidence|state)="', page)
+    assert {c for c, f in marks if f == "review"} == {"doc-mark doc-label surface-bordered-label"}
+    assert {c for c, f in marks if f != "review"} == {"doc-mark doc-label"} and {f for _c, f in marks} == {"review", "evidence", "state"}
+    key = re.search(r'id="marks">(.*?)</section>', page, re.S).group(1)
+    assert 'class="doc-mark doc-label surface-bordered-label" data-review="open"' in key and 'class="doc-mark doc-label" data-state="earned"' in key
+    assert check(page, build, record=rec)["fails"] == []
+    # a review mark without the shared label is not the owner's (the missing-class control), nor an evidence mark with it
+    bare = edit(page, 'class="doc-mark doc-label surface-bordered-label" data-review="open">Open question</span><span class="doc-meta">the points',
+                'class="doc-mark doc-label" data-review="open">Open question</span><span class="doc-meta">the points')
+    assert any(f.startswith("structure: not the grammar's <span>") for f in check(bare, build, record=rec)["fails"])
+    boxed = edit(page, 'class="doc-mark doc-label" data-evidence="supported">Supported</span><span class="doc-meta">',
+                 'class="doc-mark doc-label surface-bordered-label" data-evidence="supported">Supported</span><span class="doc-meta">')
+    assert any(f.startswith("structure: not the grammar's <span>") for f in check(boxed, build, record=rec)["fails"])
+    extra = edit(page, 'class="doc-mark doc-label surface-bordered-label" data-review="open">Open question</span><span class="doc-meta">the points',
+                 'class="doc-mark doc-label surface-bordered-label surface-labeled-range" data-review="open">Open question</span><span class="doc-meta">the points')
+    assert any(f.startswith("structure: not the grammar's <span>") for f in check(extra, build, record=rec)["fails"])
+
+
+@pytest.mark.parametrize("module,line", [
+    ("surface-treatments.css", b".surface-bordered-label {}\n"),
+    ("surface-treatments.css", b".surface-labeled-range::before {}\n"),
+    ("review-semantics.css", b".doc-mark[data-review] { --surface-bordered-label-color: x; }\n"),
+    ("review-semantics.css", b".doc-annotation-range:has(> .doc-annotations) {}\n")])
+def test_render_refuses_a_donor_without_the_bordered_label_and_the_range(module, line):
+    cfg = config()
+    src = rra.parse_source(SOURCE, cfg)
+    glosses, rows = rra.parse_record(RECORD, cfg["record_section"])
+    files = ds_files()
+    # a donor missing one rule the markup needs, as before design-system-ASK #183; a look-alike does not stand in
+    assert line in files[module]
+    files[module] = files[module].replace(line, b"/* " + line.strip() + b" */\n.surface-bordered-label--other {}\n")
+    r = rra.Renderer(src, glosses, rows, "XX", cfg, lambda rel: files[rel], "a" * 40, "2026-01-01", lambda fid: PAYLOADS[fid])
+    with pytest.raises(rra.RecordError, match=f"{module} at design-system commit aaaaaaa lacks .*#183"):
+        r.render("2026-01-01T00:00:00+00:00")
 
 
 def test_a_row_moved_across_a_section_boundary_fails():
@@ -725,10 +929,10 @@ GRAMMAR_CASES = [
     ("hidden attribute", lambda p: p.replace('<div class="doc-annotations"><span class="doc-annotation-item"><span class="doc-label">Basis',
                                              '<div class="doc-annotations" hidden><span class="doc-annotation-item"><span class="doc-label">Basis', 1), "structure"),
     ("row between the list's last item and its end", lambda p: edit(edit(p, re.search(
-        r'<div class="doc-annotations"><span class="doc-annotation-item"><span class="doc-mark doc-label" data-review="open">.*?</div>', p).group(0), ""),
+        r'<div class="doc-annotations"><span class="doc-annotation-item"><span class="doc-mark doc-label surface-bordered-label" data-review="open">.*?</div>', p).group(0), ""),
         '<li class="doc-body">the door color to show.</li></ul>',
         '<li class="doc-body">the door color to show.</li>' + re.search(
-        r'<div class="doc-annotations"><span class="doc-annotation-item"><span class="doc-mark doc-label" data-review="open">.*?</div>', p).group(0) + "</ul>"), "structure"),
+        r'<div class="doc-annotations"><span class="doc-annotation-item"><span class="doc-mark doc-label surface-bordered-label" data-review="open">.*?</div>', p).group(0) + "</ul>"), "structure"),
     ("row inside a table after its body", lambda p: edit(p, "</tbody></table></div>" + _row(p), "</tbody>" + _row(p) + "</table></div>"), "structure"),
     ("repeated attribute", lambda p: p.replace('data-review="accepted">Accepted</span><span class="doc-meta">the registers',
                                                'data-review="declined" data-review="accepted">Accepted</span><span class="doc-meta">the registers', 1), "repeats an attribute"),
@@ -751,8 +955,8 @@ GRAMMAR_CASES = [
     ("end tag with a space before its name", lambda p: p.replace('two props or fewer</mark>', 'two props or fewer</ mark>', 1), "not written as the renderer writes it"),
     ("end tag with a space after its name", lambda p: p.replace('two props or fewer</mark>', 'two props or fewer</mark >', 1), "not written as the renderer writes it"),
     ("no doctype", lambda p: p.replace("<!doctype html>\n", "", 1), "quirks mode"),
-    ("class split on a non-ASCII space", lambda p: edit(p, 'class="doc-mark doc-label" data-review="open">Open question</span><span class="doc-meta">the points',
-                                                        'class="doc-mark\u00a0doc-label" data-review="open">Open question</span><span class="doc-meta">the points'), "structure"),
+    ("class split on a non-ASCII space", lambda p: edit(p, 'class="doc-mark doc-label surface-bordered-label" data-review="open">Open question</span><span class="doc-meta">the points',
+                                                        'class="doc-mark doc-label\u00a0surface-bordered-label" data-review="open">Open question</span><span class="doc-meta">the points'), "structure"),
     ("a control character", lambda p: edit(p, LIGHT, LIGHT.replace("warm inside", "warm\u001dinside")), "invisible"),
     ("four-figure modifier on three figures", lambda p: p.replace('<div class="review-figures">', '<div class="review-figures review-figures--four">', 1), "structure"),
     ("a header term with extra colons", lambda p: p.replace('<dt class="doc-label">Version:</dt>', '<dt class="doc-label">Version:::</dt>', 1), "header differs"),
@@ -833,7 +1037,7 @@ def test_a_check_on_a_passage_names_its_words():
                "| basis | Basis | Where a marked statement comes from. | always |\n| check | Check | A check and its result. | used |\n")
     rec = edit(rec, "| XX-1.3 | whole |", '| XX-1.1 | "warm inside" | check | | Contrast | passed |\n| XX-1.3 | whole |')
     page, build, _ = render(record=rec)
-    assert '<span class="doc-meta">on “warm inside” · Contrast · passed</span>' in page
+    assert '<span class="doc-meta">on “warm inside” · Contrast // passed</span>' in page
     assert check(page, build, record=rec)["fails"] == []
 
 
@@ -1114,7 +1318,7 @@ def test_a_figure_grid_moved_under_another_block_fails():
 def test_owner_check_refuses_a_stale_build_record_and_an_extra_tool(tmp_path):
     ds = tmp_path / "ds"
     (ds / "tools").mkdir(parents=True)
-    run = '{"scheme":"%s","status":"pass","governed":1,"findings":[],"unmapped":[],"counts":{"doc-mark":0,"doc-passage-mark":0,"doc-annotation-note":0}}'
+    run = '{"scheme":"%s","status":"pass","governed":1,"findings":[],"unmapped":[],"counts":{}}'
     (ds / rra.OWNER_TOOL).write_text("console.log(JSON.stringify({tool:'check-role-conformance',pass:true,runs:["
                                      + run % "dark" + "," + run % "light" + "]}));\n", encoding="utf-8")
     git = ["git", "-C", str(ds), "-c", "user.email=t@example.com", "-c", "user.name=t"]
@@ -1460,7 +1664,7 @@ def test_command_line_manifest_with_failing_reports_succeeds_and_records_fail(tm
 def test_owner_check_is_bound_to_the_output_and_the_pinned_tools(tmp_path):
     ds = tmp_path / "ds"
     (ds / "tools").mkdir(parents=True)
-    run = '{"scheme":"%s","status":"pass","governed":1,"findings":[],"unmapped":[],"counts":{"doc-mark":0,"doc-passage-mark":0,"doc-annotation-note":0}}'
+    run = '{"scheme":"%s","status":"pass","governed":1,"findings":[],"unmapped":[],"counts":{}}'
     (ds / rra.OWNER_TOOL).write_text("console.log(JSON.stringify({tool:'check-role-conformance',pass:true,runs:["
                                      + run % "dark" + "," + run % "light" + "]}));\n", encoding="utf-8")
     git = ["git", "-C", str(ds), "-c", "user.email=t@example.com", "-c", "user.name=t"]
@@ -1519,11 +1723,49 @@ def test_owner_check_is_bound_to_the_output_and_the_pinned_tools(tmp_path):
 
 
 @pytest.mark.skipif(shutil.which("node") is None, reason="node is needed to stand in for the owner checker")
+def test_owner_check_compares_the_populations_the_owner_counts(tmp_path):
+    ds = tmp_path / "ds"
+    (ds / "tools").mkdir(parents=True)
+    git = ["git", "-C", str(ds), "-c", "user.email=t@example.com", "-c", "user.name=t"]
+    subprocess.run(["git", "init", "-q", str(ds)], check=True)
+    out = tmp_path / "out.html"
+    out.write_text('<!doctype html><title>x</title><div class="doc-group doc-annotation-range surface-labeled-range">'
+                   '<div class="doc-annotations"><span class="doc-mark doc-label surface-bordered-label" data-review="open">'
+                   'Open question</span></div></div>', encoding="utf-8")
+
+    def fails_with(counts, **run):
+        runs = [dict({"scheme": s, "status": "pass", "governed": 1, "findings": [], "unmapped": []},
+                     **({} if counts is None else {"counts": counts}), **run) for s in ("dark", "light")]
+        (ds / rra.OWNER_TOOL).write_text("console.log(JSON.stringify(" + json.dumps({"pass": True, "runs": runs}) + "));\n",
+                                         encoding="utf-8")
+        subprocess.run(git + ["add", "."], check=True)
+        subprocess.run(git + ["commit", "-q", "--allow-empty", "-m", "variant"], check=True)
+        pin = subprocess.run(git + ["rev-parse", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
+        (tmp_path / "out.html.build.json").write_text(json.dumps({"commit": pin, "out_sha256": hashlib.sha256(out.read_bytes()).hexdigest()}),
+                                                      encoding="utf-8")
+        return rra.owner_check(out, str(ds))["fails"]
+
+    # the owner counts every mark, the bordered review mark included, and reports only what it found: this file has
+    # no passage mark or note, so their absent counts are zero
+    assert fails_with({"doc-mark": 1, "doc-annotation-range": 1}) == []
+    # a population the file holds missing from the report, a wrong count, or no counts at all, is not a pass
+    for counts in ({"doc-mark": 1}, {"doc-annotation-range": 1}, {"doc-mark": 2, "doc-annotation-range": 1}, None):
+        assert any("light and dark" in f for f in fails_with(counts)), counts
+    # whatever the counts, a run that did not pass or left text unmapped is not a pass
+    for run in ({"status": "fail"}, {"unmapped": [{"text": "x"}]}):
+        assert any("light and dark" in f for f in fails_with({"doc-mark": 1, "doc-annotation-range": 1}, **run)), run
+    # a file with nothing to count: an empty count list passes, a run that reports no counts at all does not
+    out.write_text("<!doctype html><title>x</title>", encoding="utf-8")
+    assert fails_with({}) == []
+    assert any("light and dark" in f for f in fails_with(None))
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node is needed to stand in for the owner checker")
 def test_owner_check_compares_tools_not_the_checkout_head(tmp_path):
     # a checkout that has moved past the pin, with tools/ byte-identical to the pin's, passes
     ds = tmp_path / "ds"
     (ds / "tools").mkdir(parents=True)
-    run = '{"scheme":"%s","status":"pass","governed":1,"findings":[],"unmapped":[],"counts":{"doc-mark":0,"doc-passage-mark":0,"doc-annotation-note":0}}'
+    run = '{"scheme":"%s","status":"pass","governed":1,"findings":[],"unmapped":[],"counts":{}}'
     (ds / rra.OWNER_TOOL).write_text("console.log(JSON.stringify({tool:'check-role-conformance',pass:true,runs:["
                                      + run % "dark" + "," + run % "light" + "]}));\n", encoding="utf-8")
     git = ["git", "-C", str(ds), "-c", "user.email=t@example.com", "-c", "user.name=t"]
