@@ -93,6 +93,8 @@ WORDS = {
                                              "held", "external", "proposed", "neutral")},
 }
 PENDING = ("proposed", "open")
+# The review roles whose exact words take a passage mark, pending or decided; No decision recorded marks no words.
+MARKED = PENDING + ("accepted", "declined")
 # Fields a shown decision carries, split on " · ": what, who, scope (an open
 # question: what, who decides). For a passage the quoted words stand for "what".
 MIN_FIELDS = {"accepted": 3, "declined": 3, "none": 2, "open": 2}
@@ -106,17 +108,23 @@ SEP = " · "
 CHECK_JOIN = " // "
 REVIEW_MARK = ("doc-mark", "doc-label", "surface-bordered-label")
 RANGE = ("doc-group", "doc-annotation-range", "surface-labeled-range")
+# one whole list item that no range holds is itself the range of the one judgment on it
+ITEM_RANGE = ("doc-annotation-range", "surface-labeled-range")
+PASSAGE_MARK = ("doc-passage-mark", "surface-scope-underline")
 # 'Applies to' naming a run of whole blocks by the exact words that open its first block and close its last
 BLOCK_RUN = re.compile('"([^"]+)" \u2026 "([^"]+)"')
 # 'Applies to' for a further judgment on the blocks another judgment's range covers: shown as a prompt just
 # before that range, its words naming what it asks of them
 PROMPT = "prompt: "
-# What the emitted markup needs from the owner files it seals: the shared bordered label on review marks and
-# the annotation range, which design-system-ASK first carries together at #183. A compatibility preflight on
-# the owner's source, not proof that the sealed file conforms; the owner's checker and the rendered proof are.
-NEEDS = {"surface-treatments.css": (r"^\.surface-bordered-label\s*[,{]", r"^\.surface-labeled-range::before\s*\{"),
+# What the emitted markup needs from the owner files it seals: the shared bordered label on review marks, the
+# annotation range, the whole list item that is its own range and the scope underline under a passage mark's
+# words, which design-system-ASK first carries together at #185. A compatibility preflight on the owner's source,
+# not proof that the sealed file conforms; the owner's checker and the rendered proof are.
+NEEDS = {"surface-treatments.css": (r"^\.surface-bordered-label\s*[,{]", r"^\.surface-labeled-range::before\s*\{",
+                                    r"^li\.surface-labeled-range::before\s*\{", r"^\.surface-scope-underline\s*\{"),
          "review-semantics.css": (r"^\.doc-mark\[data-review\]\s*\{[^}]*--surface-bordered-label-color\s*:",
-                                  r"^\.doc-annotation-range:has\(")}
+                                  r"^\.doc-annotation-range:has\(",
+                                  r"^mark\.doc-passage-mark\s*\{[^}]*--surface-scope-underline-color\s*:")}
 
 LOCAL_CSS = """    /* ---------- Figures: this artifact's own geometry ---------- */
     .review-figures {
@@ -760,9 +768,9 @@ class Renderer:
             anchor = self.resolve(key, applies)
             carrier = None
             if anchor[0] == "passage":
-                pend = [r for r in rows if r["item"] == "review" and r["mark"] in PENDING]
+                marked = [r for r in rows if r["item"] == "review" and r["mark"] in MARKED]
                 shown = self.ordered(rows)
-                carrier = pend[0] if pend else next((r for r in shown if r["item"] == "review"), shown[0] if shown else None)
+                carrier = marked[0] if marked else next((r for r in shown if r["item"] == "review"), shown[0] if shown else None)
             for r in rows:
                 check_fields(r, quoted=r is carrier)
             plan["applied"].append({"key": key, "applies": applies, "anchor": anchor[0],
@@ -783,19 +791,25 @@ class Renderer:
                     plan["unit_rows"].setdefault(ui, []).extend(rows)
                 continue
             _, ui, a, b = anchor
-            pending = [r for r in rows if r["item"] == "review" and r["mark"] in PENDING]
-            if len(pending) > 1:
-                raise RecordError(f"{key}: one passage carries one pending review mark")
+            # the words of a pending or decided judgment take a passage mark naming its note. One passage carries one
+            # review judgment, and record order does not choose which
+            reviews = [r for r in rows if r["item"] == "review"]
+            if len(reviews) > 1:
+                raise RecordError(f"{key}: {len(reviews)} review judgments on the same words "
+                                  f"({', '.join(r['words'] for r in reviews)}); one passage carries one review judgment, "
+                                  f"and record order does not choose which; record each on its own scope: {applies[:60]}")
+            marked = [r for r in reviews if r["mark"] in MARKED]
             rest = rows
-            if pending:
+            if marked:
                 for (x, y, _role, _nid) in plan["marks"].get(ui, []):
                     if a < y and x < b:
-                        raise RecordError(f"{key}: a pending passage overlaps another one: {applies[:60]}")
+                        raise RecordError(f"{key}: a marked passage overlaps another one: {applies[:60]}")
                 self.note_seq += 1
                 nid = f"review-note-{self.note_seq}"
-                plan["marks"].setdefault(ui, []).append((a, b, pending[0]["mark"], nid))
-                plan["passages"].append({"ui": ui, "a": a, "b": b, "role": pending[0]["mark"], "nid": nid,
-                                         "rows": [r for r in rows if r["item"] != "statement"], "pending": pending[0],
+                plan["marks"].setdefault(ui, []).append((a, b, marked[0]["mark"], nid))
+                plan["passages"].append({"ui": ui, "a": a, "b": b, "role": marked[0]["mark"], "nid": nid,
+                                         "rows": [r for r in rows if r["item"] != "statement"], "judged": marked[0],
+                                         "decided": marked[0]["mark"] not in PENDING,
                                          "quote": self.quote_of(ui, a, b, full=False)})
                 rest = [r for r in rows if r["item"] == "statement"]
                 quote = None
@@ -840,8 +854,8 @@ class Renderer:
                                   f"'Applies to' '{PROMPT}…', a prompt just before the range whose words name what "
                                   "it asks of those blocks, or record it on its own scope")
             if any(x["item"] == "review" for rs, q in v if q is not None for x in rs):
-                raise RecordError(f"{key}: a decided judgment on words inside the blocks its annotation range covers; "
-                                  "a range carries one judgment, so no owner composition shows both")
+                raise RecordError(f"{key}: No decision recorded on words inside the blocks its annotation range covers; "
+                                  "it marks no words, and this renderer does not place its unmarked note after the range")
             inside = [x for b in range(b0, b1 + 1) for rs, _q in plan["inner"].get((si, b), []) for x in rs]
             for ui, u in enumerate(units):
                 if u[0] == si and b0 <= u[1] <= b1:
@@ -864,6 +878,48 @@ class Renderer:
                 raise RecordError(f"{judged[0]['key']}: {len(judged)} review judgments on one whole list item or table "
                                   f"cell ({', '.join(x['words'] for x in judged)}), and record order does not choose "
                                   "which one leads; record each on its own scope")
+        # one judgment on one whole list item that no range holds makes the item its range: no second review mark
+        # enters it, so words judged inside it take a passage mark whose note follows the list
+        plan["items"] = {ui for ui, rs in plan["unit_rows"].items()
+                         if units[ui][2][0] == "li" and any(x["item"] == "review" for x in rs)}
+        for ui in plan["items"]:
+            other = [x for rs, _q in plan["unit_tail"].get(ui, []) for x in rs if x["item"] == "review"]
+            if other:
+                raise RecordError(f"{other[0]['key']}: No decision recorded on words inside a list item that its own "
+                                  "judgment makes a range; it marks no words, and this renderer does not place its note "
+                                  "after the list")
+        # the owner keeps its 24px passage buffer between a range and a list that opens on an item that is its own
+        # range only where the list stands in the flow or one block deep. A list kept in a group, with its own row or a note after it, and
+        # set directly after a range would stand two blocks deep, and this renderer composes no spacing of its own
+        noted = lambda si, b0, b1: any(units[p["ui"]][0] == si and b0 <= units[p["ui"]][1] <= b1 for p in plan["passages"])
+        for ui in sorted(plan["items"]):
+            si, bi = units[ui][:2]
+            if units[ui][2] != ("li", 0):
+                continue
+            grouped = any(k[0] == si and k[1] == bi for k in plan["outer"]) or any(
+                p["ui"] in plan["items"] and units[p["ui"]][:2] == [si, bi] for p in plan["passages"])
+            before = next((k for k in plan["ranges"] if k[0] == si and k[2] == bi - 1), None)
+            if grouped and before and not noted(*before):
+                key = next(x["key"] for x in plan["unit_rows"][ui] if x["item"] == "review")
+                raise RecordError(f"{key}: a list that opens on an item that is its own range stands in a group, with "
+                                  "its own row or a note after it, directly after another range; the owner's 24px passage "
+                                  "buffer between them does not reach a list that deep, and this renderer adds no spacing")
+        # a table cell holding several separately judged statements takes a range for each, and this renderer
+        # draws no range inside a cell. Each judged scope counts once, by its review item, however the record's
+        # keys divide the cell's text; a basis, check, evidence, state or statement beside it is no judgment
+        scopes = {}
+        for ui, rs in plan["unit_rows"].items():
+            scopes.setdefault(ui, []).extend([x for x in rs if x["item"] == "review"][:1])
+        for ui, v in plan["unit_tail"].items():
+            for rs, _q in v:
+                scopes.setdefault(ui, []).extend([x for x in rs if x["item"] == "review"][:1])
+        for p in plan["passages"]:
+            scopes.setdefault(p["ui"], []).append(p["judged"])
+        for ui, judged in scopes.items():
+            if units[ui][2][0] == "td" and len(judged) > 1:
+                named = "; ".join(f"{x['key']} {x['applies']}: {x['words']}" for x in judged)
+                raise RecordError(f"{judged[0]['key']}: a table cell holding several separately judged statements "
+                                  f"({named}) takes a range for each, which this renderer does not draw inside a cell")
         for k, rs in plan["prompts"].items():
             if k not in plan["ranges"]:
                 raise RecordError(f"{rs[0]['key']}: a prompt stands just before the range another review judgment "
@@ -872,6 +928,8 @@ class Renderer:
             if (anchor[0] == "blocks" and anchor[1:] in plan["ranges"]) or (anchor[0] == "unit" and units[anchor[1]][2] == ("p",)
                                                                          and (*units[anchor[1]][:2], units[anchor[1]][1]) in plan["ranges"]):
                 a["anchor"] = "range"
+            elif anchor[0] == "unit" and anchor[1] in plan["items"] and any(i.startswith("review:") for i in a["items"]):
+                a["anchor"] = "item range"
         return plan
 
     # ------------------------------------------------------------ items
@@ -913,9 +971,9 @@ class Renderer:
         return f'<{tag} class="doc-annotations">' + "".join(self.item_html(r, q) for r, q in items) + f"</{tag}>"
 
     def quoted_html(self, rows: list, quote: str, inline: bool = False) -> str:
-        """A row on exact words. A decided review judgment on them is recorded in an annotation note, in the row's
-        place, that quotes the words, with no tint and no link; a row quoting words with no review judgment (a
-        basis, a check, evidence or state) stays a row."""
+        """A row on exact words that no passage mark names. No decision recorded on them is recorded in an
+        annotation note, in the row's place, that quotes the words, since it marks none; a row quoting words with no
+        review judgment (a basis, a check, evidence or state) stays a row."""
         if any(r["item"] == "review" for r in rows):
             return '<div class="doc-hierarchy doc-group doc-annotation-note">' + self.row_html(rows, quote=quote) + "</div>"
         return self.row_html(rows, quote=quote, inline=inline)
@@ -926,16 +984,16 @@ class Renderer:
 
     @staticmethod
     def note_rows(p: dict) -> list:
-        own = dict(p["pending"], value=f"on “{p['quote']}”" + (SEP + p["pending"]["value"] if p["pending"]["value"] else ""))
-        return [r for r in p["rows"] if r is not p["pending"]] + [own]
+        own = dict(p["judged"], value=f"on “{p['quote']}”" + (SEP + p["judged"]["value"] if p["judged"]["value"] else ""))
+        return [r for r in p["rows"] if r is not p["judged"]] + [own]
 
     def note_html(self, p: dict) -> str:
         return (f'<div class="doc-hierarchy doc-group doc-annotation-note" id="{p["nid"]}">'
                 + self.row_html(self.note_rows(p)) + "</div>")
 
     def quote_of(self, ui: int, a: int, b: int, full: bool) -> str:
-        """A pending passage is tinted and points to its note, so its note may shorten the quote.
-        A row that is not tied to tinted words quotes them in full."""
+        """A marked passage is underlined and points to its note, so its note may shorten the quote.
+        A row that is not tied to marked words quotes them in full."""
         ws = words(plain(self.src.units[ui][3][a:b], self.keyre, self.figno, self.codere))
         limit = self.cfg.get("quote_words", 8)
         return " ".join(ws) if full or len(ws) <= limit else " ".join(ws[:limit]) + "…"
@@ -948,7 +1006,7 @@ class Renderer:
             # at one position a close is inserted after an open, so it lands before it
             ins.append((a, 0, f"\ue000{n}\ue000"))
             ins.append((b, 1, "\ue001"))
-            opens[str(n)] = f'<mark class="doc-passage-mark" data-review="{role}" aria-describedby="{nid}">'
+            opens[str(n)] = f'<mark class="{" ".join(PASSAGE_MARK)}" data-review="{role}" aria-describedby="{nid}">'
         for pos, _order, s in sorted(ins, key=lambda x: (-x[0], x[1])):
             t = t[:pos] + s + t[pos:]
         t = self.keyre.sub("", t)
@@ -1040,8 +1098,9 @@ class Renderer:
             for need in NEEDS.get(m, ()):
                 if not re.search(need, text, re.M):
                     raise RecordError(f"{m} at design-system commit {short} lacks what this renderer's markup needs "
-                                      f"({need}): the bordered label on review marks and the annotation range, which "
-                                      "design-system-ASK first carries together at #183")
+                                      f"({need}): the bordered label on review marks, the annotation range, the whole "
+                                      "list item that is its own range and the scope underline, which "
+                                      "design-system-ASK first carries together at #185")
             parts.append(f"{BANNER}{m} (upstream {short}, verbatim) === */\n{text}")
         tpl = self.dep(TEMPLATE).decode("utf-8")
         overlay = re.search(r"<style>\n(.*?)\n  </style>", tpl, flags=re.S)
@@ -1052,26 +1111,41 @@ class Renderer:
         return "\n".join(parts), overlay
 
     # ------------------------------------------------------------ assemble
+    def note_slot(self, plan: dict, p: dict) -> tuple:
+        """Where a passage's note stands: after the annotation range that holds its words; after the list whose
+        item its own judgment makes a range; otherwise directly after the text of its paragraph, list item or cell,
+        before that text's own rows, so the line under the words clears the note's label."""
+        u = self.src.units[p["ui"]]
+        for k in plan["ranges"]:
+            if k[0] == u[0] and k[1] <= u[1] <= k[2]:
+                return ("range", k)
+        if u[2] == ("p",) or p["ui"] in plan["items"]:
+            return ("block", u[0], u[1])
+        return ("unit", p["ui"])
+
     def render(self, rendered_at: str) -> str:
         self.number_figures()
         plan = self.plan()
         self.applied = plan["applied"]
         units = self.src.units
-        ranged = {(k[0], b): k for k in plan["ranges"] for b in range(k[1], k[2] + 1)}
-        block_notes, unit_notes, range_notes = {}, {}, {}
+        notes = {}
         for p in sorted(plan["passages"], key=lambda q: (q["ui"], q["a"])):
-            u = units[p["ui"]]
-            if (u[0], u[1]) in ranged:
-                # a note on words inside an annotation range follows the range
-                target = range_notes.setdefault(ranged[(u[0], u[1])], [])
-            else:
-                target = block_notes.setdefault((u[0], u[1]), []) if u[2] == ("p",) else unit_notes.setdefault(p["ui"], [])
-            target.append(self.note_html(p))
+            notes.setdefault(self.note_slot(plan, p), []).append(p)
+
+        def got(*slot) -> str:
+            # after a text, a decided judgment's note comes before a pending one's, each in the order of its words
+            ps = notes.get(slot, [])
+            return "".join(self.note_html(p) for p in [p for p in ps if p["decided"]] + [p for p in ps if not p["decided"]])
+
+        judged = lambda rs: any(r["item"] == "review" for r in rs)
 
         def rows_html(entry_list) -> str:
+            # No decision recorded on words of the block is its note, which marks no words, then the block's own row
+            # and any other row quoting its words, then the statements
             whole = [r for rs, q in entry_list if q is None for r in rs]
-            out = self.row_html(whole)
-            out += "".join(self.quoted_html(rs, q) for rs, q in entry_list if q is not None)
+            out = "".join(self.quoted_html(rs, q) for rs, q in entry_list if q is not None and judged(rs))
+            out += self.row_html(whole)
+            out += "".join(self.row_html(rs, quote=q) for rs, q in entry_list if q is not None and not judged(rs))
             out += "".join(self.statements_html(rs) for rs, _q in entry_list)
             return out
 
@@ -1080,25 +1154,32 @@ class Renderer:
             whole = plan["unit_rows"].get(ui, [])
             tails = plan["unit_tail"].get(ui, [])
             stm = self.statements_html(whole) + "".join(self.statements_html(rs) for rs, _q in tails)
-            notes = "".join(unit_notes.get(ui, []))
-            judged = lambda rs: any(r["item"] == "review" for r in rs)
+            direct = got("unit", ui)
+            unmarked = "".join(self.quoted_html(rs, q) for rs, q in tails if judged(rs))
             if tag == "td":
-                # an item in a cell sits in the cell, as the owner's composition places it; a decided judgment on
-                # words in the cell is the note after the cell's text
+                # an item in a cell sits in the cell, as the owner's composition places it; a note on words in the
+                # cell follows the cell's text, the two in one group so the note takes the group's gap below the line
+                # under the words, as it does after a paragraph
                 inline = self.row_html(whole, inline=True) + "".join(self.row_html(rs, quote=q, inline=True)
                                                                      for rs, q in tails if not judged(rs))
-                decided = "".join(self.quoted_html(rs, q) for rs, q in tails if judged(rs))
                 text = body + (" " + inline if inline else "")
-                if not (decided or notes or stm):
+                if not (direct or unmarked or stm):
                     return f'<td class="doc-body">{text}</td>'
-                return f'<td><p class="doc-body">{text}</p>{decided}{notes}{stm}</td>'
-            # a list item's text is a block. A review judgment on the whole item leads it, its review item first,
-            # inside the item, whose bullet and indent bound it; any other row, its notes and statements follow it
-            lead = self.row_html(whole, head=True) if judged(whole) else ""
-            rows = ("" if lead else self.row_html(whole)) + "".join(self.quoted_html(rs, q) for rs, q in tails)
-            if not (lead or rows or notes or stm):
+                return f'<td><div class="doc-group"><p class="doc-body">{text}</p>{direct}{unmarked}{stm}</div></td>'
+            if ui in plan["items"]:
+                # one judgment on the whole item makes the item its range: its row leads, review item first, its
+                # words follow in a body block of their own, then any row quoting its words with no judgment and its
+                # statements. The item keeps its bullet; a note on words judged inside it follows the list
+                rows = "".join(self.row_html(rs, quote=q) for rs, q in tails)
+                return (f'<li class="{" ".join(ITEM_RANGE)}">{self.row_html(whole, head=True)}'
+                        f'<p class="doc-body">{body}</p>{rows}{stm}</li>')
+            # a list item's text is a block. The notes on its words follow the text directly, where the owner gives a
+            # note its attachment below the line under the words; any other row and its statements follow
+            rows = (direct + unmarked + self.row_html(whole)
+                    + "".join(self.row_html(rs, quote=q) for rs, q in tails if not judged(rs)))
+            if not (rows or stm):
                 return f'<li class="doc-body">{body}</li>'
-            return f'<li>{lead}<p class="doc-body">{body}</p>{rows}{notes}{stm}</li>'
+            return f'<li><p class="doc-body">{body}</p>{rows}{stm}</li>'
 
         def block_body(si: int, bi: int, b: Block) -> str:
             base = [ui for ui, u in enumerate(units) if u[0] == si and u[1] == bi]
@@ -1116,7 +1197,10 @@ class Renderer:
             bd = "".join("<tr>" + "".join(unit_html("td", cells[(r, c)]) for c in range(len(row))) + "</tr>"
                          for r, row in enumerate(b.rows))
             name = html.unescape(re.sub(r"<[^>]+>", "", self.inline(b.head[0], [])))
-            return (f'<div class="doc-table-scroll" role="region" aria-label="{E(name)}" tabindex="0">'
+            # the owner's scrolling box, named as a region and focusable so a keyboard can scroll it, except where a
+            # cell holds a scope underline, which is never set inside a focusable element
+            focus = "" if any(plan["marks"].get(ui) for ui in cells.values()) else ' tabindex="0"'
+            return (f'<div class="doc-table-scroll" role="region" aria-label="{E(name)}"{focus}>'
                     f'<table class="doc-table"><thead><tr>{hd}</tr></thead><tbody>{bd}</tbody></table></div>')
 
         def figures(si: int, bi: int) -> str:
@@ -1133,22 +1217,23 @@ class Renderer:
                 inner = self.row_html([r for rs, q in plan["outer"][span] if q is None for r in rs],
                                       head=True) if in_range else ""
                 for x in range(b0, b1 + 1):
-                    # a block, its own row, the group's row after the last block, then notes, then figures; in a
-                    # range its quoted rows and statements stand where that row would, and its notes follow the range
-                    inner += block_body(si, x, blocks[x]) + rows_html(plan["inner"].get((si, x), []))
+                    # a block, the notes on its words, its rows and statements, the group's row after the last block,
+                    # then figures; a list's notes are those on words inside an item that is its own range. In a range
+                    # its quoted rows and statements stand where that row would, and its notes follow the range
+                    inner += block_body(si, x, blocks[x]) + got("block", si, x) + rows_html(plan["inner"].get((si, x), []))
                     if x == b1 and span:
                         inner += ("".join(self.row_html(rs, quote=q) for rs, q in plan["outer"][span] if q is not None)
                                   + "".join(self.statements_html(rs) for rs, _q in plan["outer"][span]) if in_range
                                   else rows_html(plan["outer"][span]))
-                    inner += "".join(block_notes.get((si, x), [])) + figures(si, x)
+                    inner += figures(si, x)
                 if in_range:
                     # a prompt for a further judgment on these blocks stands just before their range
                     parts += [self.row_html([r]) for r in plan["prompts"].get(span, [])]
                     parts.append(f'<div class="{" ".join(RANGE)}">{inner}</div>')
                     # the notes on words inside the range follow it
-                    parts += range_notes.get(span, [])
+                    parts += [self.note_html(p) for p in notes.get(("range", span), [])]
                 else:
-                    parts.append(f'<div class="doc-group">{inner}</div>' if span or block_notes.get((si, b0)) else inner)
+                    parts.append(f'<div class="doc-group">{inner}</div>' if span or got("block", si, b0) else inner)
                 bi = b1 + 1
             body = "\n      ".join(parts)
             if sec["title"] is None:
@@ -1628,9 +1713,13 @@ class Page:
             kind = self.listing(k)
             self.blocks.append((kind, (start, self.pos())))
         elif k.tag == "div" and c == {"doc-table-scroll"}:
-            self.shape(k, "div", ("doc-table-scroll",), need={"role": "region", "aria-label": r".+", "tabindex": "0"})
-            start = self.pos()
+            self.shape(k, "div", ("doc-table-scroll",), need={"role": "region", "aria-label": r".+"}, may={"tabindex": "0"})
+            start, marked = self.pos(), len(self.passages)
             self.table(k)
+            # the box is focusable for the keyboard unless a cell holds a scope underline, never set inside a focusable
+            # element
+            if ("tabindex" in k.attrs) == (len(self.passages) > marked):
+                self.bad(k, "a table box holding a passage mark made focusable, or one holding none not focusable")
             self.blocks.append((("table", " ".join(words(k.attrs.get("aria-label", "")))), (start, self.pos())))
         elif k.tag == "div" and c == {"doc-group"} and not in_group:
             self.shape(k, "div", ("doc-group",))
@@ -1695,19 +1784,34 @@ class Page:
             elif li.cls() == {"doc-body"}:
                 self.shape(li, "li", ("doc-body",))
                 self.framed("cell", li, lambda li=li, n=n: self.unit(li, marks=True, kind=("li", n)))
+            elif li.cls() == frozenset(ITEM_RANGE):
+                # one whole item that is the range of the one judgment on it: what it holds is read in that range
+                self.shape(li, "li", ITEM_RANGE)
+                self.framed("group", li, lambda li=li, n=n: self.framed("cell", li, lambda: self.composite(li, ("li", n), item=True)))
             else:
                 self.shape(li, "li")
                 self.framed("cell", li, lambda li=li, n=n: self.composite(li, ("li", n)))
         return kind
 
-    def composite(self, n: Node, kind: tuple) -> None:
-        """A list item or cell whose text is a paragraph, followed by rows, notes and statements. A list item
-        may open with one row, the one that leads it, before its text."""
+    def composite(self, n: Node, kind: tuple, item: bool = False) -> None:
+        """A list item or cell whose text is a paragraph, followed by rows, notes and statements. A list item that
+        is its own range opens with the row naming its one judgment, before its text, and holds no note and no
+        other review mark: a note on words judged inside it follows the list."""
         self.no_text(n)
         kids = n.els()
         lead = None
-        if kind[0] == "li" and kids and kids[0].tag == "div" and kids[0].cls() == {"doc-annotations"}:
-            lead, kids = kids[0], kids[1:]
+        if kind[0] == "td":
+            # a cell's text and what follows it sit in one group, read in the cell
+            if len(kids) != 1 or kids[0].tag != "div" or not self.shape(kids[0], "div", ("doc-group",)):
+                self.bad(n, "a cell with annotations does not hold one group of its text and what follows it")
+                return
+            self.no_text(kids[0])
+            kids = kids[0].els()
+        if item:
+            if not kids or kids[0].tag != "div" or kids[0].cls() != {"doc-annotations"}:
+                self.bad(n, "a list item that is its own range does not open with its row")
+            else:
+                lead, kids = kids[0], kids[1:]
         if not kids or kids[0].tag != "p" or kids[0].cls() != {"doc-body"}:
             self.bad(n, f"a {kind[0]} with annotations does not open with its text")
             return
@@ -1719,12 +1823,19 @@ class Page:
             c = x.cls()
             if x.tag == "div" and c == {"doc-annotations"} and kind[0] == "li":
                 self.row(x)
-            elif x.tag == "div" and c == {"doc-hierarchy", "doc-group", "doc-annotation-note"}:
+            elif x.tag == "div" and c == {"doc-hierarchy", "doc-group", "doc-annotation-note"} and not item:
                 self.note(x)
             elif x.tag == "p" and c == {"doc-meta", "review-statement"}:
                 self.statement(x)
             else:
-                self.bad(x, f"not a row, note or statement in a {kind[0]}")
+                self.bad(x, f"not a row, note or statement in a {kind[0]}" + (" that is its own range" if item else ""))
+        if item:
+            stack = list(kids)
+            while stack:
+                x = stack.pop()
+                if "doc-mark" in x.cls() and "data-review" in x.attrs:
+                    self.bad(x, "a review mark inside a list item that is its own range, outside the row that opens it")
+                stack += x.els()
 
     def table(self, k: Node) -> None:
         self.no_text(k)
@@ -1810,8 +1921,8 @@ class Page:
                 self.parts.append(k.text())
                 info["raw"].append(k.text())
             elif k.tag == "mark" and marks and not in_mark and \
-                    self.shape(k, "mark", ("doc-passage-mark",), need={"data-review": r"proposed|open",
-                                                                       "aria-describedby": r"[A-Za-z0-9_-]+"}):
+                    self.shape(k, "mark", PASSAGE_MARK, need={"data-review": "|".join(MARKED),
+                                                              "aria-describedby": r"[A-Za-z0-9_-]+"}):
                 self.passages.append({"role": k.attrs["data-review"], "note": k.attrs["aria-describedby"],
                                       "text": k.text(), **self.place()})
                 self.inline(k.kids, info, marks, in_mark=True)
@@ -1857,13 +1968,13 @@ class Page:
 
     def note(self, n: Node) -> None:
         if "id" not in n.attrs:
-            # a decided judgment on exact words: its note quotes them, and no passage mark names it
+            # No decision recorded on exact words: it marks none, so its note quotes them and no passage mark names it
             if not self.shape(n, "div", ("doc-hierarchy", "doc-group", "doc-annotation-note")):
                 return
             self.no_text(n)
             kids = n.els()
             if len(kids) != 1 or kids[0].tag != "div" or kids[0].cls() != {"doc-annotations"}:
-                self.bad(n, "a decided judgment's note holds its one row")
+                self.bad(n, "an unmarked note holds its one row")
                 return
             self.row(kids[0], in_note=True)
             return
@@ -2077,10 +2188,11 @@ def at(want: dict, got: tuple) -> bool:
 def expected_sequence(r: Renderer, plan: dict, src: Source, lay: dict, first_ref: dict) -> list:
     """Every row, statement, note and figure grid the page must show, in the order the composition sets:
     the document's row and statements; then in each block, an item's or cell's rows (or items), notes and
-    statements, a review judgment on a whole list item leading the item; after the block, its own rows, then
-    its group's when it ends one, then their statements, then the block's notes, then its figures. An
-    annotation range opens with its row before its first block, after any prompt for a further judgment on the
-    same blocks; its statements stand where that row would, and the notes on words inside it follow it."""
+    statements, a review judgment on a whole list item opening the item as its range; after the block, the notes
+    on its words (a decided judgment's first), its own rows and its statements, then its group's row and statements
+    when it ends one, then its figures. A list's notes are those on words inside an item that is its own range. An annotation range opens with its row before its first block, after any prompt for a further
+    judgment on the same blocks; its statements stand where that row would, and the notes on words inside it
+    follow it."""
     units, out = src.units, []
 
     def where(sp: tuple) -> str:
@@ -2113,21 +2225,39 @@ def expected_sequence(r: Renderer, plan: dict, src: Source, lay: dict, first_ref
     def unit_place(ui: int) -> dict:
         s0, s1 = lay["unit"][ui]
         return {"pos": s1, "section": lay["section"][units[ui][0]], "cell": (units[ui][2][0], s0, s1),
-                "group": ("any", None), "range": tuple(units[ui][:2]) in ranged, "what": where((s0, s1))}
+                "group": ("any", None), "range": tuple(units[ui][:2]) in ranged or ui in plan["items"],
+                "what": where((s0, s1))}
 
-    def rows_of(entries: list, pl: dict, statements: bool = True, head: bool = False) -> None:
+    def rows_of(entries: list, pl: dict, statements: bool = True, head: bool = False, cell: bool = False,
+                direct: Callable[[], None] = lambda: None) -> None:
         keys = sorted({x["key"] for rs, _q in entries for x in rs})
         pl = dict(pl, what=f"{', '.join(keys)}, {'opening' if head else 'after'} {pl['what']}")
         whole = [x for rs, q in entries if q is None for x in rs]
-        if r.ordered(whole):
-            out.append({"kind": "row", "items": norm_items([item_sig(x, q) for x, q in r.row_items(whole, head=head)]),
-                        "place": pl})
-        for rs, q in entries:
-            if q is not None and r.ordered(rs):
-                # a decided judgment on exact words is recorded in the note that follows its block or item
-                in_note = any(x["item"] == "review" for x in rs)
-                out.append({"kind": "row", "items": norm_items([item_sig(x, qq) for x, qq in r.row_items(rs, q)]),
-                            "in_note": in_note, "place": dict(pl, what=f"{pl['what']}, in its note") if in_note else pl})
+        judged = lambda rs: any(x["item"] == "review" for x in rs)
+
+        def whole_row() -> None:
+            if r.ordered(whole):
+                out.append({"kind": "row", "items": norm_items([item_sig(x, q) for x, q in r.row_items(whole, head=head)]),
+                            "place": pl})
+
+        def quoted(decided: bool) -> None:
+            for rs, q in entries:
+                if q is not None and r.ordered(rs) and judged(rs) == decided:
+                    out.append({"kind": "row", "items": norm_items([item_sig(x, qq) for x, qq in r.row_items(rs, q)]),
+                                "in_note": decided, "place": dict(pl, what=f"{pl['what']}, in its note") if decided else pl})
+        # a decided judgment's note on exact words follows its block or item directly, then the unmarked note of No
+        # decision recorded on words, before the unit's own row and other rows quoting its words; in a cell those
+        # items sit in its text, before the notes
+        if cell:
+            whole_row()
+            quoted(False)
+            direct()
+            quoted(True)
+        else:
+            direct()
+            quoted(True)
+            whole_row()
+            quoted(False)
         if statements:
             stm_of(entries, pl)
 
@@ -2167,28 +2297,28 @@ def expected_sequence(r: Renderer, plan: dict, src: Source, lay: dict, first_ref
                     continue
                 pl = unit_place(ui)
                 whole = plan["unit_rows"].get(ui, [])
-                lead = u[2][0] == "li" and any(x["item"] == "review" for x in whole)
-                if lead:
+                if ui in plan["items"]:
+                    # the item is its judgment's range: its row opens it, before its words; the notes on words
+                    # judged inside it follow the list
                     rows_of([(whole, None)], dict(pl, pos=lay["unit"][ui][0]), statements=False, head=True)
-                tails = plan["unit_tail"].get(ui, [])
-                if u[2][0] == "td":
-                    # in a cell, items quoting words sit in its text; a decided judgment's note follows that text
-                    tails = [t for t in tails if not any(x["item"] == "review" for x in t[0])] + \
-                            [t for t in tails if any(x["item"] == "review" for x in t[0])]
-                rows_of(([] if lead else [(whole, None)]) + tails, pl, statements=False)
-                if not rk:
-                    notes_for(lambda p, ui=ui: p["ui"] == ui, pl)
-                stm_of([(plan["unit_rows"].get(ui, []), None)] + plan["unit_tail"].get(ui, []), pl)
+                    rows_of(plan["unit_tail"].get(ui, []), pl, statements=False)
+                else:
+                    own = (lambda: [notes_for(lambda p: p["ui"] == ui and p["decided"] == d, pl) for d in (True, False)])
+                    rows_of([(whole, None)] + plan["unit_tail"].get(ui, []), pl, statements=False,
+                            cell=u[2][0] == "td", direct=own if not rk else (lambda: None))
+                stm_of([(whole, None)] + plan["unit_tail"].get(ui, []), pl)
             pl = block_place(si, bi, bi)
-            rows_of(plan["inner"].get((si, bi), []) + ([] if (si, bi, bi) in plan["ranges"] else plan["outer"].get((si, bi, bi), [])), pl)
+            # the notes after the block itself: on words of a paragraph, or inside a list item that is its own range
+            here = (lambda: [notes_for(lambda p: units[p["ui"]][:2] == [si, bi] and p["decided"] == d and (
+                units[p["ui"]][2] == ("p",) or p["ui"] in plan["items"]), pl) for d in (True, False)])
+            rows_of(plan["inner"].get((si, bi), []) + ([] if (si, bi, bi) in plan["ranges"] else plan["outer"].get((si, bi, bi), [])), pl,
+                    direct=here if not rk else (lambda: None))
             span_key = next((k for k in plan["outer"] if k[0] == si and k[2] == bi and k[1] != k[2]), None)
             if span_key and span_key not in plan["ranges"]:
                 rows_of(plan["outer"][span_key], block_place(si, span_key[1], bi))
             if rk and rk[2] == bi:
                 rows_of([e for e in plan["outer"][rk] if e[1] is not None], block_place(si, rk[1], bi), statements=False)
                 stm_of(plan["outer"][rk], block_place(si, rk[1], bi))
-            if not rk:
-                notes_for(lambda p, si=si, bi=bi: units[p["ui"]][:2] == [si, bi] and units[p["ui"]][2] == ("p",), pl)
             if (si, bi) in first_ref:
                 out.append({"kind": "figs", "nums": first_ref[(si, bi)], "place": pl})
             if rk and rk[2] == bi:
@@ -2617,7 +2747,8 @@ def owner_check(out: Path, ds: str) -> dict:
     want_counts = {"doc-mark": sum(1 for n in nodes if "doc-mark" in n.cls()),
                    "doc-passage-mark": sum(1 for n in nodes if n.tag == "mark" and "doc-passage-mark" in n.cls()),
                    "doc-annotation-note": sum(1 for n in nodes if "doc-annotation-note" in n.cls()),
-                   "doc-annotation-range": sum(1 for n in nodes if "doc-annotation-range" in n.cls())}
+                   "doc-annotation-range": sum(1 for n in nodes if "doc-annotation-range" in n.cls()),
+                   "scope-underline": sum(1 for n in nodes if "surface-scope-underline" in n.cls())}
     if not same:
         fails.append(f"the checkout's tools/ is not the build's pinned commit {pin}: {differ[:5]}")
     runs = []

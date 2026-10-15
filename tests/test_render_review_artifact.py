@@ -70,9 +70,11 @@ def ds_files() -> dict:
     files.update({f"fonts/{f}": b"stub-" + f.encode() for f in rra.FONTS})
     files.update({m: f"/* stand-in for {m} */\n".encode() for m in rra.REGISTER + rra.SEMANTIC})
     # the selectors the renderer's preflight looks for in the owner files it seals
-    files["surface-treatments.css"] += b".surface-bordered-label {}\n.surface-labeled-range::before {}\n"
+    files["surface-treatments.css"] += (b".surface-bordered-label {}\n.surface-labeled-range::before {}\n"
+                                        b"li.surface-labeled-range::before {}\n.surface-scope-underline {}\n")
     files["review-semantics.css"] += (b".doc-mark[data-review] { --surface-bordered-label-color: x; }\n"
-                                      b".doc-annotation-range:has(> .doc-annotations) {}\n")
+                                      b".doc-annotation-range:has(> .doc-annotations) {}\n"
+                                      b"mark.doc-passage-mark { --surface-scope-underline-color: x; }\n")
     return files
 
 
@@ -128,7 +130,11 @@ def test_render_seals_owner_modules_in_order_and_embeds_fonts():
 
 def test_passage_mark_and_its_note_follow_the_owner_markup():
     page, _, _ = render()
-    assert '<mark class="doc-passage-mark" data-review="proposed" aria-describedby="review-note-1">two props or fewer</mark>' in page
+    # pending or decided, judged words take the shared scope underline and name their note
+    assert ('<mark class="doc-passage-mark surface-scope-underline" data-review="proposed" aria-describedby="review-note-1">'
+            'two props or fewer</mark>') in page
+    assert ('<mark class="doc-passage-mark surface-scope-underline" data-review="accepted" aria-describedby="review-note-2">'
+            'Every image starts from a photograph of the room.</mark>') in page
     note = re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note" id="review-note-1">(.*?)</div></div>', page).group(1)
     assert 'data-review="proposed">Proposed</span><span class="doc-meta">on “two props or fewer”</span>' in note
 
@@ -149,27 +155,31 @@ def test_a_tables_judgment_opens_a_range_and_its_prompt_stands_just_before_it():
     assert check(page, build)["fails"] == []
 
 
-def test_a_list_items_review_row_leads_the_item_inside_it():
+def test_a_judgment_on_a_whole_list_item_makes_the_item_its_range():
     page, build, r = render()
-    li = re.search(r"<li><div class=\"doc-annotations\">.*?</li>", page).group(0)
-    # the item's judgment leads it, review item first, and its bullet and indent bound it; its text follows
+    li = re.search(r'<li class="doc-annotation-range surface-labeled-range"><div class="doc-annotations">.*?</li>', page).group(0)
+    # the item is the range: its row leads, review item first, and its words follow in a body block of their own;
+    # the next item, judged otherwise, stays a plain item
     assert li.endswith('</div><p class="doc-body">detail photographs are optional and are added only by explicit choice;</p></li>')
+    assert li + '<li class="doc-body">the main photographs are the input set.</li>' in page
     assert li.index('data-review="accepted"') < li.index("Basis") and "on “" not in li
-    assert any(a["key"] == "XX-2.2" and a["anchor"] == "unit" for a in r.applied)
+    assert any(a["key"] == "XX-2.2" and a["anchor"] == "item range" for a in r.applied)
     assert check(page, build)["fails"] == []
 
 
-def test_a_decided_passage_is_quoted_in_full_and_once():
+def test_a_decided_passage_is_underlined_and_its_note_quotes_it_once():
     rec = edit(RECORD, '| XX-1.2 | "Every image starts from a photograph of the room." | review |',
                '| XX-1.2 | "Every image starts from a photograph of the room." | basis | | | our test design |\n'
                '| XX-1.2 | "Every image starts from a photograph of the room." | review |')
     page, build, _ = render(record=rec)
-    # a decided judgment on words is the note that follows its block, quoting them once, with no tint or link
-    note = re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note">(<div class="doc-annotations"><span class="doc-annotation-item">'
-                     r'<span class="doc-label">Basis</span>.*?</div>)</div>', page).group(1)
+    # a decided judgment keeps the scope underline on its words, which name its note; the note follows the block
+    # and quotes the words once
+    assert ('<mark class="doc-passage-mark surface-scope-underline" data-review="accepted" aria-describedby="review-note-2">'
+            'Every image starts from a photograph of the room.</mark>') in page
+    note = re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note" id="review-note-2">(<div class="doc-annotations">'
+                     r'<span class="doc-annotation-item"><span class="doc-label">Basis</span>.*?</div>)</div>', page).group(1)
     assert note.count("on “Every image") == 1
-    assert "on “Every image starts from a photograph of the room.” · studio lead · this test" in note
-    assert '<mark class="doc-passage-mark" data-review="accepted"' not in page
+    assert "on “Every image starts from a photograph of the…” · studio lead · this test" in note
     assert check(page, build, record=rec)["fails"] == []
 
 
@@ -442,11 +452,17 @@ def test_a_check_item_takes_no_mark():
         render(record=rec)
 
 
-def test_one_pending_mark_per_passage():
+@pytest.mark.parametrize("first,second", [
+    ("| review | proposed | Proposed | |", "| review | open | Open question | the count · the reviewer |"),
+    ("| review | proposed | Proposed | |", "| review | accepted | Accepted | the count · the reviewer · this test |"),
+    ("| review | proposed | Proposed | |", "| review | none | No decision recorded | the count · the reviewer |"),
+    ("| review | none | No decision recorded | the count · the reviewer |", "| review | none | No decision recorded | the count · the lead |")])
+def test_one_passage_carries_one_review_judgment(first, second):
+    # two judgments on the same words would need two lines in two colors, or one note whose record order chose which
+    # leads; marked or not, the record is refused
     rec = edit(RECORD, '| XX-1.2 | "two props or fewer" | review | proposed | Proposed | |',
-               '| XX-1.2 | "two props or fewer" | review | proposed | Proposed | |\n'
-               '| XX-1.2 | "two props or fewer" | review | open | Open question | the count · the reviewer |')
-    with pytest.raises(rra.RecordError, match="one pending review mark"):
+               f'| XX-1.2 | "two props or fewer" {first}\n| XX-1.2 | "two props or fewer" {second}')
+    with pytest.raises(rra.RecordError, match="2 review judgments on the same words"):
         render(record=rec)
 
 
@@ -466,7 +482,7 @@ def test_check_passes_on_a_fresh_render():
     page, build, _ = render()
     res = check(page, build)
     assert res["fails"] == [], res["fails"]
-    assert res["passage_marks"] == 1 and res["figures"] == 3 and res["statements"] == 1
+    assert res["passage_marks"] == 2 and res["figures"] == 3 and res["statements"] == 1
 
 
 def test_check_detects_reworded_body_text():
@@ -517,10 +533,20 @@ def test_check_detects_a_shifted_passage_or_another_role():
     shifted = page.replace('aria-describedby="review-note-1">two props or fewer</mark>',
                            'aria-describedby="review-note-1">two props</mark> or fewer')
     assert any("passage mark" in f for f in check(shifted, build)["fails"])
-    role = page.replace('<mark class="doc-passage-mark" data-review="proposed"', '<mark class="doc-passage-mark" data-review="open"')
+    role = page.replace('<mark class="doc-passage-mark surface-scope-underline" data-review="proposed"',
+                        '<mark class="doc-passage-mark surface-scope-underline" data-review="open"')
     assert any("another role" in f for f in check(role, build)["fails"])
     unpaired = page.replace('aria-describedby="review-note-1"', 'aria-describedby="review-note-9"')
     assert any("passage note" in f for f in check(unpaired, build)["fails"])
+    # a passage mark without the shared underline draws no scope cue at all: not the grammar's mark
+    bare = page.replace('<mark class="doc-passage-mark surface-scope-underline" data-review="accepted"',
+                        '<mark class="doc-passage-mark" data-review="accepted"')
+    assert any(f.startswith("structure") and "<mark" in f for f in check(bare, build)["fails"])
+    # a decided judgment whose words lose their mark: its note no longer names marked words
+    unmarked = re.sub(r'<mark class="doc-passage-mark surface-scope-underline" data-review="accepted" aria-describedby="review-note-2">'
+                      r'(.*?)</mark>', r"\1", page)
+    fails = check(unmarked, build)["fails"]
+    assert any("passage mark missing" in f and "accepted" in f for f in fails), fails
 
 
 def test_check_detects_an_orphan_note_or_a_row_in_the_key():
@@ -545,7 +571,7 @@ def test_check_detects_a_changed_key_section():
 
 def test_check_detects_a_passage_mark_or_note_moved_elsewhere():
     page, build, _ = render()
-    mark = '<mark class="doc-passage-mark" data-review="proposed" aria-describedby="review-note-1">two props or fewer</mark>'
+    mark = '<mark class="doc-passage-mark surface-scope-underline" data-review="proposed" aria-describedby="review-note-1">two props or fewer</mark>'
     moved = edit(page, mark, "two props or fewer")
     moved = moved.replace("warm inside, bright outside.", f"warm inside, {mark}.", 1)
     src = edit(SOURCE, "warm inside, bright outside.", "warm inside, two props or fewer.")
@@ -604,13 +630,17 @@ def test_a_decision_moved_to_an_identically_worded_statement_fails():
     assert any("not in the record at this place" in f for f in fails), fails
 
 
-def test_a_decided_passage_row_moved_to_identical_words_fails():
+def test_a_decided_passage_or_its_note_moved_to_identical_words_fails():
     rec = twin_record('| XX-1.1 | "fixed furniture" | review | accepted | Accepted | reviewer · this production |\n')
     page, build, _ = render(source=TWINS, record=rec, cfg=plain_cfg())
-    note = re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note"><div class="doc-annotations">.*?</div></div>', page).group(0)
+    assert placed(page, build, TWINS, rec) == []
+    note = re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note" id="review-note-1"><div class="doc-annotations">.*?</div></div>', page).group(0)
     assert "on “fixed furniture”" in note
     moved = edit(page, note, "").replace(ROOM_B, ROOM_B + note, 1)
-    assert any("not at its scope" in f for f in placed(moved, build, TWINS, rec))
+    assert any("passage note is not after its block" in f for f in placed(moved, build, TWINS, rec))
+    mark = re.search(r'<mark class="doc-passage-mark surface-scope-underline" data-review="accepted"[^>]*>fixed furniture</mark>', page).group(0)
+    moved = edit(page, mark, "fixed furniture").replace(ROOM_B, ROOM_B.replace("fixed furniture.", mark + "."), 1)
+    assert any("passage mark missing, moved" in f for f in placed(moved, build, TWINS, rec))
 
 
 DECIDED_LIST = ("# Sample guide\n\n## Inputs\n\n<!-- XX-2.1 -->**Archive material:**\n"
@@ -622,33 +652,84 @@ DECIDED_ROWS = ('| XX-2.2 | "They are optional, and are not in the first set" | 
 NOTE_OPEN = '<div class="doc-hierarchy doc-group doc-annotation-note">'
 
 
-def test_a_decided_judgment_on_words_in_a_list_item_is_its_note_after_the_text_and_nothing_wider():
+def test_a_decided_judgment_on_words_in_a_list_item_underlines_them_and_nothing_wider():
     rec = twin_record(DECIDED_ROWS)
     page, build, r = render(source=DECIDED_LIST, record=rec, cfg=plain_cfg())
     assert placed(page, build, DECIDED_LIST, rec) == []
     item = re.search(r"<li><p class=\"doc-body\">detail photographs.*?</li>", page).group(0)
-    note = re.search(re.escape(NOTE_OPEN) + r'(<div class="doc-annotations">.*?</div>)</div>', item).group(0)
-    row = note[len(NOTE_OPEN):-len("</div>")]
-    # the note follows the item's text, quotes only the accepted words, carries Basis then Accepted, no tint, no link
-    assert item.startswith('<li><p class="doc-body">detail photographs that appear to show the same rooms. They are optional, and are not in the first set;</p>' + NOTE_OPEN)
+    note = re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note" id="review-note-1">(<div class="doc-annotations">.*?</div>)</div>',
+                     item).group(0)
+    row = re.search(r'(<div class="doc-annotations">.*?</div>)</div>$', note).group(1)
+    words = "They are optional, and are not in the first set"
+    mark = f'<mark class="doc-passage-mark surface-scope-underline" data-review="accepted" aria-describedby="review-note-1">{words}</mark>'
+    # only the accepted words take the green line, not the identification before them; the item stays a plain
+    # item, and the note follows its text directly, Basis then Accepted
+    text = f'<p class="doc-body">detail photographs that appear to show the same rooms. {mark};</p>'
+    assert item == "<li>" + text + note + "</li>"
     assert row.index("Basis") < row.index('data-review="accepted"')
-    assert 'on “They are optional, and are not in the first set” · reviewer · this test' in row
-    assert "id=" not in note and '<mark class="doc-passage-mark" data-review="accepted"' not in page
-    # the pending question on the other item keeps its tint and its linked note
-    assert '<mark class="doc-passage-mark" data-review="open" aria-describedby="review-note-1">' in page
-    text = '<p class="doc-body">detail photographs that appear to show the same rooms. They are optional, and are not in the first set;</p>'
+    assert 'on “They are optional, and are not in the…” · reviewer · this test' in row
+    # the pending question on the other item keeps its underline and its linked note
+    assert '<mark class="doc-passage-mark surface-scope-underline" data-review="open" aria-describedby="review-note-2">' in page
+    bare = text.replace(mark, words)
     for name, changed in (
-            # the plain row of r5: the decision is recorded, but not in the carrier a decided phrase takes
+            # the note of D184: the decision is recorded, but no line shows which words it concerns
+            ("no mark", edit(page, text, bare)),
             ("a plain row", edit(page, note, row)),
-            # widened: leading the whole item, as if the identification were accepted too
-            ("leading the item", edit(page, "<li>" + text + note + "</li>", "<li>" + row + text + "</li>")),
+            # widened: the line under the whole item's words, or the item made the judgment's range, as if the
+            # identification were accepted too
+            ("a line under the whole item", edit(page, text, '<p class="doc-body"><mark class="doc-passage-mark surface-scope-underline" '
+                                                 'data-review="accepted" aria-describedby="review-note-1">detail photographs that appear to '
+                                                 f'show the same rooms. {words}</mark>;</p>')),
+            ("the item as its range", edit(page, "<li>" + text + note + "</li>",
+                                           '<li class="doc-annotation-range surface-labeled-range">' + row + bare + "</li>")),
             ("moved to the next item", edit(edit(page, note, ""), "is not recorded.</mark></p>", "is not recorded.</mark></p>" + note)),
-            # a decided passage tint, linked to the note
-            ("a decided tint", edit(page, "They are optional, and are not in the first set;</p>" + note,
-                                    '<mark class="doc-passage-mark" data-review="accepted" aria-describedby="d1">They are optional, and are not in the '
-                                    'first set</mark>;</p><div class="doc-hierarchy doc-group doc-annotation-note" id="d1">' + row + "</div>")),
-            ("a link to no passage", edit(page, note, '<div class="doc-hierarchy doc-group doc-annotation-note" id="d1">' + row + "</div>"))):
+            ("a line without the shared underline", edit(page, mark, mark.replace("doc-passage-mark surface-scope-underline", "doc-passage-mark")))):
         assert placed(changed, build, DECIDED_LIST, rec) != [], name
+
+
+ORDER_PARA = ("# Sample guide\n\n## Plan\n\n<!-- XX-1.1 -->Room A keeps its fixed furniture and its blue door.\n\n"
+              "<!-- XX-1.2 -->Room B is plain.\n")
+ORDER_ROWS = ('| XX-1.1 | whole | basis | | | our test design |\n'
+              '| XX-1.1 | "its blue door" | basis | | | our test design |\n'
+              '| XX-1.1 | "fixed furniture" | review | accepted | Accepted | reviewer · this test |\n')
+
+
+def test_a_decided_note_follows_its_block_directly_before_the_blocks_own_row_and_other_quoted_rows():
+    rec = twin_record(ORDER_ROWS)
+    page, build, _ = render(source=ORDER_PARA, record=rec, cfg=plain_cfg())
+    assert placed(page, build, ORDER_PARA, rec) == []
+    text = ('<p class="doc-body">Room A keeps its <mark class="doc-passage-mark surface-scope-underline" data-review="accepted" '
+            'aria-describedby="review-note-1">fixed furniture</mark> and its blue door.</p>')
+    note = re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note" id="review-note-1"><div class="doc-annotations">.*?</div></div>',
+                     page).group(0)
+    own = '<div class="doc-annotations"><span class="doc-annotation-item"><span class="doc-label">Basis</span><span class="doc-meta">our test design</span></span></div>'
+    quoted = re.search(r'<div class="doc-annotations"><span class="doc-annotation-item"><span class="doc-label">Basis</span><span class="doc-meta">on “its blue door”.*?</div>', page).group(0)
+    # whatever the record's order: the text, its decided note, the block's own row, then the row quoting other words
+    assert text + note + own + quoted in page
+    for name, changed in (("the note after the block's own row", edit(page, text + note + own, text + own + note)),
+                          ("the note after the other quoted row", edit(page, note + own + quoted, own + quoted + note))):
+        assert any("out of the composition's order" in f for f in placed(changed, build, ORDER_PARA, rec)), name
+
+
+def test_a_decided_note_in_a_list_item_follows_its_text_directly_before_rows_with_no_judgment():
+    src = "# Sample guide\n\n## Points\n\n<!-- XX-2.1 -->**Points:**\n- <!-- XX-2.2 -->the floor finish and the door color;\n- <!-- XX-2.3 -->the window.\n"
+    rec = twin_record('| XX-2.2 | "the floor finish" | basis | | | our test design |\n'
+                      '| XX-2.2 | whole | basis | | | our test design |\n'
+                      '| XX-2.2 | "the door color" | review | accepted | Accepted | reviewer · this test |\n')
+    page, build, _ = render(source=src, record=rec, cfg=plain_cfg())
+    assert placed(page, build, src, rec) == []
+    text = ('<p class="doc-body">the floor finish and <mark class="doc-passage-mark surface-scope-underline" data-review="accepted" '
+            'aria-describedby="review-note-1">the door color</mark>;</p>')
+    item = re.search(re.escape("<li>" + text) + r".*?</li>", page).group(0)
+    note = re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note" id="review-note-1"><div class="doc-annotations">.*?</div></div>',
+                     item).group(0)
+    own = '<div class="doc-annotations"><span class="doc-annotation-item"><span class="doc-label">Basis</span><span class="doc-meta">our test design</span></span></div>'
+    quoted = re.search(r'<div class="doc-annotations"><span class="doc-annotation-item"><span class="doc-label">Basis</span><span class="doc-meta">on “the floor finish”.*?</div>', item).group(0)
+    # whatever the record's order: the text, its decided note, the item's own row, then the row quoting other words
+    assert item == "<li>" + text + note + own + quoted + "</li>"
+    for name, changed in (("the note after the item's own row", edit(page, note + own, own + note)),
+                          ("the note after the other quoted row", edit(page, note + own + quoted, own + quoted + note))):
+        assert any("out of the composition's order" in f for f in placed(changed, build, src, rec)), name
 
 
 def test_a_quoted_row_with_no_review_judgment_stays_a_row_and_is_not_a_note():
@@ -659,29 +740,34 @@ def test_a_quoted_row_with_no_review_judgment_stays_a_row_and_is_not_a_note():
     assert placed(edit(page, row, NOTE_OPEN + row + "</div>"), build, DECIDED_LIST, rec) != []
 
 
-def test_a_decided_judgment_on_words_in_a_cell_is_its_note_in_the_cell():
+def test_a_decided_judgment_on_words_in_a_cell_underlines_them_and_its_note_follows_in_the_cell():
     src = "# Sample guide\n\n## Plan\n\n<!-- XX-4.1 -->| Kept | Note |\n|---|---|\n| <!-- XX-4.2 -->the blue sofa and the lamp | <!-- XX-4.3 -->as found on site |\n"
     rec = twin_record('| XX-4.2 | "the blue sofa" | review | accepted | Accepted | reviewer · this test |\n'
                       '| XX-4.3 | "as found" | basis | | | our test design |\n')
     page, build, _ = render(source=src, record=rec, cfg=plain_cfg())
     assert placed(page, build, src, rec) == []
-    cell = re.search(r'<td><p class="doc-body">the blue sofa and the lamp</p>' + re.escape(NOTE_OPEN) + r'.*?</div></div></td>', page).group(0)
+    mark = ('<mark class="doc-passage-mark surface-scope-underline" data-review="accepted" aria-describedby="review-note-1">'
+            'the blue sofa</mark>')
+    note_open = '<div class="doc-hierarchy doc-group doc-annotation-note" id="review-note-1">'
+    cell = re.search(re.escape(f'<td><div class="doc-group"><p class="doc-body">{mark} and the lamp</p>{note_open}') + r'.*?</div></div></div></td>',
+                     page).group(0)
     assert 'on “the blue sofa” · reviewer · this test' in cell
     # a quoted basis in a cell stays an inline item in it
     assert re.search(r'<td class="doc-body">as found on site <span class="doc-annotations"><span class="doc-annotation-item">'
                      r'<span class="doc-label">Basis</span><span class="doc-meta">on “as found” · our test design', page)
-    row = cell[cell.index(NOTE_OPEN) + len(NOTE_OPEN):-len("</div></td>")]
+    row = cell[cell.index(note_open) + len(note_open):-len("</div></div></td>")]
     inline = row.replace('<div class="doc-annotations">', '<span class="doc-annotations">', 1)[:-len("</div>")] + "</span>"
     as_item = edit(page, cell, '<td class="doc-body">the blue sofa and the lamp ' + inline + "</td>")
     assert placed(as_item, build, src, rec) != []
     # in one cell, an item quoting other words stays in the text and the decided judgment's note follows it,
-    # whatever the record's order
+    # whatever the record's order: a basis beside the one judgment is no second judgment
     both = twin_record('| XX-4.2 | "the blue sofa" | review | accepted | Accepted | reviewer · this test |\n'
                        '| XX-4.2 | "the lamp" | basis | | | our test design |\n')
     page, build, _ = render(source=src, record=both, cfg=plain_cfg())
     assert placed(page, build, src, both) == []
-    cell = re.search(r"<td><p class=\"doc-body\">the blue sofa and the lamp <span class=\"doc-annotations\">.*?</td>", page).group(0)
-    assert cell.index("on “the lamp”") < cell.index(NOTE_OPEN) < cell.index("on “the blue sofa”")
+    cell = re.search(re.escape(f'<td><div class="doc-group"><p class="doc-body">{mark} and the lamp <span class="doc-annotations">') + r".*?</td>",
+                     page).group(0)
+    assert cell.index("on “the lamp”") < cell.index(note_open) < cell.index("on “the blue sofa”")
 
 
 PEND_A = '| XX-1.1 | "fixed furniture" | review | proposed | Proposed | |\n'
@@ -691,7 +777,7 @@ def test_a_pending_passage_moved_to_identical_words_fails():
     rec = twin_record(PEND_A)
     page, build, _ = render(source=TWINS, record=rec, cfg=plain_cfg())
     assert placed(page, build, TWINS, rec) == []
-    mark = re.search(r'<mark class="doc-passage-mark"[^>]*>fixed furniture</mark>', page).group(0)
+    mark = re.search(r'<mark class="doc-passage-mark surface-scope-underline"[^>]*>fixed furniture</mark>', page).group(0)
     moved = edit(page, mark, "fixed furniture").replace(
         ROOM_B, ROOM_B.replace("fixed furniture.", mark + "."), 1)
     assert any("passage mark missing, moved" in f for f in placed(moved, build, TWINS, rec))
@@ -717,33 +803,44 @@ LIST = ("# Sample guide\n\n## Points\n\n<!-- XX-2.1 -->**Points:**\n"
         "- <!-- XX-2.2 -->show the floor finish;\n- <!-- XX-2.3 -->show the floor finish;\n")
 
 
-def test_a_list_items_row_moved_to_an_identical_item_fails():
+ITEM_OPEN = '<li class="doc-annotation-range surface-labeled-range">'
+
+
+def test_a_list_items_range_moved_to_an_identical_item_fails():
     rec = twin_record("| XX-2.2 | whole | review | accepted | Accepted | this item · reviewer · this production |\n")
     page, build, _ = render(source=LIST, record=rec, cfg=plain_cfg())
     assert placed(page, build, LIST, rec) == []
     row = re.search(r'<div class="doc-annotations">.*?</div>', page).group(0)
-    first = '<li>' + row + '<p class="doc-body">show the floor finish;</p></li>'
+    first = ITEM_OPEN + row + '<p class="doc-body">show the floor finish;</p></li>'
     second = '<li class="doc-body">show the floor finish;</li>'
-    moved = edit(page, first + second, '<li class="doc-body">show the floor finish;</li>'
-                 '<li>' + row + '<p class="doc-body">show the floor finish;</p></li>')
+    moved = edit(page, first + second, second + ITEM_OPEN + row + '<p class="doc-body">show the floor finish;</p></li>')
     assert any("not at its scope" in f for f in placed(moved, build, LIST, rec))
 
 
-def test_a_list_items_review_row_leads_it_a_row_with_no_judgment_follows_it_and_a_cell_has_no_leading_row():
+def test_a_judged_list_item_is_its_range_a_row_with_no_judgment_follows_its_item_and_a_cell_has_no_leading_row():
     rec = twin_record("| XX-2.2 | whole | review | proposed | Proposed | |\n| XX-2.3 | whole | basis | | | our test design |\n")
     page, build, _ = render(source=LIST, record=rec, cfg=plain_cfg())
     assert placed(page, build, LIST, rec) == []
-    lead = re.search(r'<li>(<div class="doc-annotations">.*?</div>)<p class="doc-body">show the floor finish;</p></li>', page).group(1)
+    lead = re.search(re.escape(ITEM_OPEN) + r'(<div class="doc-annotations">.*?</div>)<p class="doc-body">show the floor finish;</p></li>', page).group(1)
     assert 'data-review="proposed"' in lead
     basis = re.search(r'<li><p class="doc-body">show the floor finish;</p>(<div class="doc-annotations">.*?</div>)</li>', page).group(1)
     assert "Basis" in basis and "data-review" not in basis
-    # the bare judgment after its item's text points back at it, and Basis before the text points forward
-    trailing = edit(page, "<li>" + lead + '<p class="doc-body">show the floor finish;</p></li>',
-                    '<li><p class="doc-body">show the floor finish;</p>' + lead + "</li>")
-    assert any("not at its scope" in f for f in placed(trailing, build, LIST, rec))
-    leading = edit(page, '<li><p class="doc-body">show the floor finish;</p>' + basis + "</li>",
-                   "<li>" + basis + '<p class="doc-body">show the floor finish;</p></li>')
-    assert any("not at its scope" in f for f in placed(leading, build, LIST, rec))
+    host = ITEM_OPEN + lead + '<p class="doc-body">show the floor finish;</p></li>'
+    for name, changed in (
+            # the bare judgment after its item's text points back at it
+            ("trailing its text", edit(page, host, '<li><p class="doc-body">show the floor finish;</p>' + lead + "</li>")),
+            # the leading row of D184: a row leading a plain item, with no range of its own
+            ("leading a plain item", edit(page, host, "<li>" + lead + '<p class="doc-body">show the floor finish;</p></li>')),
+            # the range classes without the row that names its judgment, or its words not in a body block
+            ("a range with no row", edit(page, host, ITEM_OPEN + '<p class="doc-body">show the floor finish;</p></li>')),
+            ("its words bare", edit(page, host, ITEM_OPEN + lead + "show the floor finish;</li>")),
+            # widened: the range carried to the next item, which takes only a basis, or to the whole list
+            ("widened to the next item", edit(page, '<li><p class="doc-body">show the floor finish;</p>' + basis + "</li>",
+                                              ITEM_OPEN + lead + '<p class="doc-body">show the floor finish;</p>' + basis + "</li>")),
+            # Basis before the text points forward
+            ("basis leading", edit(page, '<li><p class="doc-body">show the floor finish;</p>' + basis + "</li>",
+                                   "<li>" + basis + '<p class="doc-body">show the floor finish;</p></li>'))):
+        assert placed(changed, build, LIST, rec) != [], name
     # a row ahead of a cell's text is not the grammar's
     cell = "# Sample guide\n\n## Plan\n\n<!-- XX-4.1 -->| Kept |\n|---|\n| <!-- XX-4.2 -->the blue sofa |\n"
     crec = twin_record("| XX-4.2 | whole | review | proposed | Proposed | |\n")
@@ -751,7 +848,8 @@ def test_a_list_items_review_row_leads_it_a_row_with_no_judgment_follows_it_and_
     assert placed(cpage, cbuild, cell, crec) == []
     item = re.search(r' (<span class="doc-annotations">.*?</span></span></span>)</td>', cpage).group(1)
     ahead = edit(cpage, '<td class="doc-body">the blue sofa ' + item + "</td>",
-                 '<td><div class="doc-annotations">' + item[len('<span class="doc-annotations">'):-len("</span>")] + '</div><p class="doc-body">the blue sofa</p></td>')
+                 '<td><div class="doc-group"><div class="doc-annotations">' + item[len('<span class="doc-annotations">'):-len("</span>")]
+                 + '</div><p class="doc-body">the blue sofa</p></div></td>')
     assert any(f.startswith("structure") and "does not open with its text" in f for f in placed(ahead, cbuild, cell, crec))
 
 
@@ -852,16 +950,32 @@ def test_notes_on_words_inside_a_range_follow_it():
     assert any("not after its block" in f for f in fails), fails
 
 
+def test_a_decided_judgment_on_words_inside_a_range_is_underlined_and_its_note_follows_the_range():
+    src = "# Sample guide\n\n## Plan\n\n<!-- XX-1.1 -->Room A keeps its fixed furniture.\n\n<!-- XX-1.2 -->Room B is plain.\n"
+    rec = twin_record(ACCEPT_A + '| XX-1.1 | "fixed furniture" | review | declined | Declined | reviewer · this production |\n')
+    page, build, r = render(source=src, record=rec, cfg=plain_cfg())
+    assert placed(page, build, src, rec) == []
+    rng = re.search(re.escape(RANGE_OPEN) + r".*?</p></div>", page, re.S).group(0)
+    # the range keeps its one judgment; the declined words keep their line inside it, and their note follows it
+    assert ('<mark class="doc-passage-mark surface-scope-underline" data-review="declined" aria-describedby="review-note-1">'
+            'fixed furniture</mark>') in rng and "doc-annotation-note" not in rng
+    note = re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note" id="review-note-1">.*?</div></div>', page).group(0)
+    assert rng + "\n      " + note + "\n      " + '<p class="doc-body">Room B is plain.</p>' in page
+    inside =edit(edit(page, note, ""), "fixed furniture</mark>.</p></div>", "fixed furniture</mark>.</p>" + note + "</div>")
+    fails = placed(inside, build, src, rec)
+    assert any("an annotation note inside an annotation range" in f for f in fails), fails
+
+
 def test_a_second_review_judgment_inside_a_range_is_refused():
     base = "| XX-3.1 | whole | review | accepted | Accepted | both paragraphs · reviewer · this production |\n"
     for extra, why in (('| XX-3.1 | "The second paragraph." | review | accepted | Accepted | the second paragraph · reviewer · this production |\n',
                         "inside the blocks its annotation range covers"),):
         with pytest.raises(rra.RecordError, match=why):
             render(source=TWO, record=twin_record(base + extra), cfg=plain_cfg())
-    # a decided judgment on words of a block that opens a range is inside it too
+    # No decision recorded on words of a block that opens a range marks no words, so its note could not show them
     src = "# Sample guide\n\n## Plan\n\n<!-- XX-1.1 -->Room A keeps its fixed furniture.\n"
-    rec = twin_record(ACCEPT_A + '| XX-1.1 | "fixed furniture" | review | accepted | Accepted | reviewer · this production |\n')
-    with pytest.raises(rra.RecordError, match="decided judgment on words inside the blocks"):
+    rec = twin_record(ACCEPT_A + '| XX-1.1 | "fixed furniture" | review | none | No decision recorded | reviewer |\n')
+    with pytest.raises(rra.RecordError, match="No decision recorded on words inside the blocks"):
         render(source=src, record=rec, cfg=plain_cfg())
     src = "# Sample guide\n\n## Points\n\n- <!-- XX-5.1 -->show the floor finish;\n- show the door.\n"
     rec = twin_record('| XX-5.1 | whole | review | proposed | Proposed | |\n'
@@ -1093,11 +1207,239 @@ def test_two_judgments_on_one_whole_item_or_cell_are_refused_not_ordered(source,
         render(source=source, record=twin_record(rows), cfg=plain_cfg())
 
 
+TWO_IN_A_CELL = ("# Sample guide\n\n## Plan\n\n<!-- XX-4.1 -->| Kept | Note |\n|---|---|\n"
+                 "| <!-- XX-4.2 -->The blue sofa stays. <!-- XX-4.3 -->The lamp may move. | as found |\n")
+
+
+# the same cell with both statements under one key: how the record's keys divide a cell's text changes nothing
+ONE_KEY_CELL = edit(TWO_IN_A_CELL, "<!-- XX-4.3 -->", "")
+SOFA_PROPOSED = '| XX-4.2 | "The blue sofa stays." | review | proposed | Proposed | |\n'
+SOFA_ACCEPTED = '| XX-4.2 | "The blue sofa stays." | review | accepted | Accepted | reviewer · this test |\n'
+
+
+@pytest.mark.parametrize("source,rows", [
+    (TWO_IN_A_CELL, SOFA_PROPOSED + '| XX-4.3 | "The lamp may move." | review | proposed | Proposed | |\n'),
+    (TWO_IN_A_CELL, SOFA_ACCEPTED + '| XX-4.3 | "The lamp may move." | review | proposed | Proposed | |\n'),
+    (ONE_KEY_CELL, SOFA_PROPOSED + '| XX-4.2 | "The lamp may move." | review | proposed | Proposed | |\n'),
+    (ONE_KEY_CELL, SOFA_ACCEPTED + '| XX-4.2 | "The lamp may move." | review | proposed | Proposed | |\n'),
+    # a judgment on the whole cell beside one on words in it: the cell's item is no longer alone in it
+    (ONE_KEY_CELL, '| XX-4.2 | "The blue sofa stays. The lamp may move." | review | open | Open question | the cell · reviewer |\n'
+                   '| XX-4.2 | "The lamp may move." | review | proposed | Proposed | |\n'),
+    (TWO_IN_A_CELL, SOFA_PROPOSED + '| XX-4.3 | "The lamp may move." | review | none | No decision recorded | the lamp · reviewer |\n'),
+    (ONE_KEY_CELL, SOFA_ACCEPTED + '| XX-4.2 | "The lamp may move." | review | none | No decision recorded | the lamp · reviewer |\n'),
+    (ONE_KEY_CELL, '| XX-4.2 | "The blue sofa stays." | review | none | No decision recorded | the sofa · reviewer |\n'
+                   '| XX-4.2 | "The lamp may move." | review | none | No decision recorded | the lamp · reviewer |\n')],
+    ids=["separate keys, both pending", "separate keys, one decided", "one key, both pending", "one key, one decided",
+         "the whole cell and words in it", "unmarked words beside marked words", "unmarked words, one key", "two unmarked judgments"])
+def test_a_cell_holding_several_separately_judged_statements_is_refused(source, rows):
+    # the owner gives each its own range, and no range is drawn inside a cell
+    with pytest.raises(rra.RecordError, match="several separately judged statements"):
+        render(source=source, record=twin_record(rows), cfg=plain_cfg())
+
+
+@pytest.mark.parametrize("source,rows", [
+    (TWO_IN_A_CELL, SOFA_PROPOSED + '| XX-4.3 | "The lamp may move." | basis | | | our test design |\n'),
+    (ONE_KEY_CELL, SOFA_ACCEPTED + '| XX-4.2 | "The lamp may move." | basis | | | our test design |\n'),
+    (ONE_KEY_CELL, SOFA_PROPOSED + '| XX-4.2 | "The lamp may move." | statement | | | A lamp may be added or adjusted. |\n'),
+    (TWO_IN_A_CELL, SOFA_PROPOSED + '| XX-4.2 | "The blue sofa stays." | basis | | | our test design |\n'),
+    (ONE_KEY_CELL, SOFA_PROPOSED + '| XX-4.2 | "The lamp may move." | check | | Contrast | passed |\n'),
+    (ONE_KEY_CELL, SOFA_PROPOSED + '| XX-4.2 | "The lamp may move." | evidence | supported | Supported | the photographs |\n'),
+    (ONE_KEY_CELL, SOFA_ACCEPTED + '| XX-4.2 | "The lamp may move." | state | earned | Earned | two passes |\n')],
+    ids=["a basis beside it, another key", "a basis beside it, one key", "a statement beside it", "its own basis",
+         "a check beside it", "evidence beside it", "a state beside it"])
+def test_a_cell_with_one_judged_statement_beside_unjudged_words_stays_its_exact_words(source, rows):
+    # a basis, check, evidence, state or statement beside the one judgment is no second judgment
+    rec = twin_record(rows)
+    page, build, _ = render(source=source, record=rec, cfg=plain_cfg())
+    assert placed(page, build, source, rec) == []
+    assert page.count('<mark class="doc-passage-mark surface-scope-underline"') == 1
+
+
 def test_a_prompt_on_a_list_item_is_refused():
     rec = twin_record("| XX-2.2 | whole | review | proposed | Proposed | |\n"
                       "| XX-2.2 | prompt: whole | review | proposed | Proposed | the item below |\n")
     with pytest.raises(rra.RecordError, match="cannot name words, a list item or a cell"):
         render(source=LIST, record=rec, cfg=plain_cfg())
+
+
+ITEMS = ("# Sample guide\n\n## Points\n\n<!-- XX-2.1 -->**Points:**\n"
+         "- <!-- XX-2.2 -->show the floor finish and the door;\n- <!-- XX-2.3 -->show the window.\n\n<!-- XX-2.4 -->Then the plan.\n")
+ITEM_ROWS = ("| XX-2.2 | whole | review | open | Open question | this item · reviewer |\n"
+             '| XX-2.2 | "the door" | review | accepted | Accepted | reviewer · this test |\n'
+             '| XX-2.2 | "the floor finish" | review | proposed | Proposed | |\n'
+             '| XX-2.3 | "the window" | review | proposed | Proposed | |\n')
+
+
+def test_words_judged_inside_an_item_that_is_its_range_keep_their_line_and_their_notes_follow_the_list():
+    rec = twin_record(ITEM_ROWS)
+    page, build, _ = render(source=ITEMS, record=rec, cfg=plain_cfg())
+    assert placed(page, build, ITEMS, rec) == []
+    host = re.search(re.escape(ITEM_OPEN) + r".*?</li>", page).group(0)
+    # the item keeps its one judgment's row and the lines under its judged words; no note sits inside it
+    assert host.count("doc-mark") == 1 and host.count("surface-scope-underline") == 2 and "doc-annotation-note" not in host
+    lst = re.search(r'<div class="doc-prose"><ul>.*?</ul></div>', page).group(0)
+    after = page[page.index(lst) + len(lst):page.index("Then the plan.")]
+    door, floor = (re.search(r'<mark class="doc-passage-mark surface-scope-underline" data-review="%s" aria-describedby="(review-note-\d)">' % role,
+                             host).group(1) for role in ("accepted", "proposed"))
+    # after the list, the decided note first, then the pending one; the next item's own note stays after its text
+    assert re.findall(r'doc-annotation-note" id="(review-note-\d)"', after) == [door, floor]
+    window = re.search(r'<li><p class="doc-body">show <mark[^>]*>the window</mark>\.</p>(<div class="doc-hierarchy[^"]*" id="review-note-\d">)', page)
+    assert window
+    note, other = (re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note" id="%s">.*?</div></div>' % n, page).group(0)
+                   for n in (door, floor))
+    assert lst + note + other + "</div>" in page
+    for name, changed, why in (
+            ("inside the item", edit(edit(page, note, ""), "the door</mark>;</p></li>", "the door</mark>;</p>" + note + "</li>"),
+             "structure"),
+            ("inside the list, after the next item's text",
+             edit(edit(page, note, ""), "the window</mark>.</p>", "the window</mark>.</p>" + note), "not after its block"),
+            ("the pending note first", edit(page, note + other, other + note), "out of the composition's order")):
+        fails = placed(changed, build, ITEMS, rec)
+        assert any(why in f for f in fails), (name, fails)
+    # No decision recorded on words inside it marks none, so its note could not show them there
+    none = twin_record(ITEM_ROWS.replace("| review | accepted | Accepted | reviewer · this test |", "| review | none | No decision recorded | reviewer |"))
+    with pytest.raises(rra.RecordError, match="No decision recorded on words inside a list item"):
+        render(source=ITEMS, record=none, cfg=plain_cfg())
+
+
+EDGE = ("# Sample guide\n\n## Plan\n\n<!-- XX-1.1 -->Room A keeps its sofa.\n\n"
+        "- <!-- XX-2.2 -->show the floor finish;\n- show the door.\n")
+EDGE_RANGE = "| XX-1.1 | whole | review | accepted | Accepted | the room · reviewer · this test |\n"
+EDGE_ITEM = '| XX-2.2 | "show the floor finish;" | review | proposed | Proposed | |\n'
+
+
+@pytest.mark.parametrize("source,rows,refused", [
+    # a note after the list, on words inside its first item, groups the list with it, two blocks deep after the range
+    (EDGE, EDGE_RANGE + EDGE_ITEM + '| XX-2.2 | "floor finish" | review | open | Open question | the finish · reviewer |\n', True),
+    # so does the list's own row
+    (EDGE, EDGE_RANGE + EDGE_ITEM + "| XX-2.2 | whole | basis | | | our test design |\n", True),
+    # in the flow, the list is one block deep and the owner's buffer reaches it
+    (EDGE, EDGE_RANGE + EDGE_ITEM, False),
+    # a block between the range and the grouped list
+    (edit(EDGE, "Room A keeps its sofa.\n\n", "Room A keeps its sofa.\n\nRoom B is plain.\n\n"),
+     edit(EDGE_RANGE, "| XX-1.1 | whole |", '| XX-1.1 | "Room A keeps its sofa." |') + EDGE_ITEM + "| XX-2.2 | whole | basis | | | our test design |\n", False),
+    # the range's own note stands between them
+    (EDGE, EDGE_RANGE + '| XX-1.1 | "sofa" | review | proposed | Proposed | |\n' + EDGE_ITEM + "| XX-2.2 | whole | basis | | | our test design |\n", False)],
+    ids=["note after the list", "the list's own row", "list in the flow", "a block between", "the range's note between"])
+def test_a_grouped_list_opening_on_an_item_range_is_refused_directly_after_a_range(source, rows, refused):
+    rec = twin_record(rows)
+    if refused:
+        with pytest.raises(rra.RecordError, match="24px passage buffer between them"):
+            render(source=source, record=rec, cfg=plain_cfg())
+    else:
+        page, build, _ = render(source=source, record=rec, cfg=plain_cfg())
+        assert placed(page, build, source, rec) == [] and ITEM_OPEN in page
+
+
+NONE_PARA = ("# Sample guide\n\n## Plan\n\n<!-- XX-1.1 -->Room A keeps its fixed furniture and its blue door.\n\n"
+             "<!-- XX-2.1 -->**Points:**\n- <!-- XX-2.2 -->the floor finish and the door color;\n- <!-- XX-2.3 -->the window.\n")
+NONE_ROWS = ('| XX-1.1 | whole | basis | | | our test design |\n'
+             '| XX-1.1 | "its blue door" | review | none | No decision recorded | the door · reviewer |\n'
+             '| XX-1.1 | "fixed furniture" | review | accepted | Accepted | reviewer · this test |\n'
+             '| XX-2.2 | whole | basis | | | our test design |\n'
+             '| XX-2.2 | "the door color" | review | none | No decision recorded | the color · reviewer |\n'
+             '| XX-2.2 | "the floor finish" | review | proposed | Proposed | |\n')
+
+
+def test_no_decision_recorded_on_words_is_an_unmarked_note_after_the_marked_ones():
+    rec = twin_record(NONE_ROWS)
+    page, build, _ = render(source=NONE_PARA, record=rec, cfg=plain_cfg())
+    assert placed(page, build, NONE_PARA, rec) == []
+    own = ('<div class="doc-annotations"><span class="doc-annotation-item"><span class="doc-label">Basis</span>'
+           '<span class="doc-meta">our test design</span></span></div>')
+    for words, quote in (("its blue door", "on “its blue door” · the door · reviewer"), ("the door color", "on “the door color” · the color · reviewer")):
+        # it marks no words: the words stay plain, and its note quotes them in full and has no id
+        assert f">{words}</mark>" not in page
+        note = re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note"><div class="doc-annotations"><span class="doc-annotation-item">'
+                         r'<span class="doc-mark doc-label surface-bordered-label" data-review="none">No decision recorded</span>'
+                         r'<span class="doc-meta">' + re.escape(quote) + r'</span></span></div></div>', page).group(0)
+        # directly after the note on marked words, before the text's own row
+        marked = re.search(r'(<div class="doc-hierarchy doc-group doc-annotation-note" id="review-note-\d">(?:(?!doc-annotation-note).)*?</div></div>)'
+                           + re.escape(note), page).group(1)
+        assert page.index(marked) + len(marked) == page.index(note) and page.index(note) + len(note) == page.index(own, page.index(note))
+        for name, changed in (("a plain row", edit(page, note, note[len('<div class="doc-hierarchy doc-group doc-annotation-note">'):-len("</div>")])),
+                              ("after the text's own row", edit(page, note + own, own + note)),
+                              ("before the marked note", edit(page, marked + note, note + marked))):
+            assert placed(changed, build, NONE_PARA, rec) != [], (words, name)
+
+
+def test_a_mark_on_words_the_record_does_not_judge_fails():
+    rec = twin_record('| XX-1.1 | "fixed furniture" | review | accepted | Accepted | reviewer · this production |\n')
+    page, build, _ = render(source=TWINS, record=rec, cfg=plain_cfg())
+    mark = re.search(r'<mark class="doc-passage-mark surface-scope-underline" data-review="accepted"[^>]*>fixed furniture</mark>', page).group(0)
+    # the record's mark kept, and a second green line added under identical words the record never judged
+    stray = page.replace(ROOM_B, ROOM_B.replace("fixed furniture.", mark + "."), 1)
+    assert any("passage mark not in the record at this place" in f for f in placed(stray, build, TWINS, rec))
+
+
+def test_the_item_range_rules_each_hold_on_their_own():
+    rec = twin_record(ITEM_ROWS)
+    page, build, _ = render(source=ITEMS, record=rec, cfg=plain_cfg())
+    host = re.search(re.escape(ITEM_OPEN) + r".*?</li>", page).group(0)
+    lead = re.search(r'^' + re.escape(ITEM_OPEN) + r'(<div class="doc-annotations">.*?</div>)<p', host).group(1)
+    note = re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note" id="review-note-\d">.*?</div></div>', page).group(0)
+    for name, changed, why in (
+            ("no row opening it", edit(page, host, host.replace(lead, "", 1)), "does not open with its row"),
+            ("a note inside it", edit(page, host, host[:-len("</li>")] + note + "</li>"), "not a row, note or statement in a li that is its own range"),
+            ("a second review mark inside it", edit(page, host, host[:-len("</li>")] + lead + "</li>"), "that is its own range")):
+        assert any(why in f for f in placed(changed, build, ITEMS, rec)), name
+
+
+def test_a_decided_note_in_a_group_of_blocks_follows_its_block_before_the_blocks_rows():
+    src = "# Sample guide\n\n## Plan\n\n<!-- XX-1.1 -->Room A keeps its fixed furniture and its blue door.\n\nRoom B is plain.\n"
+    rec = twin_record('| XX-1.1 | whole | basis | | | our test design |\n'
+                      '| XX-1.1 | "its blue door" | basis | | | our test design |\n'
+                      '| XX-1.1 | "fixed furniture" | review | accepted | Accepted | reviewer · this test |\n')
+    page, build, _ = render(source=src, record=rec, cfg=plain_cfg())
+    assert placed(page, build, src, rec) == []
+    group = re.search(r'<div class="doc-group"><p class="doc-body">Room A.*?</div>\n', page, re.S).group(0)
+    note = re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note" id="review-note-1">.*?</div></div>', group).group(0)
+    quoted = re.search(r'<div class="doc-annotations"><span class="doc-annotation-item"><span class="doc-label">Basis</span><span class="doc-meta">on “its blue door”.*?</div>', group).group(0)
+    # in a group of blocks with no judgment, the first block's note follows its text, before its own quoted row
+    assert group.index("</p>") < group.index(note) < group.index(quoted) < group.index("Room B")
+    assert any("out of the composition's order" in f for f in placed(edit(page, note + quoted, quoted + note), build, src, rec))
+
+
+def test_a_table_box_holding_a_scope_underline_is_not_focusable_and_any_other_is():
+    src = "# Sample guide\n\n## Plan\n\n<!-- XX-4.1 -->| Kept |\n|---|\n| <!-- XX-4.2 -->the blue sofa |\n\n<!-- XX-5.1 -->| Moved |\n|---|\n| the lamp |\n"
+    rec = twin_record('| XX-4.2 | "blue sofa" | review | proposed | Proposed | |\n')
+    page, build, _ = render(source=src, record=rec, cfg=plain_cfg())
+    assert placed(page, build, src, rec) == []
+    # the owner's checker refuses a scope underline inside a focusable element; a box with none stays focusable
+    marked, plain_box = '<div class="doc-table-scroll" role="region" aria-label="Kept">', '<div class="doc-table-scroll" role="region" aria-label="Moved" tabindex="0">'
+    assert marked in page and plain_box in page
+    assert '<div class="doc-table-scroll" role="region" aria-label="Marks in this review copy" tabindex="0">' in page
+    focusable = edit(page, marked, marked[:-1] + ' tabindex="0">')
+    assert any(f.startswith("structure") and "made focusable" in f for f in placed(focusable, build, src, rec))
+
+
+def test_a_note_on_words_in_a_list_item_follows_its_text_before_the_items_rows():
+    # the line under the item's last words needs the note's attachment below it: a row there would sit on the line
+    src = "# Sample guide\n\n## Points\n\n<!-- XX-2.1 -->**Points:**\n- <!-- XX-2.2 -->the floor finish and the door color;\n- <!-- XX-2.3 -->the window.\n"
+    rec = twin_record('| XX-2.2 | whole | basis | | | our test design |\n'
+                      '| XX-2.2 | "the door color" | review | proposed | Proposed | |\n'
+                      '| XX-2.2 | "the floor finish" | review | accepted | Accepted | reviewer · this test |\n')
+    page, build, _ = render(source=src, record=rec, cfg=plain_cfg())
+    assert placed(page, build, src, rec) == []
+    item = re.search(r'<li><p class="doc-body">.*?</li>', page).group(0)
+    accepted, proposed = (re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note" id="(review-note-\d)"><div class="doc-annotations">'
+                                    r'<span class="doc-annotation-item"><span class="doc-mark doc-label surface-bordered-label" data-review="%s"' % r,
+                                    item).group(1) for r in ("accepted", "proposed"))
+    own = '<div class="doc-annotations"><span class="doc-annotation-item"><span class="doc-label">Basis</span><span class="doc-meta">our test design</span></span></div>'
+    # the text, the decided note, the pending note, then the item's own row
+    at = lambda nid: item.index(f'id="{nid}"')
+    assert item.index("</p>") < at(accepted) < at(proposed) < item.index(own)
+    note = re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note" id="%s">.*?</div></div>' % proposed, item).group(0)
+    assert any("out of the composition's order" in f for f in placed(edit(page, note + own, own + note), build, src, rec))
+
+
+def test_a_link_inside_judged_words_stays_a_link_under_the_line():
+    src = edit(SOURCE, "**Light:** warm inside, bright outside.", "**Light:** warm inside, bright outside, as in `F101`.")
+    rec = edit(RECORD, "| XX-1.3 | whole |", '| XX-1.1 | "bright outside, as in `F101`" | review | open | Open question | the view · reviewer |\n| XX-1.3 | whole |')
+    page, build, _ = render(source=src, record=rec)
+    assert check(page, build, source=src, record=rec)["fails"] == []
+    assert re.search(r'<mark class="doc-passage-mark surface-scope-underline" data-review="open" aria-describedby="review-note-\d">'
+                     r'bright outside, as in <a class="surface-text-link review-figref" href="#fig-1">fig\. 1</a></mark>', page)
 
 
 def test_a_quoted_row_without_a_judgment_stays_inside_its_blocks_range():
@@ -1139,18 +1481,21 @@ def test_review_marks_carry_the_shared_bordered_label_and_other_marks_do_not():
 @pytest.mark.parametrize("module,line", [
     ("surface-treatments.css", b".surface-bordered-label {}\n"),
     ("surface-treatments.css", b".surface-labeled-range::before {}\n"),
+    ("surface-treatments.css", b"li.surface-labeled-range::before {}\n"),
+    ("surface-treatments.css", b".surface-scope-underline {}\n"),
     ("review-semantics.css", b".doc-mark[data-review] { --surface-bordered-label-color: x; }\n"),
-    ("review-semantics.css", b".doc-annotation-range:has(> .doc-annotations) {}\n")])
-def test_render_refuses_a_donor_without_the_bordered_label_and_the_range(module, line):
+    ("review-semantics.css", b".doc-annotation-range:has(> .doc-annotations) {}\n"),
+    ("review-semantics.css", b"mark.doc-passage-mark { --surface-scope-underline-color: x; }\n")])
+def test_render_refuses_a_donor_without_what_its_markup_needs(module, line):
     cfg = config()
     src = rra.parse_source(SOURCE, cfg)
     glosses, rows = rra.parse_record(RECORD, cfg["record_section"])
     files = ds_files()
-    # a donor missing one rule the markup needs, as before design-system-ASK #183; a look-alike does not stand in
+    # a donor missing one rule the markup needs, as before design-system-ASK #185; a look-alike does not stand in
     assert line in files[module]
     files[module] = files[module].replace(line, b"/* " + line.strip() + b" */\n.surface-bordered-label--other {}\n")
     r = rra.Renderer(src, glosses, rows, "XX", cfg, lambda rel: files[rel], "a" * 40, "2026-01-01", lambda fid: PAYLOADS[fid])
-    with pytest.raises(rra.RecordError, match=f"{module} at design-system commit aaaaaaa lacks .*#183"):
+    with pytest.raises(rra.RecordError, match=f"{module} at design-system commit aaaaaaa lacks .*#185"):
         r.render("2026-01-01T00:00:00+00:00")
 
 
@@ -1222,7 +1567,8 @@ def _row(page):
 
 GRAMMAR_CASES = [
     # (name, mutation of the fixture page, expected failure)
-    ("hidden attribute", lambda p: edit(p, '<li><div class="doc-annotations">', '<li><div class="doc-annotations" hidden>'), "structure"),
+    ("hidden attribute", lambda p: edit(p, '<li class="doc-annotation-range surface-labeled-range"><div class="doc-annotations">',
+                                        '<li class="doc-annotation-range surface-labeled-range"><div class="doc-annotations" hidden>'), "structure"),
     ("row between the list's last item and its end", lambda p: edit(edit(p, re.search(
         r'<div class="doc-annotations"><span class="doc-annotation-item"><span class="doc-mark doc-label surface-bordered-label" data-review="open">.*?</div>', p).group(0), ""),
         '<li class="doc-body">the door color to show.</li></ul>',
@@ -1233,8 +1579,16 @@ GRAMMAR_CASES = [
     ("repeated attribute", lambda p: p.replace('data-review="accepted">Accepted</span><span class="doc-meta">the registers',
                                                'data-review="declined" data-review="accepted">Accepted</span><span class="doc-meta">the registers', 1), "repeats an attribute"),
     ("template element", lambda p: edit(p, LIGHT, LIGHT.replace("warm inside", "warm <template>never shown</template>inside")), "structure"),
-    ("free text in a row", lambda p: edit(p, '<li><div class="doc-annotations">', '<li><div class="doc-annotations">Superseded: '), "text where the grammar has none"),
-    ("strikethrough", lambda p: edit(p, "</mark>. Every image starts from a photograph of the room.</p>", "</mark>. <s>Every image starts from a photograph of the room.</s></p>"), "structure"),
+    ("free text in a row", lambda p: edit(p, '<li class="doc-annotation-range surface-labeled-range"><div class="doc-annotations">',
+                                          '<li class="doc-annotation-range surface-labeled-range"><div class="doc-annotations">Superseded: '),
+     "text where the grammar has none"),
+    ("strikethrough", lambda p: edit(p, "</mark>. <mark", "</mark>. <s>Kept.</s> <mark"), "structure"),
+    # a table's scrolling box holding no scope underline left unfocusable, so a keyboard cannot scroll it
+    ("unfocusable table box", lambda p: edit(p, '<div class="doc-table-scroll" role="region" aria-label="Key" tabindex="0">',
+                                             '<div class="doc-table-scroll" role="region" aria-label="Key">'), "structure"),
+    # a judged item composed as a group would take that composition's gap, and its range is the item host's alone
+    ("judged item composed as a group", lambda p: edit(p, '<li class="doc-annotation-range surface-labeled-range">',
+                                                       '<li class="doc-group doc-annotation-range surface-labeled-range">'), "structure"),
     ("unclosed paragraph", lambda p: edit(p, LIGHT, LIGHT[:-4]), "structure"),
     ("marked section", lambda p: edit(p, LIGHT, LIGHT + "<![CDATA[Accepted for all productions]]>"), "marked section"),
     ("removed bold", lambda p: edit(p, "<strong>Light:</strong>", "Light:"), "bold, code or figure links differ"),
@@ -1304,7 +1658,7 @@ def test_a_mark_moved_within_a_hyphenated_word_fails():
     rec = twin_record('| XX-1.2 | "tone" | review | proposed | Proposed | |\n')
     page, build, _ = render(source=src, record=rec, cfg=plain_cfg())
     assert placed(page, build, src, rec) == []
-    mark = re.search(r'<mark class="doc-passage-mark"[^>]*>tone</mark>', page).group(0)
+    mark = re.search(r'<mark class="doc-passage-mark surface-scope-underline"[^>]*>tone</mark>', page).group(0)
     moved = edit(page, "two-tone " + mark, "two-" + mark + " tone")
     assert any("passage mark missing, moved" in f for f in placed(moved, build, src, rec))
 
@@ -1324,7 +1678,7 @@ def test_a_note_before_its_blocks_row_fails_the_composition_order():
 
 def test_a_quote_that_differs_only_in_spacing_is_refused():
     src = "# Sample guide\n\n## Plan\n\n<!-- XX-1.1 -->Room A: keep the fixed furniture. <!-- XX-1.2 -->Room B: keep the fixed  furniture.\n"
-    rec = twin_record('| XX-1.2 | "keep the fixed  furniture." | review | accepted | Accepted | reviewer · this production |\n')
+    rec = twin_record('| XX-1.2 | "keep the fixed  furniture." | basis | | | our test design |\n')
     with pytest.raises(rra.RecordError, match="more than once"):
         render(source=src, record=rec, cfg=plain_cfg())
 
@@ -1381,11 +1735,11 @@ def test_annotations_on_a_table_heading_are_refused_not_dropped():
 
 def test_a_quote_found_twice_by_overlap_or_by_invisible_characters_is_refused():
     src = "# Sample guide\n\n## Plan\n\n<!-- XX-1.1 -->Show it red <!-- XX-1.2 -->red red now.\n"
-    rec = twin_record('| XX-1.2 | "red red" | review | accepted | Accepted | reviewer · this production |\n')
+    rec = twin_record('| XX-1.2 | "red red" | basis | | | our test design |\n')
     with pytest.raises(rra.RecordError, match="more than once"):
         render(source=src, record=rec, cfg=plain_cfg())
     src = "# Sample guide\n\n## Plan\n\n<!-- XX-1.1 -->Keep the so\u00adfa. <!-- XX-1.2 -->Keep the sofa.\n"
-    rec = twin_record('| XX-1.2 | "Keep the sofa." | review | accepted | Accepted | reviewer · this production |\n')
+    rec = twin_record('| XX-1.2 | "Keep the sofa." | basis | | | our test design |\n')
     with pytest.raises(rra.RecordError, match="more than once"):
         render(source=src, record=rec, cfg=plain_cfg())
 
@@ -1440,7 +1794,7 @@ def test_the_source_refuses_more_markdown_a_reader_would_read_differently():
 def test_more_quote_and_passage_edges_are_refused():
     for a, b in [("Keep the fixed\u2009furniture.", "Keep the fixed furniture."), ("Keep the so\u034ffa.", "Keep the sofa.")]:
         src = f"# Sample guide\n\n## Plan\n\n<!-- XX-1.1 -->{a} <!-- XX-1.2 -->{b}\n"
-        rec = twin_record(f'| XX-1.2 | "{b}" | review | accepted | Accepted | reviewer · this production |\n')
+        rec = twin_record(f'| XX-1.2 | "{b}" | basis | | | our test design |\n')
         with pytest.raises(rra.RecordError, match="more than once"):
             render(source=src, record=rec, cfg=plain_cfg())
     src = "# Sample guide\n\n## Plan\n\n<!-- XX-1.1 -->Keep the cafe\u0301 tables.\n"
@@ -1527,7 +1881,7 @@ def test_boundaries_and_quotes_fold_as_a_reader_sees_them():
     with pytest.raises(rra.RecordError, match="accented"):
         render(source=src, record=rec, cfg=plain_cfg())
     src = "# Sample guide\n\n## Plan\n\n<!-- XX-1.1 -->keep the \ufb01xed furniture. <!-- XX-1.2 -->keep the fixed furniture.\n"
-    rec = twin_record('| XX-1.2 | "keep the fixed furniture." | review | accepted | Accepted | reviewer · this production |\n')
+    rec = twin_record('| XX-1.2 | "keep the fixed furniture." | basis | | | our test design |\n')
     with pytest.raises(rra.RecordError, match="more than once"):
         render(source=src, record=rec, cfg=plain_cfg())
 
@@ -1600,8 +1954,15 @@ def test_notes_in_items_and_cells_must_stay_in_them():
     out_of_item = edit(edit(page, note, ""), "<li class=\"doc-body\">show the door;</li>", "<li><p class=\"doc-body\">show the door;</p>" + note + "</li>")
     assert any("note" in f for f in placed(out_of_item, build, src, rec))
     cell_note = re.search(r'<div class="doc-hierarchy doc-group doc-annotation-note" id="review-note-2">.*?</div></div>', page).group(0)
-    out_of_cell = edit(page, cell_note + "</td>", "</td>").replace("</table></div>", "</table></div>" + cell_note, 1)
+    out_of_cell = edit(page, cell_note + "</div></td>", "</div></td>").replace("</table></div>", "</table></div>" + cell_note, 1)
     assert placed(out_of_cell, build, src, rec) != []
+    # in the cell but outside the group of its text, where it would take no gap below the line under the words
+    ungrouped = edit(page, cell_note + "</div></td>", "</div>" + cell_note + "</td>")
+    assert any(f.startswith("structure") for f in placed(ungrouped, build, src, rec))
+    # the cell's text and its note outside any group: the note takes no gap below the line under the words
+    group_open = '<td><div class="doc-group"><p class="doc-body">the '
+    flat = edit(edit(page, group_open, '<td><p class="doc-body">the '), cell_note + "</div></td>", cell_note + "</td>")
+    assert any("does not hold one group" in f for f in placed(flat, build, src, rec))
 
 
 def test_a_figure_grid_moved_under_another_block_fails():
@@ -1712,9 +2073,20 @@ def test_the_build_records_applied_annotations_are_the_records():
 
 def test_a_quote_that_names_two_places_is_refused():
     src = "# Sample guide\n\n## Plan\n\n<!-- XX-1.1 -->Room A: keep the fixed furniture. <!-- XX-1.2 -->Room B: keep the fixed furniture.\n"
-    rec = twin_record('| XX-1.1 | "keep the fixed furniture." | review | accepted | Accepted | reviewer · this production |\n')
+    rec = twin_record('| XX-1.1 | "keep the fixed furniture." | basis | | | our test design |\n')
     with pytest.raises(rra.RecordError, match="more than once in the text the row follows"):
         render(source=src, record=rec, cfg=plain_cfg())
+    # a decided judgment on the same words is marked where the record puts it, so its note needs no unique quote;
+    # its line moved to the other occurrence fails
+    rec = twin_record('| XX-1.1 | "keep the fixed furniture." | review | accepted | Accepted | reviewer · this production |\n')
+    page, build, _ = render(source=src, record=rec, cfg=plain_cfg())
+    assert placed(page, build, src, rec) == []
+    mark = re.search(r'<mark class="doc-passage-mark surface-scope-underline" data-review="accepted"[^>]*>keep the fixed furniture\.</mark>',
+                     page).group(0)
+    assert "Room A: " + mark + " Room B: keep the fixed furniture." in page
+    moved = edit(page, "Room A: " + mark + " Room B: keep the fixed furniture.",
+                 "Room A: keep the fixed furniture. Room B: " + mark)
+    assert any("passage mark missing, moved" in f for f in placed(moved, build, src, rec))
 
 
 def test_a_key_inside_a_word_is_refused():
@@ -1958,6 +2330,25 @@ def test_command_line_manifest_with_failing_reports_succeeds_and_records_fail(tm
 
 
 @pytest.mark.skipif(shutil.which("node") is None, reason="node is needed to stand in for the owner checker")
+def test_owner_check_requires_the_owner_to_govern_every_scope_underline(tmp_path):
+    ds = tmp_path / "ds"
+    (ds / "tools").mkdir(parents=True)
+    git = ["git", "-C", str(ds), "-c", "user.email=t@example.com", "-c", "user.name=t"]
+    subprocess.run(["git", "init", "-q", str(ds)], check=True)
+    out = tmp_path / "out.html"
+    out.write_text('<!doctype html><title>x</title><mark class="doc-passage-mark surface-scope-underline">w</mark>', encoding="utf-8")
+    for counts, ok in (('{"doc-passage-mark":1}', False), ('{"doc-passage-mark":1,"scope-underline":1}', True)):
+        run = '{"scheme":"%s","status":"pass","governed":1,"findings":[],"unmapped":[],"counts":' + counts + '}'
+        (ds / rra.OWNER_TOOL).write_text("console.log(JSON.stringify({tool:'check-role-conformance',pass:true,runs:["
+                                         + run % "dark" + "," + run % "light" + "]}));\n", encoding="utf-8")
+        subprocess.run(git + ["add", "."], check=True)
+        subprocess.run(git + ["commit", "-qm", "stand-in"], check=True)
+        pin = subprocess.run(git + ["rev-parse", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
+        (tmp_path / "out.html.build.json").write_text(json.dumps({"commit": pin, "out_sha256": hashlib.sha256(out.read_bytes()).hexdigest()}),
+                                                      encoding="utf-8")
+        assert (rra.owner_check(out, str(ds))["fails"] == []) is ok, counts
+
+
 def test_owner_check_is_bound_to_the_output_and_the_pinned_tools(tmp_path):
     ds = tmp_path / "ds"
     (ds / "tools").mkdir(parents=True)
