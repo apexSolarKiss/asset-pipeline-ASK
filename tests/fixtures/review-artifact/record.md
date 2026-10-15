@@ -21,7 +21,7 @@ reads only the section below.
 | XX-1.3 | whole | review | open | Open question | the points listed · the reviewer |
 | XX-2.1 | whole | basis | | | our test design |
 | XX-2.1 | whole | review | accepted | Accepted | the registers in this plan · studio lead · this test only |
-| XX-2.1 | whole | review | proposed | Proposed | the roles and figures |
+| XX-2.1 | prompt: whole | review | proposed | Proposed | the roles and figures in the table below · studio lead |
 | XX-2.2 | "detail photographs are optional and are added only by explicit choice;" | basis | | | our test design |
 | XX-2.2 | "detail photographs are optional and are added only by explicit choice;" | review | accepted | Accepted | the optional detail photographs · studio lead · this test |
 | XX-2.4 | "A move appears only where the target view includes it." | statement | | | Uses “target view”. If the reviewer leaves that term open, read “real or approved”. |
