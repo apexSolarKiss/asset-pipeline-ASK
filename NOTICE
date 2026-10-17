@@ -11,7 +11,10 @@ Tier 2 foundations, the Spectral State and Three Functions profiles, and
 design-system-owned static and interactive diagram render support under
 docs/diagrams/, the surface-shell pattern, the surface-panel, surface-action,
 surface-text-link, surface-document and surface-treatments visual rules, and
-the ASK wordmark pair used by docs/index.html and docs/diagrams/index.html.
+the ASK wordmark pair used by docs/index.html and docs/diagrams/index.html,
+and, vendored under tools/read/carriers/ for the site's reading pages, the
+surface-text-link, surface-document and surface-treatments visual rules and
+the surface-document overflow helper.
 
 This product also includes the ASK social card, docs/og-image.png, copied
 unmodified from the ASK site (github.com/apexSolarKiss/ASK).
