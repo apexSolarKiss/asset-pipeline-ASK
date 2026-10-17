@@ -6,8 +6,8 @@
   "identity": {
     "name": "AP-ASK",
     "index_description": "AP-ASK documents, rendered from the repository's Markdown.",
-    "index_lede": "AP-ASK's reader path: the problem, the concrete package, the architecture and method, and the deeper artifacts, rendered from the repository's Markdown when the site is built. The full evidence trail stays on GitHub, the source of record; every page links its source and its raw file.",
-    "documents_title": "reader path",
+    "index_lede": "AP-ASK's reader path and foundation documents: the problem, the concrete package, the architecture, method and premises, and the deeper artifacts the diagrams draw on, rendered from the repository's Markdown when the site is built. The full evidence trail stays on GitHub, the source of record; every page links its source and its raw file.",
+    "documents_title": "documents",
     "records_intro": "Operating records of the diagram folder, rendered from their Markdown.",
     "source_note": "the diagram front door links it",
     "source_card": "Read-only, line-numbered: one source file, in the view the diagram front door links.",
@@ -31,6 +31,7 @@
     {"path": "docs/package-lifecycle-partition-v1.md", "label": "package lifecycle partition"},
     {"path": "docs/architecture.md", "label": "architecture"},
     {"path": "docs/method.md", "label": "method"},
+    {"path": "docs/foundational-premises-v1.md", "label": "foundational premises"},
     {"path": "docs/structured-ia-model-v2.md", "label": "structured IA model v2"},
     {"path": "docs/layered-reference-and-discretion-architecture-v1.md", "label": "layered reference and discretion architecture"},
     {"path": "docs/brand-system-input-cross-category-synthesis-v1.md", "label": "brand-system input: cross-category synthesis"},
@@ -51,7 +52,7 @@
     {"path": "CLAUDE.md", "reason": "a runtime adapter that imports AGENTS.md"}
   ],
   "held_under": [
-    {"under": "docs/", "reason": "AP-ASK's evidence trail: findings, plans, decision records, milestones, application contracts and the full reading-order index (docs/index.md), read on GitHub. The pages above follow README.md's reader path and the diagram front door"}
+    {"under": "docs/", "reason": "everything else under docs/, read on GitHub: the evidence trail (findings, plans, decision records and milestones), the application contracts, templates and worksheets, and the full reading-order index, docs/index.md"}
   ],
   "passages": {
     "docs/creative-discretion-doctrine-v1.md": [

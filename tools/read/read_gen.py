@@ -6,11 +6,13 @@ tools/read/read_gen.py (PRG-023). The renderer, the gates and the page markup
 are method-ASK's; what differed by repository moved into tools/read/declared.json:
 the identity strings, the chrome's stylesheet, script and wordmark paths, the
 site directory (docs/ or the repository root), an authored home page in place
-of a generated one, several front doors, document collections outside the
-site, an explicit output name per entry, and a declared default hold for the
-Markdown under a directory. A link to a directory inside the site with no
-index.html, or to a Markdown file in the site that is not rendered, opens on
-GitHub. Hidden files are not copied into the site.
+of a generated one, several front doors, document collections, an explicit
+output name per entry, a declared default hold for the Markdown under a
+directory, and directory exclusions (site_exclude entries ending in /), inside
+which the build's --out and --report may land. A link to a directory inside
+the site with no index.html, to a Markdown file in the site that is not
+rendered, or to a hidden file, opens on GitHub. Hidden files are not copied
+into the site, and an authored home page is link-checked like a generated one.
 
 The deployed site is the declared site directory as authored, plus a home page
 at its root (index.html: generated from the declaration's home block, or the
@@ -214,12 +216,12 @@ class Tree:
         self.root = root
         self.site = cfg["site"]                                   # docs, or "." for the repository root: the authored site
         self.read = cfg["read"]                                   # read: the generated pages, site-relative
-        self.ident = cfg["identity"]
-        self.documents = {d["path"]: d for d in cfg["documents"]}
+        self.ident = cfg.get("identity") or {}
+        self.documents = {d["path"]: d for d in cfg.get("documents", [])}
         self.collections = list(cfg.get("collections", []))
-        self.collection_of = {e["path"]: c for c in self.collections for e in c["entries"]}
+        self.collection_of = {e["path"]: c for c in self.collections for e in c.get("entries", [])}
         self.records = {r["path"]: r for r in cfg.get("records", [])}
-        self.rendered = dict(self.documents, **{p: e for c in self.collections for e in c["entries"] for p in [e["path"]]},
+        self.rendered = dict(self.documents, **{p: e for c in self.collections for e in c.get("entries", []) for p in [e["path"]]},
                              **self.records)
         self.redirects = {r["path"]: r["to"] for r in cfg.get("redirects", [])}
         self.held = {h["path"]: h for h in cfg.get("held", [])}
@@ -234,6 +236,10 @@ class Tree:
 
     def site_prefix(self):
         return "" if self.site == "." else self.site + "/"
+
+    def is_hidden(self, repo_path):
+        """A path with a segment that starts with '.': never copied into the site."""
+        return any(seg.startswith(".") and seg not in (".", "..") for seg in repo_path.split("/"))
 
     def is_excluded(self, repo_path):
         """A declared site exclusion names a file, or a directory with a trailing slash."""
@@ -299,7 +305,7 @@ class Tree:
     def raw_href(self, page, repo_path):
         """The raw file: hosted on this site when it is in the site directory and not excluded, on GitHub otherwise."""
         site = self.site_path(repo_path)
-        if site is not None and not self.is_excluded(repo_path):
+        if site is not None and not self.is_excluded(repo_path) and not self.is_hidden(repo_path):
             return self.rel(page, site)
         return self.github(repo_path, kind="raw")
 
@@ -369,8 +375,18 @@ def config_problems(tree):
     for fd in cfg.get("front_doors", []):
         if path_ok(fd, "front door", site) and not tree.exists(fd):
             out.append("UNRESOLVED  front door %s: no such file" % fd)
+        elif tree.is_excluded(fd) or tree.is_hidden(fd):
+            out.append("STRUCTURE-FRONT-DOOR  %s is excluded from the site or hidden, so it is never served" % fd)
     for p in cfg.get("site_exclude", []):
-        path_ok(p.rstrip("/"), "site exclusion", site)
+        bare = p.rstrip("/")
+        if not path_ok(bare, "site exclusion", site):
+            continue
+        if posixpath.normpath(bare) in (".", "") or bare == cfg["site"]:
+            out.append("STRUCTURE-PATH  site exclusion %r names the site itself" % p)
+        elif p.endswith("/") and tree.exists(bare) and not os.path.isdir(tree.abspath(bare)):
+            out.append("STRUCTURE-PATH  site exclusion %r ends in / but names a file" % p)
+        elif not p.endswith("/") and os.path.isdir(tree.abspath(bare)):
+            out.append("STRUCTURE-PATH  site exclusion %r names a directory; write it with a trailing /" % p)
     for d in cfg["documents"]:
         if path_ok(d["path"], "document", site) and not tree.exists(d["path"]):
             out.append("UNRESOLVED  document %s: no such file" % d["path"])
@@ -460,7 +476,11 @@ def config_problems(tree):
         return out
     # every Markdown file in the inventory scope has exactly one declared disposition
     declared = {}
-    for p in list(tree.rendered) + list(tree.redirects) + list(tree.held):
+    listed = ([d["path"] for d in cfg.get("documents", [])]
+              + [e["path"] for c in cfg.get("collections", []) for e in c.get("entries", [])]
+              + [r["path"] for r in cfg.get("records", [])] + [r["path"] for r in cfg.get("redirects", [])]
+              + [h["path"] for h in cfg.get("held", [])])
+    for p in listed:
         declared.setdefault(p, 0)
         declared[p] += 1
     for p, n in sorted(declared.items()):
@@ -531,7 +551,8 @@ def rewrite(tree, from_path, page, href):
     site = tree.site_path(target)
     if site is not None and not is_dir and target.endswith(".md"):
         return tree.github(target), "unrendered-markdown-to-github"    # its rendered view, not raw text
-    if site is not None and not tree.is_excluded(target) and not (is_dir and tree.is_excluded(target + "/")):
+    if (site is not None and not tree.is_excluded(target) and not tree.is_hidden(target)
+            and not (is_dir and tree.is_excluded(target + "/"))):
         if not is_dir or os.path.isfile(os.path.join(tree.abspath(target), "index.html")):
             return tree.rel(page, site) + ("/" if is_dir else "") + query, "hosted-file"
         return tree.github(target, "", "tree"), "site-directory-to-github"    # the site serves no listing of it
@@ -575,7 +596,7 @@ def rewrite_image_src(tree, from_path, page, src, raw=False):
     target = posixpath.normpath(posixpath.join(posixpath.dirname(from_path), path))
     site = tree.site_path(target)
     if (src.startswith("/") or path.startswith("/") or target.startswith("../") or site is None or tree.is_excluded(target)
-            or not tree.exists(target)):
+            or tree.is_hidden(target) or not tree.exists(target)):
         return src, "UNRESOLVED-IMAGE (not a hosted file)"
     if raw and not os.path.isfile(tree.abspath(target)):
         return src, "UNRESOLVED-IMAGE (raw <img> src is not a regular file)"
@@ -1846,13 +1867,13 @@ def site_files(tree):
 
 
 def link_problems(tree, site):
-    """Link and anchor check over the generated pages, the home page among them, and the front door of a composed
-    site. Returns (problems, warnings, counts, pages read)."""
+    """Link and anchor check over the generated pages, the home page (generated or authored), and each front door of
+    a composed site. Returns (problems, warnings, counts, pages read)."""
     read_root = os.path.join(site, tree.read)
     site_root = os.path.normpath(site)
     pages = {}
     targets = [os.path.join(dp, fn) for dp, _, fns in os.walk(read_root) for fn in fns if fn.endswith(".html")]
-    if not tree.home_page:                       # an authored home page is checked only as a front door
+    if tree.home_path() not in {tree.site_path(fd) for fd in tree.front_doors}:   # a front door is added below
         targets.append(os.path.join(site, *tree.home_path().split("/")))
     for fd in tree.front_doors:
         targets.append(os.path.join(site, *tree.site_path(fd).split("/")))

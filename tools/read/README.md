@@ -1,12 +1,14 @@
 # tools/read
 
-`read_gen.py` builds the site. It copies `docs/` as authored, except `docs/vercel.json` and hidden files and directories, and adds the pages it generates under `read/`: one reading page per declared document and record, one read-only source view per declared source or data file, and a documents index.
+`read_gen.py` builds the site. It copies `docs/` as authored, except `docs/vercel.json`, hidden files, and hidden and symlinked directories, and adds the pages it generates under `read/`: one reading page per declared document and record, one read-only source view per declared source or data file, and a documents index.
 
 The site root keeps the authored AP-ASK landing page, `docs/index.html`, which the build copies unchanged; `declared.json` names it as the home page, and every generated page's breadcrumb links it.
 
-The Markdown and the source files stay the only source. The generated pages are build output: they are written to the directory the build is given, never into `docs/`, and never committed. Editing a Markdown file is enough to change its page at the next build, with three exceptions, each of which needs `declared.json` changed in the same commit: a new Markdown file at the repository root needs a declared place; a new blockquote in a rendered document needs a declared role; and changing the opening words of a declared passage or block needs its declaration changed to match. A new Markdown file under `docs/` is held by the declared default hold until it is declared. Until then the build fails and nothing new is deployed.
+The Markdown and the source files stay the only source. The generated pages are build output: they are written to the directory the build is given, never into `docs/`, and never committed. Editing a Markdown file is enough to change its page at the next build, with three exceptions, each of which needs `declared.json` changed in the same commit: a new Markdown file at the repository root needs a declared place; a new blockquote in a rendered document needs a declared role; and changing the opening words of a declared passage or block needs its declaration changed to match. Until then the build fails and nothing new is deployed.
 
-The build touches nothing outside the site: `src/`, `scripts/`, `tests/` and the review-artifact renderer are separate from it.
+A new Markdown file under `docs/` builds without error: the declared default hold keeps it unrendered, and pages link it on GitHub, until it is declared. The gates do apply to every rendered document: a new blockquote, raw HTML or an HTML comment, a second title, a link to a file that does not exist (a held file that is renamed or retired included) or a link in a table header fails the build, and a failed build deploys nothing in that commit, landing-page changes included.
+
+The build changes nothing outside its output: `src/`, `scripts/`, `tests/` and the review-artifact renderer are separate from it.
 
 The pages are static files. Each loads same-site stylesheets, fonts, icons and two scripts, `surface-shell.js` and `surface-document-overflow.js`; the shell script builds the responsive navigation panel from the page's own markup. No content is generated or fetched at runtime, and the site runs no server-side code.
 
@@ -14,7 +16,7 @@ GitHub stays the source of record. Every reading page and source view links its 
 
 ## Provenance
 
-`read_gen.py`, `vercel-build.sh` and `requirements.txt` are adapted from [`apexSolarKiss/method-ASK`](https://github.com/apexSolarKiss/method-ASK) at `5e3a332164b2973d9eea2337ddeed825ae56ad4d` (`tools/read/`). The renderer, the gates and the page markup are method-ASK's. What differed by repository is declared in `declared.json` instead of written into the code: the repository's name and index copy, the stylesheet, script and wordmark paths, the site directory, the home page, the front doors, the document collections and their output names, and default holds. Three behaviours were added: a link to a directory inside the site with no `index.html` of its own, or to a Markdown file in the site that is not rendered, opens on GitHub rather than as a raw file or a missing listing; hidden files are not copied into the site; and a word too long for its line breaks rather than widen the page at narrow widths. `requirements.txt` is method-ASK's, unchanged.
+`read_gen.py`, `vercel-build.sh` and `requirements.txt` are adapted from [`apexSolarKiss/method-ASK`](https://github.com/apexSolarKiss/method-ASK) at `5e3a332164b2973d9eea2337ddeed825ae56ad4d` (`tools/read/`). The renderer, the gates and the page markup are method-ASK's. What differed by repository is declared in `declared.json` instead of written into the code: the repository's name and index copy, the stylesheet, script and wordmark paths, the site directory, the home page, the front doors, the document collections and their output names, default holds, and directory exclusions (`site_exclude` entries ending in `/`), inside which the build's output and report may land. Five behaviors were added: a link to a directory inside the site with no `index.html` of its own, to a Markdown file in the site that is not rendered, or to a hidden file opens on GitHub rather than as a raw file, a missing listing or a file the site does not serve; hidden files are not copied into the site; an authored home page is link-checked like a generated one; a word too long for its line breaks rather than widen the page at narrow widths; and the build's output may sit inside the site only within a directory the declaration excludes, matched case-exactly even before that directory exists, where method-ASK's refused any output inside the site. `requirements.txt` is method-ASK's, unchanged. The same `read_gen.py` runs on every PRG-023 site, so it reads declaration keys a site may not use — `home_page`, `held_under`, `collections` or a repository-root `site` — and a key absent from `declared.json` has no effect.
 
 ## The front door
 
@@ -34,7 +36,7 @@ Apart from the mapped `href` values and those template tags, the composed copy i
 2. installs the exact renderer pin into a temporary virtual environment, by hash, from wheels only;
 3. runs `read_gen.py build --out _site` at the repository root.
 
-A failed gate fails the build, so a broken document is never deployed. `docs/vercel.json` also carries the site's headers, the `noindex` header on `/images/` and the `/diagrams` redirect; the build changes none of them.
+A failed gate fails the build, so a broken document is never deployed. `docs/vercel.json` also carries the site's headers, the `noindex` header on `/images/`, the `/diagrams` redirect, and a `/read` to `/read/` redirect so the documents index, served from a directory, keeps its relative links; the build changes none of them.
 
 ## Setup
 
@@ -140,6 +142,7 @@ Successive groups sit one line apart. A shape is never inferred from blank lines
 | a Markdown file in the site that is not rendered | the file on GitHub at `main`; its raw route stays served |
 | another file in the site (a figure, a raster, a source file) | a relative link to that file |
 | a directory in the site with no `index.html` | the directory on GitHub at `main` |
+| a hidden file, or a file the declaration excludes from the site | the file on GitHub at `main` |
 | a repository file or directory outside the site that is not rendered | the file or directory on GitHub at `main` |
 | an external URL | unchanged |
 
