@@ -2,7 +2,7 @@
 
 `read_gen.py` builds the site. It copies `docs/` as authored, except `docs/vercel.json`, hidden files, and hidden and symlinked directories, and adds the pages it generates under `read/`: one reading page per declared document and record, one read-only source view per declared source or data file, and a documents index.
 
-The site root keeps the authored AP-ASK landing page, `docs/index.html`, which the build copies unchanged; `declared.json` names it as the home page, and every generated page's breadcrumb links it.
+The site root keeps the authored AP-ASK landing page, `docs/index.html`; `declared.json` names it as the home page and as a front door, and every generated page's breadcrumb links it.
 
 The Markdown and the source files stay the only source. The generated pages are build output: they are written to the directory the build is given, never into `docs/`, and never committed. Editing a Markdown file is enough to change its page at the next build, with three exceptions, each of which needs `declared.json` changed in the same commit: a new Markdown file at the repository root needs a declared place; a new blockquote in a rendered document needs a declared role; and changing the opening words of a declared passage or block needs its declaration changed to match. Until then the build fails and nothing new is deployed.
 
@@ -12,21 +12,21 @@ The build changes nothing outside its output: `src/`, `scripts/`, `tests/` and t
 
 The pages are static files. Each loads same-site stylesheets, fonts, icons and two scripts, `surface-shell.js` and `surface-document-overflow.js`; the shell script builds the responsive navigation panel from the page's own markup. No content is generated or fetched at runtime, and the site runs no server-side code.
 
-GitHub stays the source of record. Every reading page and source view links its file on GitHub at `main` and its raw file. The raw `.md` and `.js` routes under the site are unchanged, and so are the landing page, the diagram pages and their assets, which the build copies byte for byte.
+GitHub stays the source of record. Every reading page and source view links its file on GitHub at `main` and its raw file. The raw `.md` and `.js` routes under the site are unchanged, and so are the diagram pages and the site's assets, which the build copies byte for byte; the two front doors, the diagram index and the landing page, differ from their authored bytes only as composed (below).
 
 ## Provenance
 
 `read_gen.py`, `vercel-build.sh` and `requirements.txt` are adapted from [`apexSolarKiss/method-ASK`](https://github.com/apexSolarKiss/method-ASK) at `5e3a332164b2973d9eea2337ddeed825ae56ad4d` (`tools/read/`). The renderer, the gates and the page markup are method-ASK's. What differed by repository is declared in `declared.json` instead of written into the code: the repository's name and index copy, the stylesheet, script and wordmark paths, the site directory, the home page, the front doors, the document collections and their output names, default holds, and directory exclusions (`site_exclude` entries ending in `/`), inside which the build's output and report may land. Five behaviors were added: a link to a directory inside the site with no `index.html` of its own, to a Markdown file in the site that is not rendered, or to a hidden file opens on GitHub rather than as a raw file, a missing listing or a file the site does not serve; hidden files are not copied into the site; an authored home page is link-checked like a generated one; a word too long for its line breaks rather than widen the page at narrow widths; and the build's output may sit inside the site only within a directory the declaration excludes, matched case-exactly even before that directory exists, where method-ASK's refused any output inside the site. `requirements.txt` is method-ASK's, unchanged. This repository owns its adapted copy of `read_gen.py`, and `declared.json` supplies the repository-specific configuration. The copy reads declaration keys a site may not use — `home_page`, `held_under`, `collections` or a repository-root `site` — and a key absent from `declared.json` has no effect.
 
-## The front door
+## The front doors
 
-`docs/diagrams/index.html` is authored once, and it is the only authored file the build changes on its way into the site.
+`docs/diagrams/index.html` and the landing page, `docs/index.html`, are each authored once, and they are the only authored files the build changes on their way into the site.
 
-- **Opened from a clone**, without a build, it works as written: its relative links open the files they name, the raw source, data, document and README files included. Its root-absolute icons are the deployment's and do not load from a clone, as before.
+- **Opened from a clone**, without a build, each works as written: its relative links open the files they name, on the diagram page the raw source, data, document and README files included. Its root-absolute icons are the deployment's and do not load from a clone, as before.
 - **In the composed site**, the build serves a copy in which each link to a declared source file opens its source view, and each link to a rendered document or record opens its page. A query or `#fragment` on the link is kept. The mapping is the declaration's own; there is no separate list to keep in step.
-- **Build-only fragment.** Navigation whose destination exists only in a built site sits in a `<template data-read-build>` element. A template's content is inert, so a clone shows no dead link; the build removes the template tags, each with its line where it stands alone on one, so the content renders. The documents route uses one. The breadcrumb's `AP-ASK` already links the landing page.
+- **Build-only fragment.** Navigation whose destination exists only in a built site sits in a `<template data-read-build>` element. A template's content is inert, so a clone shows no dead link; the build removes the template tags, each with its line where it stands alone on one, so the content renders. The diagram page's documents route uses one, and the landing page's three links to the technical documentation, its title action, its closing panel and its navigation entry, use one each. The breadcrumb's `AP-ASK` already links the landing page.
 
-Apart from the mapped `href` values and those template tags, the composed copy is the authored bytes, and nothing else under `docs/` is changed.
+Apart from the mapped `href` values and those template tags, the composed copies are the authored bytes, and nothing else under `docs/` is changed.
 
 ## Deployment
 
@@ -110,10 +110,10 @@ Only then does the staging tree become `--out`.
 - `chrome` — the stylesheets and scripts every generated page loads, in order, and the wordmark pair, as site paths;
 - `documents` (under `docs/`) and `records` (the diagram folder's `README.md` and its token mirror's `MANIFEST.md`) — what is rendered: README.md's reader path, its concrete example, and the documents the diagram front door links. `collections` is empty here;
 - `redirects`, `held` and `held_under` — what is not rendered, each with its target or reason. `held_under` holds every other Markdown file under `docs/`, the evidence trail, and the documents index lists it with its reason;
-- `source_views` — the source and data files the front door's source and data actions open;
+- `source_views` — the source and data files the diagram front door's source and data actions open;
 - `site_exclude` — authored files under `docs/` that are configuration, not site: `docs/vercel.json`;
-- `front_doors` — the authored page the build composes: `docs/diagrams/index.html`;
-- `home_page` — the authored landing page, `docs/index.html`, which the build copies unchanged;
+- `front_doors` — the authored pages the build composes: `docs/diagrams/index.html` and the landing page, `docs/index.html`;
+- `home_page` — the authored landing page, `docs/index.html`, served at the site root;
 - `passages` — the role of each blockquote;
 - `blocks` — the shape of each structured preformatted block.
 
