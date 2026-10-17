@@ -1996,11 +1996,28 @@ def report_overlap(out, report):
     return []
 
 
+def in_excluded_dir(tree, path):
+    """True when path lands inside a directory the declaration excludes from the site. An excluded directory that
+    does not exist yet, such as the build's own output before its first build, is matched by its physical path,
+    case-exactly, so a differently spelled path is not excused."""
+    probe = physical(path)
+    for x in tree.excluded:
+        if not x.endswith("/"):
+            continue
+        base = tree.abspath(x.rstrip("/"))
+        if within(path, base):
+            return True
+        spelled = physical(base)
+        if probe == spelled or probe.startswith(spelled + os.sep):
+            return True
+    return False
+
+
 def in_authored_site(tree, path):
     """True when path lands inside the site directory and outside every directory the declaration excludes from it."""
     if not within(path, tree.abspath(tree.site)):
         return False
-    return not any(within(path, tree.abspath(x.rstrip("/"))) for x in tree.excluded if x.endswith("/"))
+    return not in_excluded_dir(tree, path)
 
 
 def out_problems(tree, out):
