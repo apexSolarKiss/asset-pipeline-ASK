@@ -3,3 +3,6 @@ Thumbs.db
 __pycache__/
 *.py[cod]
 .pytest_cache/
+
+# site build output (tools/read/vercel-build.sh)
+/_site/

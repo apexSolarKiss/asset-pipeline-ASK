@@ -1,0 +1,88 @@
+{
+  "repo": "apexSolarKiss/asset-pipeline-ASK",
+  "branch": "main",
+  "site": "docs",
+  "read": "read",
+  "identity": {
+    "name": "AP-ASK",
+    "index_description": "AP-ASK documents, rendered from the repository's Markdown.",
+    "index_lede": "AP-ASK's reader path: the problem, the concrete package, the architecture and method, and the deeper artifacts, rendered from the repository's Markdown when the site is built. The full evidence trail stays on GitHub, the source of record; every page links its source and its raw file.",
+    "documents_title": "reader path",
+    "records_intro": "Operating records of the diagram folder, rendered from their Markdown.",
+    "source_note": "the diagram front door links it",
+    "source_card": "Read-only, line-numbered: one source file, in the view the diagram front door links.",
+    "front_link": {"label": "diagrams", "href": "diagrams/index.html"}
+  },
+  "chrome": {
+    "stylesheets": ["diagrams/_dsa-tokens/colors_and_type.css", "diagrams/_dsa-surface/surface-panel.css",
+                    "diagrams/_dsa-surface/surface-action.css", "read/_dsa/surface-text-link.css",
+                    "read/_dsa/surface-document.css", "read/_dsa/surface-treatments.css",
+                    "diagrams/_dsa-surface/surface-shell.css"],
+    "scripts": ["diagrams/_dsa-surface/surface-shell.js", "read/_dsa/surface-document-overflow.js"],
+    "logo_light": "diagrams/_dsa-surface/assets/logo-ASK-white.png",
+    "logo_dark": "diagrams/_dsa-surface/assets/logo-ASK-lavender-ASK.png"
+  },
+  "front_doors": ["docs/diagrams/index.html"],
+  "home_page": "docs/index.html",
+  "site_exclude": ["docs/vercel.json"],
+  "documents": [
+    {"path": "docs/problem-and-approach.md", "label": "problem and approach"},
+    {"path": "docs/asset-definition-package-map-2c-marketing-hero-v1.md", "label": "asset definition package map: 2c marketing hero"},
+    {"path": "docs/package-lifecycle-partition-v1.md", "label": "package lifecycle partition"},
+    {"path": "docs/architecture.md", "label": "architecture"},
+    {"path": "docs/method.md", "label": "method"},
+    {"path": "docs/structured-ia-model-v2.md", "label": "structured IA model v2"},
+    {"path": "docs/layered-reference-and-discretion-architecture-v1.md", "label": "layered reference and discretion architecture"},
+    {"path": "docs/brand-system-input-cross-category-synthesis-v1.md", "label": "brand-system input: cross-category synthesis"},
+    {"path": "docs/ia-layered-content-sketch-sku-driven-mode-v1.md", "label": "IA layered content sketch: SKU-driven mode"},
+    {"path": "docs/layer-disambiguation-note-v1.md", "label": "layer disambiguation note"},
+    {"path": "docs/creative-discretion-doctrine-v1.md", "label": "creative discretion doctrine"},
+    {"path": "docs/visual-payload-architecture-v2.md", "label": "visual payload architecture v2"}
+  ],
+  "collections": [],
+  "records": [
+    {"path": "docs/diagrams/README.md", "label": "diagrams README", "output": "diagrams-README.html"},
+    {"path": "docs/diagrams/_dsa-tokens/MANIFEST.md", "label": "token mirror MANIFEST", "output": "diagrams-dsa-tokens-MANIFEST.html"}
+  ],
+  "redirects": [],
+  "held": [
+    {"path": "README.md", "reason": "the repository front page; its banner image sits outside the deployed site"},
+    {"path": "AGENTS.md", "reason": "the repository's workflow rules for executors, not reading material for this site"},
+    {"path": "CLAUDE.md", "reason": "a runtime adapter that imports AGENTS.md"}
+  ],
+  "held_under": [
+    {"under": "docs/", "reason": "AP-ASK's evidence trail: findings, plans, decision records, milestones, application contracts and the full reading-order index (docs/index.md), read on GitHub. The pages above follow README.md's reader path and the diagram front door"}
+  ],
+  "passages": {
+    "docs/creative-discretion-doctrine-v1.md": [
+      {"starts": "creative intent ≠ creative discretion", "role": "callout"}
+    ]
+  },
+  "blocks": {},
+  "source_views": [
+    {"path": "docs/diagrams/asset-pipeline-ASK_architectural-representation-atlas.figure.js", "label": "architectural representation atlas source", "figure": "docs/diagrams/asset-pipeline-ASK_architectural-representation-atlas.html"},
+    {"path": "docs/diagrams/asset-pipeline-ASK_architecture-tree.source.js", "label": "architecture tree source", "figure": "docs/diagrams/asset-pipeline-ASK_architecture-tree.html"},
+    {"path": "docs/diagrams/asset-pipeline-ASK_ontology-tree.source.js", "label": "ontology tree source", "figure": "docs/diagrams/asset-pipeline-ASK_ontology-tree.html"},
+    {"path": "docs/diagrams/asset-pipeline-ASK_inheritance-spine.source.js", "label": "inheritance spine source", "figure": "docs/diagrams/asset-pipeline-ASK_inheritance-spine.html"},
+    {"path": "docs/diagrams/asset-pipeline-ASK_bounded-generativity.figure.js", "label": "bounded generativity source", "figure": "docs/diagrams/asset-pipeline-ASK_bounded-generativity.html"},
+    {"path": "docs/diagrams/asset-pipeline-ASK_visual-payload-architecture.source.js", "label": "visual payload architecture source", "figure": "docs/diagrams/asset-pipeline-ASK_visual-payload-architecture.html"},
+    {"path": "docs/diagrams/interactive/asset-pipeline-ASK_ia-state-spine.data.js", "label": "information architecture state data", "figure": "docs/diagrams/interactive/asset-pipeline-ASK_ia-state-spine.html"}
+  ],
+  "carriers": {
+    "owner": "apexSolarKiss/design-system-ASK",
+    "pin": "8fc30b19d360670fabec54e272654118fc623cca",
+    "vendored": [
+      {"path": "tools/read/carriers/surface-text-link.css", "owner_path": "surface-text-link.css", "sha256": "9a6acf457ffbe2a0bb31ae28507855b6446195ff9dcd3cc7112f04ec5bf0fce3"},
+      {"path": "tools/read/carriers/surface-document.css", "owner_path": "surface-document.css", "sha256": "7dbc392202aab5bb3f849f2947e585f7a6c4bccd7d8cd09171a6e12bd05bf888"},
+      {"path": "tools/read/carriers/surface-treatments.css", "owner_path": "surface-treatments.css", "sha256": "836f5957d28fce2ef06c01e4aedf82f84fc92b7615bbb880bbbe43ae9f7a5e91"},
+      {"path": "tools/read/carriers/surface-document-overflow.js", "owner_path": "surface-document-overflow.js", "sha256": "d66d31b36f697e20739ba009dcfa7ba05328be33fd6f401fa41443d3e268bca1"}
+    ],
+    "reused": [
+      {"path": "docs/diagrams/_dsa-tokens/colors_and_type.css", "owner_path": "colors_and_type.css", "sha256": "4fed9d796a0d51072802f430b9528459a5cbb9c709fa1964bf5b13f18464122a"},
+      {"path": "docs/diagrams/_dsa-surface/surface-panel.css", "owner_path": "surface-panel.css", "sha256": "883e24ac5407a4fe24f9149b0d8964a06995cc88b6b6150b1a1bdfd9aee2976e"},
+      {"path": "docs/diagrams/_dsa-surface/surface-action.css", "owner_path": "surface-action.css", "sha256": "f00ccde1b4db17687fd6ecd62644700932107352b37476184718f2036209fb2e"},
+      {"path": "docs/diagrams/_dsa-surface/surface-shell.css", "owner_path": "patterns/surface-shell/surface-shell.css", "sha256": "300031beef7cad336a4d4bc5f937789e730b0fbe5e1e9ae993f2edbd87c7f661"},
+      {"path": "docs/diagrams/_dsa-surface/surface-shell.js", "owner_path": "patterns/surface-shell/surface-shell.js", "sha256": "f626258684479879f5acf41644729e316574d450e2a057929bfa96fa9d1d0f36"}
+    ]
+  }
+}

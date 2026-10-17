@@ -1,5 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "",
+  "buildCommand": "sh ../tools/read/vercel-build.sh",
+  "outputDirectory": "../_site",
   "redirects": [
     {
       "source": "/diagrams",

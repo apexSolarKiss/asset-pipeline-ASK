@@ -18,6 +18,15 @@
      to this file. Repo-root owner documents outside that root, and fleet routes
      to other repos or surfaces, use canonical external locators.
 
+     In a clone, the source, data, document and README links open the raw
+     files they name. The site build (tools/read/) composes the deployed copy
+     of this page from this file: it maps each of those links to the reading
+     page or source view generated from the same file, and renders the
+     build-only <template data-read-build> fragment, whose destination exists
+     only in a built site: the documents route below. Apart from those links
+     and the template's tags, the page is served as written here, and the
+     figures, PNGs and diagram files are the same in both.
+
      This page is ASSET-PIPELINE-ASK-OWNED composition over vendored
      design-system-ASK carriers. The carriers under _dsa-surface/ are pinned
      byte-identical copies and are never hand-edited here; the tokens and fonts
@@ -232,6 +241,12 @@
       <span class="name surface-panel-title">asset-pipeline-ASK</span>
       <span class="what surface-panel-support">What the definition layer is, the claim it makes, and the reader path into the worked package.</span>
     </a>
+    <template data-read-build>
+    <a class="route surface-panel" href="../read/index.html">
+      <span class="name surface-panel-title">documents</span>
+      <span class="what surface-panel-support">The reader path, from the problem to the deeper artifacts, rendered from this repository. Each page links GitHub and its raw file.</span>
+    </a>
+    </template>
     <a class="route surface-panel" href="https://github.com/apexSolarKiss/method-ASK" target="_blank" rel="noopener">
       <span class="name surface-panel-title">method-ASK</span>
       <span class="what surface-panel-support">The upstream methodology layer, and the origin of the bounded-generativity figure this repo adapts.</span>
