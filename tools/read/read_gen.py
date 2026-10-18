@@ -22,7 +22,11 @@ file, and a documents index, all generated from tools/read/declared.json at
 build time. The generated pages are build output. They are never committed.
 They are static files: each loads same-site stylesheets, fonts, icons and two
 scripts, one of which builds the responsive navigation panel from the page's own
-markup. No content is generated or fetched at runtime.
+markup. No content is generated or fetched at runtime. Each generated page's head
+also names its canonical address on the declared origin and carries link-preview
+metadata (Open Graph, and a Twitter large-image card) for the declared social
+image, whose media type and dimensions the build reads from the file itself. Each
+authored front door carries the same set in its own head, which the build checks.
 
 Each front door is authored once, with links to the raw files, so it opens
 from a clone. The composed site serves a copy whose links to declared source
@@ -62,7 +66,8 @@ build   renders every page in memory and runs every gate first: the exact
         resolving in the source tree, no root-absolute link, and its source
         links naming exactly the declared source files), each composed front
         door linking each declared source only through its source view and
-        closing each link before the next opens, and every reading-page carrier
+        closing each link before the next opens, each authored front door's
+        head carrying the declared link preview, and every reading-page carrier
         matching its declared sha256. It then composes the site, with the front
         doors composed, and the generated pages in a staging directory beside
         --out, verifies every written file byte for byte and runs the link
@@ -83,6 +88,7 @@ import os
 import posixpath
 import re
 import shutil
+import struct
 import sys
 import tempfile
 from html.parser import HTMLParser
@@ -129,6 +135,17 @@ RAW_IMG = re.compile(RAW_IMG_TAG)
 RAW_IMG_ATTR = re.compile(r'[ \t\n]+(src|alt)="([^"<>]*)"')
 RAW_IMG_TYPES = (".png",)    # a raw <img src> names a regular file of one of these types; the corpus's raw images are .png
 
+# The link preview every generated page carries, from the declaration's link_preview block: the site's public
+# origin, its name, the social image (a site path) and that image's alt text. The image's type and dimensions
+# are read from the PNG itself, never declared, and it must be large enough for a large link card.
+PREVIEW_KEYS = ("origin", "site_name", "image", "image_alt")
+PREVIEW_ORIGIN = re.compile(r"https://[a-z0-9]+(?:(?:\.|-+)[a-z0-9]+)*")    # no port, path, query or trailing slash
+PREVIEW_MIN = (1200, 627)
+PREVIEW_MAX_BYTES = 5 * 1024 * 1024
+PREVIEW_ADDRESS = re.compile(r"(?:[a-z0-9][a-z0-9._-]*/)+")                 # a directory address, such as "styleguide/"
+PREVIEW_TITLE = re.compile(r"<title\b[^>]*>(.*?)</title\s*>", re.I | re.S)
+ASCII_SPACE = re.compile(r"[\t\n\f\r ]+")
+
 
 def sha256(data):
     return hashlib.sha256(data).hexdigest()
@@ -141,6 +158,13 @@ def esc(text):
 def txt(text):
     """Declared copy as element text: & < and > escaped, quotes kept as written."""
     return html.escape(text, quote=False)
+
+
+def png_size(data):
+    """A PNG's width and height, from its header, or None for anything that is not a PNG."""
+    if len(data) < 24 or data[:8] != b"\x89PNG\r\n\x1a\n" or data[12:16] != b"IHDR":
+        return None
+    return struct.unpack(">II", data[16:24])
 
 
 def exists_exact(base, segments):
@@ -296,6 +320,12 @@ class Tree:
     def index_path(self):
         return self.read + "/index.html"
 
+    def public_url(self, page):
+        """A page's public address on the declared origin. A directory's index.html is addressed by its directory,
+        with the trailing slash the deployment serves it at."""
+        path = page[:-len("index.html")] if page == "index.html" or page.endswith("/index.html") else page
+        return self.cfg["link_preview"]["origin"] + "/" + url_path(path)
+
     def rel(self, from_page, site_target):
         return url_path(posixpath.relpath(site_target, posixpath.dirname(from_page)))
 
@@ -365,8 +395,41 @@ def config_problems(tree):
     for key in ("logo_light", "logo_dark"):
         if not chrome.get(key):
             out.append("STRUCTURE-CHROME  chrome.%s: the wordmark's site path" % key)
+    prev = cfg.get("link_preview") if isinstance(cfg.get("link_preview"), dict) else {}
+    for key in PREVIEW_KEYS:
+        if not isinstance(prev.get(key), str) or not prev.get(key):
+            out.append("STRUCTURE-PREVIEW  link_preview.%s: the declaration names it" % key)
+    if isinstance(prev.get("origin"), str) and prev["origin"] and not PREVIEW_ORIGIN.fullmatch(prev["origin"]):
+        out.append("STRUCTURE-PREVIEW  link_preview.origin %r: the site's https origin, lowercase, with no port, "
+                   "path or trailing slash" % prev["origin"])
+    addresses = prev.get("addresses", {})
+    if not isinstance(addresses, dict):
+        out.append("STRUCTURE-PREVIEW  link_preview.addresses: an object from a front door to its public address")
+    else:
+        for fd, address in sorted(addresses.items()):
+            if fd not in (cfg.get("front_doors") or []):
+                out.append("STRUCTURE-PREVIEW  link_preview.addresses %s: not a declared front door" % fd)
+            if not isinstance(address, str) or not PREVIEW_ADDRESS.fullmatch(address):
+                out.append("STRUCTURE-PREVIEW  link_preview.addresses %s: %r is not a directory address such as "
+                           "\"styleguide/\"" % (fd, address))
     if out:
         return out
+    image = tree.site_prefix() + prev["image"]
+    if path_ok(image, "link-preview image", site):
+        if not tree.exists(image):
+            out.append("UNRESOLVED  link-preview image %s: no such file" % image)
+        elif prev["image"] not in site_files(tree):
+            out.append("STRUCTURE-PREVIEW  link-preview image %s is not among the files the build copies into the "
+                       "site" % image)
+        else:
+            data = tree.read_bytes(image)
+            size = png_size(data)
+            if size is None:
+                out.append("STRUCTURE-PREVIEW  link-preview image %s: not a PNG" % image)
+            elif size[0] < PREVIEW_MIN[0] or size[1] < PREVIEW_MIN[1] or len(data) >= PREVIEW_MAX_BYTES:
+                out.append("STRUCTURE-PREVIEW  link-preview image %s: %dx%d and %d bytes; a large link card needs "
+                           "at least %dx%d and under %d bytes" % ((image,) + size + (len(data),) + PREVIEW_MIN
+                                                                  + (PREVIEW_MAX_BYTES,)))
     if os.path.lexists(tree.abspath(tree.site_prefix() + tree.read)):
         out.append("STRUCTURE-SOURCE-MIRROR  %s%s exists in the source tree: reading pages are build output and "
                    "are never committed beside the Markdown" % (tree.site_prefix(), tree.read))
@@ -1237,13 +1300,107 @@ def wbr_path(path):
     return re.sub(r"([/_.])", r"\1<wbr>", esc(path))
 
 
+def preview_block(tree, page, title, description):
+    """The page's canonical address and its link preview: Open Graph and a Twitter large-image card, all naming
+    the declared social image, with the media type and dimensions read from the image."""
+    prev = tree.cfg["link_preview"]
+    url, image = tree.public_url(page), prev["origin"] + "/" + url_path(prev["image"])
+    width, height = png_size(tree.read_bytes(tree.site_prefix() + prev["image"]))
+    rows = (("property", "og:site_name", prev["site_name"]), ("property", "og:title", title),
+            ("property", "og:description", description), ("property", "og:type", "website"),
+            ("property", "og:url", url), ("property", "og:image", image), ("property", "og:image:type", "image/png"),
+            ("property", "og:image:width", str(width)), ("property", "og:image:height", str(height)),
+            ("property", "og:image:alt", prev["image_alt"]), ("name", "twitter:card", "summary_large_image"),
+            ("name", "twitter:title", title), ("name", "twitter:description", description),
+            ("name", "twitter:image", image), ("name", "twitter:image:alt", prev["image_alt"]))
+    return '<link rel="canonical" href="%s">\n' % esc(url) + "".join(
+        '<meta %s="%s" content="%s">\n' % (attr, key, esc(value)) for attr, key, value in rows)
+
+
+class PreviewScan(HTMLParser):
+    """An authored page's canonical links and named meta values in its head, and the canonical, Open Graph and
+    Twitter tags anywhere after it."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.in_head, self.canonical, self.meta, self.outside = True, [], {}, []
+
+    def handle_starttag(self, tag, attrs):
+        a = dict(attrs)
+        key = a.get("property") or a.get("name") or ""
+        canonical = tag == "link" and "canonical" in (a.get("rel") or "").lower().split()
+        if tag == "body":
+            self.in_head = False
+        elif not self.in_head:
+            if canonical or (tag == "meta" and key.startswith(("og:", "twitter:"))):
+                self.outside.append("canonical" if canonical else key)
+        elif canonical:
+            self.canonical.append(a.get("href") or "")
+        elif tag == "meta" and key:
+            self.meta.setdefault(key, []).append(a.get("content") or "")
+
+    def handle_endtag(self, tag):
+        if tag == "head":
+            self.in_head = False
+
+
+def page_title(text):
+    """A page's title as a browser reads it: the text of its first <title>, character references decoded, ASCII
+    whitespace stripped and collapsed. Read from the bytes, so the result does not depend on the parser's version."""
+    m = PREVIEW_TITLE.search(text)
+    return ASCII_SPACE.sub(" ", html.unescape(m.group(1))).strip(" ") if m else ""
+
+
+def front_door_preview_problems(tree, fd, image_path):
+    """An authored front door carries the declared link preview in its own head, as every generated page does: one
+    canonical address, the front door's public address, with og:url the same; each Open Graph and Twitter key once,
+    naming the declared site, image and alt text, the image's type and dimensions as the PNG gives them, and the
+    page's own non-empty title and description; no other Open Graph or Twitter key; and none of these tags after
+    the head. The public address is the front door's own, a directory's index.html by its directory, unless
+    link_preview.addresses names the address a deployment rewrite serves it at."""
+    prev = tree.cfg["link_preview"]
+    image = prev["origin"] + "/" + url_path(prev["image"])
+    aliases = prev.get("addresses", {})
+    address = (prev["origin"] + "/" + url_path(aliases[fd]) if fd in aliases
+               else tree.public_url(tree.site_path(fd)))
+    width, height = png_size(tree.read_bytes(image_path))
+    text = tree.read_bytes(fd).decode("utf-8")
+    scan = PreviewScan()
+    scan.feed(text)
+    scan.close()
+    title, descriptions = page_title(text), scan.meta.get("description", [])
+    description = descriptions[0] if len(descriptions) == 1 and descriptions[0].strip() else None
+    out = []
+    if not title:
+        out.append("STRUCTURE-PREVIEW  front door %s: one non-empty <title>" % fd)
+    if description is None:
+        out.append("STRUCTURE-PREVIEW  front door %s: one non-empty meta description, found %r" % (fd, descriptions))
+    if scan.canonical != [address]:
+        out.append("STRUCTURE-PREVIEW  front door %s: one canonical address, %s; found %r" % (fd, address, scan.canonical))
+    want = (("og:site_name", prev["site_name"]), ("og:title", title or None), ("og:description", description),
+            ("og:type", "website"), ("og:url", address), ("og:image", image), ("og:image:type", "image/png"),
+            ("og:image:width", str(width)), ("og:image:height", str(height)), ("og:image:alt", prev["image_alt"]),
+            ("twitter:card", "summary_large_image"), ("twitter:title", title or None),
+            ("twitter:description", description), ("twitter:image", image), ("twitter:image:alt", prev["image_alt"]))
+    for key, value in want:
+        found = scan.meta.get(key, [])
+        if value is not None and found != [value]:
+            out.append("STRUCTURE-PREVIEW  front door %s: %s once, as %r; found %r" % (fd, key, value, found))
+    keys = {key for key, _ in want}
+    for key in sorted(k for k in scan.meta if k.startswith(("og:", "twitter:")) and k not in keys):
+        out.append("STRUCTURE-PREVIEW  front door %s: %s is not a key the declared link preview gives" % (fd, key))
+    for key in scan.outside:
+        out.append("STRUCTURE-PREVIEW  front door %s: %s after the head" % (fd, key))
+    return out
+
+
 def head_block(tree, page, title, description, css, metas):
     meta_lines = "".join('<meta name="%s" content="%s">\n' % (esc(k), esc(v)) for k, v in metas)
     links = "".join('<link rel="stylesheet" href="%s">\n' % esc(tree.rel(page, s)) for s in tree.cfg["chrome"]["stylesheets"])
     return ("<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n"
             "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"
             "<title>%s</title>\n<meta name=\"description\" content=\"%s\">\n"
-            "<meta name=\"color-scheme\" content=\"light dark\">\n"
+            "<meta name=\"color-scheme\" content=\"light dark\">\n%s"
             "<meta name=\"generator\" content=\"tools/read/read_gen.py %s\">\n%s"
             "<!-- GENERATED at build time from tools/read/declared.json by tools/read/read_gen.py.\n"
             "     Build output: never committed; the Markdown is the source. -->\n"
@@ -1251,8 +1408,8 @@ def head_block(tree, page, title, description, css, metas):
             "<link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"%s\">\n"
             "<link rel=\"apple-touch-icon\" href=\"%s\">\n"
             "%s<style>%s</style>\n</head>\n") % (
-        esc(title), esc(description), PAGE_FORMAT, meta_lines, tree.rel(page, "favicon.svg"),
-        tree.rel(page, "favicon-32.png"), tree.rel(page, "apple-touch-icon.png"), links, css)
+        esc(title), esc(description), preview_block(tree, page, title, description), PAGE_FORMAT, meta_lines,
+        tree.rel(page, "favicon.svg"), tree.rel(page, "favicon-32.png"), tree.rel(page, "apple-touch-icon.png"), links, css)
 
 
 def shell_open(tree, page, crumb_tail, lede=""):
@@ -2098,7 +2255,7 @@ def build(tree, out, report_path=None, mode="build"):
         nav, lk = authored_navigation_problems(tree, fd)
         fronts[fd] = text
         mapping += m
-        fd_problems += fdp + nav
+        fd_problems += fdp + nav + front_door_preview_problems(tree, fd, tree.site_prefix() + tree.cfg["link_preview"]["image"])
         linked |= lk
     problems = (fd_problems + authored_source_set_problems(tree, linked) + source_set_problems(tree, fronts)
                 + carrier_problems(tree) + problems)
