@@ -61,7 +61,6 @@
   },
   "blocks": {},
   "source_views": [
-    {"path": "docs/diagrams/asset-pipeline-ASK_architectural-representation-atlas.figure.js", "label": "architectural representation atlas source", "figure": "docs/diagrams/asset-pipeline-ASK_architectural-representation-atlas.html"},
     {"path": "docs/diagrams/asset-pipeline-ASK_architecture-tree.source.js", "label": "architecture tree source", "figure": "docs/diagrams/asset-pipeline-ASK_architecture-tree.html"},
     {"path": "docs/diagrams/asset-pipeline-ASK_ontology-tree.source.js", "label": "ontology tree source", "figure": "docs/diagrams/asset-pipeline-ASK_ontology-tree.html"},
     {"path": "docs/diagrams/asset-pipeline-ASK_inheritance-spine.source.js", "label": "inheritance spine source", "figure": "docs/diagrams/asset-pipeline-ASK_inheritance-spine.html"},

@@ -36,7 +36,7 @@ Apart from the mapped `href` values and those template tags, the composed copies
 2. installs the exact renderer pin into a temporary virtual environment, by hash, from wheels only;
 3. runs `read_gen.py build --out _site` at the repository root.
 
-A failed gate fails the build, so a broken document is never deployed. `docs/vercel.json` also carries the site's headers, the `noindex` header on `/images/`, the `/diagrams` redirect, and a `/read` to `/read/` redirect so the documents index, served from a directory, keeps its relative links; the build changes none of them.
+A failed gate fails the build, so a broken document is never deployed. `docs/vercel.json` also carries the site's headers, the `noindex` header on `/images/`, the `/diagrams` redirect, a `/read` to `/read/` redirect so the documents index, served from a directory, keeps its relative links, and the redirects that send the retired atlas's page, builder and generated source view to `/diagrams/`; the build changes none of them.
 
 ## Setup
 

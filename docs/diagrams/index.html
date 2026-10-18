@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>asset-pipeline-ASK // diagrams</title>
-<meta name="description" content="asset-pipeline-ASK // seven illustrative figures across four classes — the representation atlas that orients them, two structural axes, the repo architecture tree, the bounded-generativity system model, the visual-payload convergence flow, and the interactive architecture-state spine.">
+<meta name="description" content="asset-pipeline-ASK // six illustrative figures of four objects — three views of the governed visual-payload information architecture (ontology, visual payload architecture, inheritance), the bounded-generativity system model, the repo architecture tree, and the interactive architecture-state spine.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
@@ -12,7 +12,7 @@
 <!-- ============================================================
      DIAGRAM FRONT DOOR — asset-pipeline-ASK/docs/diagrams/index.html
 
-     A live navigation surface for the seven diagram pages in this folder. It
+     A live navigation surface for the six diagram pages in this folder. It
      opens from the deployment or by double-click from a clean clone. Local
      assets and destinations inside the deployed `docs/` root resolve relative
      to this file. Repo-root owner documents outside that root, and fleet routes
@@ -35,31 +35,43 @@
      for the diagrams, so no second token or font copy exists.
 
      TIER BOUNDARY. This page is an ASK-branded surface and carries an
-     ASK-assigned Tier-3 value in the shell's mark slot. The seven figures it
+     ASK-assigned Tier-3 value in the shell's mark slot. The six figures it
      indexes remain Tier 1 + Tier 2 only — the assignment does not propagate
      into them, does not make asset-pipeline-ASK ASK-the-entity, and does not
      come from surface-shell, which ships a slot and no mark. Any future
      independent asset-pipeline-ASK brand is a separate identity migration.
      See README.md.
 
-     ORDER IS SEMANTIC, NOT GEOMETRIC. The representation atlas leads because it
-     is the orientation layer over all the other diagrams — it names, per view, the
-     object represented, the question it answers, and where that view's authority
-     ends. No single diagram is the master picture. It takes the same inert card
-     as every other figure: one grid, one panel class, no hero variant. The
-     remaining six hold the folder's existing inventory order.
+     GROUPED BY OBJECT, NOT BY FORM. The six figures represent four different
+     objects, and the page orders them by the object each one represents. The
+     governed visual-payload information architecture comes first, as one
+     grouping plane holding its three views: ontology and visual payload
+     architecture as its principal views, inheritance as the orthogonal view that
+     supports them. The bounded-generativity system model, the repository's
+     architecture tree and the architecture-state spine follow, each a card of its
+     own. No single diagram is the master picture.
+
+     The plane is a separate surface, not a content panel and not a link: panel
+     material, free corners and no elevation, composed from the surface-panel and
+     surface-treatments axes. Its label takes the foundation's caption role, and
+     the cards inside it are the same inert panels as the cards outside it. It
+     also carries the runtime axis's prose-only status, as a note whose two
+     prose links take the surface-text-link class. This page takes over the
+     orientation the architectural representation atlas used to give, which ASK
+     decided on 2026-10-17 to retire.
 
      The diagrams are ILLUSTRATIVE, not source of truth. Repo prose is
      authoritative; each card links the document that owns what it draws, where a
-     current public owner exists. The atlas is an orientation aid over the other
-     views rather than a modelled object with its own doctrine owner, and the
-     state spine is authored in its own data carrier — so neither borrows a third
-     action it does not have. Two figures carry a committed raster because their
-     governing prose embeds it directly; those cards expose it.
+     current public owner exists. The state spine is authored in its own data
+     carrier, so it borrows no third action it does not have. Two figures carry a
+     committed raster because their governing prose embeds it directly; those
+     cards expose it.
      ============================================================ -->
 <link rel="stylesheet" href="_dsa-tokens/colors_and_type.css">
 <link rel="stylesheet" href="_dsa-surface/surface-panel.css">
+<link rel="stylesheet" href="_dsa-surface/surface-treatments.css">
 <link rel="stylesheet" href="_dsa-surface/surface-action.css">
+<link rel="stylesheet" href="_dsa-surface/surface-text-link.css">
 <link rel="stylesheet" href="_dsa-surface/surface-shell.css">
 <style>
   :root { --gap: 20px; }
@@ -91,6 +103,17 @@
      interaction. Four actions is this page's maximum and wraps to a second line
      before the card's own column narrows. */
   .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 6px; }
+
+  /* The grouping plane. One object's three views share it. Its material,
+     corners, flush elevation and inset come from the shared axis classes on its
+     markup; what stays here is the column it stacks, the label's and note's
+     spacing and foreground, and the gap to the cards that follow it. The label
+     takes the foundation's caption role, and the note its small role. */
+  .group { display: flex; flex-direction: column; gap: var(--space-5); min-width: 0; }
+  .group-head { display: flex; flex-direction: column; gap: var(--space-2); }
+  .group-head h2 { margin: 0; }
+  .group-head p { margin: 0; color: var(--fg-2); }
+  .group + .grid { margin-top: var(--gap); }
 
   /* Repo-level destinations. Each has exactly one target, so each is a
      full-panel link — the panel IS the anchor and carries no control inside it.
@@ -140,10 +163,10 @@
       <nav class="surface-breadcrumb" aria-label="Breadcrumb">
         <h1 class="surface-title"><a class="org" href="https://a-s-k.studio/">ASK</a> <span class="sep" aria-hidden="true">//</span> <a href="https://a-s-k.studio/apex-solar-kiss">apex solar kiss</a> <span class="sep" aria-hidden="true">//</span> <a href="../index.html">AP-ASK</a> <span class="sep" aria-hidden="true">//</span> <span class="page" aria-current="page">diagrams</span></h1>
       </nav>
-      <p class="surface-lede">Seven figures across four classes — two structural axes, the repo architecture tree, a
-        system-model topology, a convergence flow, and one interactive state surface. They represent different objects
-        and must not be collapsed into one picture, so the representation atlas comes first and says what each one is
-        for. Diagrams are orientation aids and age; the repo prose is source of truth.</p>
+      <p class="surface-lede">Six figures of four different objects: three views of the governed visual-payload
+        information architecture this repo develops, the bounded-generativity system model it instantiates, the
+        repository that carries the work, and the architecture's current state. No single diagram is the master
+        picture. Diagrams are orientation aids and age; the repo prose is source of truth.</p>
       <span class="surface-badge">illustrative &gt;&gt; not source of truth</span>
     </div>
   </header>
@@ -152,50 +175,52 @@
 
   <main class="surface-payload">
 
+  <section class="group surface-separate surface-material-panel surface-attach-free surface-elevation-flush" aria-labelledby="group-payload">
+    <div class="group-head">
+      <h2 class="caption" id="group-payload">governed visual-payload information architecture</h2>
+      <p class="small">The domain architecture this repo develops, in three views of one object. Ontology and visual payload architecture are its principal views; inheritance is the orthogonal view that supports them. Its runtime axis, Axis D, has no dedicated diagram: the prose carries it, in the runtime layers of the <a class="surface-text-link" href="../architecture.md">architecture</a> and in the <a class="surface-text-link" href="../layer-disambiguation-note-v1.md">layer note</a>, which also keeps the earlier variation axis, Axis C, as historical.</p>
+    </div>
+
+    <div class="grid">
+
+      <div class="card surface-panel">
+        <div class="cls">tree // TREE_ONTOLOGY</div>
+        <h3 class="surface-panel-title">ontology</h3>
+        <p class="surface-panel-support">Axis A — what kinds of information the definition layer structures: intent, inputs, constraints, creative discretion, required outputs, and governance. A branching classification, drawn as a horizontal cascade. Structural, asserting no maturity state.</p>
+        <div class="actions">
+          <a class="surface-action" href="asset-pipeline-ASK_ontology-tree.html">open</a>
+          <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_ontology-tree.source.js">source</a>
+          <a class="surface-action surface-action--secondary" href="../layer-disambiguation-note-v1.md">layer note</a>
+        </div>
+      </div>
+
+      <div class="card surface-panel">
+        <div class="cls">flow // FLOW_DIAGRAM</div>
+        <h3 class="surface-panel-title">visual payload architecture</h3>
+        <p class="surface-panel-support">The convergence flow a commercial image's visual decisions move through — a reference carrier qualifying a normative-source field, the field converging into a resolved slot specification, realization reconverging into conformance, then selection, governance, and a return loop where a governed output can re-enter as a reference.</p>
+        <div class="actions">
+          <a class="surface-action" href="asset-pipeline-ASK_visual-payload-architecture.html">open</a>
+          <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_visual-payload-architecture.source.js">source</a>
+          <a class="surface-action surface-action--secondary" href="../visual-payload-architecture-v2.md">visual payload</a>
+          <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_visual-payload-architecture.png">PNG</a>
+        </div>
+      </div>
+
+      <div class="card surface-panel">
+        <div class="cls">spine // TREE_INHERITANCE</div>
+        <h3 class="surface-panel-title">inheritance</h3>
+        <p class="surface-panel-support">Axis B — where information lives and how it inherits, overrides, and combines, from the brand-system layer down to the terminal slot. A linear chain, drawn as a centered vertical spine. The orthogonal partner to the ontology, deliberately a separate picture.</p>
+        <div class="actions">
+          <a class="surface-action" href="asset-pipeline-ASK_inheritance-spine.html">open</a>
+          <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_inheritance-spine.source.js">source</a>
+          <a class="surface-action surface-action--secondary" href="../layer-disambiguation-note-v1.md">layer note</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
   <div class="grid">
-
-    <div class="card surface-panel">
-      <div class="cls">atlas // orientation — start here</div>
-      <h2 class="surface-panel-title">architectural representation atlas</h2>
-      <p class="surface-panel-support">The orientation layer over all the other diagrams. For each representation it names the object represented, the architectural question it answers, the live surface that carries it, and where that view's authority ends. Flat and non-causal — containment and <code>view of</code> relations, no flow. It is not another architecture model, and no single diagram is the master picture.</p>
-      <div class="actions">
-        <a class="surface-action" href="asset-pipeline-ASK_architectural-representation-atlas.html">open</a>
-        <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_architectural-representation-atlas.figure.js">source</a>
-      </div>
-    </div>
-
-    <div class="card surface-panel">
-      <div class="cls">tree // TREE_D04</div>
-      <h2 class="surface-panel-title">architecture tree</h2>
-      <p class="surface-panel-support">Where the repo's surfaces live — the current architecture front door, the plateau state, the portability and extractability arc, the structured form and its consumers, and the application-layer outputs. A structural atlas of the project, not a maturity claim.</p>
-      <div class="actions">
-        <a class="surface-action" href="asset-pipeline-ASK_architecture-tree.html">open</a>
-        <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_architecture-tree.source.js">source</a>
-        <a class="surface-action surface-action--secondary" href="../architecture.md">architecture</a>
-      </div>
-    </div>
-
-    <div class="card surface-panel">
-      <div class="cls">tree // TREE_ONTOLOGY</div>
-      <h2 class="surface-panel-title">ontology</h2>
-      <p class="surface-panel-support">Axis A — what kinds of information the definition layer structures: intent, inputs, constraints, creative discretion, required outputs, and governance. A branching classification, drawn as a horizontal cascade. Structural, asserting no maturity state.</p>
-      <div class="actions">
-        <a class="surface-action" href="asset-pipeline-ASK_ontology-tree.html">open</a>
-        <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_ontology-tree.source.js">source</a>
-        <a class="surface-action surface-action--secondary" href="../layer-disambiguation-note-v1.md">layer note</a>
-      </div>
-    </div>
-
-    <div class="card surface-panel">
-      <div class="cls">spine // TREE_INHERITANCE</div>
-      <h2 class="surface-panel-title">inheritance</h2>
-      <p class="surface-panel-support">Axis B — where information lives and how it inherits, overrides, and combines, from the brand-system layer down to the terminal slot. A linear chain, drawn as a centered vertical spine. The orthogonal partner to the ontology, deliberately a separate picture.</p>
-      <div class="actions">
-        <a class="surface-action" href="asset-pipeline-ASK_inheritance-spine.html">open</a>
-        <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_inheritance-spine.source.js">source</a>
-        <a class="surface-action surface-action--secondary" href="../layer-disambiguation-note-v1.md">layer note</a>
-      </div>
-    </div>
 
     <div class="card surface-panel">
       <div class="cls">system model // bespoke figure</div>
@@ -210,14 +235,13 @@
     </div>
 
     <div class="card surface-panel">
-      <div class="cls">flow // FLOW_DIAGRAM</div>
-      <h2 class="surface-panel-title">visual payload architecture</h2>
-      <p class="surface-panel-support">The convergence flow a commercial image's visual decisions move through — a reference carrier qualifying a normative-source field, the field converging into a resolved slot specification, realization reconverging into conformance, then selection, governance, and a return loop where a governed output can re-enter as a reference.</p>
+      <div class="cls">tree // TREE_D04</div>
+      <h2 class="surface-panel-title">architecture tree</h2>
+      <p class="surface-panel-support">Where the repo's surfaces live — the current architecture front door, the plateau state, the portability and extractability arc, the structured form and its consumers, and the application-layer outputs. A structural atlas of the project, not a maturity claim.</p>
       <div class="actions">
-        <a class="surface-action" href="asset-pipeline-ASK_visual-payload-architecture.html">open</a>
-        <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_visual-payload-architecture.source.js">source</a>
-        <a class="surface-action surface-action--secondary" href="../visual-payload-architecture-v2.md">visual payload</a>
-        <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_visual-payload-architecture.png">PNG</a>
+        <a class="surface-action" href="asset-pipeline-ASK_architecture-tree.html">open</a>
+        <a class="surface-action surface-action--secondary" href="asset-pipeline-ASK_architecture-tree.source.js">source</a>
+        <a class="surface-action surface-action--secondary" href="../architecture.md">architecture</a>
       </div>
     </div>
 
@@ -264,7 +288,7 @@
 
   <div class="page-note">
     <p>Drag to pan, scroll to zoom, and use the HUD controls in the bottom-left; <code>⤢</code> fits the figure. Theme follows the operating system, and the diagrams default to dark as repository documentation.</p>
-    <p>Each figure carries its authored content beside it — <code>.source.js</code> for the three engine-rendered patterns and the flow, <code>.figure.js</code> for the two bespoke figures, <code>.data.js</code> for the state spine. Source advances when the authored content changes; the renderer advances only when its realization does.</p>
+    <p>Each figure carries its authored content beside it — <code>.source.js</code> for the three engine-rendered patterns and the flow, <code>.figure.js</code> for the bespoke figure, <code>.data.js</code> for the state spine. Source advances when the authored content changes; the renderer advances only when its realization does.</p>
     <p>Every figure exports on demand from its own HUD, in the resolved theme — <code>PNG page</code> for the chromed render and <code>PNG diagram</code> for the canvas alone. Two figures additionally keep one committed raster, because their governing prose embeds it directly; the <code>PNG</code> action on those two cards opens that committed file. The HTML and its authored content remain canonical, and the rasters are supplemental. See <code>README.md</code> for the full contents list and the refresh cadence each class follows.</p>
     <p>These pages consume the vendored token mirror in <code>_dsa-tokens/</code> and the surface carriers in <code>_dsa-surface/</code>, both pinned byte-identical to <code>design-system-ASK</code> and never hand-edited here.</p>
   </div>
@@ -285,7 +309,7 @@
   <!-- Responsive navigation. The identity mark discloses the panel, one meaning
        for the mark wherever it appears.
 
-       PARENT FORM. The seven figures are this surface's CHILDREN rather than its
+       PARENT FORM. The six figures are this surface's CHILDREN rather than its
        siblings, so the current-position marker carries a nested list. The
        current label and its aria-current are authored once, in the visible
        breadcrumb above — never repeated here — and `diagrams` is deliberately
@@ -297,12 +321,11 @@
     <ul class="surface-nav-local">
       <li data-surface-nav-current>
         <ul>
-          <li><a href="asset-pipeline-ASK_architectural-representation-atlas.html">architectural representation atlas</a></li>
-          <li><a href="asset-pipeline-ASK_architecture-tree.html">architecture tree</a></li>
           <li><a href="asset-pipeline-ASK_ontology-tree.html">ontology</a></li>
+          <li><a href="asset-pipeline-ASK_visual-payload-architecture.html">visual payload architecture</a></li>
           <li><a href="asset-pipeline-ASK_inheritance-spine.html">inheritance</a></li>
           <li><a href="asset-pipeline-ASK_bounded-generativity.html">bounded generativity</a></li>
-          <li><a href="asset-pipeline-ASK_visual-payload-architecture.html">visual payload architecture</a></li>
+          <li><a href="asset-pipeline-ASK_architecture-tree.html">architecture tree</a></li>
           <li><a href="interactive/asset-pipeline-ASK_ia-state-spine.html">information architecture — state</a></li>
         </ul>
       </li>
