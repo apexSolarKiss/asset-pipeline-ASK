@@ -13,6 +13,21 @@
       "source": "/read",
       "destination": "/read/",
       "permanent": true
+    },
+    {
+      "source": "/diagrams/asset-pipeline-ASK_architectural-representation-atlas.html",
+      "destination": "/diagrams/",
+      "permanent": true
+    },
+    {
+      "source": "/diagrams/asset-pipeline-ASK_architectural-representation-atlas.figure.js",
+      "destination": "/diagrams/",
+      "permanent": true
+    },
+    {
+      "source": "/read/source/asset-pipeline-ASK_architectural-representation-atlas.figure.js.html",
+      "destination": "/diagrams/",
+      "permanent": true
     }
   ],
   "headers": [
