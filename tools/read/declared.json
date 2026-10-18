@@ -22,6 +22,8 @@
     "logo_light": "diagrams/_dsa-surface/assets/logo-ASK-white.png",
     "logo_dark": "diagrams/_dsa-surface/assets/logo-ASK-lavender-ASK.png"
   },
+  "link_preview": {"origin": "https://asset-pipeline.a-s-k.studio", "site_name": "AP-ASK",
+                   "image": "og-image.png", "image_alt": "ASK wordmark on lavender background"},
   "front_doors": ["docs/diagrams/index.html", "docs/index.html"],
   "home_page": "docs/index.html",
   "site_exclude": ["docs/vercel.json"],
