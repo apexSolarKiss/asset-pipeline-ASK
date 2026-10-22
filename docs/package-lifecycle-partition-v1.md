@@ -77,7 +77,7 @@ To prevent first-reader decision ambiguity at the points a reader enters the pac
 2. **Label each element by lifecycle state** on the human-readable surfaces (the package map; the store's file map), so prospective definition, run state, and governed record are visible as distinct at a glance — including that one file (`slots.yaml`) carries elements of more than one state.
 3. **Show the two status axes separately** wherever a packet-level status appears next to slot/asset statuses, and be explicit that the store does not encode the partition — the separation is an interpretive reading, not a typed relationship in the current data.
 
-This calibration lands in the [package map](asset-definition-package-map-2c-marketing-hero-v1.md) and the [worked package store README](worked-package-store-2c-marketing-hero/README.md). Front-door (`README.md`) calibration is deferred to a later front-of-house pass.
+This calibration lands in the [package map](asset-definition-package-map-2c-marketing-hero-v1.md) and the [worked package store README](worked-package-store-2c-marketing-hero/README.md). Front-door ([`README.md`](../README.md)) calibration is deferred to a later front-of-house pass.
 
 ## What this does not do
 
