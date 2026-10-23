@@ -2,6 +2,8 @@
 
 These documents are provisional application-layer artifacts derived from the repository's current working ontology.
 
+An application presents the ontology's concepts in its users' working language: see [Domain-Facing Vocabulary](../method.md#domain-facing-vocabulary).
+
 - [`workflow-discovery-worksheet.md`](workflow-discovery-worksheet.md): structured discovery aid for mapping a current-state workflow
 - [`workflow-diagnosis-memo-template.md`](workflow-diagnosis-memo-template.md): structured synthesis derived from discovery
 - [`workflow-redesign-brief-template.md`](workflow-redesign-brief-template.md): structured target-state proposal derived from diagnosis
