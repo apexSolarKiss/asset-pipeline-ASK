@@ -16,8 +16,9 @@ and, vendored under tools/read/carriers/ for the site's reading pages, the
 surface-text-link, surface-document and surface-treatments visual rules and
 the surface-document overflow helper.
 
-This product also includes the ASK social card, docs/og-image.png, copied
-unmodified from the ASK site (github.com/apexSolarKiss/ASK).
+This product also includes the AP-ASK wordmark, docs/logo-AP-ASK.svg,
+which is derived from the ASK wordmark, and the AP-ASK social card,
+docs/og-image.png, rendered from docs/logo-AP-ASK.svg.
 
 design-system-ASK
 Copyright 2026 Andrew S Klug // ASK

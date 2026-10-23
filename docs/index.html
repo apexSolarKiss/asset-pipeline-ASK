@@ -16,12 +16,12 @@
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="ASK wordmark on lavender background">
+<meta property="og:image:alt" content="AP-ASK wordmark on lavender background">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="AP-ASK // An architecture for creative intent">
 <meta name="twitter:description" content="AP-ASK articulates and encodes a brand’s visual language and creative judgment as a clear, reusable system for image production.">
 <meta name="twitter:image" content="https://asset-pipeline.a-s-k.studio/og-image.png">
-<meta name="twitter:image:alt" content="ASK wordmark on lavender background">
+<meta name="twitter:image:alt" content="AP-ASK wordmark on lavender background">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -88,11 +88,13 @@
      1100px is --surface-shell-content-max and 64px is twice --space-6, the
      page's side padding. A re-vendor that changes either must update sizes.
 
-     SHARE CARD. Link previews carry the ASK card, og-image.png at the deployed
-     root, a byte-identical copy of the A-S-K.studio card. It is declared
-     explicitly so that a platform falling back to the page's own images never
-     picks the figure, and vercel.json serves the figure's files noindex so that
-     search results do not use it as the page's thumbnail.
+     SHARE CARD. Link previews carry the AP-ASK card, og-image.png at the
+     deployed root: the AP-ASK wordmark, logo-AP-ASK.svg, drawn in white 900px
+     wide and centered on a 1200 x 630 lavender-ASK (#d4c6e1) field. It is
+     declared explicitly so that a platform falling back to the page's own
+     images never picks the figure, and vercel.json serves the figure's files
+     noindex so that search results do not use it as the page's thumbnail. The
+     card's mark does not replace the shell's ASK wordmark pair.
 
      HEADINGS. The shell's structural title — the breadcrumbed h1, "ASK // apex
      solar kiss // AP-ASK" — is the family locator every shell page carries. The
