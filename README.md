@@ -12,6 +12,16 @@ Image models provide image-making capacity; this repo structures the production 
 
 The reusable object is a **portable asset-definition package** — the definition layer for a commercial visual-asset workflow, **designed to be substrate-independent**: product truth, business and creative intent, constraints, required outputs, slot variation, visual references, decision ownership, approval boundaries, capture/governance rules, and reuse/family-coherence rules, carried as each workflow needs them. The repository is a current worked reference architecture — a prototype proof of that layer, refined as evidence accumulates, not a finished product spec.
 
+## Airtable demo
+
+The [**Airtable demo**](https://airtable.com/appAd5MxDJ7PnVBue/shrktCKpBa1RIVSqG) follows one production brief through candidate images to recorded acceptance: the brief and its shots, the candidates generated for each shot, and the images accepted for a named use, each with the standard it was judged against.
+
+- [**Airtable demo**](https://airtable.com/appAd5MxDJ7PnVBue/shrktCKpBa1RIVSqG): the read-only interface, starting from the candidates and their images
+- [**Inspect and copy the base**](https://airtable.com/appAd5MxDJ7PnVBue/shrIkFkFoMOUMF9Mw): the tables, fields and relationships underneath; Airtable's Copy base makes your own copy to adapt the pattern
+- the other interface pages: [the brief](https://airtable.com/appAd5MxDJ7PnVBue/shrizX0g203kyLwHK), [its shots](https://airtable.com/appAd5MxDJ7PnVBue/shra7JPGuJf35zhvP), [the accepted images](https://airtable.com/appAd5MxDJ7PnVBue/shrDRpvLgYlglqyMp) and [about this demo](https://airtable.com/appAd5MxDJ7PnVBue/shrtinuJhP58FLedl)
+
+The demo is a working base and a work in progress, and it changes in public. Its About table carries the license, the images' provenance and the setup a copy needs: generation and editing happen in your copy, with your own configuration and AI credits. Airtable is the substrate this demo is built on, not the deliverable.
+
 ## What claim it makes
 
 The wedge is whether style guides, approved references, and creative rules can be made legible as normative information structure that a repo-local pipeline can carry and verify without collapsing into vague creative direction.
@@ -60,12 +70,7 @@ For the cleanest layered IA architecture case, see the SKU-driven mode, anchored
 - [`docs/milestones/`](docs/milestones/) — plateau markers
 - [`AGENTS.md`](AGENTS.md) — repo-local execution guidance
 - [`docs/diagrams/asset-pipeline-ASK_architecture-tree.html`](docs/diagrams/asset-pipeline-ASK_architecture-tree.html) — visual architecture tree at orientation depth; regenerated when a plateau milestone marker lands or an equivalent architecture-front-door shift makes the diagram materially stale, so its update cadence is slower than the prose docs; the prose docs are authoritative if the two diverge
-
-Prototype test bases (worked evidence surfaces; Airtable is one substrate, not the deliverable):
-
-- [`Airtable base // Integrated Four-Workflow Home-Goods v1`](https://airtable.com/app4sBiFw2tft17VF/shrckbrFuw0k9e6wq) — the base the 2c marketing-hero chain runs in; the worked evidence surface for the end-to-end in-base proof (definition layer → generation → candidate accumulation → selection → governed asset, no external import)
-- [`Airtable base // SKU-Driven Furniture v1`](https://airtable.com/appoqJ25B6w4vSuX9/shrGGnxr3uvLRkEU4) — original prototype base for SKU-driven Furniture v1 and early cross-mode pressure work
-- [`Airtable base // Campaign-Driven D2C Home-Goods v1`](https://airtable.com/appCAcRuA82SWj5h5/shryHuOgJHRsNhMMU) — separate campaign-mode prototype base for cross-base / cross-brand pressure work
+- [`docs/index.md` § Airtable Proof Cycles](docs/index.md#airtable-proof-cycles-and-attachment-input-chain) — the earlier prototype bases the findings ran in, kept as provenance
 
 Background article series, in chronological order:
 

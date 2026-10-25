@@ -14,7 +14,7 @@ Screenshots and generated images are not committed evidence unless a future evid
 
 ## Start Here / Foundation
 
-- [README.md](../README.md): entry points and current repo framing
+- [README.md](../README.md): entry points and current repo framing, including the Airtable demo: a read-only interface and a base to inspect and copy
 - [AGENTS.md](../AGENTS.md): repo-local workflow rules; the adversarial-collaboration operating model (ASK-apexed advisor–executor topology); rules are agent-agnostic and apply to whoever is executing
 - [docs/architecture.md](architecture.md): high-level architecture stance and current ontology direction
 - [docs/layer-disambiguation-note-v1.md](layer-disambiguation-note-v1.md): deconfliction reference for the project's four uses of "layer" (Axis A ontology / B inheritance / C variation / D runtime); reconciles the 3/5/6/7/8-layer counts and records why the architecture's eight-layer list spans two meanings
@@ -221,6 +221,12 @@ The application sub-tree contains examples, bridge docs, templates, and constrai
 This index intentionally does not enumerate every application sub-tree file. The application README is the lower-level map for that area.
 
 ## Airtable Proof Cycles And Attachment-Input Chain
+
+Prototype bases, kept as provenance: the earlier Airtable bases these findings ran in, the worked evidence surfaces the linked docs cite. The current demonstration is the Airtable demo, linked from the [README](../README.md#airtable-demo).
+
+- [`Airtable base // Integrated Four-Workflow Home-Goods v1`](https://airtable.com/app4sBiFw2tft17VF/shrckbrFuw0k9e6wq) — the base the 2c marketing-hero chain runs in; the worked evidence surface for the end-to-end in-base proof (definition layer → generation → candidate accumulation → selection → governed asset, no external import)
+- [`Airtable base // SKU-Driven Furniture v1`](https://airtable.com/appoqJ25B6w4vSuX9/shrGGnxr3uvLRkEU4) — original prototype base for SKU-driven Furniture v1 and early cross-mode pressure work
+- [`Airtable base // Campaign-Driven D2C Home-Goods v1`](https://airtable.com/appCAcRuA82SWj5h5/shryHuOgJHRsNhMMU) — separate campaign-mode prototype base for cross-base / cross-brand pressure work
 
 Start with the SKU-driven Furniture v1 Airtable foundation:
 
