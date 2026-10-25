@@ -14,13 +14,13 @@ The reusable object is a **portable asset-definition package** — the definitio
 
 ## Airtable demo
 
-The [**Airtable demo**](https://airtable.com/appAd5MxDJ7PnVBue/shrktCKpBa1RIVSqG) follows one production brief through candidate images to recorded acceptance: the brief and its shots, the candidates generated for each shot, and the images accepted for a named use, each with the standard it was judged against.
+The Airtable demo follows one production brief through candidate images to recorded acceptance: the brief and its shots, the candidates generated for each shot, and the images accepted for a named use, each with the standard it was judged against.
 
 - [**Airtable demo**](https://airtable.com/appAd5MxDJ7PnVBue/shrktCKpBa1RIVSqG): the read-only interface, starting from the candidates and their images
-- [**Inspect and copy the base**](https://airtable.com/appAd5MxDJ7PnVBue/shrIkFkFoMOUMF9Mw): the tables, fields and relationships underneath; Airtable's Copy base makes your own copy to adapt the pattern
+- [**Inspect and copy the base**](https://airtable.com/appAd5MxDJ7PnVBue/shrIkFkFoMOUMF9Mw): the tables, fields and relationships underneath; with an Airtable account, Copy base makes a copy in your own workspace to adapt the pattern (a copy made through this link has not been tested yet)
 - the other interface pages: [the brief](https://airtable.com/appAd5MxDJ7PnVBue/shrizX0g203kyLwHK), [its shots](https://airtable.com/appAd5MxDJ7PnVBue/shra7JPGuJf35zhvP), [the accepted images](https://airtable.com/appAd5MxDJ7PnVBue/shrDRpvLgYlglqyMp) and [about this demo](https://airtable.com/appAd5MxDJ7PnVBue/shrtinuJhP58FLedl)
 
-The demo is a working base and a work in progress, and it changes in public. Its About table carries the license, the images' provenance and the setup a copy needs: generation and editing happen in your copy, with your own configuration and AI credits. Airtable is the substrate this demo is built on, not the deliverable.
+The demo is a working base and a work in progress, and it changes in public. The public demo is read-only: editing, and any generation, belong in your own copy, with your own configuration and AI credits. Its About table carries the license, the images' provenance and the setup a copy needs; the implementation is under the repository's Apache-2.0 license, and the images are outside it. Airtable is the platform this demo is built on, not the deliverable; Airtable is a trademark of Formagrid Inc., and this demo is not affiliated with or endorsed by it.
 
 ## What claim it makes
 
