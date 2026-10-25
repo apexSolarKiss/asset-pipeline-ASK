@@ -32,8 +32,9 @@
      the short public name of asset-pipeline-ASK; the repository name, the
      domain and every technical identifier are unchanged. The page carries the
      approved pitch in full, in its approved order and wording, and links its
-     technical destinations: the diagram collection (diagrams/index.html), the
-     technical documentation the site build generates (read/index.html) and the
+     destinations: the diagram collection (diagrams/index.html), the
+     technical documentation the site build generates (read/index.html), the
+     Airtable demo (a public, read-only Airtable interface) and the
      repository.
 
      This page is ASSET-PIPELINE-ASK-OWNED content and composition over vendored
@@ -54,14 +55,16 @@
      Nothing in the pitch is carded; the closing navigation is the shared panel
      stack (EXPLORE).
 
-     ACTIONS. The title's line carries three compact actions at its right,
-     centered to it: diagrams, technical docs and repository, so a returning or
-     technical reader reaches the technical destinations without reading on.
+     ACTIONS. The title's line carries four compact actions at its right,
+     centered to it: diagrams, technical docs, Airtable demo and repository, so a
+     returning or technical reader reaches the destinations without reading on.
+     "Airtable demo" keeps Airtable's capitalization and names the substrate of
+     the demonstration, not an endorsement.
      They use the shared action styles and the footer's standard spacing; there
      is no sticky navigation.
 
      EXPLORE. After the author section, "Explore the architecture" offers the
-     same three destinations as a stack of full-width shared panels, each with
+     same four destinations as a stack of full-width shared panels, each with
      one line of support, for a reader who has read the introduction. Like the
      title's line and the figure, the stack spans the content width. It replaces
      the footer's former diagrams + repository pair; the footer keeps the
@@ -72,7 +75,7 @@
      navigation entry each sit in a <template data-read-build> fragment, which a
      clone keeps inert and the site build (tools/read/, which declares this page
      a front door) renders by removing the template tags. A clone shows the
-     diagrams and repository destinations only.
+     diagrams, Airtable demo and repository destinations only.
 
      FIGURE. One image sits between "The project today" and the author section:
      a conceptual illustration, presented without a heading or caption, so the
@@ -135,7 +138,7 @@
      the title and the actions, they wrap below it, still at the right. */
   .ap-title-line { display: flex; flex-wrap: wrap; align-items: center; column-gap: var(--space-5); row-gap: var(--space-3); }
   .ap-title-nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--space-5); margin-left: auto; }
-  /* The closing navigation: the three destinations as a vertical stack of the
+  /* The closing navigation: the four destinations as a vertical stack of the
      shared panels. The stack's gap is this page's, as on design-system-ASK's
      index; the panels are the shared surface-panel contract. The supporting
      foreground is the one that contract leaves to each surface. */
@@ -173,6 +176,7 @@
             <template data-read-build>
             <a class="surface-action surface-action--secondary" href="read/index.html">technical docs</a>
             </template>
+            <a class="surface-action surface-action--secondary" href="https://airtable.com/appAd5MxDJ7PnVBue/shrktCKpBa1RIVSqG" target="_blank" rel="noopener">Airtable demo</a>
             <a class="surface-action surface-action--secondary" href="https://github.com/apexSolarKiss/asset-pipeline-ASK" target="_blank" rel="noopener">repository</a>
           </div>
         </div>
@@ -280,6 +284,10 @@
             <span class="surface-panel-support">Architecture, specifications and worked examples for implementers and AI-assisted workflows.</span>
           </a>
           </template>
+          <a class="surface-panel" href="https://airtable.com/appAd5MxDJ7PnVBue/shrktCKpBa1RIVSqG" target="_blank" rel="noopener">
+            <span class="surface-panel-title">Airtable demo</span>
+            <span class="surface-panel-support">A working Airtable base, shown read-only: one brief carried through candidate images to recorded acceptance, with links to inspect and copy the base.</span>
+          </a>
           <a class="surface-panel" href="https://github.com/apexSolarKiss/asset-pipeline-ASK" target="_blank" rel="noopener">
             <span class="surface-panel-title">repository</span>
             <span class="surface-panel-support">Source files, development history and the complete documentation on GitHub.</span>
@@ -294,9 +302,11 @@
   </footer>
 
   <!-- Responsive navigation. The identity mark discloses the panel. The diagram
-       collection and the technical documentation are this page's children, the
-       latter build-only, as above; the repository is a utility destination and
-       sits in the utility row, not in the ancestry. -->
+       collection, the technical documentation and the Airtable demo are listed
+       under this page, the technical documentation build-only, as above; the
+       panel's runtime renders each entry from its label and href alone, so the
+       demo opens in the same tab here. The repository is a utility destination
+       and sits in the utility row, not in the ancestry. -->
   <template class="surface-nav-source">
     <ul class="surface-nav-local">
       <li data-surface-nav-current>
@@ -305,6 +315,7 @@
           <template data-read-build>
           <li><a href="read/index.html">technical documentation</a></li>
           </template>
+          <li><a href="https://airtable.com/appAd5MxDJ7PnVBue/shrktCKpBa1RIVSqG">Airtable demo</a></li>
         </ul>
       </li>
     </ul>
