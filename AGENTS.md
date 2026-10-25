@@ -944,6 +944,8 @@ For brand-intake work that authors brand-facing image guidance, recurring produc
 
 For work that renders such an artifact for review, also read `docs/application/review-artifact-rendering.md`. This is a pointer rule — the usage contract remains the source.
 
+For work that builds or changes an operational candidate workspace, where people request, follow and review candidate images, also read `docs/application/candidate-workspace-ux-contract.md`. This is a pointer rule — the contract remains the source; do not duplicate it here.
+
 ## Inbound handoff intake (AP layer)
 
 The generic `-TBI` overlay, ingestion, resolution, and disposition mechanics
