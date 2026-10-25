@@ -28,6 +28,12 @@ How an intake output is rendered for review: one semantic source plus its review
 
 - [`review-artifact-rendering.md`](review-artifact-rendering.md): usage contract for `scripts/render_review_artifact.py`: inputs, placement of review marks, the conditions on which it fails closed, supported and unexercised compositions, and how a rendered artifact is verified
 
+## Workspace Patterns
+
+Shared blueprints for operational interfaces where people carry out one task on the architecture's records: the views, what each shows and allows, and what an update must preserve. Application-layer contracts, not schema, design-system modules or implementations; each installation records the release it uses.
+
+- [`candidate-workspace-ux-contract.md`](candidate-workspace-ux-contract.md): the candidate workspace, where people request candidate images for a shot, follow each request and review the results: five views, eight requirements, two variants, the Airtable binding, and how an installation takes a release. Its numbering script, tests and installation guide are in [`tools/candidate-numbering/`](../../tools/candidate-numbering/README.md)
+
 ## Examples
 
 - [`examples/README.md`](examples/README.md): compact application example sets that pressure-test the discovery -> diagnosis -> redesign sequence against abstract workflow modes
