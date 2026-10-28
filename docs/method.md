@@ -17,6 +17,8 @@ In a photography-facing workflow, an output slot is presented as a **shot**, and
 
 This is a domain-facing alias, not a new architectural entity or a change to the ontology. The implementation's documentation states the mapping, so users do not have to learn both vocabularies. Implementation names may differ from the canonical term on the same condition: a table of shots can implement output slots, and a changed visible label does not by itself call for renaming an existing table.
 
+The alias holds where each output slot is made for itself. Where one image fills several required positions, such as the same detail on the pages of several sizes, the slots and the shot separate: the shot is still the requested image, one target specification that candidates answer, and the slots are where it goes. Neither is a new entity; the shot is no longer one-to-one with a slot. The relations between them are set out in [shot guides, fulfillment and asset applications](shot-guides-fulfillment-and-asset-applications-v1.md).
+
 Other applications may use other terms suited to their audience. A familiar label must not hide a material distinction: a requested output, a candidate and an accepted asset (the result accepted for a specified use) remain different things, even when one user action performs several workflow steps.
 
 The implementation roadmap / system map grammar already requires this of generated documents: it translates repository vocabulary into terms its audience can read, as a content rule rather than a style preference ([Translation Rules](application/implementation-roadmap-system-map-artifact-grammar-v1.md#translation-rules)). This section extends the same discipline to operational interfaces.

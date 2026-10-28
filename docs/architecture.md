@@ -38,7 +38,7 @@ For routing to specific depth artifacts, see Source-of-Truth Routing below. For 
 *Scope / inheritance layers (Axis B):*
 
 - **brand-system layer** — currently unmodeled in IA; the brand platform and visual identity system deepenings concretize this as a real architectural gap; substantively narrowed by the brand-system carrier decision surface v2 (see Brand-System Layer Status below)
-- **category / product-class layer** — signaled-only; not first-class; inheritance from brand-system is partial (lighting register plausibly inherits cross-category under shared brand-system aesthetic; environment composition and product-class proportions are category-local)
+- **category / product-class layer** — signaled-only; not first-class; inheritance from brand-system is partial (lighting register plausibly inherits cross-category under shared brand-system aesthetic; environment composition and product-class proportions are category-local). A product classification can key a shot guide, the recurring set of images a product needs; that is deliverable shape, an output-obligation input, not this layer's held aesthetic carrier ([shot guides, fulfillment and asset applications](shot-guides-fulfillment-and-asset-applications-v1.md))
 - **mode-specific layer** — varies by mode
 - **packet layer** — strongest current carrier
 - **slot layer** — role-specific narrowing
@@ -68,7 +68,7 @@ For routing to specific depth artifacts, see Source-of-Truth Routing below. For 
 
 **Implementation entry surface.** Brand discovery / digestion is the surface where brand-system input enters the layered IA before any tool implementation begins. All six brand-system input categories (photography / image style guide; asset library; brand platform; visual identity system; application guidelines; past campaigns) are at deepening depth. Modeled as a layered intake architecture and synthesized across the six categories. Depth: [brand-discovery-digestion-layered-intake-architecture-v1.md](brand-discovery-digestion-layered-intake-architecture-v1.md) + [brand-system-input-cross-category-synthesis-v1.md](brand-system-input-cross-category-synthesis-v1.md).
 
-**Fallback chain.** When brand-system input is sparse, contradictory, or absent, the architecture falls back through an ordered six-layer chain: asset library → photography style guide → brand platform → intra-category recency / specificity → Phase 1 worked-example defaults → operator-marked inferred-not-stated. Operator judgment becomes load-bearing under stress; the architecture surfaces options at each conflict point but does not auto-resolve.
+**Fallback chain.** When brand-system input is sparse, contradictory, or absent, the architecture falls back through an ordered six-layer chain: asset library → photography style guide → brand platform → intra-category recency / specificity → Phase 1 worked-example defaults → operator-marked inferred-not-stated. Operator judgment becomes load-bearing under stress; the architecture surfaces options at each conflict point but does not auto-resolve. For a shot guide, a worked-example default grid is a proposal and does not operate until adopted ([shot guides, fulfillment and asset applications](shot-guides-fulfillment-and-asset-applications-v1.md)).
 
 ## Evidence Depth
 
