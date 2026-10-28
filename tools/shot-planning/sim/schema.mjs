@@ -4,7 +4,7 @@
 //   stored kinds   text (singleLineText), long (multilineText), number, checkbox, select
 //                  (singleSelect, options.choices), link (multipleRecordLinks, options.table and
 //                  options.inverse: the inverse field's name in the linked table, which the schema
-//                  adds there; null for a self link, which in Airtable has no inverse), attachments
+//                  adds there; a self link has one too, as Airtable creates it), attachments
 //                  (multipleAttachments), date (dateTime), autonumber
 //   computed kinds formula (its function and Airtable text are in formulas.mjs, under the same
 //                  table and field name), lookup (options.link, options.field), rollup
@@ -251,7 +251,7 @@ const TABLES = [
     ['Recorded summary', 'text'],
     ['Record result', 'long'],
     ['Withdrawn', 'checkbox'],
-    ['Duplicate of', 'link', link('Product-page slots', null)],
+    ['Duplicate of', 'link', link('Product-page slots', 'Duplicated by')],
     ['Shot', 'link', link('Shots', 'Slots filled')],
     ['Detach log', 'long'],
     ['Test', 'checkbox'],
@@ -508,8 +508,8 @@ const TABLES = [
     ['Account', 'text'],
     ['Current', 'checkbox'],
     ['Current set at', 'date'],
-    ['Replaces', 'link', link('Applications', null)],
-    ['Replaced by', 'link', link('Applications', null)],
+    ['Replaces', 'link', link('Applications', 'Named in Replaces')],
+    ['Replaced by', 'link', link('Applications', 'Named in Replaced by')],
     ['Replaced at', 'date'],
     ['Withdrawn', 'checkbox'],
     ['Test', 'checkbox'],

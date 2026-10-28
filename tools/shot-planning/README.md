@@ -123,7 +123,7 @@ The tables and fields below are the schema the scripts and formulas run on, as [
 The build's reconcile reads the live schema before any change (§9.1 step 2) and stops on an Existing field that is absent, of another type or configured otherwise. A rollup's aggregation isn't in the connector's schema read, so for the two existing rollups (Shots › Acceptance coverage, Accepted images › Candidate is test) it isn't checked; the sim's aggregation gives what their readers need ([Choices](#choices-made-in-the-source)).
 
 **Creating the fields:**
-- A link lists both of its fields: creating one in Airtable creates the other, which is then renamed as listed. A link "to itself" has no paired field.
+- A link lists both of its fields: creating one in Airtable creates the other, which is then renamed as listed. A link to its own table gets a paired field too: the build copy showed Airtable creating one. The three self-links' paired fields (Duplicated by, Named in Replaces, Named in Replaced by) are mirrors that no formula or script reads.
 - Lookups, rollups, counts and last-modified times are created by connector, like formulas (§6).
 - The two repoints, the buttons and the three formula primaries (Product lines, Applications and Use decisions › Name) need the Airtable UI (§9.3).
 
@@ -339,7 +339,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 
 </details>
 
-<details><summary><b>Product-page slots</b> (new table, 133 fields and 2 buttons)</summary>
+<details><summary><b>Product-page slots</b> (new table, 134 fields and 2 buttons)</summary>
 
 | Field | Type | Status |
 |---|---|---|
@@ -376,7 +376,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | Recorded summary | Single line text | New |
 | Record result | Long text | New |
 | Withdrawn | Checkbox | New |
-| Duplicate of | Link to Product-page slots, to itself (no paired field) | New |
+| Duplicate of | Link to Product-page slots; paired with Product-page slots › Duplicated by | New |
 | Shot | Link to Shots; paired with Shots › Slots filled | New |
 | Detach log | Long text | New |
 | Test | Checkbox | New |
@@ -474,6 +474,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | Status | Formula (below) | New |
 | Replan result | Long text | New |
 | Product facts | Lookup of Product facts through Product | New |
+| Duplicated by | Link to Product-page slots; paired with Product-page slots › Duplicate of | New |
 | Applications | Link to Applications; paired with Applications › Slot | New |
 | Use decisions | Link to Use decisions; paired with Use decisions › Slots | New |
 | Record decision | Button: runs S7, kind "slot" | New |
@@ -643,7 +644,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 
 </details>
 
-<details><summary><b>Applications</b> (new table, 58 fields)</summary>
+<details><summary><b>Applications</b> (new table, 60 fields)</summary>
 
 | Field | Type | Status |
 |---|---|---|
@@ -660,8 +661,8 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | Account | Single line text | New |
 | Current | Checkbox | New |
 | Current set at | Date, with time | New |
-| Replaces | Link to Applications, to itself (no paired field) | New |
-| Replaced by | Link to Applications, to itself (no paired field) | New |
+| Replaces | Link to Applications; paired with Applications › Named in Replaces | New |
+| Replaced by | Link to Applications; paired with Applications › Named in Replaced by | New |
 | Replaced at | Date, with time | New |
 | Withdrawn | Checkbox | New |
 | Test | Checkbox | New |
@@ -705,6 +706,8 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | In use eligibility | Formula (below) | New |
 | Alternate title | Formula (below) | New |
 | Settled source image | Formula (below) | New |
+| Named in Replaces | Link to Applications; paired with Applications › Replaces | New |
+| Named in Replaced by | Link to Applications; paired with Applications › Replaced by | New |
 
 </details>
 
