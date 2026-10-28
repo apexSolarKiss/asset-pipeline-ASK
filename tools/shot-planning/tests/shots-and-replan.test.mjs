@@ -231,7 +231,7 @@ add('T9/CX5', 'CX5 on a shot of one slot: a view edit is a draft (changed, still
     && slot(w, front, 'Kept view').endsWith('Centered on the surface.'), result(w, SH, sh));
   t.check('Shot-guide check Same, in the plan, active; the shot is Planned', slot(w, front, 'Shot-guide check') === TEXT.guideSame && slot(w, front, 'In adopted plan') === 1 && slot(w, front, 'Active') === 1 && shot(w, sh, 'Planned') === 1, shot(w, sh, 'Plan check'));
   t.check('the refresh isn\'t flagged as a hand edit', slot(w, front, 'Kept plan check') === '' && slot(w, front, 'Held') === 0);
-  t.check('the earlier candidate keeps the old definition in its kept standard and reads changed', !w.get('Candidates', cand, 'Standard').includes('Centered on the surface.') && w.get('Candidates', cand, 'Standard').includes('version 1')
+  t.check('the earlier candidate keeps the old definition in its kept standard and reads changed', !w.get('Candidates', cand, 'Standard used').includes('Centered on the surface.') && w.get('Candidates', cand, 'Standard used').includes('version 1')
     && w.get('Candidates', cand, 'Standard check') === 'The standard has changed since this image was made');
   t.check('the result says what was done', result(w, SH, sh).includes('refreshed 1 of 1 slot.\n- Bath Vessel · 1 Front: refreshed from version 2.'), result(w, SH, sh));
 });
@@ -582,7 +582,7 @@ add('T31/CX3', 'CX3: two products with one share key and contradictory facts: S2
     await pressS2(w, req.id);
     const n = shotNote(w, req.id);
     t.check(`[${fix}] no shared shot; the Make slots got theirs`, !shotOf(w, a1) && !shotOf(w, b1) && shotsOn(w, req.id).length === 2);
-    t.check(`[${fix}] the note names the products and their differing facts`, n.includes('Test Towel Bath and Test Towel Sheet are both Test terry / white, but their facts differ: "A white towel with a plain edge band." / "A white towel with a fringed edge.". Nothing was shared. If they are one style in two sizes, correct the facts and press again; if not, record a departure to Make for each.'), n);
+    t.check(`[${fix}] the note names the products and their differing facts`, n.includes('Test Towel Bath and Test Towel Sheet are both Test terry / white, but their facts differ: "Must stay true: A white towel with a plain edge band. Material: . Finish: ." / "Must stay true: A white towel with a fringed edge. Material: . Finish: .". Nothing was shared. If they are one style in two sizes, correct the facts and press again; if not, record a departure to Make for each.'), n);
     t.check(`[${fix}] each slot's Status points to the note`, slot(w, a1, 'Status') === "Not shared: the products' facts differ (see the Shot planning note)" && slot(w, b1, 'Status') === slot(w, a1, 'Status'), slot(w, a1, 'Status'));
     if (fix === 'departures') {
       for (const s of [a1, b1]) await recordSlot(w, s, { Fulfillment: 'Make', 'Fulfillment reason': 'test: the edges differ' });

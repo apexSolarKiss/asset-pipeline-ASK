@@ -10,7 +10,12 @@
 //                  table and field name), lookup (options.link, options.field), rollup
 //                  (options.link, options.field, options.agg, optional options.where), count
 //                  (options.link, optional options.where), modified (lastModifiedTime,
-//                  options.watch: the field names it watches)
+//                  options.watch: the field names it watches), created (createdTime: the
+//                  record's creation time)
+//
+// The existing tables' fields carry the live base's exact names, types and configurations, as
+// the build copy's schema read gives them (README, Schema). An existing formula's text is the
+// live text (formulas.mjs).
 //
 // Computed fields are never stored: sim/world.mjs computes them on read. A rollup's agg names
 // an aggregation in AGG below, which carries the Airtable aggregation formula it mirrors; a
@@ -34,6 +39,7 @@ export const AGG = {
   JOIN_NL_COMPACT: ['ARRAYJOIN(ARRAYCOMPACT(values), "\\n")', v => v.filter(x => !blank(x)).map(String).join('\n')],
   JOIN_BAR_COMPACT: ['ARRAYJOIN(ARRAYCOMPACT(values), "¦")', v => v.filter(x => !blank(x)).map(String).join('¦')],
   JOIN_COMMA_COMPACT: ['ARRAYJOIN(ARRAYCOMPACT(values), ", ")', v => v.filter(x => !blank(x)).map(String).join(', ')],
+  JOIN_EMPTY: ['ARRAYJOIN(values, "")', v => v.map(x => (x == null ? '' : String(x))).join('')],
   UNIQUE_BAR: ['ARRAYJOIN(ARRAYUNIQUE(ARRAYCOMPACT(ARRAYFLATTEN(values))), "¦")', v => [...new Set(v.filter(x => !blank(x)).map(String))].join('¦')],
   UNIQUE_NL: ['ARRAYJOIN(ARRAYUNIQUE(ARRAYCOMPACT(ARRAYFLATTEN(values))), "\\n")', v => [...new Set(v.filter(x => !blank(x)).map(String))].join('\n')],
   SUM: ['SUM(values)', v => v.reduce((a, x) => a + (typeof x === 'number' ? x : x === true ? 1 : 0), 0)],
@@ -105,10 +111,13 @@ const TABLES = [
     ['Style', 'text'],
     ['Color', 'text'],
     ['Size', 'text'],
-    ['Must stay true', 'long'], // the existing facts text
+    ['Must stay true', 'long'], // existing: the facts text
+    ['Material', 'text'],       // existing
+    ['Finish', 'text'],         // existing
+    ['Image updated', 'modified', { watch: ['Image'] }], // existing
     ['Product ID', 'formula'],
-    ['Product facts', 'formula'], // existing, not edited
-    ['Prompt line', 'formula'],   // existing, not edited
+    ['Product facts', 'formula'], // existing, not edited: the live text
+    ['Prompt line', 'formula'],   // existing, not edited: the live text
     ['Product share key', 'formula'],
     ['Facts without size', 'formula'],
     ['Share signature', 'formula'],
@@ -140,14 +149,22 @@ const TABLES = [
   ]),
   T('References', 'RF', [
     ['Name', 'text'],
+    ['Role', 'select', sel(['Light', 'Palette', 'Material', 'Restraint', 'Atmosphere'])], // existing
+    ['Applies to', 'select', sel(['Whole brand', 'This brief'])],                          // existing
+    ['What it may decide', 'long'],                                                        // existing
     ['Image', 'attachments'],
     ['Test', 'checkbox'],
+    ['Image updated', 'modified', { watch: ['Image'] }], // existing
+    ['Reference line', 'formula'], // existing, not edited: the live text
+    ['Prompt line', 'formula'],    // existing, not edited: the live text
     ['Has image', 'formula'],
   ]),
   T('Briefs', 'BR', [
     ['Name', 'text'],
     ['Workflow', 'select', sel(['Product pages', 'Collection', 'Marketing', 'Campaign', 'Walkthrough'])],
-    ['Direction', 'long'], // the existing brief's direction text, read by Brief standard
+    ['Purpose', 'long'],        // existing
+    ['Direction', 'long'],      // existing
+    ['What may vary', 'long'],  // existing
     ['Products', 'link', link('Products', 'Briefs')], // existing link, unchanged
     ['References', 'link', link('References', 'Briefs')],
     ['Shot guide (collection)', 'link', link('Shot guides', 'Requests')],
@@ -163,15 +180,19 @@ const TABLES = [
     ['Line count', 'count', { link: 'Product lines' }],
     ['Reference has image', 'lookup', lk('References', 'Has image')],
     ['References complete', 'formula'],
+    ['Product facts', 'lookup', lk('Products', 'Product facts')],        // existing
+    ['Reference lines', 'lookup', lk('References', 'Reference line')],   // existing
+    ['Product prompt', 'lookup', lk('Products', 'Prompt line')],         // existing
+    ['Reference prompts', 'lookup', lk('References', 'Prompt line')],    // existing
     ['Reference images', 'lookup', lk('References', 'Image')],
-    ['Brief standard', 'formula'], // existing, not edited
-    ['Brief prompt', 'formula'],   // existing, not edited
+    ['Brief standard', 'formula'], // existing, not edited: the live text
+    ['Brief prompt', 'formula'],   // existing, not edited: the live text
     ['Request standard', 'formula'],
     ['Request prompt', 'formula'],
     ['Reference prompt', 'formula'],
   ]),
   T('Product lines', 'PL', [
-    ['Name', 'formula'],
+    ['Name', 'formula'], // the primary: created by connector as Single line text, converted to this formula in the UI (README, Install)
     ['Request', 'link', link('Briefs', 'Product lines')],
     ['Product', 'link', link('Products', 'Product lines')],
     ['Test', 'checkbox'],
@@ -360,6 +381,7 @@ const TABLES = [
     ['Brief prompt', 'lookup', lk('Brief', 'Brief prompt')],
     ['Request standard', 'lookup', lk('Brief', 'Request standard')],
     ['Request prompt', 'lookup', lk('Brief', 'Request prompt')],
+    ['Reference prompt', 'lookup', lk('Brief', 'Reference prompt')],
     ['References complete', 'lookup', lk('Brief', 'References complete')],
     ['Reference images', 'lookup', lk('Brief', 'Reference images')],
     ['Collection guide ID', 'lookup', lk('Brief', 'Guide ID')],
@@ -394,6 +416,9 @@ const TABLES = [
     ['Current slot basis', 'rollup', ru('Slots filled', 'Shot basis line', 'JOIN_NL_COMPACT')],
     ['Accepted count', 'rollup', ru('Candidates', 'Is accepted', 'SUM')],
     ['Accepted slots kept', 'rollup', ru('Candidates', 'Accepted slots kept', 'JOIN_NL_COMPACT')],
+    // existing: Title, the shot's display name the candidates look up; Acceptance coverage, read by Decision
+    ['Title', 'formula'],
+    ['Acceptance coverage', 'rollup', ru('Accepted images', 'Coverage', 'JOIN_EMPTY')],
     ['Sharing check', 'formula'],
     ['Current product basis', 'formula'],
     ['Effective placement', 'formula'],
@@ -416,14 +441,19 @@ const TABLES = [
     ['Number in shot', 'number'],
     ['Test', 'checkbox'],
     ['Image', 'attachments'],
-    ['Generated at', 'date'],
+    ['Generated at', 'modified', { watch: ['Image'] }], // existing: the last-modified time of Image
     ['Generate when ready', 'checkbox'],
-    ['Standard', 'long'],        // kept by Snapshot
-    ['Intended use', 'text'],    // kept by Snapshot
+    ['Generate requested', 'checkbox'],        // existing: ticked by G1
+    ['Standard used', 'long'],                 // existing: the kept standard, written by Snapshot
+    ['Prompt used', 'long'],                   // existing: written by Snapshot
+    ['Intended use', 'text'],                  // existing: written by Snapshot
+    ['Product image used', 'attachments'],     // existing: written by Snapshot
+    ['Reference images used', 'attachments'],  // existing: written by Snapshot
+    ['Input check', 'long'],                   // existing: written by G2a
     ['Slots kept', 'long'],      // kept by Snapshot (§6)
     ['Products kept', 'long'],   // kept by Snapshot (§6)
-    ['Shot name', 'lookup', lk('Shot', 'Name')],
-    ['Shot current standard', 'lookup', lk('Shot', 'Current standard')],
+    ['Shot name', 'lookup', lk('Shot', 'Title')],             // existing
+    ['Current standard', 'lookup', lk('Shot', 'Current standard')], // existing: the shot's current standard
     ['Shot planned values', 'rollup', ru('Shot', 'Planned', 'SUM')],
     ['Shot count', 'count', { link: 'Shot' }],
     ['Current slot basis', 'lookup', lk('Shot', 'Current slot basis')],
@@ -439,26 +469,33 @@ const TABLES = [
     ['Accepted slots kept', 'formula'],
   ]),
   T('Accepted images', 'AI', [
-    ['Candidate', 'link', link('Candidates', 'Accepted image')],
-    ['Accepted at', 'date'],
-    ['Standard', 'long'],    // the candidate's kept Standard, copied by Accept
+    // existing: every field down to Current title, as Accept writes and the live base computes them
+    ['Recorded as', 'text'], // the primary field: the candidate's title when it was accepted
+    ['Candidate record no.', 'link', link('Candidates', 'Accepted images')],
+    ['Shot', 'link', link('Shots', 'Accepted images')],
+    ['Image', 'attachments'], // Accept copies the candidate's image into it
     ['Approved for', 'text'],
+    ['Standard', 'long'],    // the candidate's Standard used, copied by Accept
     ['Accepted by', 'text'],
+    ['Accepted by ID', 'text'],
+    ['Accepted at', 'created'],
+    ['Test', 'checkbox'],
+    ['Record complete', 'formula'],
+    ['Candidate is test', 'rollup', ru('Candidate record no.', 'Test', 'SUM')],
+    ['Shot standard now', 'lookup', lk('Shot', 'Current standard')],
+    ['Coverage', 'formula'],
+    ['Candidate title now', 'lookup', lk('Candidate record no.', 'Title')],
+    ['Current title', 'formula'],
+    // new
     ['Applications done', 'checkbox'],
     ['Application progress', 'long'],
     ['Accepted ID', 'formula'],
-    ['Current title', 'lookup', lk('Candidate', 'Title')],
-    ['Shot current standard', 'lookup', lk('Candidate', 'Shot current standard')],
-    ['Slots kept', 'lookup', lk('Candidate', 'Slots kept')],
-    ['Products kept', 'lookup', lk('Candidate', 'Products kept')],
-    ['Candidate test', 'lookup', lk('Candidate', 'Test')],
-    ['Image', 'lookup', lk('Candidate', 'Image')],
-    ['Name', 'formula'],
-    ['Record complete', 'formula'],
-    ['Coverage', 'formula'],
+    ['Slots kept', 'lookup', lk('Candidate record no.', 'Slots kept')],
+    ['Products kept', 'lookup', lk('Candidate record no.', 'Products kept')],
     ['Source current', 'formula'],
   ]),
   T('Applications', 'AP', [
+    ['Name', 'formula'], // the primary: created by connector as Single line text, converted to this formula in the UI (README, Install)
     ['Accepted image', 'link', link('Accepted images', 'Applications')],
     ['Slot', 'link', link('Product-page slots', 'Applications')],
     ['Application key', 'text'],
@@ -502,7 +539,6 @@ const TABLES = [
     ['Replaced by name', 'lookup', lk('Replaced by', 'Name')],
     ['Replaces IDs', 'lookup', lk('Replaces', 'Application ID')],
     ['Replaces in use', 'lookup', lk('Replaces', 'In use flag')],
-    ['Name', 'formula'],
     ['Current check', 'formula'],
     ['Eligibility', 'formula'],
     ['Basis finished', 'formula'],
@@ -519,6 +555,7 @@ const TABLES = [
     ['Settled source image', 'formula'],
   ]),
   T('Use decisions', 'UD', [
+    ['Name', 'formula'], // the primary: created by connector as Single line text, converted to this formula in the UI (README, Install)
     ['Accepted image', 'link', link('Accepted images', 'Use decisions')],
     ['Slots', 'link', link('Product-page slots', 'Use decisions')],
     ['Replace', 'checkbox'],
@@ -539,7 +576,6 @@ const TABLES = [
     ['Slot basis lines', 'rollup', ru('Slots', 'Basis line', 'JOIN_NL')],
     ['Record changed at', 'modified', { watch: ['Decided basis', 'Decided selection', 'Decided at'] }],
     ['Application count', 'count', { link: 'Applications' }],
-    ['Name', 'formula'],
     ['Live basis', 'formula'],
     ['Record intact', 'formula'],
     ['Basis check', 'formula'],
@@ -552,6 +588,7 @@ const KIND = {
   text: 'singleLineText', long: 'multilineText', number: 'number', checkbox: 'checkbox', select: 'singleSelect',
   link: 'multipleRecordLinks', attachments: 'multipleAttachments', date: 'dateTime', autonumber: 'autoNumber',
   formula: 'formula', lookup: 'multipleLookupValues', rollup: 'rollup', count: 'count', modified: 'lastModifiedTime',
+  created: 'createdTime',
 };
 export const STORED = new Set(['text', 'long', 'number', 'checkbox', 'select', 'link', 'attachments', 'date']);
 
@@ -685,7 +722,7 @@ export const BINDINGS = {
   // slot (Product-page slots), app (Applications).
   s4: {
     acceptedTable: 'Accepted images', accRecordCompleteField: 'Record complete', accSlotsKeptField: 'Slots kept',
-    accCandidateTestField: 'Candidate test', accAcceptedAtField: 'Accepted at', accDoneField: 'Applications done',
+    accCandidateTestField: 'Candidate is test', accAcceptedAtField: 'Accepted at', accDoneField: 'Applications done',
     accProgressField: 'Application progress',
     slotsTable: 'Product-page slots', slotNameField: 'Name', slotActiveField: 'Active', slotHeldField: 'Held',
     slotRequestSupersededField: 'Request superseded', slotInPlanField: 'In adopted plan', slotWaivedField: 'Waived',
@@ -707,7 +744,7 @@ export const BINDINGS = {
     udResultField: 'Result', udAppliedField: 'Applied', udLiveBasisField: 'Live basis', udRecordIntactField: 'Record intact',
     udBasisCheckField: 'Basis check', udEndedSlotsField: 'Ended slots',
     acceptedTable: 'Accepted images', accRecordCompleteField: 'Record complete', accProductsKeptField: 'Products kept',
-    accSlotsKeptField: 'Slots kept', accCandidateTestField: 'Candidate test', accSourceCurrentField: 'Source current',
+    accSlotsKeptField: 'Slots kept', accCandidateTestField: 'Candidate is test', accSourceCurrentField: 'Source current',
     accTitleField: 'Current title',
     slotsTable: 'Product-page slots', slotNameField: 'Name', slotActiveField: 'Active', slotPickupOkField: 'Pickup ok',
     slotChangePendingField: 'Change pending', slotHeldField: 'Held', slotKeyCountField: 'Key count',

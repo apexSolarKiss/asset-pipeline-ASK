@@ -137,14 +137,24 @@ export function makeShot(w, slotIds, { madeAs, name } = {}) {
   for (const s of slotIds) w.set('Product-page slots', s, { Shot: [id] }); // S2 links each slot to its shot
   return id;
 }
+// Snapshot's stand-in writes the kept inputs (Standard used, Prompt used, Intended use, the image
+// copies, Slots kept, Products kept); the generator's write of Image moves Generated at (the
+// last-modified time of Image), so a candidate made without an image has no Image cell at all.
+export const snapshotCells = (w, shotId) => ({ Shot: [shotId], 'Number in shot': (w.get('Shots', shotId, 'Candidates') || []).length + 1,
+  'Standard used': w.get('Shots', shotId, 'Current standard'), 'Prompt used': w.get('Shots', shotId, 'Current prompt'), 'Intended use': w.get('Shots', shotId, 'Effective placement'),
+  'Product image used': w.get('Shots', shotId, 'Product image'), 'Reference images used': w.get('Shots', shotId, 'Reference images'),
+  'Slots kept': w.get('Shots', shotId, 'Current slot basis'), 'Products kept': w.get('Shots', shotId, 'Current product basis') });
+export const CANDIDATE_IMAGE = shotId => [{ url: 'https://example.test/c.jpg', filename: `candidate-${shotId}.jpg` }];
 export function snapshotCandidate(w, shotId, { image = true } = {}) {
-  return w.add('Candidates', { Shot: [shotId], 'Number in shot': (w.get('Shots', shotId, 'Candidates') || []).length + 1, Standard: w.get('Shots', shotId, 'Current standard'),
-    'Intended use': w.get('Shots', shotId, 'Effective placement'), 'Slots kept': w.get('Shots', shotId, 'Current slot basis'), 'Products kept': w.get('Shots', shotId, 'Current product basis'),
-    Image: image ? [{ url: 'https://example.test/c.jpg', filename: `candidate-${shotId}.jpg` }] : null, 'Generated at': image ? w.iso() : null });
+  return w.add('Candidates', { ...snapshotCells(w, shotId), ...(image ? { Image: CANDIDATE_IMAGE(shotId) } : {}) });
 }
-export const accept = (w, candidateId) => w.add('Accepted images', { Candidate: [candidateId], 'Accepted at': w.iso(), Standard: w.get('Candidates', candidateId, 'Standard'), 'Accepted by': 'ASK' });
+// Accept's stand-in: the accepted record, as Accept writes it (Accepted at is its created time).
+export const accept = (w, candidateId) => w.add('Accepted images', {
+  'Recorded as': w.get('Candidates', candidateId, 'Title'), 'Candidate record no.': [candidateId], Shot: w.get('Candidates', candidateId, 'Shot'),
+  Image: w.get('Candidates', candidateId, 'Image'), 'Approved for': w.get('Candidates', candidateId, 'Intended use'), Standard: w.get('Candidates', candidateId, 'Standard used'),
+  'Accepted by': 'ASK', 'Accepted by ID': 'usrSIMULATED00001' });
 export function applyAcceptance(w, acceptedId) {
-  const cand = w.get('Accepted images', acceptedId, 'Candidate')[0];
+  const cand = w.get('Accepted images', acceptedId, 'Candidate record no.')[0];
   const lines = (w.get('Candidates', cand, 'Slots kept') || '').split('\n').filter(Boolean);
   const apps = [];
   for (const l of lines) {

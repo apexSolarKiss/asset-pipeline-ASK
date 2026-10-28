@@ -30,9 +30,7 @@ const mutate = (t, src, from, to, label) => { const m = src.replace(from, to); t
 
 // Snapshot's stand-in, with the candidate's Test (fixtures' snapshotCandidate, plus Test).
 function snap(w, shotId, { test = false } = {}) {
-  return w.add('Candidates', { Shot: [shotId], 'Number in shot': (w.get(SH, shotId, 'Candidates') || []).length + 1, Standard: w.get(SH, shotId, 'Current standard'),
-    'Intended use': w.get(SH, shotId, 'Effective placement'), 'Slots kept': w.get(SH, shotId, 'Current slot basis'), 'Products kept': w.get(SH, shotId, 'Current product basis'),
-    Image: [{ url: 'https://example.test/c.jpg', filename: `candidate-${shotId}.jpg` }], 'Generated at': w.iso(), Test: test });
+  return w.add('Candidates', { ...fx.snapshotCells(w, shotId), Image: fx.CANDIDATE_IMAGE(shotId), Test: test });
 }
 // A candidate kept, accepted (Accept's stand-in) and applied by the real S4.
 async function acceptShot(w, shotId, opts = {}) {
@@ -391,7 +389,7 @@ async function legacySetup() {
   const walk = fx.request(w, { name: 'Launch brief', workflow: 'Walkthrough' });
   const legacyShot = (name) => {
     const sh = w.add(SH, { Name: name, Brief: [walk.id], Placement: 'Product page detail', 'Shot direction': 'A closer, quieter view of the vessel.' });
-    const c = w.add('Candidates', { Shot: [sh], 'Number in shot': 1, Standard: w.get(SH, sh, 'Current standard'), Image: [{ url: 'https://example.test/c.jpg', filename: 'close.jpg' }], 'Generated at': w.iso() });
+    const c = w.add('Candidates', { Shot: [sh], 'Number in shot': 1, 'Standard used': w.get(SH, sh, 'Current standard'), 'Intended use': w.get(SH, sh, 'Effective placement'), Image: [{ url: 'https://example.test/c.jpg', filename: 'close.jpg' }] });
     return fx.accept(w, c);
   };
   const close = legacyShot('Close study'), other = legacyShot('Other study');
@@ -888,7 +886,7 @@ add('S4-guards', "S4's own guards: an accepted record that isn't Complete gets o
   const n0 = w.writes.length; await pressS4(w, accepted);
   t.check('not Complete: only Application progress written; no application; not done', writesSince(w, n0).every(x => x.table === AI && x.fields.join() === 'Application progress')
     && w.get(AI, accepted, 'Application progress') === "Not applied: this accepted record isn't Complete." && appsFrom(w, accepted).length === 0 && !w.get(AI, accepted, 'Applications done'));
-  w.set(AI, accepted, { Standard: w.get('Candidates', candidate, 'Standard') });
+  w.set(AI, accepted, { Standard: w.get('Candidates', candidate, 'Standard used') });
   fx.request(w, { name: 'Bath product pages, version 2', products: [b.P.vessel, b.P.towel, b.P.sheet, b.P.hand], supersedes: [b.req.id] });
   await pressS4(w, accepted);
   t.check('a superseded request: each slot skipped and said so; done ticked; no application', appsFrom(w, accepted).length === 0 && w.get(AI, accepted, 'Applications done') === true

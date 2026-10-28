@@ -39,6 +39,8 @@
 //   is applied. Script operations: getTable/getField (no operation), selectRecordAsync,
 //   selectRecordsAsync, createRecordAsync(s), updateRecordAsync(s), each one operation.
 //
+// A created-time field reads the record's creation time, as Airtable's createdTime does.
+//
 // Values a script reads have Airtable's scripting shapes: a checkbox reads true or null, a single
 // select { id, name, color }, a link [{ id, name }], an empty value null. Writes are checked as
 // Airtable checks them: a computed field can't be written, a select needs { name } of an existing
@@ -127,6 +129,7 @@ export class World {
     const rec = t.records.get(id); if (!rec) return null;
     if (STORED.has(f.kind) || f.kind === 'autonumber') return rec.cells[f.id] ?? null;
     if (f.kind === 'modified') return rec.lmt[f.id] != null ? this.iso(rec.lmt[f.id]) : null;
+    if (f.kind === 'created') return this.iso(rec.created);
     const key = `${t.id}|${id}|${f.id}`;
     if (this.cache.has(key)) return this.cache.get(key);
     if (this.computing.has(key)) throw new Error(`sim: circular computed field ${t.name}.${f.name}`);
@@ -202,7 +205,7 @@ export class World {
   }
   create(t, cells, { by, strict = false } = {}) {
     const id = this.newId();
-    t.records.set(id, { cells: {}, lmt: {} });
+    t.records.set(id, { cells: {}, lmt: {}, created: this.clock });
     for (const f of t.fields) if (f.kind === 'autonumber') t.records.get(id).cells[f.id] = ++t.auto;
     try { this.write(t, id, cells, { by, create: true, strict }); } catch (e) { t.records.delete(id); throw e; }
     return id;

@@ -10,10 +10,12 @@
 //   checkbox                         true, or null
 //   link                             array of record IDs, or null
 //   lookup                           array of the linked records' values, flattened, or null
-//   date, last modified time         ISO string, or null
+//   date, last modified time,        ISO string, or null
+//   created time
 //   formula                          its value: a string, or 0/1 for a truth value
 // The helpers below give these Airtable's coercions: S (text, as & does, arrays joined ", "),
-// AJ (ARRAYJOIN), N (a number), B (truthiness), MS (a time, in ms), FIND (1-based, 0 when absent).
+// AJ (ARRAYJOIN), N (a number), B (truthiness), MS (a time, in ms), FIND (1-based, 0 when absent),
+// DTF (DATETIME_FORMAT(t, 'YYYY-MM-DD HH:mm:ss'), in UTC as Airtable formats without a time zone).
 
 export const S = v => (v == null ? '' : Array.isArray(v) ? v.map(S).join(', ') : v === true ? '1' : v === false ? '0' : String(v));
 export const AJ = (v, sep = '') => (v == null ? '' : Array.isArray(v) ? v.map(S).join(sep) : S(v));
@@ -21,11 +23,48 @@ export const N = v => (v == null || v === '' ? 0 : Array.isArray(v) ? v.reduce((
 export const B = v => !(v == null || v === '' || v === 0 || v === false || (Array.isArray(v) && v.length === 0));
 export const MS = v => { const x = Array.isArray(v) ? v[0] : v; if (x == null || x === '') return null; const t = Date.parse(x); return Number.isNaN(t) ? null : t; };
 export const FIND = (needle, hay) => { const n = S(needle), h = S(hay); if (n === '') return 0; return h.indexOf(n) + 1; };
+// The live Product facts' closing clause, the product image's time; Product facts (lines) and Shared facts line end with it.
+const IMAGE_AS_OF = ` & " Product image as of " & IF({Image updated}, DATETIME_FORMAT({Image updated}, 'YYYY-MM-DD HH:mm:ss'), "(no image)") & " UTC."`;
+const imageAsOf = r => ` Product image as of ${r.get('Image updated') ? DTF(r.get('Image updated')) : '(no image)'} UTC.`;
+export const DTF = v => { const t = MS(v); if (t == null) return ''; const iso = new Date(t).toISOString(); return `${iso.slice(0, 10)} ${iso.slice(11, 19)}`; };
 const IF = (c, a, b) => (B(c) ? a : b);
 const bit = c => (B(c) ? 1 : 0);
 const present = v => B(v);
 
 const F = (airtable, fn) => { fn.airtable = airtable.trim(); return fn; };
+
+// The live texts of the existing formulas this unit reads or changes, with field names for field
+// IDs: read from the build copy (appVaDEn7St333yYg), whose schema is the live base's; the eight that
+// SCRATCH/baseline/06-field-configs.raw.json holds for the live base are byte-equal to it. An
+// existing formula that isn't changed is the live text itself (don't install it). A Changed formula
+// is built from its live text below, so its unchanged part is that text, character for character.
+export const LIVE = {
+  productFacts: `{Name} & ". Must stay true: " & {Must stay true} & " Material: " & {Material} & ". Finish: " & {Finish} & ". Product image as of " & IF({Image updated}, DATETIME_FORMAT({Image updated}, 'YYYY-MM-DD HH:mm:ss'), "(no image)") & " UTC."`,
+  productPromptLine: `{Name} & ". " & {Must stay true} & " Material: " & {Material} & ". Finish: " & {Finish} & "."`,
+  referenceLine: `{Name} & " (" & {Role} & ", " & {Applies to} & "): " & {What it may decide} & " Image as of " & IF({Image updated}, DATETIME_FORMAT({Image updated}, 'YYYY-MM-DD HH:mm:ss'), "(no image)") & " UTC."`,
+  referencePromptLine: `{Role} & " reference: " & {What it may decide}`,
+  briefStandard: `"Purpose: " & {Purpose} & "\\nDirection: " & {Direction} & "\\nWhat may vary: " & {What may vary} & "\\nProduct: " & ARRAYJOIN({Product facts}, " ") & "\\nReferences:\\n" & ARRAYJOIN({Reference lines}, "\\n")`,
+  briefPrompt: `"Direction: " & {Direction} & "\\n\\nWhat may vary: " & {What may vary} & "\\n\\nThe first attached image is the product image. It is the authority for the product: " & ARRAYJOIN({Product prompt}, " ") & " Do not redesign, substitute, embellish or alter the product.\\n\\nThe remaining attached images are references, in this order. Use each one only for its role. None of them may change the product.\\n" & ARRAYJOIN({Reference prompts}, "\\n")`,
+  shotTitle: `{Name}`,
+  currentStandard: `ARRAYJOIN({Brief standard}, "") & "\\nShot: " & {Name} & ", for " & {Placement} & ". " & {Shot direction}`,
+  currentPrompt: `"Generate one single commercial photograph. Not a grid, collage, contact sheet or multi-image layout.\\n\\nShot: " & {Name} & ", for " & {Placement} & ". " & {Shot direction} & "\\n\\n" & ARRAYJOIN({Brief prompt}, "")`,
+  canGenerate: `IF(AND({Placement} != "", {Shot direction} != "", COUNTA({Product image}) > 0, COUNTA({Reference images}) > 0), 1, 0)`,
+  decision: `IF(FIND("Current standard", {Acceptance coverage}),
+  "Accepted for " & {Placement} &
+    IF(LEN({Acceptance coverage}) - LEN(SUBSTITUTE({Acceptance coverage}, "Current standard", "")) > 16,
+      " · " & (LEN({Acceptance coverage}) - LEN(SUBSTITUTE({Acceptance coverage}, "Current standard", ""))) / 16 & " images", ""),
+  IF(FIND("Earlier standard", {Acceptance coverage}), "Accepted under an earlier standard", "No accepted image yet"))`,
+  candidateTitle: `ARRAYJOIN({Shot name}, "") & IF({Number in shot}, " // candidate " & {Number in shot}, IF({Test}, " // test record " & {Record no.}, " // new candidate"))`,
+  candidateHasImage: `IF({Image}, 1, 0)`,
+  standardCheck: `IF({Standard used}="", "", IF(ARRAYJOIN({Current standard}, "")={Standard used}, "Same standard as when this image was made", "The standard has changed since this image was made"))`,
+  ready: `IF(AND(COUNTA({Shot}) > 0, {Standard used}, {Prompt used}, {Intended use}, {Product image used}, {Reference images used}), "Ready to generate", "Preparing…")`,
+  status: `IF({Has image} = 1, "Image ready", IF({Generate requested}, "Image requested // contact ASK if it appears stuck", IF({Generate when ready}, IF(LEFT({Input check}, 13) = "Would request", "Dry run // the image would have been requested", IF(OR(LEFT({Input check}, 8) = "Missing:", LEFT({Input check}, 19) = "Not a usable image:", LEFT({Input check}, 14) = "Not requested:", LEFT({Input check}, 14) = "Still copying:", {Standard check} = "The standard has changed since this image was made"), "Needs attention // contact ASK before trying again", "Preparing inputs // this request will continue automatically; contact ASK if it appears stuck")), IF({Standard used} = "", "Preparing inputs", IF({Ready} = "Ready to generate", "Not requested // contact ASK to generate this candidate", "Can't generate: its inputs are incomplete")))))`,
+  recordComplete: `IF(AND({Image}, COUNTA({Candidate record no.}) > 0, {Approved for}, {Standard}, {Accepted by ID}), "Complete", "Incomplete")`,
+  coverage: `IF(OR({Test}, {Record complete} != "Complete", {Candidate is test}), "", IF(ARRAYJOIN({Shot standard now}, "") = {Standard}, "Current standard", "Earlier standard"))`,
+  acceptedCurrentTitle: `ARRAYJOIN({Candidate title now}, "")`,
+};
+// One substitution in a live text, which must occur exactly once.
+const swap = (text, from, to) => { if (text.split(from).length !== 2) throw new Error(`formulas: "${from}" must occur once`); return text.replace(from, () => to); };
 
 // The limited hand-edit detector (§6): a watched value changed more than a minute after the
 // script's own time, or a watched value no script has written (no written-at time).
@@ -64,6 +103,15 @@ export const TEXT = {
   moreSizes: " This image is used for more than one size: nothing in it may show the product's size.",
 };
 const SHARE_RULE = 'Shared across sizes of one style and color';
+const NEW_WORKFLOW = 'OR(ARRAYJOIN({Workflow}) = "Product pages", ARRAYJOIN({Workflow}) = "Collection", ARRAYJOIN({Workflow}) = "Marketing", ARRAYJOIN({Workflow}) = "Campaign")';
+// v3 §5.1's products paragraph in the prompt.
+const PRODUCTS_PARAGRAPH = 'The first attached images are the products, one each, in this order. Each is the authority for its product. Do not redesign, substitute, embellish or alter any product.';
+// The candidates' held texts (§7.6).
+export const HELD = {
+  notPlanned: "Held: the shot isn't planned now. See its Plan check.",
+  standard: 'Held: the standard changed since this candidate was kept.',
+  continues: ' If it is planned again with the same standard, a pending request continues automatically; contact ASK to cancel it.',
+};
 const Q = x => `"${x.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`; // an Airtable string literal
 const STATUS = {
   waivedPending: ', and a change waits for its decision record',
@@ -119,18 +167,26 @@ IF({Complete}, "Adopted, version " & {Adopted version}, "Changed since adoption:
 
   'Products': {
     'Product ID': F('RECORD_ID()', r => r.id),
-    // Stand-ins for the existing Product facts and Prompt line formulas, which this unit doesn't edit.
-    'Product facts': F('{Must stay true}', r => S(r.get('Must stay true'))),
-    'Prompt line': F('{Name} & ": " & {Must stay true}', r => `${S(r.get('Name'))}: ${S(r.get('Must stay true'))}`),
+    // The existing Product facts and Prompt line, the live texts; this unit doesn't edit them (§7.8).
+    'Product facts': F(LIVE.productFacts,
+      r => `${S(r.get('Name'))}. Must stay true: ${S(r.get('Must stay true'))} Material: ${S(r.get('Material'))}. Finish: ${S(r.get('Finish'))}. Product image as of ${B(r.get('Image updated')) ? DTF(r.get('Image updated')) : '(no image)'} UTC.`),
+    'Prompt line': F(LIVE.productPromptLine, r => `${S(r.get('Name'))}. ${S(r.get('Must stay true'))} Material: ${S(r.get('Material'))}. Finish: ${S(r.get('Finish'))}.`),
     'Product share key': F('{Style} & " / " & {Color}', r => `${S(r.get('Style'))} / ${S(r.get('Color'))}`),
-    'Facts without size': F('{Must stay true}', r => S(r.get('Must stay true'))),
+    // Today's Product facts without what differs between sizes of one style and color: the name, the
+    // image's time (each product record has its own) and the size, which is kept apart in Size (§3).
+    'Facts without size': F('"Must stay true: " & {Must stay true} & " Material: " & {Material} & ". Finish: " & {Finish} & "."',
+      r => `Must stay true: ${S(r.get('Must stay true'))} Material: ${S(r.get('Material'))}. Finish: ${S(r.get('Finish'))}.`),
     'Share signature': F('{Product share key} & " | " & {Facts without size}', r => `${S(r.get('Product share key'))} | ${S(r.get('Facts without size'))}`),
-    'Product facts (lines)': F('{Product share key} & ": " & {Facts without size} & IF({Size}, " Size: " & {Size} & ".", "")',
-      r => `${S(r.get('Product share key'))}: ${S(r.get('Facts without size'))}${IF(r.get('Size'), ` Size: ${S(r.get('Size'))}.`, '')}`),
-    'Shared facts line': F('{Product share key} & ": " & {Facts without size}', r => `${S(r.get('Product share key'))}: ${S(r.get('Facts without size'))}`),
-    'Prompt line (lines)': F('{Name} & " (" & {Style} & ", " & {Color} & IF({Size}, ", " & {Size}, "") & ")"',
-      r => `${S(r.get('Name'))} (${S(r.get('Style'))}, ${S(r.get('Color'))}${IF(r.get('Size'), `, ${S(r.get('Size'))}`, '')})`),
-    'Shared prompt line': F('{Style} & ", " & {Color}', r => `${S(r.get('Style'))}, ${S(r.get('Color'))}`),
+    // The standard's product lines end with the product image's time, as the live Product facts does,
+    // so replacing the image a shot attaches changes its standard (v3 §5.1: "each line's product facts").
+    'Product facts (lines)': F(`{Product share key} & ": " & {Facts without size} & IF({Size}, " Size: " & {Size} & ".", "")${IMAGE_AS_OF}`,
+      r => `${S(r.get('Product share key'))}: ${S(r.get('Facts without size'))}${IF(r.get('Size'), ` Size: ${S(r.get('Size'))}.`, '')}${imageAsOf(r)}`),
+    'Shared facts line': F(`{Product share key} & ": " & {Facts without size}${IMAGE_AS_OF}`, r => `${S(r.get('Product share key'))}: ${S(r.get('Facts without size'))}${imageAsOf(r)}`),
+    // Today's Prompt line (name, Must stay true, material, finish), with the size (v3 §5.1).
+    'Prompt line (lines)': F('{Name} & ". " & {Must stay true} & " Material: " & {Material} & ". Finish: " & {Finish} & "." & IF({Size}, " Size: " & {Size} & ".", "")',
+      r => `${S(r.get('Name'))}. ${S(r.get('Must stay true'))} Material: ${S(r.get('Material'))}. Finish: ${S(r.get('Finish'))}.${IF(r.get('Size'), ` Size: ${S(r.get('Size'))}.`, '')}`),
+    // Style and color with no product name and no size (§7.1), then the facts every size shares.
+    'Shared prompt line': F('{Style} & ", " & {Color} & ". " & {Facts without size}', r => `${S(r.get('Style'))}, ${S(r.get('Color'))}. ${S(r.get('Facts without size'))}`),
     'Has image': F('IF(COUNTA({Image}) = 1, 1, 0)', r => bit((r.get('Image') || []).length === 1)),
     'Decision content': F(`"Shot guide: " & ARRAYJOIN({Shot guide ID}, ", ") & "\\nAssignment basis: " & {Assignment basis} & ${decisionFieldsText}`,
       r => `Shot guide: ${AJ(r.get('Shot guide ID'), ', ')}\nAssignment basis: ${S(r.get('Assignment basis'))}${decisionFields(r)}`),
@@ -142,6 +198,10 @@ IF({Complete}, "Adopted, version " & {Adopted version}, "Changed since adoption:
   },
 
   'References': {
+    // The existing Reference line and Prompt line, the live texts; not edited.
+    'Reference line': F(LIVE.referenceLine,
+      r => `${S(r.get('Name'))} (${S(r.get('Role'))}, ${S(r.get('Applies to'))}): ${S(r.get('What it may decide'))} Image as of ${B(r.get('Image updated')) ? DTF(r.get('Image updated')) : '(no image)'} UTC.`),
+    'Prompt line': F(LIVE.referencePromptLine, r => `${S(r.get('Role'))} reference: ${S(r.get('What it may decide'))}`),
     'Has image': F('IF(COUNTA({Image}) = 1, 1, 0)', r => bit((r.get('Image') || []).length === 1)),
   },
 
@@ -149,14 +209,22 @@ IF({Complete}, "Adopted, version " & {Adopted version}, "Changed since adoption:
     'Request ID': F('RECORD_ID()', r => r.id),
     'References complete': F('IF(AND(COUNTA({References}) > 0, MIN({Reference has image}) = 1), 1, 0)',
       r => { const h = r.get('Reference has image') || []; return bit(h.length > 0 && h.every(x => N(x) === 1)); }),
-    // Stand-ins for the existing brief formulas, which this unit doesn't edit.
-    'Brief standard': F('"Request: " & {Name} & ". " & {Direction}', r => `Request: ${S(r.get('Name'))}. ${S(r.get('Direction'))}`),
-    'Brief prompt': F('{Direction}', r => S(r.get('Direction'))),
-    'Request standard': F('"Request: " & {Name} & " (" & {Workflow} & "). " & {Direction} & IF({Message to carry}, " Message to carry: " & {Message to carry}, "")',
-      r => `Request: ${S(r.get('Name'))} (${S(r.get('Workflow'))}). ${S(r.get('Direction'))}${IF(r.get('Message to carry'), ` Message to carry: ${S(r.get('Message to carry'))}`, '')}`),
-    'Request prompt': F('{Direction} & IF({Message to carry}, " Message: " & {Message to carry}, "")',
-      r => `${S(r.get('Direction'))}${IF(r.get('Message to carry'), ` Message: ${S(r.get('Message to carry'))}`, '')}`),
-    'Reference prompt': F('"Use the attached reference images for light, surface and atmosphere."', () => 'Use the attached reference images for light, surface and atmosphere.'),
+    // The existing Brief standard and Brief prompt, the live texts; not edited (§7.8).
+    'Brief standard': F(LIVE.briefStandard,
+      r => `Purpose: ${S(r.get('Purpose'))}\nDirection: ${S(r.get('Direction'))}\nWhat may vary: ${S(r.get('What may vary'))}\nProduct: ${AJ(r.get('Product facts'), ' ')}\nReferences:\n${AJ(r.get('Reference lines'), '\n')}`),
+    'Brief prompt': F(LIVE.briefPrompt,
+      r => `Direction: ${S(r.get('Direction'))}\n\nWhat may vary: ${S(r.get('What may vary'))}\n\nThe first attached image is the product image. It is the authority for the product: ${AJ(r.get('Product prompt'), ' ')} Do not redesign, substitute, embellish or alter the product.\n\nThe remaining attached images are references, in this order. Use each one only for its role. None of them may change the product.\n${AJ(r.get('Reference prompts'), '\n')}`),
+    // v3 §4: purpose, direction, what may vary, the message to carry when there is one, the workflow,
+    // and each reference's line, in the live Brief standard's wording. The products come from the
+    // shot's lines (§7.1), not from the request.
+    'Request standard': F('"Purpose: " & {Purpose} & "\\nDirection: " & {Direction} & "\\nWhat may vary: " & {What may vary} & IF({Message to carry}, "\\nMessage to carry: " & {Message to carry}, "") & "\\nWorkflow: " & {Workflow} & "\\nReferences:\\n" & ARRAYJOIN({Reference lines}, "\\n")',
+      r => `Purpose: ${S(r.get('Purpose'))}\nDirection: ${S(r.get('Direction'))}\nWhat may vary: ${S(r.get('What may vary'))}${IF(r.get('Message to carry'), `\nMessage to carry: ${S(r.get('Message to carry'))}`, '')}\nWorkflow: ${S(r.get('Workflow'))}\nReferences:\n${AJ(r.get('Reference lines'), '\n')}`),
+    // v3 §4: direction, what may vary, and the message to carry when there is one, as the live Brief prompt words them.
+    'Request prompt': F('"Direction: " & {Direction} & "\\n\\nWhat may vary: " & {What may vary} & IF({Message to carry}, "\\n\\nMessage to carry: " & {Message to carry}, "")',
+      r => `Direction: ${S(r.get('Direction'))}\n\nWhat may vary: ${S(r.get('What may vary'))}${IF(r.get('Message to carry'), `\n\nMessage to carry: ${S(r.get('Message to carry'))}`, '')}`),
+    // v3 §4: the references paragraph, worded as the live Brief prompt words it.
+    'Reference prompt': F('"The remaining attached images are references, in this order. Use each one only for its role. None of them may change the product.\\n" & ARRAYJOIN({Reference prompts}, "\\n")',
+      r => `The remaining attached images are references, in this order. Use each one only for its role. None of them may change the product.\n${AJ(r.get('Reference prompts'), '\n')}`),
   },
 
   'Product lines': {
@@ -317,61 +385,77 @@ IF(ARRAYJOIN({Workflow}) = "Collection", IF(AND(FIND(ARRAYJOIN({Guide slot defin
       if (wf === 'Product pages') return N(r.get('Slots guide changed')) === 0 ? TEXT.guideSame : TEXT.guideChanged;
       if (wf === 'Collection') return FIND(AJ(r.get('Guide slot definition line')), r.get('Kept guide plan')) > 0 && N(r.get('Collection guide complete')) === 1 ? TEXT.guideSame : TEXT.guideChanged;
       return ''; }),
-    // Workflow branch (§7.1): an empty or Walkthrough workflow keeps today's expression character for character.
-    'Current standard': F(`IF(OR(ARRAYJOIN({Workflow}) = "Product pages", ARRAYJOIN({Workflow}) = "Collection", ARRAYJOIN({Workflow}) = "Marketing", ARRAYJOIN({Workflow}) = "Campaign"),
-ARRAYJOIN({Request standard}, "") & "\\nProducts:\\n" & IF({Active slots filled} > 1, ARRAYJOIN({Line shared facts}, "\\n"), ARRAYJOIN({Line facts}, "\\n")) & "\\nShot: " & {Name} & ", for " & {Effective placement} & ". " & {Effective direction} & IF({Lineage}, "\\n" & {Lineage}, ""),
-ARRAYJOIN({Brief standard}, "") & "\\nShot: " & {Name} & ", for " & {Placement} & ". " & {Shot direction})`,
+    // Workflow branch (§7.1): the four new workflows take v3 §5.1's composition with v6's changes; any
+    // other Workflow, an empty one included, keeps today's text character for character (LIVE).
+    'Current standard': F(`IF(${NEW_WORKFLOW},
+ARRAYJOIN({Request standard}, "") & "\\nProducts, in image order:\\n" & IF({Active slots filled} > 1, ARRAYJOIN({Line shared facts}, "\\n"), ARRAYJOIN({Line facts}, "\\n")) & "\\nShot: " & {Name} & ", for " & {Effective placement} & ". " & {Effective direction} & IF({Lineage}, "\\n" & {Lineage}, "") & IF(AND({Exception}, {Exception reason}), "\\nException reason: " & {Exception reason} & ". Set by: " & {Exception set by} & ".", ""),
+${LIVE.currentStandard})`,
     r => (isNewWorkflow(r)
-      ? `${AJ(r.get('Request standard'))}\nProducts:\n${AJ(N(r.get('Active slots filled')) > 1 ? r.get('Line shared facts') : r.get('Line facts'), '\n')}\nShot: ${S(r.get('Name'))}, for ${S(r.get('Effective placement'))}. ${S(r.get('Effective direction'))}${IF(r.get('Lineage'), `\n${S(r.get('Lineage'))}`, '')}`
+      ? `${AJ(r.get('Request standard'))}\nProducts, in image order:\n${AJ(N(r.get('Active slots filled')) > 1 ? r.get('Line shared facts') : r.get('Line facts'), '\n')}\nShot: ${S(r.get('Name'))}, for ${S(r.get('Effective placement'))}. ${S(r.get('Effective direction'))}${IF(r.get('Lineage'), `\n${S(r.get('Lineage'))}`, '')}${B(r.get('Exception')) && B(r.get('Exception reason')) ? `\nException reason: ${S(r.get('Exception reason'))}. Set by: ${S(r.get('Exception set by'))}.` : ''}`
       : `${AJ(r.get('Brief standard'))}\nShot: ${S(r.get('Name'))}, for ${S(r.get('Placement'))}. ${S(r.get('Shot direction'))}`)),
-    'Current prompt': F(`IF(OR(ARRAYJOIN({Workflow}) = "Product pages", ARRAYJOIN({Workflow}) = "Collection", ARRAYJOIN({Workflow}) = "Marketing", ARRAYJOIN({Workflow}) = "Campaign"),
-ARRAYJOIN({Request prompt}, "") & "\\nProducts:\\n" & IF({Active slots filled} > 1, ARRAYJOIN({Line shared prompt lines}, "\\n"), ARRAYJOIN({Line prompt lines}, "\\n")) & "\\nShot: " & {Name} & ", for " & {Prompt placement} & ". " & {Effective direction},
-ARRAYJOIN({Brief prompt}, "") & "\\nShot: " & {Name} & ", for " & {Placement} & ". " & {Shot direction})`,
+    // v3 §5.1's order: the opening, the shot, the request prompt, the products, the references.
+    'Current prompt': F(`IF(${NEW_WORKFLOW},
+"Generate one single commercial photograph. Not a grid, collage, contact sheet or multi-image layout.\\n\\nShot: " & {Name} & ", for " & {Prompt placement} & ". " & {Effective direction} & "\\n\\n" & ARRAYJOIN({Request prompt}, "") & "\\n\\n${PRODUCTS_PARAGRAPH}\\n" & IF({Active slots filled} > 1, ARRAYJOIN({Line shared prompt lines}, "\\n"), ARRAYJOIN({Line prompt lines}, "\\n")) & "\\n\\n" & ARRAYJOIN({Reference prompt}, ""),
+${LIVE.currentPrompt})`,
     r => (isNewWorkflow(r)
-      ? `${AJ(r.get('Request prompt'))}\nProducts:\n${AJ(N(r.get('Active slots filled')) > 1 ? r.get('Line shared prompt lines') : r.get('Line prompt lines'), '\n')}\nShot: ${S(r.get('Name'))}, for ${S(r.get('Prompt placement'))}. ${S(r.get('Effective direction'))}`
-      : `${AJ(r.get('Brief prompt'))}\nShot: ${S(r.get('Name'))}, for ${S(r.get('Placement'))}. ${S(r.get('Shot direction'))}`)),
-    // Stand-in for the existing Decision formula, retargeted to Effective placement (§6).
-    'Decision': F('IF({Effective placement} = "", "", "For " & {Effective placement})', r => (present(r.get('Effective placement')) ? `For ${S(r.get('Effective placement'))}` : '')),
+      ? `Generate one single commercial photograph. Not a grid, collage, contact sheet or multi-image layout.\n\nShot: ${S(r.get('Name'))}, for ${S(r.get('Prompt placement'))}. ${S(r.get('Effective direction'))}\n\n${AJ(r.get('Request prompt'))}\n\n${PRODUCTS_PARAGRAPH}\n${AJ(N(r.get('Active slots filled')) > 1 ? r.get('Line shared prompt lines') : r.get('Line prompt lines'), '\n')}\n\n${AJ(r.get('Reference prompt'))}`
+      : `Generate one single commercial photograph. Not a grid, collage, contact sheet or multi-image layout.\n\nShot: ${S(r.get('Name'))}, for ${S(r.get('Placement'))}. ${S(r.get('Shot direction'))}\n\n${AJ(r.get('Brief prompt'))}`)),
+    // The live Decision with {Placement} replaced by {Effective placement} (§6), which is Placement on a walkthrough shot.
+    'Decision': F(swap(LIVE.decision, '"Accepted for " & {Placement}', '"Accepted for " & {Effective placement}'),
+      r => { const cov = S(r.get('Acceptance coverage')), n = cov.split('Current standard').length - 1;
+        if (n > 0) return `Accepted for ${S(r.get('Effective placement'))}${n > 1 ? ` · ${n} images` : ''}`;
+        return FIND('Earlier standard', cov) ? 'Accepted under an earlier standard' : 'No accepted image yet'; }),
+    // v6 §6 gives this text; it replaces the live LIVE.canGenerate, whose Placement and Shot direction
+    // conditions Planned covers for a walkthrough shot (§7.2).
     'Can generate': F('IF(AND({Planned} = 1, COUNTA({Product image}) > 0, COUNTA({Reference images}) > 0), 1, 0)',
       r => bit(N(r.get('Planned')) === 1 && (r.get('Product image') || []).length > 0 && (r.get('Reference images') || []).length > 0)),
+    // Existing, not edited: the live text.
+    'Title': F(LIVE.shotTitle, r => S(r.get('Name'))),
   },
 
   'Candidates': {
-    'Title': F('ARRAYJOIN({Shot name}) & " // candidate " & {Number in shot}', r => `${AJ(r.get('Shot name'))} // candidate ${S(r.get('Number in shot'))}`),
-    'Has image': F('IF(COUNTA({Image}) > 0, 1, 0)', r => bit((r.get('Image') || []).length > 0)),
+    // The existing Title, Has image and Standard check: the live texts; not edited (§7.8).
+    'Title': F(LIVE.candidateTitle,
+      r => `${AJ(r.get('Shot name'))}${B(r.get('Number in shot')) ? ` // candidate ${S(r.get('Number in shot'))}` : B(r.get('Test')) ? ` // test record ${S(r.get('Record no.'))}` : ' // new candidate'}`),
+    'Has image': F(LIVE.candidateHasImage, r => bit(B(r.get('Image')))),
     'Shot planned': F('IF(AND({Shot count} = 1, {Shot planned values} = 1), 1, 0)', r => bit(N(r.get('Shot count')) === 1 && N(r.get('Shot planned values')) === 1)),
-    'Standard check': F('IF({Standard} = ARRAYJOIN({Shot current standard}), "Same as the shot\'s current standard", "The standard has changed since this image was made")',
-      r => (S(r.get('Standard')) === AJ(r.get('Shot current standard')) ? "Same as the shot's current standard" : 'The standard has changed since this image was made')),
-    // Held labels apply only to a candidate that has never had an image (§7.6); otherwise a stand-in for today's Ready.
-    'Ready': F(`IF(AND({Has image} = 0, {Generated at} = BLANK()), IF({Shot planned} != 1, "Held: the shot isn't planned now. See its Plan check.", IF(LEFT({Standard check}, 4) != "Same", "Held: the standard changed since this candidate was kept.", IF({Standard}, "Ready to generate", "Preparing…"))), IF({Standard}, "Ready to generate", "Preparing…"))`,
-      r => { const today = present(r.get('Standard')) ? 'Ready to generate' : 'Preparing…';
+    'Standard check': F(LIVE.standardCheck, r => standardCheck(r)),
+    // The two held labels (§7.6) apply only to a candidate that has never had an image; otherwise,
+    // and when neither holds, Ready is the live text. The standard label needs a kept standard: the
+    // live Standard check is empty until Snapshot writes Standard used.
+    'Ready': F(`IF(AND({Has image} = 0, {Generated at} = BLANK()), IF({Shot planned} != 1, ${Q(HELD.notPlanned)}, IF(AND({Standard check} != "", LEFT({Standard check}, 4) != "Same"), ${Q(HELD.standard)}, ${LIVE.ready})), ${LIVE.ready})`,
+      r => {
         if (N(r.get('Has image')) === 0 && r.get('Generated at') == null) {
-          if (N(r.get('Shot planned')) !== 1) return "Held: the shot isn't planned now. See its Plan check.";
-          if (!S(r.get('Standard check')).startsWith('Same')) return 'Held: the standard changed since this candidate was kept.';
+          if (N(r.get('Shot planned')) !== 1) return HELD.notPlanned;
+          const sc = S(r.get('Standard check'));
+          if (sc !== '' && sc.slice(0, 4) !== 'Same') return HELD.standard;
         }
-        return today; }),
-    'Status': F(`IF({Has image}, "Image ready", IF(LEFT({Ready}, 5) = "Held:", "Held // the shot changed." & IF({Generate when ready}, " If it is planned again with the same standard, a pending request continues automatically; contact ASK to cancel it.", ""), IF({Generate when ready}, "Image requested", "Not requested")))`,
-      r => (B(r.get('Has image')) ? 'Image ready' : S(r.get('Ready')).startsWith('Held:')
-        ? `Held // the shot changed.${B(r.get('Generate when ready')) ? ' If it is planned again with the same standard, a pending request continues automatically; contact ASK to cancel it.' : ''}`
-        : B(r.get('Generate when ready')) ? 'Image requested' : 'Not requested')),
-    'Is accepted': F('IF(COUNTA({Accepted image}) > 0, 1, 0)', r => bit((r.get('Accepted image') || []).length > 0)),
+        return liveReady(r); }),
+    // The held branch, placed directly after the live first branch (§7.6); the rest is the live text.
+    'Status': F(swap(LIVE.status, '"Image ready", ', `"Image ready", IF(LEFT({Ready}, 5) = "Held:", "Held // the shot changed." & IF({Generate when ready}, ${Q(HELD.continues)}, ""), `) + ')',
+      r => {
+        if (N(r.get('Has image')) === 1) return 'Image ready';
+        if (S(r.get('Ready')).slice(0, 5) === 'Held:') return `Held // the shot changed.${B(r.get('Generate when ready')) ? HELD.continues : ''}`;
+        return liveStatusAfterImage(r); }),
+    'Is accepted': F('IF(COUNTA({Accepted images}) > 0, 1, 0)', r => bit((r.get('Accepted images') || []).length > 0)),
     'Accepted slots kept': F('IF({Is accepted}, {Slots kept}, "")', r => IF(r.get('Is accepted'), S(r.get('Slots kept')), '')),
   },
 
   'Accepted images': {
+    // The existing Record complete, Coverage and Current title: the live texts; not edited (§7.8).
+    'Record complete': F(LIVE.recordComplete,
+      r => (B(r.get('Image')) && (r.get('Candidate record no.') || []).length > 0 && B(r.get('Approved for')) && B(r.get('Standard')) && B(r.get('Accepted by ID')) ? 'Complete' : 'Incomplete')),
+    'Coverage': F(LIVE.coverage,
+      r => (B(r.get('Test')) || S(r.get('Record complete')) !== 'Complete' || B(r.get('Candidate is test')) ? '' : AJ(r.get('Shot standard now')) === S(r.get('Standard')) ? 'Current standard' : 'Earlier standard')),
+    'Current title': F(LIVE.acceptedCurrentTitle, r => AJ(r.get('Candidate title now'))),
     'Accepted ID': F('RECORD_ID()', r => r.id),
-    'Name': F('ARRAYJOIN({Current title})', r => AJ(r.get('Current title'))),
-    // Stand-ins for the existing Record complete and Coverage formulas, which this unit doesn't edit.
-    'Record complete': F('IF(AND(COUNTA({Candidate}) = 1, {Accepted at}, {Standard}), "Complete", "Incomplete")',
-      r => ((r.get('Candidate') || []).length === 1 && present(r.get('Accepted at')) && present(r.get('Standard')) ? 'Complete' : 'Incomplete')),
-    'Coverage': F('IF(SUM({Candidate test}) > 0, "", IF({Standard} = ARRAYJOIN({Shot current standard}), "Current standard", "Earlier standard"))',
-      r => (N(r.get('Candidate test')) > 0 ? '' : S(r.get('Standard')) === AJ(r.get('Shot current standard')) ? 'Current standard' : 'Earlier standard')),
-    'Source current': F('IF({Standard} = ARRAYJOIN({Shot current standard}), 1, 0)', r => bit(S(r.get('Standard')) === AJ(r.get('Shot current standard')))),
+    // The comparison Coverage makes, not blanked for Test (§6).
+    'Source current': F('IF(ARRAYJOIN({Shot standard now}, "") = {Standard}, 1, 0)', r => bit(AJ(r.get('Shot standard now')) === S(r.get('Standard')))),
   },
 
   'Applications': {
-    'Application ID': F('RECORD_ID()', r => r.id),
     'Name': F('ARRAYJOIN({Slot name}) & " ← " & ARRAYJOIN({Source title})', r => `${AJ(r.get('Slot name'))} ← ${AJ(r.get('Source title'))}`),
+    'Application ID': F('RECORD_ID()', r => r.id),
     'Current check': detector(['Current'], 'Current changed at', 'Current set at'),
     'Eligibility': F(`IF(SUM({Slot active}) = 0, IF(SUM({Slot waived}) > 0, "Needs review: the slot is marked not needed", IF(SUM({Slot in adopted plan}) = 0, "Needs review: the slot is no longer in the adopted plan", "Needs review: the slot is withdrawn")),
 IF(ARRAYJOIN({Slot kept destination}) != {Kept destination}, "Needs review: the slot was replanned since this image was applied",
@@ -428,8 +512,8 @@ IF({Eligibility} != "Holds", {Eligibility}, "In use"))))))))`,
   },
 
   'Use decisions': {
-    'Decision ID': F('RECORD_ID()', r => r.id),
     'Name': F('ARRAYJOIN({Source title}) & " → " & COUNTA({Slots}) & " slots"', r => `${AJ(r.get('Source title'))} → ${(r.get('Slots') || []).length} slots`),
+    'Decision ID': F('RECORD_ID()', r => r.id),
     'Live basis': F(`"Source: " & ARRAYJOIN({Source ID}) & "\\n" & {Slot basis lines} & "\\n" & IF({Replace}, "replace", "add") & "\\nFacts reviewed: " & IF({Facts reviewed}, "yes", "no") & "\\nConditions: " & {Conditions} & ${decisionFieldsText}`,
       r => `Source: ${AJ(r.get('Source ID'))}\n${S(r.get('Slot basis lines'))}\n${B(r.get('Replace')) ? 'replace' : 'add'}\nFacts reviewed: ${B(r.get('Facts reviewed')) ? 'yes' : 'no'}\nConditions: ${S(r.get('Conditions'))}${decisionFields(r)}`),
     'Record intact': F(`IF(${handText(['Decided basis', 'Decided selection'], 'Record changed at', 'Decided at')} = "", 1, 0)`,
@@ -446,6 +530,28 @@ IF({Eligibility} != "Holds", {Eligibility}, "In use"))))))))`,
 };
 
 function isNewWorkflow(r) { return ['Product pages', 'Collection', 'Marketing', 'Campaign'].includes(AJ(r.get('Workflow'))); }
+
+// Candidates: the live Standard check, Ready and Status (after its first branch), as JavaScript.
+function standardCheck(r) {
+  if (!present(r.get('Standard used'))) return '';
+  return AJ(r.get('Current standard')) === S(r.get('Standard used')) ? 'Same standard as when this image was made' : 'The standard has changed since this image was made';
+}
+function liveReady(r) {
+  return (r.get('Shot') || []).length > 0 && ['Standard used', 'Prompt used', 'Intended use', 'Product image used', 'Reference images used'].every(f => B(r.get(f)))
+    ? 'Ready to generate' : 'Preparing…';
+}
+function liveStatusAfterImage(r) {
+  if (B(r.get('Generate requested'))) return 'Image requested // contact ASK if it appears stuck';
+  if (B(r.get('Generate when ready'))) {
+    const ic = S(r.get('Input check'));
+    if (ic.slice(0, 13) === 'Would request') return 'Dry run // the image would have been requested';
+    if (['Missing:', 'Not a usable image:', 'Not requested:', 'Still copying:'].some(p => ic.slice(0, p.length) === p) || S(r.get('Standard check')) === 'The standard has changed since this image was made')
+      return 'Needs attention // contact ASK before trying again';
+    return 'Preparing inputs // this request will continue automatically; contact ASK if it appears stuck';
+  }
+  if (!present(r.get('Standard used'))) return 'Preparing inputs';
+  return S(r.get('Ready')) === 'Ready to generate' ? 'Not requested // contact ASK to generate this candidate' : "Can't generate: its inputs are incomplete";
+}
 
 // Slot Status (§7.7, with v6's held, recorded and stale branches, and GPT-A's covered pickup).
 // slotStatus() and STATUS_TEXT() are the same decision list, branch for branch.

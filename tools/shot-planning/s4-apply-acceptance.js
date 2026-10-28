@@ -47,7 +47,7 @@ const A = {
   complete: id(bind('A', 'accRecordCompleteField', 'formula')),
   slotsKept: id(bind('A', 'accSlotsKeptField', ...LOOKUP, 'multilineText')),
   test: id(bind('A', 'accCandidateTestField', ...LOOKUP)),
-  acceptedAt: id(bind('A', 'accAcceptedAtField', 'dateTime', 'date')),
+  acceptedAt: id(bind('A', 'accAcceptedAtField', 'createdTime', 'dateTime', 'date')),
   done: id(bind('A', 'accDoneField', 'checkbox')),
   progress: id(bind('A', 'accProgressField', ...TEXT)),
 };

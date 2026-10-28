@@ -109,7 +109,7 @@ It is a **limited detector of hand edits**, not proof that a field was written b
 
 ## Schema
 
-The tables and fields below are the schema the scripts and formulas run on, as [`sim/schema.mjs`](sim/schema.mjs) declares it, field by field and in its order. The names are the demo's; an installation binds its own by ID or name.
+The tables and fields below are the schema the scripts and formulas run on, as [`sim/schema.mjs`](sim/schema.mjs) declares it, field by field and in its order. The new fields' names are the demo's, and an installation binds its own by ID or name. The existing fields carry the live base's names, types and configurations.
 
 **Status:**
 - **New:** added by this unit. Besides the fields v6 §6 names, this includes:
@@ -117,15 +117,15 @@ The tables and fields below are the schema the scripts and formulas run on, as [
   - five result fields v6 doesn't name: Adoption result, Record result on Products and on Product-page slots, and Replan result on Product-page slots and on Shots;
   - a Product facts lookup on Product-page slots, for S5's legacy map.
 - **Changed:** an existing field this unit changes, and how.
-- **Existing:** a live field this unit reads and doesn't change, as v6 §2.2, §6 and §7.8 describe the live base.
-- **Existing (assumed):** a field the new formulas read whose presence in the live base v6 doesn't state.
+- **Existing:** a live field this unit reads and doesn't change. Its name, type and configuration (link and its pair, lookup or rollup field and link, last-modified field, select choices) are the build copy's, from its schema read of 2026-10-28, whose schema is the live base's (§9.1). An existing formula's text is the live text ([Formula texts](#formula-texts)).
+- **Primary (new):** the primary field of a new table whose primary is a formula. The connector creates a table's primary only as a stored field, so it is created as Single line text "Name" and converted to its formula in the UI ([Install](#install)).
 
-The build reads the live schema before any change (§9.1 step 2), and adds a missing Existing (assumed) field as listed. **Whether the live base has the Existing and Existing (assumed) fields isn't checked here,** since no part of this unit reads Airtable.
+The build's reconcile reads the live schema before any change (§9.1 step 2) and stops on an Existing field that is absent, of another type or configured otherwise. A rollup's aggregation isn't in the connector's schema read, so for the two existing rollups (Shots › Acceptance coverage, Accepted images › Candidate is test) it isn't checked; the sim's aggregation gives what their readers need ([Choices](#choices-made-in-the-source)).
 
 **Creating the fields:**
 - A link lists both of its fields: creating one in Airtable creates the other, which is then renamed as listed. A link "to itself" has no paired field.
 - Lookups, rollups, counts and last-modified times are created by connector, like formulas (§6).
-- The two repoints and the buttons need the Airtable UI (§9.3).
+- The two repoints, the buttons and the three formula primaries (Product lines, Applications and Use decisions › Name) need the Airtable UI (§9.3).
 
 <details><summary><b>Shot guides</b> (new table, 29 fields and 1 button)</summary>
 
@@ -191,17 +191,20 @@ The build reads the live schema before any change (§9.1 step 2), and adds a mis
 
 </details>
 
-<details><summary><b>Products</b> (changed table, 43 fields and 1 button)</summary>
+<details><summary><b>Products</b> (changed table, 46 fields and 1 button)</summary>
 
 | Field | Type | Status |
 |---|---|---|
 | Name | Single line text | Existing |
 | Image | Attachment | Existing |
-| Test | Checkbox | Existing (assumed) |
+| Test | Checkbox | New |
 | Style | Single line text | New |
 | Color | Single line text | New |
 | Size | Single line text | New |
 | Must stay true | Long text | Existing |
+| Material | Single line text | Existing |
+| Finish | Single line text | Existing |
+| Image updated | Last modified time of: Image | Existing |
 | Product ID | Formula (below) | New |
 | Product facts | Formula (below) | Existing |
 | Prompt line | Formula (below) | Existing |
@@ -242,25 +245,33 @@ The build reads the live schema before any change (§9.1 step 2), and adds a mis
 
 </details>
 
-<details><summary><b>References</b> (changed table, 5 fields)</summary>
+<details><summary><b>References</b> (changed table, 11 fields)</summary>
 
 | Field | Type | Status |
 |---|---|---|
 | Name | Single line text | Existing |
+| Role | Single select: Light / Palette / Material / Restraint / Atmosphere | Existing |
+| Applies to | Single select: Whole brand / This brief | Existing |
+| What it may decide | Long text | Existing |
 | Image | Attachment | Existing |
-| Test | Checkbox | Existing (assumed) |
+| Test | Checkbox | New |
+| Image updated | Last modified time of: Image | Existing |
+| Reference line | Formula (below) | Existing |
+| Prompt line | Formula (below) | Existing |
 | Has image | Formula (below) | New |
 | Briefs | Link to Briefs; paired with Briefs › References | Existing |
 
 </details>
 
-<details><summary><b>Briefs</b> (changed table, 28 fields and 2 buttons)</summary>
+<details><summary><b>Briefs</b> (changed table, 34 fields and 2 buttons)</summary>
 
 | Field | Type | Status |
 |---|---|---|
 | Name | Single line text | Existing |
 | Workflow | Single select: Product pages / Collection / Marketing / Campaign / Walkthrough | New |
-| Direction | Long text | Existing (assumed) |
+| Purpose | Long text | Existing |
+| Direction | Long text | Existing |
+| What may vary | Long text | Existing |
 | Products | Link to Products; paired with Products › Briefs | Existing |
 | References | Link to References; paired with References › Briefs | Existing |
 | Shot guide (collection) | Link to Shot guides; paired with Shot guides › Requests | New |
@@ -268,7 +279,7 @@ The build reads the live schema before any change (§9.1 step 2), and adds a mis
 | Slot planning note | Long text | New |
 | Shot planning note | Long text | New |
 | Supersedes | Link to Briefs; paired with Briefs › Superseded by | New |
-| Test | Checkbox | Existing (assumed) |
+| Test | Checkbox | New |
 | Request ID | Formula (below) | New |
 | Guide ID | Lookup of Guide ID through Shot guide (collection) | New |
 | Guide complete | Lookup of Complete through Shot guide (collection) | New |
@@ -276,7 +287,11 @@ The build reads the live schema before any change (§9.1 step 2), and adds a mis
 | Line count | Count of Product lines | New |
 | Reference has image | Lookup of Has image through References | New |
 | References complete | Formula (below) | New |
-| Reference images | Lookup of Image through References | Existing (assumed) |
+| Product facts | Lookup of Product facts through Products | Existing |
+| Reference lines | Lookup of Reference line through References | Existing |
+| Product prompt | Lookup of Prompt line through Products | Existing |
+| Reference prompts | Lookup of Prompt line through References | Existing |
+| Reference images | Lookup of Image through References | Existing |
 | Brief standard | Formula (below) | Existing |
 | Brief prompt | Formula (below) | Existing |
 | Request standard | Formula (below) | New |
@@ -295,7 +310,7 @@ The build reads the live schema before any change (§9.1 step 2), and adds a mis
 
 | Field | Type | Status |
 |---|---|---|
-| Name | Formula (below) | New |
+| Name | Formula (below) | Primary (new): created by connector as Single line text, then converted to this formula in the UI (Install) |
 | Request | Link to Briefs; paired with Briefs › Product lines | New |
 | Product | Link to Products; paired with Products › Product lines | New |
 | Test | Checkbox | New |
@@ -466,7 +481,7 @@ The build reads the live schema before any change (§9.1 step 2), and adds a mis
 
 </details>
 
-<details><summary><b>Shots</b> (changed table, 79 fields and 1 button)</summary>
+<details><summary><b>Shots</b> (changed table, 83 fields and 1 button)</summary>
 
 | Field | Type | Status |
 |---|---|---|
@@ -495,9 +510,10 @@ The build reads the live schema before any change (§9.1 step 2), and adds a mis
 | Request superseded | Lookup of Superseded through Brief | New |
 | Request line count | Lookup of Line count through Brief | New |
 | Brief standard | Lookup of Brief standard through Brief | Existing |
-| Brief prompt | Lookup of Brief prompt through Brief | Existing (assumed) |
+| Brief prompt | Lookup of Brief prompt through Brief | Existing |
 | Request standard | Lookup of Request standard through Brief | New |
 | Request prompt | Lookup of Request prompt through Brief | New |
+| Reference prompt | Lookup of Reference prompt through Brief | New |
 | References complete | Lookup of References complete through Brief | New |
 | Reference images | Lookup of Reference images through Brief | Existing |
 | Collection guide ID | Lookup of Guide ID through Brief | New |
@@ -532,6 +548,8 @@ The build reads the live schema before any change (§9.1 step 2), and adds a mis
 | Current slot basis | Rollup of Shot basis line through Slots filled: `ARRAYJOIN(ARRAYCOMPACT(values), "\n")` | New |
 | Accepted count | Rollup of Is accepted through Candidates: `SUM(values)` | New |
 | Accepted slots kept | Rollup of Accepted slots kept through Candidates: `ARRAYJOIN(ARRAYCOMPACT(values), "\n")` | New |
+| Title | Formula (below) | Existing |
+| Acceptance coverage | Rollup of Coverage through Accepted images: `ARRAYJOIN(values, "")` | Existing |
 | Sharing check | Formula (below) | New |
 | Current product basis | Formula (below) | New |
 | Effective placement | Formula (below) | New |
@@ -549,11 +567,12 @@ The build reads the live schema before any change (§9.1 step 2), and adds a mis
 | Replan result | Long text | New |
 | Slots filled | Link to Product-page slots; paired with Product-page slots › Shot | New |
 | Candidates | Link to Candidates; paired with Candidates › Shot | Existing |
+| Accepted images | Link to Accepted images; paired with Accepted images › Shot | Existing |
 | Replan | Button: runs S3, kind "shot" | New |
 
 </details>
 
-<details><summary><b>Candidates</b> (changed table, 27 fields)</summary>
+<details><summary><b>Candidates</b> (changed table, 32 fields)</summary>
 
 | Field | Type | Status |
 |---|---|---|
@@ -562,14 +581,19 @@ The build reads the live schema before any change (§9.1 step 2), and adds a mis
 | Number in shot | Number | Existing |
 | Test | Checkbox | Existing |
 | Image | Attachment | Existing |
-| Generated at | Date, with time | Existing |
+| Generated at | Last modified time of: Image | Existing |
 | Generate when ready | Checkbox | Existing |
-| Standard | Long text | Existing |
-| Intended use | Single line text | Existing (assumed) |
+| Generate requested | Checkbox | Existing |
+| Standard used | Long text | Existing |
+| Prompt used | Long text | Existing |
+| Intended use | Single line text | Existing |
+| Product image used | Attachment | Existing |
+| Reference images used | Attachment | Existing |
+| Input check | Long text | Existing |
 | Slots kept | Long text | New |
 | Products kept | Long text | New |
-| Shot name | Lookup of Name through Shot | Existing (assumed) |
-| Shot current standard | Lookup of Current standard through Shot | Existing (assumed) |
+| Shot name | Lookup of Title through Shot | Existing |
+| Current standard | Lookup of Current standard through Shot | Existing |
 | Shot planned values | Rollup of Planned through Shot: `SUM(values)` | New |
 | Shot count | Count of Shot | New |
 | Current slot basis | Lookup of Current slot basis through Shot | New |
@@ -579,35 +603,39 @@ The build reads the live schema before any change (§9.1 step 2), and adds a mis
 | Has image | Formula (below) | Existing |
 | Shot planned | Formula (below) | New |
 | Standard check | Formula (below) | Existing |
-| Ready | Formula (below) | Changed: two held labels for a candidate that has never had an image |
+| Ready | Formula (below) | Changed: two held labels for a candidate that has never had an image; the standard label also needs a non-empty Standard check (a departure from v6 §7.6, for review) |
 | Status | Formula (below) | Changed: one held branch, after its first branch |
 | Is accepted | Formula (below) | New |
 | Accepted slots kept | Formula (below) | New |
-| Accepted image | Link to Accepted images; paired with Accepted images › Candidate | Existing |
+| Accepted images | Link to Accepted images; paired with Accepted images › Candidate record no. | Existing |
 
 </details>
 
-<details><summary><b>Accepted images</b> (changed table, 20 fields and 1 button)</summary>
+<details><summary><b>Accepted images</b> (changed table, 24 fields and 1 button)</summary>
 
 | Field | Type | Status |
 |---|---|---|
-| Candidate | Link to Candidates; paired with Candidates › Accepted image | Existing |
-| Accepted at | Date, with time | Existing |
-| Standard | Long text | Existing |
+| Recorded as | Single line text | Existing |
+| Candidate record no. | Link to Candidates; paired with Candidates › Accepted images | Existing |
+| Shot | Link to Shots; paired with Shots › Accepted images | Existing |
+| Image | Attachment | Existing |
 | Approved for | Single line text | Existing |
-| Accepted by | Single line text | Existing (assumed) |
+| Standard | Long text | Existing |
+| Accepted by | Single line text | Existing |
+| Accepted by ID | Single line text | Existing |
+| Accepted at | Created time | Existing |
+| Test | Checkbox | Existing |
+| Record complete | Formula (below) | Existing |
+| Candidate is test | Rollup of Test through Candidate record no.: `SUM(values)` | Existing |
+| Shot standard now | Lookup of Current standard through Shot | Existing |
+| Coverage | Formula (below) | Existing |
+| Candidate title now | Lookup of Title through Candidate record no. | Existing |
+| Current title | Formula (below) | Existing |
 | Applications done | Checkbox | New |
 | Application progress | Long text | New |
 | Accepted ID | Formula (below) | New |
-| Current title | Lookup of Title through Candidate | Existing |
-| Shot current standard | Lookup of Shot current standard through Candidate | Existing (assumed) |
-| Slots kept | Lookup of Slots kept through Candidate | New |
-| Products kept | Lookup of Products kept through Candidate | New |
-| Candidate test | Lookup of Test through Candidate | Existing (assumed) |
-| Image | Lookup of Image through Candidate | Existing (assumed) |
-| Name | Formula (below) | Existing (assumed) |
-| Record complete | Formula (below) | Existing |
-| Coverage | Formula (below) | Existing |
+| Slots kept | Lookup of Slots kept through Candidate record no. | New |
+| Products kept | Lookup of Products kept through Candidate record no. | New |
 | Source current | Formula (below) | New |
 | Applications | Link to Applications; paired with Applications › Accepted image | New |
 | Use decisions | Link to Use decisions; paired with Use decisions › Accepted image | New |
@@ -619,6 +647,7 @@ The build reads the live schema before any change (§9.1 step 2), and adds a mis
 
 | Field | Type | Status |
 |---|---|---|
+| Name | Formula (below) | Primary (new): created by connector as Single line text, then converted to this formula in the UI (Install) |
 | Accepted image | Link to Accepted images; paired with Accepted images › Applications | New |
 | Slot | Link to Product-page slots; paired with Product-page slots › Applications | New |
 | Application key | Single line text | New |
@@ -662,7 +691,6 @@ The build reads the live schema before any change (§9.1 step 2), and adds a mis
 | Replaced by name | Lookup of Name through Replaced by | New |
 | Replaces IDs | Lookup of Application ID through Replaces | New |
 | Replaces in use | Lookup of In use flag through Replaces | New |
-| Name | Formula (below) | New |
 | Current check | Formula (below) | New |
 | Eligibility | Formula (below) | New |
 | Basis finished | Formula (below) | New |
@@ -684,6 +712,7 @@ The build reads the live schema before any change (§9.1 step 2), and adds a mis
 
 | Field | Type | Status |
 |---|---|---|
+| Name | Formula (below) | Primary (new): created by connector as Single line text, then converted to this formula in the UI (Install) |
 | Accepted image | Link to Accepted images; paired with Accepted images › Use decisions | New |
 | Slots | Link to Product-page slots; paired with Product-page slots › Use decisions | New |
 | Replace | Checkbox | New |
@@ -706,7 +735,6 @@ The build reads the live schema before any change (§9.1 step 2), and adds a mis
 | Slot basis lines | Rollup of Basis line through Slots: `ARRAYJOIN(values, "\n")` | New |
 | Record changed at | Last modified time of: Decided basis, Decided selection, Decided at | New |
 | Application count | Count of Applications | New |
-| Name | Formula (below) | New |
 | Live basis | Formula (below) | New |
 | Record intact | Formula (below) | New |
 | Basis check | Formula (below) | New |
@@ -729,15 +757,18 @@ Each text below is the `airtable` text of one formula in [`sim/formulas.mjs`](si
 
 **Status:**
 - **New:** install the text as written.
-  - **New; proposal:** v6 names the field and what it holds, not its text, so the text is this source's.
-  - **New; stand-in for v3 §4's text:** install v3 §4's text instead.
-- **Changed:** replace the live formula with the text, after saving the old text as its rollback (§7.8).
-  - **Changed; partly a stand-in:** part of the text stands in for a live text that isn't known here. The status says which part is the change.
-- **Existing, not changed; a stand-in:** the sim's text stands in for a live formula this unit leaves alone. **Don't install it.**
+  - **New; proposal:** v6 names the field and what it holds, not its text, so the text is this source's. The Request texts carry v3 §4's content.
+- **Primary (new):** a new table's primary field: created as Single line text "Name", then converted in the UI to this text ([Install](#install)).
+- **Changed:** replace the live formula with this exact text, after saving the old text as its rollback (§7.8). Each is the live text plus only v6's change, which its status names: nothing is spliced into the live text at install.
+- **Existing, not changed: the live text:** the live formula this unit reads and leaves alone, with field names for field IDs. **Don't install it.**
+
+The live texts are read from the build copy, whose schema is the live base's: `sim/formulas.mjs` holds them as `LIVE`, and each Changed text is built from its `LIVE` text. Eight of them (Product facts, Prompt line, Current standard, Current prompt, Decision, Can generate, Ready and Status) were also read from the live base itself, and are the same.
 
 **What has been checked:**
 - SCHEMA-refs checks that every `{field}` a text names exists in its table, and that no text holds a placeholder. Its control shows a misspelt field caught.
-- Nothing in the tests checks a text against its JavaScript function, or runs a text in Airtable. The build copy is the first place they run (§9.1 step 4).
+- LIVE-unchanged checks that each existing formula is its `LIVE` text, and LIVE-changed that each Changed text is its `LIVE` text with only its change: the default branch of Current standard and Current prompt, Decision's one field, Ready's wrapper and Status's one branch.
+- LIVE-7.8 checks, on a walkthrough shot and its candidates, that the Changed formulas' JavaScript gives the values the live texts give, written out by hand (§7.8), and that the held labels apply only to an imageless candidate. CTRL-LIVE-ready is its control.
+- Nothing in the tests checks a text against its JavaScript function in general, or runs a text in Airtable. The build copy is the first place they run (§9.1 step 4).
 - Nothing in the tests keeps the texts here equal to those in `sim/formulas.mjs`. They were compared, text for text, when this file was written.
 
 <details><summary><b>Shot guides</b> (7 formulas)</summary>
@@ -838,16 +869,16 @@ IF({Is incomplete}, {Name}, "")
 RECORD_ID()
 ```
 
-**Products › Product facts** · Existing, not changed; a stand-in: don't install it
+**Products › Product facts** · Existing, not changed: the live text; don't install it
 
 ```text
-{Must stay true}
+{Name} & ". Must stay true: " & {Must stay true} & " Material: " & {Material} & ". Finish: " & {Finish} & ". Product image as of " & IF({Image updated}, DATETIME_FORMAT({Image updated}, 'YYYY-MM-DD HH:mm:ss'), "(no image)") & " UTC."
 ```
 
-**Products › Prompt line** · Existing, not changed; a stand-in: don't install it
+**Products › Prompt line** · Existing, not changed: the live text; don't install it
 
 ```text
-{Name} & ": " & {Must stay true}
+{Name} & ". " & {Must stay true} & " Material: " & {Material} & ". Finish: " & {Finish} & "."
 ```
 
 **Products › Product share key** · New
@@ -856,10 +887,10 @@ RECORD_ID()
 {Style} & " / " & {Color}
 ```
 
-**Products › Facts without size** · New; proposal: today's facts text, with size kept apart in Size (v6 §3); confirm against the live Product facts text
+**Products › Facts without size** · New; proposal: today's Product facts text without the product's name, its image time and its size (v6 §3); checked against the live text
 
 ```text
-{Must stay true}
+"Must stay true: " & {Must stay true} & " Material: " & {Material} & ". Finish: " & {Finish} & "."
 ```
 
 **Products › Share signature** · New
@@ -868,28 +899,28 @@ RECORD_ID()
 {Product share key} & " | " & {Facts without size}
 ```
 
-**Products › Product facts (lines)** · New; proposal
+**Products › Product facts (lines)** · New; proposal: ends with the live Product facts' image time
 
 ```text
-{Product share key} & ": " & {Facts without size} & IF({Size}, " Size: " & {Size} & ".", "")
+{Product share key} & ": " & {Facts without size} & IF({Size}, " Size: " & {Size} & ".", "") & " Product image as of " & IF({Image updated}, DATETIME_FORMAT({Image updated}, 'YYYY-MM-DD HH:mm:ss'), "(no image)") & " UTC."
 ```
 
-**Products › Shared facts line** · New; proposal
+**Products › Shared facts line** · New; proposal: ends with the live Product facts' image time
 
 ```text
-{Product share key} & ": " & {Facts without size}
+{Product share key} & ": " & {Facts without size} & " Product image as of " & IF({Image updated}, DATETIME_FORMAT({Image updated}, 'YYYY-MM-DD HH:mm:ss'), "(no image)") & " UTC."
 ```
 
-**Products › Prompt line (lines)** · New; proposal
+**Products › Prompt line (lines)** · New; proposal: today's Prompt line text, with the size (v3 §5.1)
 
 ```text
-{Name} & " (" & {Style} & ", " & {Color} & IF({Size}, ", " & {Size}, "") & ")"
+{Name} & ". " & {Must stay true} & " Material: " & {Material} & ". Finish: " & {Finish} & "." & IF({Size}, " Size: " & {Size} & ".", "")
 ```
 
-**Products › Shared prompt line** · New; proposal
+**Products › Shared prompt line** · New; proposal: style and color with no product name and no size (§7.1), then Facts without size
 
 ```text
-{Style} & ", " & {Color}
+{Style} & ", " & {Color} & ". " & {Facts without size}
 ```
 
 **Products › Has image** · New
@@ -930,7 +961,19 @@ IF({Decided content} = "", "Assignment not recorded", IF({Decision content} = {D
 
 </details>
 
-<details><summary><b>References</b> (1 formulas)</summary>
+<details><summary><b>References</b> (3 formulas)</summary>
+
+**References › Reference line** · Existing, not changed: the live text; don't install it
+
+```text
+{Name} & " (" & {Role} & ", " & {Applies to} & "): " & {What it may decide} & " Image as of " & IF({Image updated}, DATETIME_FORMAT({Image updated}, 'YYYY-MM-DD HH:mm:ss'), "(no image)") & " UTC."
+```
+
+**References › Prompt line** · Existing, not changed: the live text; don't install it
+
+```text
+{Role} & " reference: " & {What it may decide}
+```
 
 **References › Has image** · New
 
@@ -954,41 +997,41 @@ RECORD_ID()
 IF(AND(COUNTA({References}) > 0, MIN({Reference has image}) = 1), 1, 0)
 ```
 
-**Briefs › Brief standard** · Existing, not changed; a stand-in: don't install it
+**Briefs › Brief standard** · Existing, not changed: the live text; don't install it
 
 ```text
-"Request: " & {Name} & ". " & {Direction}
+"Purpose: " & {Purpose} & "\nDirection: " & {Direction} & "\nWhat may vary: " & {What may vary} & "\nProduct: " & ARRAYJOIN({Product facts}, " ") & "\nReferences:\n" & ARRAYJOIN({Reference lines}, "\n")
 ```
 
-**Briefs › Brief prompt** · Existing, not changed; a stand-in: don't install it
+**Briefs › Brief prompt** · Existing, not changed: the live text; don't install it
 
 ```text
-{Direction}
+"Direction: " & {Direction} & "\n\nWhat may vary: " & {What may vary} & "\n\nThe first attached image is the product image. It is the authority for the product: " & ARRAYJOIN({Product prompt}, " ") & " Do not redesign, substitute, embellish or alter the product.\n\nThe remaining attached images are references, in this order. Use each one only for its role. None of them may change the product.\n" & ARRAYJOIN({Reference prompts}, "\n")
 ```
 
-**Briefs › Request standard** · New; stand-in for v3 §4's text
+**Briefs › Request standard** · New; proposal: v3 §4's content (purpose, direction, what may vary, the message to carry, the workflow, the references' lines), in the live Brief standard's wording
 
 ```text
-"Request: " & {Name} & " (" & {Workflow} & "). " & {Direction} & IF({Message to carry}, " Message to carry: " & {Message to carry}, "")
+"Purpose: " & {Purpose} & "\nDirection: " & {Direction} & "\nWhat may vary: " & {What may vary} & IF({Message to carry}, "\nMessage to carry: " & {Message to carry}, "") & "\nWorkflow: " & {Workflow} & "\nReferences:\n" & ARRAYJOIN({Reference lines}, "\n")
 ```
 
-**Briefs › Request prompt** · New; stand-in for v3 §4's text
+**Briefs › Request prompt** · New; proposal: v3 §4's content (direction, what may vary, the message to carry), in the live Brief prompt's wording
 
 ```text
-{Direction} & IF({Message to carry}, " Message: " & {Message to carry}, "")
+"Direction: " & {Direction} & "\n\nWhat may vary: " & {What may vary} & IF({Message to carry}, "\n\nMessage to carry: " & {Message to carry}, "")
 ```
 
-**Briefs › Reference prompt** · New; stand-in for v3 §4's text
+**Briefs › Reference prompt** · New; proposal: v3 §4's references paragraph, worded as the live Brief prompt words it
 
 ```text
-"Use the attached reference images for light, surface and atmosphere."
+"The remaining attached images are references, in this order. Use each one only for its role. None of them may change the product.\n" & ARRAYJOIN({Reference prompts}, "\n")
 ```
 
 </details>
 
 <details><summary><b>Product lines</b> (3 formulas)</summary>
 
-**Product lines › Name** · New
+**Product lines › Name** · Primary (new): created by connector as Single line text, then converted to this formula in the UI (Install)
 
 ```text
 ARRAYJOIN({Request name}) & " · " & ARRAYJOIN({Product name})
@@ -1333,7 +1376,7 @@ IF(OR({Operative fulfillment} = "Make", {Operative fulfillment} = "Share"), "Wai
 
 </details>
 
-<details><summary><b>Shots</b> (16 formulas)</summary>
+<details><summary><b>Shots</b> (17 formulas)</summary>
 
 **Shots › Shot ID** · New
 
@@ -1441,48 +1484,58 @@ IF(ARRAYJOIN({Workflow}) = "Product pages", IF({Slots guide changed} = 0, "Same"
 IF(ARRAYJOIN({Workflow}) = "Collection", IF(AND(FIND(ARRAYJOIN({Guide slot definition line}), {Kept guide plan}) > 0, SUM({Collection guide complete}) = 1), "Same", "The shot guide changed since this was planned"), ""))
 ```
 
-**Shots › Current standard** · Changed: the Workflow branch is the change; the default branch is today's text, as v6 §2.2 gives it
+**Shots › Current standard** · Changed: replace the live text with this text. Its default branch is the live text, character for character; the Workflow branch is v3 §5.1's composition with v6 §7.1's changes
 
 ```text
 IF(OR(ARRAYJOIN({Workflow}) = "Product pages", ARRAYJOIN({Workflow}) = "Collection", ARRAYJOIN({Workflow}) = "Marketing", ARRAYJOIN({Workflow}) = "Campaign"),
-ARRAYJOIN({Request standard}, "") & "\nProducts:\n" & IF({Active slots filled} > 1, ARRAYJOIN({Line shared facts}, "\n"), ARRAYJOIN({Line facts}, "\n")) & "\nShot: " & {Name} & ", for " & {Effective placement} & ". " & {Effective direction} & IF({Lineage}, "\n" & {Lineage}, ""),
+ARRAYJOIN({Request standard}, "") & "\nProducts, in image order:\n" & IF({Active slots filled} > 1, ARRAYJOIN({Line shared facts}, "\n"), ARRAYJOIN({Line facts}, "\n")) & "\nShot: " & {Name} & ", for " & {Effective placement} & ". " & {Effective direction} & IF({Lineage}, "\n" & {Lineage}, "") & IF(AND({Exception}, {Exception reason}), "\nException reason: " & {Exception reason} & ". Set by: " & {Exception set by} & ".", ""),
 ARRAYJOIN({Brief standard}, "") & "\nShot: " & {Name} & ", for " & {Placement} & ". " & {Shot direction})
 ```
 
-**Shots › Current prompt** · Changed; partly a stand-in: the Workflow branch is the change; the default branch is this source's reading of today's prompt, "the same shape" as the standard (v6 §2.2), and keeps the live text
+**Shots › Current prompt** · Changed: replace the live text with this text. Its default branch is the live text, character for character; the Workflow branch is v3 §5.1's composition with v6 §7.1's changes
 
 ```text
 IF(OR(ARRAYJOIN({Workflow}) = "Product pages", ARRAYJOIN({Workflow}) = "Collection", ARRAYJOIN({Workflow}) = "Marketing", ARRAYJOIN({Workflow}) = "Campaign"),
-ARRAYJOIN({Request prompt}, "") & "\nProducts:\n" & IF({Active slots filled} > 1, ARRAYJOIN({Line shared prompt lines}, "\n"), ARRAYJOIN({Line prompt lines}, "\n")) & "\nShot: " & {Name} & ", for " & {Prompt placement} & ". " & {Effective direction},
-ARRAYJOIN({Brief prompt}, "") & "\nShot: " & {Name} & ", for " & {Placement} & ". " & {Shot direction})
+"Generate one single commercial photograph. Not a grid, collage, contact sheet or multi-image layout.\n\nShot: " & {Name} & ", for " & {Prompt placement} & ". " & {Effective direction} & "\n\n" & ARRAYJOIN({Request prompt}, "") & "\n\nThe first attached images are the products, one each, in this order. Each is the authority for its product. Do not redesign, substitute, embellish or alter any product.\n" & IF({Active slots filled} > 1, ARRAYJOIN({Line shared prompt lines}, "\n"), ARRAYJOIN({Line prompt lines}, "\n")) & "\n\n" & ARRAYJOIN({Reference prompt}, ""),
+"Generate one single commercial photograph. Not a grid, collage, contact sheet or multi-image layout.\n\nShot: " & {Name} & ", for " & {Placement} & ". " & {Shot direction} & "\n\n" & ARRAYJOIN({Brief prompt}, ""))
 ```
 
-**Shots › Decision** · Changed; partly a stand-in: the change is {Placement} replaced by {Effective placement} in the live text
+**Shots › Decision** · Changed: replace the live text with this text: the live text with {Placement} replaced by {Effective placement}
 
 ```text
-IF({Effective placement} = "", "", "For " & {Effective placement})
+IF(FIND("Current standard", {Acceptance coverage}),
+  "Accepted for " & {Effective placement} &
+    IF(LEN({Acceptance coverage}) - LEN(SUBSTITUTE({Acceptance coverage}, "Current standard", "")) > 16,
+      " · " & (LEN({Acceptance coverage}) - LEN(SUBSTITUTE({Acceptance coverage}, "Current standard", ""))) / 16 & " images", ""),
+  IF(FIND("Earlier standard", {Acceptance coverage}), "Accepted under an earlier standard", "No accepted image yet"))
 ```
 
-**Shots › Can generate** · Changed: v6 §6 gives this text
+**Shots › Can generate** · Changed: replace the live text with this text, which v6 §6 gives
 
 ```text
 IF(AND({Planned} = 1, COUNTA({Product image}) > 0, COUNTA({Reference images}) > 0), 1, 0)
+```
+
+**Shots › Title** · Existing, not changed: the live text; don't install it
+
+```text
+{Name}
 ```
 
 </details>
 
 <details><summary><b>Candidates</b> (8 formulas)</summary>
 
-**Candidates › Title** · Existing, not changed; a stand-in: don't install it
+**Candidates › Title** · Existing, not changed: the live text; don't install it
 
 ```text
-ARRAYJOIN({Shot name}) & " // candidate " & {Number in shot}
+ARRAYJOIN({Shot name}, "") & IF({Number in shot}, " // candidate " & {Number in shot}, IF({Test}, " // test record " & {Record no.}, " // new candidate"))
 ```
 
-**Candidates › Has image** · Existing, not changed; a stand-in: don't install it
+**Candidates › Has image** · Existing, not changed: the live text; don't install it
 
 ```text
-IF(COUNTA({Image}) > 0, 1, 0)
+IF({Image}, 1, 0)
 ```
 
 **Candidates › Shot planned** · New
@@ -1491,28 +1544,28 @@ IF(COUNTA({Image}) > 0, 1, 0)
 IF(AND({Shot count} = 1, {Shot planned values} = 1), 1, 0)
 ```
 
-**Candidates › Standard check** · Existing, not changed; a stand-in: don't install it
+**Candidates › Standard check** · Existing, not changed: the live text; don't install it
 
 ```text
-IF({Standard} = ARRAYJOIN({Shot current standard}), "Same as the shot's current standard", "The standard has changed since this image was made")
+IF({Standard used}="", "", IF(ARRAYJOIN({Current standard}, "")={Standard used}, "Same standard as when this image was made", "The standard has changed since this image was made"))
 ```
 
-**Candidates › Ready** · Changed; partly a stand-in: the two held labels are the change; each IF({Standard}, "Ready to generate", "Preparing…") stands in for today's Ready, which is kept as it is
+**Candidates › Ready** · Changed: replace the live text with this text: the two held labels (§7.6) around the live text, which is kept as each default. One departure from v6 §7.6's predicate, awaiting the reviewer's approval: the standard label also needs `{Standard check} != ""` (Choices: Ready's held standard label)
 
 ```text
-IF(AND({Has image} = 0, {Generated at} = BLANK()), IF({Shot planned} != 1, "Held: the shot isn't planned now. See its Plan check.", IF(LEFT({Standard check}, 4) != "Same", "Held: the standard changed since this candidate was kept.", IF({Standard}, "Ready to generate", "Preparing…"))), IF({Standard}, "Ready to generate", "Preparing…"))
+IF(AND({Has image} = 0, {Generated at} = BLANK()), IF({Shot planned} != 1, "Held: the shot isn't planned now. See its Plan check.", IF(AND({Standard check} != "", LEFT({Standard check}, 4) != "Same"), "Held: the standard changed since this candidate was kept.", IF(AND(COUNTA({Shot}) > 0, {Standard used}, {Prompt used}, {Intended use}, {Product image used}, {Reference images used}), "Ready to generate", "Preparing…"))), IF(AND(COUNTA({Shot}) > 0, {Standard used}, {Prompt used}, {Intended use}, {Product image used}, {Reference images used}), "Ready to generate", "Preparing…"))
 ```
 
-**Candidates › Status** · Changed; partly a stand-in: the held branch after "Image ready" is the change; the other branches stand in for today's Status
+**Candidates › Status** · Changed: replace the live text with this text: the live text with one held branch directly after its first branch (§7.6)
 
 ```text
-IF({Has image}, "Image ready", IF(LEFT({Ready}, 5) = "Held:", "Held // the shot changed." & IF({Generate when ready}, " If it is planned again with the same standard, a pending request continues automatically; contact ASK to cancel it.", ""), IF({Generate when ready}, "Image requested", "Not requested")))
+IF({Has image} = 1, "Image ready", IF(LEFT({Ready}, 5) = "Held:", "Held // the shot changed." & IF({Generate when ready}, " If it is planned again with the same standard, a pending request continues automatically; contact ASK to cancel it.", ""), IF({Generate requested}, "Image requested // contact ASK if it appears stuck", IF({Generate when ready}, IF(LEFT({Input check}, 13) = "Would request", "Dry run // the image would have been requested", IF(OR(LEFT({Input check}, 8) = "Missing:", LEFT({Input check}, 19) = "Not a usable image:", LEFT({Input check}, 14) = "Not requested:", LEFT({Input check}, 14) = "Still copying:", {Standard check} = "The standard has changed since this image was made"), "Needs attention // contact ASK before trying again", "Preparing inputs // this request will continue automatically; contact ASK if it appears stuck")), IF({Standard used} = "", "Preparing inputs", IF({Ready} = "Ready to generate", "Not requested // contact ASK to generate this candidate", "Can't generate: its inputs are incomplete"))))))
 ```
 
 **Candidates › Is accepted** · New
 
 ```text
-IF(COUNTA({Accepted image}) > 0, 1, 0)
+IF(COUNTA({Accepted images}) > 0, 1, 0)
 ```
 
 **Candidates › Accepted slots kept** · New
@@ -1525,50 +1578,50 @@ IF({Is accepted}, {Slots kept}, "")
 
 <details><summary><b>Accepted images</b> (5 formulas)</summary>
 
+**Accepted images › Record complete** · Existing, not changed: the live text; don't install it
+
+```text
+IF(AND({Image}, COUNTA({Candidate record no.}) > 0, {Approved for}, {Standard}, {Accepted by ID}), "Complete", "Incomplete")
+```
+
+**Accepted images › Coverage** · Existing, not changed: the live text; don't install it
+
+```text
+IF(OR({Test}, {Record complete} != "Complete", {Candidate is test}), "", IF(ARRAYJOIN({Shot standard now}, "") = {Standard}, "Current standard", "Earlier standard"))
+```
+
+**Accepted images › Current title** · Existing, not changed: the live text; don't install it
+
+```text
+ARRAYJOIN({Candidate title now}, "")
+```
+
 **Accepted images › Accepted ID** · New
 
 ```text
 RECORD_ID()
 ```
 
-**Accepted images › Name** · Existing, not changed; a stand-in: don't install it
-
-```text
-ARRAYJOIN({Current title})
-```
-
-**Accepted images › Record complete** · Existing, not changed; a stand-in: don't install it
-
-```text
-IF(AND(COUNTA({Candidate}) = 1, {Accepted at}, {Standard}), "Complete", "Incomplete")
-```
-
-**Accepted images › Coverage** · Existing, not changed; a stand-in: don't install it
-
-```text
-IF(SUM({Candidate test}) > 0, "", IF({Standard} = ARRAYJOIN({Shot current standard}), "Current standard", "Earlier standard"))
-```
-
 **Accepted images › Source current** · New
 
 ```text
-IF({Standard} = ARRAYJOIN({Shot current standard}), 1, 0)
+IF(ARRAYJOIN({Shot standard now}, "") = {Standard}, 1, 0)
 ```
 
 </details>
 
 <details><summary><b>Applications</b> (16 formulas)</summary>
 
+**Applications › Name** · Primary (new): created by connector as Single line text, then converted to this formula in the UI (Install)
+
+```text
+ARRAYJOIN({Slot name}) & " ← " & ARRAYJOIN({Source title})
+```
+
 **Applications › Application ID** · New
 
 ```text
 RECORD_ID()
-```
-
-**Applications › Name** · New
-
-```text
-ARRAYJOIN({Slot name}) & " ← " & ARRAYJOIN({Source title})
 ```
 
 **Applications › Current check** · New
@@ -1673,16 +1726,16 @@ IF({State} = "In use", ARRAYJOIN({Source image}), "")
 
 <details><summary><b>Use decisions</b> (7 formulas)</summary>
 
+**Use decisions › Name** · Primary (new): created by connector as Single line text, then converted to this formula in the UI (Install)
+
+```text
+ARRAYJOIN({Source title}) & " → " & COUNTA({Slots}) & " slots"
+```
+
 **Use decisions › Decision ID** · New
 
 ```text
 RECORD_ID()
-```
-
-**Use decisions › Name** · New
-
-```text
-ARRAYJOIN({Source title}) & " → " & COUNTA({Slots}) & " slots"
 ```
 
 **Use decisions › Live basis** · New
@@ -2008,8 +2061,8 @@ IF({Decided basis} = "", "Not applied", IF({Applied}, IF(LEFT({Result}, 15) = "A
 | `acceptedTable` | Accepted images | table |
 | `accRecordCompleteField` | Record complete | formula |
 | `accSlotsKeptField` | Slots kept | lookup or rollup or formula or count or long text |
-| `accCandidateTestField` | Candidate test | lookup or rollup or formula or count |
-| `accAcceptedAtField` | Accepted at | date, with or without time |
+| `accCandidateTestField` | Candidate is test | lookup or rollup or formula or count |
+| `accAcceptedAtField` | Accepted at | created time, or date, with or without time |
 | `accDoneField` | Applications done | checkbox |
 | `accProgressField` | Application progress | single line text or long text |
 | `slotsTable` | Product-page slots | table |
@@ -2080,7 +2133,7 @@ IF({Decided basis} = "", "Not applied", IF({Applied}, IF(LEFT({Result}, 15) = "A
 | `accRecordCompleteField` | Record complete | formula |
 | `accProductsKeptField` | Products kept | lookup or rollup or formula or count or long text |
 | `accSlotsKeptField` | Slots kept | lookup or rollup or formula or count or long text |
-| `accCandidateTestField` | Candidate test | lookup or rollup or formula or count |
+| `accCandidateTestField` | Candidate is test | lookup or rollup or formula or count |
 | `accSourceCurrentField` | Source current | formula |
 | `accTitleField` | Current title | lookup or rollup or formula or count or single line text |
 | `slotsTable` | Product-page slots | table |
@@ -2228,10 +2281,12 @@ IF({Decided basis} = "", "Not applied", IF({Applied}, IF(LEFT({Result}, 15) = "A
 **The live order** (§7.8). Every intermediate state keeps the §7.8 values equal to today's. Read them after each step (K11), and save each replaced formula's text first, as its rollback.
 
 1. Add the new tables and fields ([Schema](#schema)), with no change to existing formulas.
+   - Create Product lines, Applications and Use decisions with the primary field "Name", Single line text. Once the fields their Name formulas read exist, convert each Name in the UI to its formula ([Formula texts](#formula-texts): Product lines › Name, Applications › Name, Use decisions › Name). Nothing is written to those Name fields before the conversion.
+   - The other three new tables are created with their first listed field as the primary.
 2. Set the existing brief's Workflow to Walkthrough.
 3. Add the vessel's line to the existing brief, link the three existing shots to it, then tick Products confirmed.
 4. Repoint the two lookups in the UI: Shots › Product image to Image through Lines in shot, and Candidates › Current intended use to Effective placement (K10).
-5. Replace Current standard and Can generate with their Changed texts above. In Current prompt, Decision, Ready and Status, whose texts are partly stand-ins, apply to the live text only the change each one's status names, and keep the rest of it as it is.
+5. Replace Current standard, Current prompt, Decision, Can generate, Ready and Status, each with its Changed text above, exactly as written. Save each live text first: it is the `LIVE` text in `sim/formulas.mjs`, with field names, and a difference stops the step.
 6. Change Snapshot, Accept and G1 as §7.6 says. Their texts are not in this folder; the build record keeps their before and after texts.
 7. **This unit's automations:** the ten automations of S1–S7, two each for S3, S4 and S7, each with the exact bytes of its file and its bindings. Turn each on (K0).
    - v6 places them in the change set without fixing their step, and this list puts them last ([Choices](#choices-made-in-the-source)).
@@ -2345,12 +2400,36 @@ Where v6 is silent or ambiguous, the source takes the reading below, the one mos
   - A Kept destination reads `Kept definition line ‖ product ID`.
 - **Collection shots.** The formulas read the Kept guide plan's lines that begin `Placement: `, `View: ` and `Lineage: `, and find the guide slot's Definition line in it. S2 writes six lines in that form: Placement, View, Lineage, Includes, Choose count and Definition.
 - **Product facts.**
-  - Product facts (lines) is the share key, `: `, Facts without size and ` Size: <Size>.`.
-  - Facts without size is the existing "Must stay true" text.
-  - The standard uses Shared facts line, the share key and Facts without size, when Active slots filled > 1.
+  - Facts without size is the live Product facts text without the product's name, its "Product image as of" time and its size: `Must stay true: … Material: …. Finish: ….`. The name and the image time differ between two sizes of one style and color, so they can't be in the Share signature.
+  - Product facts (lines) is the share key, `: `, Facts without size, ` Size: <Size>.` and the live Product facts' closing clause, ` Product image as of <time> UTC.`.
+  - The standard uses Shared facts line, the share key, Facts without size and the same image clause, when Active slots filled > 1.
+  - So a new-workflow standard carries the time of each product image the shot attaches, as the live Product facts does (v3 §5.1, "each line's product facts"). Replacing that image changes the standard, so its candidates' Standard check reads "The standard has changed since this image was made", which Accept refuses on (§7.6, as T36 for a color change). A shared shot's Lines in shot holds its input line only, so the time is the input product's; another size's image isn't attached and doesn't change it. v6 is silent on this, and the reviewer is asked to confirm it. Case: STD-image; its control is CTRL-STD-image.
+- **Prompt lines.** Prompt line (lines) is the live Prompt line with ` Size: <Size>.` (v3 §5.1's prompt line: name, Must stay true, material, finish). Shared prompt line is style and color, then Facts without size, so a shared prompt carries the facts with no product name and no size (§7.1).
+  - Including Facts without size (Must stay true, Material, Finish) goes beyond v6 §6's "style and color without the product name or size". It follows v3 §5.1 item 4, where each product's prompt line carries those facts. The reviewer is asked to confirm it.
+  - The sim's demo products have no Material or Finish, so their lines read `Material: . Finish: .`. Enter Material and Finish on the new catalog products (v3 §1: "natural-fiber terry or waffle weave") before the live steps.
+- **The request texts** (v3 §4), in the live brief texts' wording:
+  - Request standard: Purpose, Direction, What may vary, the Message to carry when there is one, the Workflow, and the references' lines. The products come from the shot's lines (§7.1), not from the request.
+  - Request prompt: Direction, What may vary, and the Message to carry when there is one.
+  - Reference prompt: the live references paragraph, with each reference's prompt line. Shots look it up as Reference prompt.
+- **The new standard and prompt** (§7.1, v3 §5.1):
+  - The standard: the request standard; "Products, in image order:" and each line's facts; "Shot: name, for" the Effective placement, and the Effective direction; the Lineage; and, for a complete exception, "Exception reason: … Set by: …." (its text is in the Effective direction).
+  - The prompt: the live opening sentence; "Shot: name, for" the Prompt placement, and the Effective direction; the request prompt; v3 §5.1's products paragraph and each line's prompt line; the reference prompt.
+- **Ready's held standard label** needs a kept standard. The live Standard check is empty until Snapshot writes Standard used, so a new candidate reads "Preparing…", not "Held: the standard changed …", while it waits for Snapshot. v6's predicate was written against a Standard check that is never empty.
+  - This adds a condition to an installed formula's text that v6 §7.6's literal predicate doesn't have. It needs the reviewer's approval; if approved, the build record lists it with the other Changed-formula departures. LIVE-7.8 ("a new candidate … not held") and CTRL-LIVE-ready exercise it.
+- **The live field names** (the build copy's schema read):
+  - a candidate's kept standard is Standard used, and the shot's current standard as the candidate sees it is its Current standard lookup;
+  - Shot name looks up Shots › Title, a formula `{Name}`;
+  - an accepted record's candidate link is Candidate record no. (its pair on Candidates is Accepted images); its primary is Recorded as, the candidate's title when it was accepted, written by Accept; its Current title is a formula over Candidate title now;
+  - an accepted record's image is its own Image, an attachment Accept copies, so Applications › Source image reads that copy;
+  - "the shot's current standard" on an accepted record is Shot standard now, a lookup through the record's own Shot link, which Accept writes with the candidate's shot; Coverage and Source current both read it;
+  - "the candidate is Test" on an accepted record is Candidate is test, a rollup of the candidate's Test (a number); S4 and S5 read it as truthy;
+  - Accepted at is a created time, and Generated at the last-modified time of the candidate's Image: neither is written, and S4 accepts a created time for Accepted at.
+- **Existing rollups' aggregations.** The connector's schema read doesn't give a rollup's aggregation. The sim gives Shots › Acceptance coverage `ARRAYJOIN(values, "")`, so Decision counts each "Current standard" (16 characters), and Accepted images › Candidate is test `SUM(values)`. Both are only read, never created here.
+- **Test checkboxes.** Products, References and Briefs have no Test field in the live base, so each gets a new checkbox.
+- **New tables with a formula primary.** Product lines, Applications and Use decisions keep v6's display, a formula Name, as the primary. The connector can create a primary only as a stored field and can't change a field's type, so each table is created with "Name" as Single line text and the field is converted to its formula in the UI (Install, step 1). Applications and Use decisions list Name first for that reason.
 - **Held** reads the slot's own Product link, the kept product, for the product's Record intact and for its recorded guide's Adopted definition check. In adopted plan compares Kept product ID with the line's current product.
 - **Formula values.** Lookups drop empty values. An unticked checkbox reads null, as in Airtable scripting. A formula's empty text reads null through the API.
-- **Stand-ins.** Some existing formulas' live texts aren't known here, so the sim's texts stand in for them: Product facts, Prompt line, Brief standard, Brief prompt, today's part of Ready and of the candidate Status, Record complete, Coverage and Decision ([Formula texts](#formula-texts)). Only their inputs to the new formulas matter. Current prompt's default branch and Request standard, Request prompt and Reference prompt are stand-ins too.
+- **Live texts.** Every existing formula the new formulas read, and every Changed formula's unchanged part, is the live text ([Formula texts](#formula-texts)). None is a stand-in.
 - **Pair keys** are plain concatenations with no separator:
   - line ID + guide-slot ID;
   - request ID + guide-slot ID + share signature;
@@ -2563,6 +2642,8 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
   | CTRL-U30b | the Held term of step 2's Replace-path checks | U30b's held case |
   | CTRL-WITHDRAWN-S3 | S3's Withdrawn filter on a slot's shot (it takes the first linked shot) | GPT-B-withdrawn-stale |
   | CTRL-S2-OK | S2's Slot ok check before "already planned" | S2-guards |
+  | CTRL-LIVE-ready | Ready's "has never had an image" guard (held labels on every candidate) | LIVE-7.8: an image candidate stays "Ready to generate" |
+  | CTRL-STD-image | the product image's time in Product facts (lines) and Shared facts line | STD-image: a candidate made from a replaced image reads changed |
 
   Each control also checks something only a mutated run that finished produces: that the script ran to the end, or the result text it writes. So a crash or a stall can't pass for the guard failing.
 
@@ -2573,6 +2654,8 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
   - HYGIENE checks no import, require, Node API or top-level return, one `input.config()`, and `await main();` last;
   - SCHEMA-refs is described under Formula texts.
 - **Text and guard cases:**
+  - LIVE-unchanged, LIVE-changed, LIVE-7.8 and LIVE-new-branch check the existing and Changed formulas against the live texts, and the new standard's and prompt's composition (Formula texts);
+  - STD-image checks that replacing the product image a new-workflow shot attaches changes its standard, and that on a Share shot only the input product's image counts (Choices: Product facts);
   - TEXT-s3 and TEXT-s4s5 check the scripts' copies of Status texts against `sim/formulas.mjs`;
   - S4-guards covers S4's own refusals;
   - S2-guards covers S2's note for a slot that isn't ok but has a shot.
@@ -2587,7 +2670,8 @@ The tests show the scripts' logic on a simulated base. They don't show what Airt
 - **Links.** Writing a link from its inverse side ("Slots filled") in a create call, and appending to an existing link, are modelled, not observed. So are lookups through deleted records, and the order of a link and of its inverse. In the sim, a new inverse link is appended at the end, and Slot definitions follows the guide's link order.
 - **The cell shapes scripts read.** S2 and S3 read lookups and rollups with `getCellValueAsString`, assuming comma-joined text. S4 and S5 accept plain values or `{ value }` items.
 - **The button trigger.** Whether it can pass the clicking user as `account` is unverified.
-- **Snapshot, Accept and G1.** Their behaviour here is the fixtures' stand-ins, not the automations: the Planned gate, Approved for and the kept payloads.
+- **Snapshot, Accept and G1.** Their behaviour here is the fixtures' stand-ins, not the automations: the Planned gate, the kept payloads (Standard used, Prompt used, Intended use, the image copies, Slots kept, Products kept), and Accept's record (Recorded as, Candidate record no., Shot, Image, Approved for, Standard, Accepted by and its ID). That Accept writes the accepted record's Shot as its candidate's shot, which Shot standard now reads, is the copy's to confirm.
+- **The two existing rollups' aggregations** (Acceptance coverage, Candidate is test) aren't in the connector's schema read; the copy confirms Decision's and Coverage's values on the existing records (§7.8, K11c). A record read of the copy (2026-10-28) shows each existing shot with one acceptance, its Acceptance coverage "Current standard", and Candidate is test 0 (a number) on both accepted records. That fits the sim's aggregations but can't show Acceptance coverage's separator, so confirm both in the copy's UI before the live steps. Decision counts occurrences of "Current standard", so any separator gives the same count.
 - **A newline in a guide slot's View** would break the line-based parsing of Slots kept and Products kept. S4 throws on a malformed line; S5 tolerates it in Decided basis.
 - **Noted for review:**
   - S2's note also lists slots that left the plan, which is noisy, and an old slot can share a name with its new slot.
