@@ -105,7 +105,7 @@ It is a **limited detector of hand edits**, not proof that a field was written b
 - **A use decision whose own record is flagged** writes no new application: S5 ends it "Applied in part". **An application whose Current is flagged** reads Edited by hand, and a use decision with Replace resolves its slot.
 - **Where it misses, the edit operates** as if a script had written it.
 - **A press is never flagged,** whether or not Airtable moves a last-modified time on an unchanged write. The tests run both models (T37-local, T37-s3, T37-s4s5).
-- Field editing permissions, if the build copy shows they can keep these fields to automations, are the stronger guard. The copy records which applies (T37).
+- Field editing permissions are the stronger guard. The build copy shows they can keep a field to automations, one field at a time (T37; [What the build copy shows](#what-the-build-copy-shows)).
 
 ## Schema
 
@@ -2714,3 +2714,27 @@ The tests show the scripts' logic on a simulated base. They don't show what Airt
   - After a slot-level Replan on an accepted shared shot, its slots can hold different kept versions, so the shot's Lineage shows two lines.
   - Basis check reads "Edited after it was decided" after a replan or a facts change, not only after an edit to the decision, as v6's Live basis defines it.
   - In T37's within-a-minute case, the missed hand tick operates as a real application in use, which a pending Replace decision would then end as superseded. That is v6's stated limit, recorded rather than counted as a pass.
+
+## What the build copy shows
+
+The copy tests ran v6 §10.1 in a private copy of the base with this source installed (2026-10-29), through the installed automations and, for the scripts, a webhook harness running the same bytes. Against the list above:
+
+- **The formula texts** run in Airtable and read back equal to this README's, in field-ID form. The copy found one kind of error in them, COUNTA on a link or attachment field ([Choices](#choices-made-in-the-source): Counting links and files).
+- **Conditional lookups** take only linked shots that aren't Withdrawn: a slot whose duplicate shot is ticked Withdrawn reads Live shot count 1, and its kept shot plans (T3b, GPT-B-withdrawn).
+- **Last-modified times** move only on a change. An S3 refresh with the same kept values, and an S7 re-record of the same decision, left them where they were (T37). So the default model is Airtable's. A hand edit within a minute of a script's write isn't flagged in Airtable either (T37), the detector's stated limit.
+- **Links.** S2 writes a collection shot's Lines in shot in the request's line order. The order of Lines in shot, set by hand, carries through to the kept product files, Products kept and the prompt (T6, K4).
+- **The cell shapes scripts read.** S1–S7 ran on the copy's own lookups and rollups and wrote what this README says.
+- **The button trigger** passes the clicking user as `account`: S6's log line names the person who pressed.
+- **Snapshot, Accept and G1.**
+  - Snapshot runs about a second after a waiting candidate's shot becomes Planned (K2).
+  - Accept writes the accepted record's Shot as its candidate's shot, and refuses on a shot that isn't planned before it refuses on a changed standard (T16–T20). Like the fixtures' stand-in, it leaves the accepted record's Test empty; S4 and S5 read Candidate is test.
+  - G1 was never pressed. Its refusal branch keys only on Can generate, which reads 0 on every shot that isn't Planned (K7′).
+- **A held request resumes** (K2b). With G2a on in dry-run, a held candidate with Generate when ready ticked started no run. When its shot was planned again with the same standard, G2a ran once and wrote "Would request at …". So Status's held text keeps its resume clause.
+- **Double presses.** A double press of S1 can make a slot twice; the slot pair check (Key count) shows it (T2b). Two decisions for one slot pressed together made no Conflict in two tries: the later run's slot read saw the earlier run's application, and it refused (U20).
+- **An S4 run stopped by a fault** shows in the run history as a script error without its message. It leaves one application reading Unfinished and Applications done clear, and Retry applications finishes it (U17, U27). A slot held by a hand edit waits on Retry until a new version of the request ends it (T37).
+- **Field editing permissions** can keep a field to automations: set to Nobody with automations allowed, a connector write by the base's owner was refused while S6 still wrote the field (T37). The setting is per field.
+- **Interface pages.** Airtable's field editability is per page, not per record, so Lines in shot and Products confirmed are editable on every Shot Detail page. A rollup of an attachment shows as text and a lookup as the picture (U28).
+- **Noted for review:**
+  - While a slot has two live shots, its Status reads "Fulfillment changed after its shot was made: press Replan on this slot …", because Matches its shot compares the two-value Shot made as ("Make, Make") with "Make". The right next step is the shot pair check, which the Status doesn't name (T3b).
+  - When two decisions for one slot are pressed together, the later one can refuse with "its Pickup ok doesn't hold", which names a formula rather than the image in use (U20).
+  - v6's T38 asks for the acceptance's Coverage to read "Earlier standard", but Coverage, an existing field, is empty for any test acceptance. On a test record the same comparison shows as Source current 0.
