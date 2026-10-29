@@ -223,11 +223,12 @@ This index intentionally does not enumerate every application sub-tree file. The
 
 ## Airtable Proof Cycles And Attachment-Input Chain
 
-Prototype bases, kept as provenance: the earlier Airtable bases these findings ran in, the worked evidence surfaces the linked docs cite. The current demonstration is the Airtable demo, linked from the [README](../README.md#airtable-demo).
+Prototype and build/test bases, kept as provenance: the evidence surfaces cited by the linked documentation. The current demonstration is the Airtable demo, linked from the [README](../README.md#airtable-demo).
 
 - [`Airtable base // Integrated Four-Workflow Home-Goods v1`](https://airtable.com/app4sBiFw2tft17VF/shrckbrFuw0k9e6wq) — the base the 2c marketing-hero chain runs in; the worked evidence surface for the end-to-end in-base proof (definition layer → generation → candidate accumulation → selection → governed asset, no external import)
 - [`Airtable base // SKU-Driven Furniture v1`](https://airtable.com/appoqJ25B6w4vSuX9/shrGGnxr3uvLRkEU4) — original prototype base for SKU-driven Furniture v1 and early cross-mode pressure work
 - [`Airtable base // Campaign-Driven D2C Home-Goods v1`](https://airtable.com/appCAcRuA82SWj5h5/shryHuOgJHRsNhMMU) — separate campaign-mode prototype base for cross-base / cross-brand pressure work
+- `Airtable base // AP-ASK provenance // four-workflow + shot-planning build/test copy // 2026-10-29` (private, with no share link; "the build copy" in the shot-planning README) — private build and test evidence for the four-workflow extension and the S1–S7 shot-planning implementation in [`tools/shot-planning/`](../tools/shot-planning/README.md), including shot guides, fulfillment planning, pickup and applications, recovery paths and regression fixtures. Not the current public demo or a clean copy template
 
 Start with the SKU-driven Furniture v1 Airtable foundation:
 

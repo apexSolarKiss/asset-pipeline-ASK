@@ -70,7 +70,7 @@ For the cleanest layered IA architecture case, see the SKU-driven mode, anchored
 - [`docs/milestones/`](docs/milestones/) — plateau markers
 - [`AGENTS.md`](AGENTS.md) — repo-local execution guidance
 - [`docs/diagrams/asset-pipeline-ASK_architecture-tree.html`](docs/diagrams/asset-pipeline-ASK_architecture-tree.html) — visual architecture tree at orientation depth; regenerated when a plateau milestone marker lands or an equivalent architecture-front-door shift makes the diagram materially stale, so its update cadence is slower than the prose docs; the prose docs are authoritative if the two diverge
-- [`docs/index.md` § Airtable Proof Cycles](docs/index.md#airtable-proof-cycles-and-attachment-input-chain) — the earlier prototype bases the findings ran in, kept as provenance
+- [`docs/index.md` § Airtable Proof Cycles](docs/index.md#airtable-proof-cycles-and-attachment-input-chain) — earlier prototype bases and preserved build/test evidence
 
 Background article series, in chronological order:
 
