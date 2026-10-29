@@ -463,6 +463,7 @@ const TABLES = [
     ['Current standard', 'lookup', lk('Shot', 'Current standard')], // existing: the shot's current standard
     ['Shot planned values', 'rollup', ru('Shot', 'Planned', 'SUM')],
     ['Shot count', 'count', { link: 'Shot' }],
+    ['Shot withdrawn', 'rollup', ru('Shot', 'Withdrawn', 'OR')], // the Candidates page's filter (§11)
     ['Current slot basis', 'lookup', lk('Shot', 'Current slot basis')],
     ['Current product basis', 'lookup', lk('Shot', 'Current product basis')],
     ['Current intended use', 'lookup', lk('Shot', 'Effective placement')], // repointed (§6)

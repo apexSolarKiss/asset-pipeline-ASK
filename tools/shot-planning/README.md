@@ -578,7 +578,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 
 </details>
 
-<details><summary><b>Candidates</b> (changed table, 32 fields)</summary>
+<details><summary><b>Candidates</b> (changed table, 33 fields)</summary>
 
 | Field | Type | Status |
 |---|---|---|
@@ -602,6 +602,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | Current standard | Lookup of Current standard through Shot | Existing |
 | Shot planned values | Rollup of Planned through Shot: `SUM(values)` | New |
 | Shot count | Count of Shot | New |
+| Shot withdrawn | Rollup of Withdrawn through Shot: `OR(values)` | New |
 | Current slot basis | Lookup of Current slot basis through Shot | New |
 | Current product basis | Lookup of Current product basis through Shot | New |
 | Current intended use | Lookup of Effective placement through Shot | Changed: repointed in the UI to look up Effective placement |
@@ -2307,6 +2308,7 @@ IF({Decided basis} = "", "Not applied", IF({Applied}, IF(LEFT({Result}, 15) = "A
 **After installing:**
 - No other automation should watch the fields these scripts write.
 - On interface pages, keep the kept-plan fields and Issued numbers on no page, and Retry applications on no public page. The Product pages view shows Settled images only (K9, §11).
+- The Shots gallery's cards show Effective placement and Effective direction, and it leaves out shots whose Withdrawn is ticked. The Candidates gallery leaves out candidates whose Shot withdrawn is 1 (K9, §11). Both are page settings, made in the UI.
 - The scripts need a plan that runs scripts in automations. Every run, including one that stops or refuses, counts toward the plan's automation runs.
 
 ## Retry
@@ -2438,6 +2440,7 @@ Where v6 is silent or ambiguous, the source takes the reading below, the one mos
 - **Existing rollups' aggregations.** The connector's schema read doesn't give a rollup's aggregation, so the build copy's field settings were read in its UI (2026-10-29): Shots › Acceptance coverage is `ARRAYJOIN(values, "|")` over Accepted images › Coverage, and Accepted images › Candidate is test is `OR(values)` over Candidate record no. › Test, neither with conditions or sorting. The sim gives them the same. Decision counts each "Current standard" (16 characters), so the separator doesn't change its value. Both are only read, never created here.
 - **Counting links and files.** In the build copy a formula's COUNTA reads a link or attachment field as one value: Use decisions › Name read "→ 1 slots" with three slots linked, and a collection shot with all three of its request's lines read "it must include all the request's products" (U2, T6, T7). So a count comes from a Count field (Brief count and Lines in shot count on Shots, Duplicate of count on Product-page slots, Slot count on Use decisions), and COUNTA of a link or attachment field only tests for emptiness: `> 0`, `= 0`, or the COUNTA itself as a truth value. TEXT-counta checks every text for it, and CTRL-TEXT-counta is its control. A lookup is a list, so a lookup's COUNTA isn't affected.
 - **Has image** (Products, References) is 1 for exactly one file (v3, K8). A formula reads an attachment field as its files' text, joined by commas, so one file is a non-empty field with no comma in it. That is v3's reason for comma-free filenames (K8), and a file whose name has a comma reads 0, which stops its shot planning rather than passing a second file. The build copy showed COUNTA give 1 for two files (K8), so it isn't used. K8-has-image checks the sim's function.
+- **Candidates › Shot withdrawn** is a rollup of the shot's Withdrawn, `OR(values)`, which the Candidates page filters on (§11: "a filter that drops candidates on withdrawn shots"). v6 names the filter, not a field, and the live Candidates table has nothing to filter on.
 - **Membership belongs to the request.** v6 §7.2's membership row names the count rules only ("v3: All, or Choose with a current confirmation"), but T7 is "as v3", and v3's T7 and §5.2 also require every line in the shot to be one of its request's lines. So a collection or written shot isn't Planned while a line from another request is in it: "Not planned: it may include only its request's products". It compares the lines' Request IDs, made unique (Line request IDs), with the shot's Request ID, before the count rules. A product-page shot already holds only its slot's line (T7-membership).
 - **Test checkboxes.** Products, References and Briefs have no Test field in the live base, so each gets a new checkbox.
 - **New tables with a formula primary.** Product lines, Applications and Use decisions keep v6's display, a formula Name, as the primary. The connector can create a primary only as a stored field and can't change a field's type, so each table is created with "Name" as Single line text and the field is converted to its formula in the UI (Install, step 1). Applications and Use decisions list Name first for that reason.
@@ -2672,7 +2675,7 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
   - STD-image checks that replacing the product image a new-workflow shot attaches changes its standard, and that on a Share shot only the input product's image counts (Choices: Product facts);
   - TEXT-s3 and TEXT-s4s5 check the scripts' copies of Status texts against `sim/formulas.mjs`;
   - TEXT-counta checks that no formula counts a link or attachment field with COUNTA, and TEXT-readme that the README's formula texts are `sim/formulas.mjs`'s (Formula texts; Choices: Counting links and files);
-  - K8-has-image checks Has image's one-file rule, and T7-membership a line from another request (Choices);
+  - K8-has-image checks Has image's one-file rule, T7-membership a line from another request, and K9-candidates-filter the Candidates page's filter field (Choices);
   - S4-guards covers S4's own refusals;
   - S2-guards covers S2's note for a slot that isn't ok but has a shot.
 

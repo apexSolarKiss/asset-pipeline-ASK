@@ -141,6 +141,15 @@ add('T7-membership', "Choose 2 (v3 T7's membership): a line from another request
   t.check('its own request\'s line only, confirmed: Planned', shot(w, written, 'Planned') === 1, shot(w, written, 'Plan check'));
 });
 
+add('K9-candidates-filter', "Candidates › Shot withdrawn, the Candidates page's filter (§11): 0 for a candidate on a live shot, 1 once its shot is Withdrawn", async t => {
+  const b = await bathPlanned(new World()), { w } = b;
+  await pressS2(w, b.req.id);
+  const shotId = w.ids(SH).find(id => shot(w, id, 'Planned') === 1), c = fx.snapshotCandidate(w, shotId);
+  t.check('a live shot: 0', w.get('Candidates', c, 'Shot withdrawn') === 0, w.get('Candidates', c, 'Shot withdrawn'));
+  w.set(SH, shotId, { Withdrawn: true });
+  t.check('its shot Withdrawn: 1', w.get('Candidates', c, 'Shot withdrawn') === 1, w.get('Candidates', c, 'Shot withdrawn'));
+});
+
 add('T3b-local', 'A double press of S2 (forced interleaving): the outcome is recorded; the duplicate shows in the shot pair check, and its slot is not ok until it is resolved (Copy records what Airtable does)', async t => {
   const b = bath(new World()), { w } = b;
   await adopt(w, b.vessel.id); await assign(w, b.P.vessel, b.vessel.id); await pressS1(w, b.req.id);
