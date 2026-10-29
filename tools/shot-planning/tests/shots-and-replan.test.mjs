@@ -123,6 +123,24 @@ add('T3-collection', "Make shots on a Collection request: one shot per (request,
   t.check('a written request: "This request\'s shots are written in it", nothing else written', shotNote(w, mk.id).endsWith("Nothing was made: this request's shots are written in it.") && w.writes.slice(n0).every(x => x.fields.join() === 'Shot planning note'));
 });
 
+add('T7-membership', "Choose 2 (v3 T7's membership): a line from another request isn't the shot's, so it isn't Planned and Plan check says so; with two of its own request's lines, confirmed, it is; a written shot follows the same rule", async t => {
+  const b = bath(new World()), { w } = b;
+  const { g, req } = await bathSet(b);
+  await pressS2(w, req.id);
+  const pair = shotsOn(w, req.id).find(id => (shot(w, id, 'From guide slot') || [])[0] === g.slots[1]);
+  const other = fx.request(w, { name: 'Other set', workflow: 'Collection', products: [b.P.towel] });
+  w.set(SH, pair, { 'Lines in shot': [req.lines[0], other.lines[0]] }); w.set(SH, pair, { 'Products confirmed': true });
+  t.check('a line from another request, two lines, confirmed: not Planned, and Plan check names it', shot(w, pair, 'Planned') === 0 && shot(w, pair, 'Plan check') === TEXT.otherRequest, shot(w, pair, 'Plan check'));
+  w.set(SH, pair, { 'Lines in shot': [req.lines[0], req.lines[1]] }); w.set(SH, pair, { 'Products confirmed': true });
+  t.check('two of its own request\'s lines, confirmed: Planned', shot(w, pair, 'Planned') === 1, shot(w, pair, 'Plan check'));
+  const mk = fx.request(w, { name: 'Bath message', workflow: 'Marketing', products: [b.P.vessel] });
+  const written = w.add(SH, { Name: 'Message', Brief: [mk.id], Placement: 'Website hero', 'Shot direction': 'The vessel in a calm room.', 'Lines in shot': [mk.lines[0], other.lines[0]] });
+  w.set(SH, written, { 'Products confirmed': true });
+  t.check('a written shot with a line from another request: not Planned, the same Plan check', shot(w, written, 'Plan check') === TEXT.otherRequest, shot(w, written, 'Plan check'));
+  w.set(SH, written, { 'Lines in shot': [mk.lines[0]] }); w.set(SH, written, { 'Products confirmed': true });
+  t.check('its own request\'s line only, confirmed: Planned', shot(w, written, 'Planned') === 1, shot(w, written, 'Plan check'));
+});
+
 add('T3b-local', 'A double press of S2 (forced interleaving): the outcome is recorded; the duplicate shows in the shot pair check, and its slot is not ok until it is resolved (Copy records what Airtable does)', async t => {
   const b = bath(new World()), { w } = b;
   await adopt(w, b.vessel.id); await assign(w, b.P.vessel, b.vessel.id); await pressS1(w, b.req.id);

@@ -26,6 +26,11 @@ export const FIND = (needle, hay) => { const n = S(needle), h = S(hay); if (n ==
 // The live Product facts' closing clause, the product image's time; Product facts (lines) and Shared facts line end with it.
 const IMAGE_AS_OF = ` & " Product image as of " & IF({Image updated}, DATETIME_FORMAT({Image updated}, 'YYYY-MM-DD HH:mm:ss'), "(no image)") & " UTC."`;
 const imageAsOf = r => ` Product image as of ${r.get('Image updated') ? DTF(r.get('Image updated')) : '(no image)'} UTC.`;
+// Has image: exactly one file (v3, K8). A formula reads an attachment field as its files' text,
+// joined by commas, and COUNTA counts it as one value (the build copy), so one file is a field
+// with no comma in it: filenames are comma-free (K8), and a filename with a comma reads 0.
+const ONE_FILE = 'IF(AND({Image}, FIND(",", {Image} & "") = 0), 1, 0)';
+const oneFile = r => { const files = r.get('Image') || []; return bit(files.length === 1 && !S(files[0].filename).includes(',')); };
 export const DTF = v => { const t = MS(v); if (t == null) return ''; const iso = new Date(t).toISOString(); return `${iso.slice(0, 10)} ${iso.slice(11, 19)}`; };
 const IF = (c, a, b) => (B(c) ? a : b);
 const bit = c => (B(c) ? 1 : 0);
@@ -85,6 +90,7 @@ const decisionFieldsText = '"\\nDecided by: " & {Decided by} & "\\nDecision sour
 // Texts the formulas show that scripts and tests also name.
 export const TEXT = {
   sharedSame: 'Same facts for every product',
+  otherRequest: "Not planned: it may include only its request's products",
   sharedDiffer: 'The products this image would be shared by differ: ',
   guideSame: 'Same',
   guideChanged: 'The shot guide changed since this was planned',
@@ -187,7 +193,7 @@ IF({Complete}, "Adopted, version " & {Adopted version}, "Changed since adoption:
       r => `${S(r.get('Name'))}. ${S(r.get('Must stay true'))} Material: ${S(r.get('Material'))}. Finish: ${S(r.get('Finish'))}.${IF(r.get('Size'), ` Size: ${S(r.get('Size'))}.`, '')}`),
     // Style and color with no product name and no size (§7.1), then the facts every size shares.
     'Shared prompt line': F('{Style} & ", " & {Color} & ". " & {Facts without size}', r => `${S(r.get('Style'))}, ${S(r.get('Color'))}. ${S(r.get('Facts without size'))}`),
-    'Has image': F('IF(COUNTA({Image}) = 1, 1, 0)', r => bit((r.get('Image') || []).length === 1)),
+    'Has image': F(ONE_FILE, oneFile),
     'Decision content': F(`"Shot guide: " & ARRAYJOIN({Shot guide ID}, ", ") & "\\nAssignment basis: " & {Assignment basis} & ${decisionFieldsText}`,
       r => `Shot guide: ${AJ(r.get('Shot guide ID'), ', ')}\nAssignment basis: ${S(r.get('Assignment basis'))}${decisionFields(r)}`),
     'Record check': detector(['Decided content', 'Recorded guide', 'Recorded guide ID'], 'Record changed at', 'Decision recorded at'),
@@ -202,7 +208,7 @@ IF({Complete}, "Adopted, version " & {Adopted version}, "Changed since adoption:
     'Reference line': F(LIVE.referenceLine,
       r => `${S(r.get('Name'))} (${S(r.get('Role'))}, ${S(r.get('Applies to'))}): ${S(r.get('What it may decide'))} Image as of ${B(r.get('Image updated')) ? DTF(r.get('Image updated')) : '(no image)'} UTC.`),
     'Prompt line': F(LIVE.referencePromptLine, r => `${S(r.get('Role'))} reference: ${S(r.get('What it may decide'))}`),
-    'Has image': F('IF(COUNTA({Image}) = 1, 1, 0)', r => bit((r.get('Image') || []).length === 1)),
+    'Has image': F(ONE_FILE, oneFile),
   },
 
   'Briefs': {
@@ -253,14 +259,13 @@ IF({Complete}, "Adopted, version " & {Adopted version}, "Changed since adoption:
     // held, and the withdrawn record carrying no decision, or the named record carrying a recorded
     // decision no earlier than its own (compared by Decided content's last-modified time).
     'Withdrawal': F(`IF(NOT({Withdrawn}), "",
-IF(OR(COUNTA({Duplicate of}) != 1, ARRAYJOIN({Duplicate key}) != {Slot key}, SUM({Duplicate withdrawn}) > 0), "Withdrawal not valid: name the record it duplicates",
+IF(OR({Duplicate of count} != 1, ARRAYJOIN({Duplicate key}) != {Slot key}, SUM({Duplicate withdrawn}) > 0), "Withdrawal not valid: name the record it duplicates",
 IF(OR({Held}, SUM({Duplicate held}) > 0), "Withdrawal not valid: a record is edited by hand; record it again first",
 IF(AND({Carries decision}, OR({Pending use decisions} > 0, SUM({Duplicate has decision}) = 0, IS_BEFORE(ARRAYJOIN({Duplicate decided at}), {Decided content changed at}))), "Withdrawal not valid: this record carries a decision; record it on the other first",
 "Valid"))))`,
     r => {
       if (!B(r.get('Withdrawn'))) return '';
-      const dup = r.get('Duplicate of') || [];
-      if (dup.length !== 1 || AJ(r.get('Duplicate key')) !== S(r.get('Slot key')) || N(r.get('Duplicate withdrawn')) > 0) return 'Withdrawal not valid: name the record it duplicates';
+      if (N(r.get('Duplicate of count')) !== 1 || AJ(r.get('Duplicate key')) !== S(r.get('Slot key')) || N(r.get('Duplicate withdrawn')) > 0) return 'Withdrawal not valid: name the record it duplicates';
       if (B(r.get('Held')) || N(r.get('Duplicate held')) > 0) return 'Withdrawal not valid: a record is edited by hand; record it again first';
       if (B(r.get('Carries decision'))) {
         const theirs = MS(r.get('Duplicate decided at')), mine = MS(r.get('Decided content changed at'));
@@ -512,7 +517,7 @@ IF({Eligibility} != "Holds", {Eligibility}, "In use"))))))))`,
   },
 
   'Use decisions': {
-    'Name': F('ARRAYJOIN({Source title}) & " → " & COUNTA({Slots}) & " slots"', r => `${AJ(r.get('Source title'))} → ${(r.get('Slots') || []).length} slots`),
+    'Name': F('ARRAYJOIN({Source title}) & " → " & {Slot count} & " slots"', r => `${AJ(r.get('Source title'))} → ${N(r.get('Slot count'))} slots`),
     'Decision ID': F('RECORD_ID()', r => r.id),
     'Live basis': F(`"Source: " & ARRAYJOIN({Source ID}) & "\\n" & {Slot basis lines} & "\\n" & IF({Replace}, "replace", "add") & "\\nFacts reviewed: " & IF({Facts reviewed}, "yes", "no") & "\\nConditions: " & {Conditions} & ${decisionFieldsText}`,
       r => `Source: ${AJ(r.get('Source ID'))}\n${S(r.get('Slot basis lines'))}\n${B(r.get('Replace')) ? 'replace' : 'add'}\nFacts reviewed: ${B(r.get('Facts reviewed')) ? 'yes' : 'no'}\nConditions: ${S(r.get('Conditions'))}${decisionFields(r)}`),
@@ -660,17 +665,18 @@ function sourcesAndException(r, walkthrough) {
   return 'Planned';
 }
 function planCheck(r) {
-  if ((r.get('Brief') || []).length !== 1) return 'Not planned: it needs one request';
+  if (N(r.get('Brief count')) !== 1) return 'Not planned: it needs one request';
   if (B(r.get('Withdrawn'))) return 'Not planned: withdrawn';
   if (N(r.get('Request superseded')) > 0) return 'Not planned: its request is superseded';
-  const wf = AJ(r.get('Workflow')), lines = r.get('Lines in shot') || [];
+  const wf = AJ(r.get('Workflow')), lines = N(r.get('Lines in shot count'));
+  const otherRequest = lines > 0 && S(r.get('Line request IDs')) !== AJ(r.get('Request ID'));
   if (wf === 'Product pages') {
     if (N(r.get('Active slots filled')) < 1) return 'Not planned: it fills no active slot';
     if (N(r.get('Held slots')) > 0) return 'Not planned: a slot it fills is edited by hand (see its Status)';
     if (N(r.get('Slots not ok')) > 0) return "Not planned: a slot it fills isn't ok (see its Status)";
     if (N(r.get('Slots guide changed')) > 0) return `Not planned: ${TEXT.guideChanged.toLowerCase()}`;
     if (S(r.get('Active guide-slot IDs')).includes('¦') || S(r.get('Active definition lines')).includes('¦')) return "Not planned: its slots don't share one guide slot";
-    if (lines.length !== 1 || !FIND(AJ(r.get('Line IDs')), r.get('Active slot lines'))) return 'Not planned: Lines in shot must be the line of one of its active slots';
+    if (lines !== 1 || !FIND(AJ(r.get('Line IDs')), r.get('Active slot lines'))) return 'Not planned: Lines in shot must be the line of one of its active slots';
     const made = S(r.get('Made as'));
     if (made === 'Make') { if (N(r.get('Active slots filled')) !== 1) return 'Not planned: a made shot fills exactly one slot'; }
     else if (made === 'Share') {
@@ -684,19 +690,23 @@ function planCheck(r) {
     if (N(r.get('Collection guide complete')) !== 1) return "Not planned: the collection guide isn't Complete";
     if (!FIND(AJ(r.get('Guide slot definition line')), r.get('Kept guide plan'))) return `Not planned: ${TEXT.guideChanged.toLowerCase()}`;
     if (AJ(r.get('Guide slot guide ID')) !== AJ(r.get('Collection guide ID'))) return "Not planned: its guide isn't the request's collection guide";
+    if (otherRequest) return TEXT.otherRequest;
     if (AJ(r.get('Guide slot includes')) === 'Choose') {
-      if (lines.length !== N(r.get('Guide slot choose count')) || !B(r.get('Confirmation current'))) return 'Not planned: choose the products and confirm them';
-    } else if (lines.length !== N(r.get('Request line count'))) return "Not planned: it must include all the request's products";
+      if (lines !== N(r.get('Guide slot choose count')) || !B(r.get('Confirmation current'))) return 'Not planned: choose the products and confirm them';
+    } else if (lines !== N(r.get('Request line count'))) return "Not planned: it must include all the request's products";
     return sourcesAndException(r, false);
   }
   if (!present(r.get('Placement')) || !present(r.get('Shot direction'))) return 'Not planned: it needs a Placement and a Shot direction';
-  if (!lines.length || !B(r.get('Confirmation current'))) return 'Not planned: confirm its products';
+  if (otherRequest) return TEXT.otherRequest;
+  if (lines === 0 || !B(r.get('Confirmation current'))) return 'Not planned: confirm its products';
   return sourcesAndException(r, !['Marketing', 'Campaign'].includes(wf));
 }
 function PLAN_CHECK_TEXT() {
+  // v3 §5.2, "Membership belongs to the request" (T7, as v3): every line is one of the request's.
+  const membership = `IF(AND({Lines in shot count} > 0, {Line request IDs} != ARRAYJOIN({Request ID})), "${TEXT.otherRequest}",`;
   const sx = walkthrough => `IF(OR(COUNTA({Line product has image}) = 0, MIN({Line product has image}) != 1, SUM({References complete}) != 1), "Not planned: a source image is missing",
     ${walkthrough ? `IF({Exception} != "", "Not planned: Exceptions aren't used on walkthrough shots; edit Shot direction.",\n    ` : ''}IF(AND({Exception} != "", {Exception reason} = ""), "Not planned: an exception needs its reason", "Planned"))${walkthrough ? ')' : ''}`;
-  return `IF(COUNTA({Brief}) != 1, "Not planned: it needs one request",
+  return `IF({Brief count} != 1, "Not planned: it needs one request",
 IF({Withdrawn}, "Not planned: withdrawn",
 IF(SUM({Request superseded}) > 0, "Not planned: its request is superseded",
 IF(ARRAYJOIN({Workflow}) = "Product pages",
@@ -705,7 +715,7 @@ IF(ARRAYJOIN({Workflow}) = "Product pages",
   IF({Slots not ok} > 0, "Not planned: a slot it fills isn't ok (see its Status)",
   IF({Slots guide changed} > 0, "Not planned: the shot guide changed since this was planned",
   IF(OR(FIND("¦", {Active guide-slot IDs}) > 0, FIND("¦", {Active definition lines}) > 0), "Not planned: its slots don't share one guide slot",
-  IF(OR(COUNTA({Lines in shot}) != 1, FIND(ARRAYJOIN({Line IDs}), {Active slot lines}) = 0), "Not planned: Lines in shot must be the line of one of its active slots",
+  IF(OR({Lines in shot count} != 1, FIND(ARRAYJOIN({Line IDs}), {Active slot lines}) = 0), "Not planned: Lines in shot must be the line of one of its active slots",
   IF({Made as} = "Make", IF({Active slots filled} != 1, "Not planned: a made shot fills exactly one slot", ${sx(false)}),
   IF({Made as} = "Share", IF({Active fulfillments} != "Share", "Not planned: every slot a shared shot fills must be Share", IF({Sharing check} != "${TEXT.sharedSame}", "Not planned: " & {Sharing check}, ${sx(false)})),
   "Not planned: Made as must be Make or Share")))))))),
@@ -714,10 +724,12 @@ IF(ARRAYJOIN({Workflow}) = "Collection",
   IF(SUM({Collection guide complete}) != 1, "Not planned: the collection guide isn't Complete",
   IF(FIND(ARRAYJOIN({Guide slot definition line}), {Kept guide plan}) = 0, "Not planned: the shot guide changed since this was planned",
   IF(ARRAYJOIN({Guide slot guide ID}) != ARRAYJOIN({Collection guide ID}), "Not planned: its guide isn't the request's collection guide",
+  ${membership}
   IF(ARRAYJOIN({Guide slot includes}) = "Choose",
-    IF(OR(COUNTA({Lines in shot}) != SUM({Guide slot choose count}), NOT({Confirmation current})), "Not planned: choose the products and confirm them", ${sx(false)}),
-    IF(COUNTA({Lines in shot}) != SUM({Request line count}), "Not planned: it must include all the request's products", ${sx(false)})))))),
+    IF(OR({Lines in shot count} != SUM({Guide slot choose count}), NOT({Confirmation current})), "Not planned: choose the products and confirm them", ${sx(false)}),
+    IF({Lines in shot count} != SUM({Request line count}), "Not planned: it must include all the request's products", ${sx(false)}))))))),
   IF(OR({Placement} = "", {Shot direction} = ""), "Not planned: it needs a Placement and a Shot direction",
-  IF(OR(COUNTA({Lines in shot}) = 0, NOT({Confirmation current})), "Not planned: confirm its products",
-  IF(OR(ARRAYJOIN({Workflow}) = "Marketing", ARRAYJOIN({Workflow}) = "Campaign"), ${sx(false)}, ${sx(true)}))))))))`;
+  ${membership}
+  IF(OR({Lines in shot count} = 0, NOT({Confirmation current})), "Not planned: confirm its products",
+  IF(OR(ARRAYJOIN({Workflow}) = "Marketing", ARRAYJOIN({Workflow}) = "Campaign"), ${sx(false)}, ${sx(true)})))))))))`;
 }

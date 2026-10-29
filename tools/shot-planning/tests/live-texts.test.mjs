@@ -6,6 +6,7 @@
 import * as fx from './fixtures.mjs';
 import { World } from '../sim/world.mjs';
 import { FORMULAS, LIVE, HELD } from '../sim/formulas.mjs';
+import { buildSchema } from '../sim/schema.mjs';
 
 const { bathPlanned, pressS2, slotAt } = fx;
 const SH = 'Shots', CA = 'Candidates', AI = 'Accepted images';
@@ -40,6 +41,68 @@ add('LIVE-changed', 'Each Changed formula is its live text plus only v6\'s chang
   const status = text(CA, 'Status'), held = `IF(LEFT({Ready}, 5) = "Held:", "Held // the shot changed." & IF({Generate when ready}, "${HELD.continues}", ""), `;
   t.check('Candidates › Status: one held branch, directly after the live first branch; the rest is the live text',
     status.startsWith(`IF({Has image} = 1, "Image ready", ${held}`) && status.replace(held, '').slice(0, -1) === LIVE.status, status);
+});
+
+// In the build copy a formula's COUNTA reads a link or attachment field as one value, so 3 linked
+// records count 1 (U2, K8). A count that matters comes from a Count field (or, for an image, the
+// comma rule of Has image); COUNTA of a link or attachment field may only test for emptiness.
+const LINKISH = new Set(['link', 'attachments']);
+function countaMisuses(formulas, schema) {
+  const out = [];
+  for (const [table, fields] of Object.entries(formulas)) {
+    const kinds = new Map(schema.tables.find(x => x.name === table).fields.map(f => [f.name, f.kind]));
+    for (const [field, f] of Object.entries(fields)) for (const m of f.airtable.matchAll(/COUNTA\(\{([^}]+)\}\)(\s*[=!<>]+\s*\d+|\s*[,)])?/g)) {
+      if (!LINKISH.has(kinds.get(m[1]))) continue;
+      // allowed: > 0, = 0, or the COUNTA itself as a truth value (an argument of AND, OR or IF)
+      if (!/^\s*(?:> 0|= 0|,|\))$/.test(m[2] || '')) out.push(`${table} › ${field}: ${m[0]}`);
+    }
+  }
+  return out;
+}
+add('TEXT-counta', "No formula counts a link or attachment field with COUNTA: COUNTA of one appears only as > 0 or = 0", async t => {
+  const bad = countaMisuses(FORMULAS, buildSchema());
+  t.check('every COUNTA of a link or attachment field tests only emptiness', bad.length === 0, bad.join('; '));
+});
+add('CTRL-TEXT-counta', "Negative control: TEXT-counta's check flags the texts the copy showed wrong (U2's Plan check and Name, K8's Has image) and passes their emptiness tests", async t => {
+  const schema = buildSchema(), probe = text => countaMisuses({ Shots: { x: { airtable: text } } }, schema).length;
+  t.check('flags COUNTA({Lines in shot}) != SUM({Request line count})', probe('IF(COUNTA({Lines in shot}) != SUM({Request line count}), 1, 0)') === 1);
+  t.check('flags COUNTA({Brief}) != 1 and a COUNTA used as a number', probe('IF(COUNTA({Brief}) != 1, 1, 0)') === 1 && probe('COUNTA({Lines in shot}) & " lines"') === 1);
+  t.check('passes COUNTA({Lines in shot}) = 0, COUNTA({Brief}) > 0, a COUNTA as a truth value, and a lookup\'s COUNTA',
+    probe('IF(OR(COUNTA({Lines in shot}) = 0, COUNTA({Brief}) > 0), 1, 0)') === 0 && probe('IF(AND({Withdrawn}, COUNTA({Brief})), 1, 0)') === 0 && probe('COUNTA({Line product has image}) != 2') === 0);
+  t.check('flags an attachment count (Products › Has image as installed first)', countaMisuses({ Products: { x: { airtable: 'IF(COUNTA({Image}) = 1, 1, 0)' } } }, schema).length === 1);
+});
+
+// The README's Formula texts against sim/formulas.mjs: each block is "**Table › Field** · status"
+// and a text fence; every block is its FORMULAS text and every FORMULAS text has a block.
+function readmeTextMismatches(md, formulas) {
+  const sec = md.slice(md.indexOf('\n## Formula texts'), md.indexOf('\n## Scripts: triggers'));
+  const out = [], seen = new Set();
+  for (const [, table, field, text] of sec.matchAll(/\*\*([^*]+?) › ([^*]+?)\*\* · [^\n]*\n\n```text\n([\s\S]*?)\n```/g)) {
+    seen.add(`${table} › ${field}`);
+    if (formulas[table]?.[field]?.airtable !== text) out.push(`${table} › ${field}`);
+  }
+  for (const [table, fields] of Object.entries(formulas)) for (const field of Object.keys(fields)) if (!seen.has(`${table} › ${field}`)) out.push(`${table} › ${field} (not in the README)`);
+  return out;
+}
+add('TEXT-readme', "Every formula text in the README is its sim/formulas.mjs text, character for character, and every formula there has its text in the README", async t => {
+  const bad = readmeTextMismatches(fx.script('README.md'), FORMULAS);
+  t.check('README and sim/formulas.mjs carry the same texts', bad.length === 0, bad.join('; '));
+});
+add('CTRL-TEXT-readme', "Negative control: TEXT-readme's check flags one changed character in a README text, and a formula with no README text", async t => {
+  const md = fx.script('README.md'), plan = FORMULAS.Shots['Plan check'].airtable;
+  const changed = md.replace(plan, plan.replace('{Brief count} != 1', '{Brief count} != 2'));
+  t.check('a changed character is flagged', md !== changed && readmeTextMismatches(changed, FORMULAS).join() === 'Shots › Plan check');
+  t.check('a formula with no README text is flagged', readmeTextMismatches(md, { ...FORMULAS, Shots: { ...FORMULAS.Shots, Extra: { airtable: '1' } } }).join() === 'Shots › Extra (not in the README)');
+});
+
+add('K8-has-image', 'Has image (Products, References) is 1 for exactly one comma-free file: 0 with no file, with two files, and with one file whose name has a comma (K8)', async t => {
+  const w = new World(), file = n => ({ url: `https://example.test/${n}`, filename: n });
+  for (const table of ['Products', 'References']) {
+    const one = w.add(table, { Name: 'One', Image: [file('one.jpg')] }), two = w.add(table, { Name: 'Two', Image: [file('a.jpg'), file('b.jpg')] });
+    const none = w.add(table, { Name: 'None' }), comma = w.add(table, { Name: 'Comma', Image: [file('towel, white.jpg')] });
+    t.check(`${table}: one file 1; none, two files and a comma in the name 0`, [one, none, two, comma].map(id => w.get(table, id, 'Has image')).join() === '1,0,0,0');
+    t.check(`${table}: the text is the comma rule, not a COUNTA`, FORMULAS[table]['Has image'].airtable === 'IF(AND({Image}, FIND(",", {Image} & "") = 0), 1, 0)');
+  }
 });
 
 // A walkthrough request as the live base has it: one product, one reference, three written shots' worth of fields.

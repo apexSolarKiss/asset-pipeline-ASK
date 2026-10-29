@@ -339,7 +339,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 
 </details>
 
-<details><summary><b>Product-page slots</b> (new table, 134 fields and 2 buttons)</summary>
+<details><summary><b>Product-page slots</b> (new table, 135 fields and 2 buttons)</summary>
 
 | Field | Type | Status |
 |---|---|---|
@@ -402,6 +402,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | Share signature | Lookup of Share signature through Line | New |
 | Size | Lookup of Size through Line | New |
 | Live shot count | Count of Shot, only linked records where Not withdrawn is 1 | New |
+| Duplicate of count | Count of Duplicate of | New |
 | Shot made as | Lookup of Made as through Shot, only linked records where Not withdrawn is 1 | New |
 | Shot name | Lookup of Name through Shot, only linked records where Not withdrawn is 1 | New |
 | Shot accepted count | Lookup of Accepted count through Shot, only linked records where Not withdrawn is 1 | New |
@@ -482,7 +483,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 
 </details>
 
-<details><summary><b>Shots</b> (changed table, 83 fields and 1 button)</summary>
+<details><summary><b>Shots</b> (changed table, 87 fields and 1 button)</summary>
 
 | Field | Type | Status |
 |---|---|---|
@@ -507,9 +508,12 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | Not withdrawn | Formula (below) | New |
 | Confirmed at | Last modified time of: Products confirmed | New |
 | Lines changed at | Last modified time of: Lines in shot | New |
+| Brief count | Count of Brief | New |
+| Lines in shot count | Count of Lines in shot | New |
 | Workflow | Lookup of Workflow through Brief | New |
 | Request superseded | Lookup of Superseded through Brief | New |
 | Request line count | Lookup of Line count through Brief | New |
+| Request ID | Lookup of Request ID through Brief | New |
 | Brief standard | Lookup of Brief standard through Brief | Existing |
 | Brief prompt | Lookup of Brief prompt through Brief | Existing |
 | Request standard | Lookup of Request standard through Brief | New |
@@ -524,6 +528,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | Guide slot includes | Lookup of Includes through From guide slot | New |
 | Guide slot choose count | Lookup of Choose count through From guide slot | New |
 | Line IDs | Lookup of Line ID through Lines in shot | New |
+| Line request IDs | Rollup of Request ID through Lines in shot: `ARRAYJOIN(ARRAYUNIQUE(ARRAYCOMPACT(ARRAYFLATTEN(values))), "¦")` | New |
 | Line share signature | Lookup of Share signature through Lines in shot | New |
 | Line facts | Lookup of Product facts (lines) through Lines in shot | New |
 | Line shared facts | Lookup of Shared facts line through Lines in shot | New |
@@ -550,7 +555,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | Accepted count | Rollup of Is accepted through Candidates: `SUM(values)` | New |
 | Accepted slots kept | Rollup of Accepted slots kept through Candidates: `ARRAYJOIN(ARRAYCOMPACT(values), "\n")` | New |
 | Title | Formula (below) | Existing |
-| Acceptance coverage | Rollup of Coverage through Accepted images: `ARRAYJOIN(values, "")` | Existing |
+| Acceptance coverage | Rollup of Coverage through Accepted images: `ARRAYJOIN(values, "\|")` (the build copy's field settings) | Existing |
 | Sharing check | Formula (below) | New |
 | Current product basis | Formula (below) | New |
 | Effective placement | Formula (below) | New |
@@ -627,7 +632,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | Accepted at | Created time | Existing |
 | Test | Checkbox | Existing |
 | Record complete | Formula (below) | Existing |
-| Candidate is test | Rollup of Test through Candidate record no.: `SUM(values)` | Existing |
+| Candidate is test | Rollup of Test through Candidate record no.: `OR(values)` (the build copy's field settings) | Existing |
 | Shot standard now | Lookup of Current standard through Shot | Existing |
 | Coverage | Formula (below) | Existing |
 | Candidate title now | Lookup of Title through Candidate record no. | Existing |
@@ -711,7 +716,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 
 </details>
 
-<details><summary><b>Use decisions</b> (new table, 29 fields and 1 button)</summary>
+<details><summary><b>Use decisions</b> (new table, 30 fields and 1 button)</summary>
 
 | Field | Type | Status |
 |---|---|---|
@@ -738,6 +743,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | Slot basis lines | Rollup of Basis line through Slots: `ARRAYJOIN(values, "\n")` | New |
 | Record changed at | Last modified time of: Decided basis, Decided selection, Decided at | New |
 | Application count | Count of Applications | New |
+| Slot count | Count of Slots | New |
 | Live basis | Formula (below) | New |
 | Record intact | Formula (below) | New |
 | Basis check | Formula (below) | New |
@@ -772,7 +778,7 @@ The live texts are read from the build copy, whose schema is the live base's: `s
 - LIVE-unchanged checks that each existing formula is its `LIVE` text, and LIVE-changed that each Changed text is its `LIVE` text with only its change: the default branch of Current standard and Current prompt, Decision's one field, Ready's wrapper and Status's one branch.
 - LIVE-7.8 checks, on a walkthrough shot and its candidates, that the Changed formulas' JavaScript gives the values the live texts give, written out by hand (§7.8), and that the held labels apply only to an imageless candidate. CTRL-LIVE-ready is its control.
 - Nothing in the tests checks a text against its JavaScript function in general, or runs a text in Airtable. The build copy is the first place they run (§9.1 step 4).
-- Nothing in the tests keeps the texts here equal to those in `sim/formulas.mjs`. They were compared, text for text, when this file was written.
+- TEXT-readme checks that every text here is its `sim/formulas.mjs` text, character for character, and that every formula there has its text here. CTRL-TEXT-readme is its control.
 
 <details><summary><b>Shot guides</b> (7 formulas)</summary>
 
@@ -929,7 +935,7 @@ RECORD_ID()
 **Products › Has image** · New
 
 ```text
-IF(COUNTA({Image}) = 1, 1, 0)
+IF(AND({Image}, FIND(",", {Image} & "") = 0), 1, 0)
 ```
 
 **Products › Decision content** · New
@@ -981,7 +987,7 @@ IF({Decided content} = "", "Assignment not recorded", IF({Decision content} = {D
 **References › Has image** · New
 
 ```text
-IF(COUNTA({Image}) = 1, 1, 0)
+IF(AND({Image}, FIND(",", {Image} & "") = 0), 1, 0)
 ```
 
 </details>
@@ -1120,7 +1126,7 @@ IF(OR({Has decision}, {Pending use decisions} > 0), 1, 0)
 
 ```text
 IF(NOT({Withdrawn}), "",
-IF(OR(COUNTA({Duplicate of}) != 1, ARRAYJOIN({Duplicate key}) != {Slot key}, SUM({Duplicate withdrawn}) > 0), "Withdrawal not valid: name the record it duplicates",
+IF(OR({Duplicate of count} != 1, ARRAYJOIN({Duplicate key}) != {Slot key}, SUM({Duplicate withdrawn}) > 0), "Withdrawal not valid: name the record it duplicates",
 IF(OR({Held}, SUM({Duplicate held}) > 0), "Withdrawal not valid: a record is edited by hand; record it again first",
 IF(AND({Carries decision}, OR({Pending use decisions} > 0, SUM({Duplicate has decision}) = 0, IS_BEFORE(ARRAYJOIN({Duplicate decided at}), {Decided content changed at}))), "Withdrawal not valid: this record carries a decision; record it on the other first",
 "Valid"))))
@@ -1441,7 +1447,7 @@ IF(AND({Products confirmed}, OR({Lines changed at} = BLANK(), NOT(IS_BEFORE({Con
 **Shots › Plan check** · New
 
 ```text
-IF(COUNTA({Brief}) != 1, "Not planned: it needs one request",
+IF({Brief count} != 1, "Not planned: it needs one request",
 IF({Withdrawn}, "Not planned: withdrawn",
 IF(SUM({Request superseded}) > 0, "Not planned: its request is superseded",
 IF(ARRAYJOIN({Workflow}) = "Product pages",
@@ -1450,7 +1456,7 @@ IF(ARRAYJOIN({Workflow}) = "Product pages",
   IF({Slots not ok} > 0, "Not planned: a slot it fills isn't ok (see its Status)",
   IF({Slots guide changed} > 0, "Not planned: the shot guide changed since this was planned",
   IF(OR(FIND("¦", {Active guide-slot IDs}) > 0, FIND("¦", {Active definition lines}) > 0), "Not planned: its slots don't share one guide slot",
-  IF(OR(COUNTA({Lines in shot}) != 1, FIND(ARRAYJOIN({Line IDs}), {Active slot lines}) = 0), "Not planned: Lines in shot must be the line of one of its active slots",
+  IF(OR({Lines in shot count} != 1, FIND(ARRAYJOIN({Line IDs}), {Active slot lines}) = 0), "Not planned: Lines in shot must be the line of one of its active slots",
   IF({Made as} = "Make", IF({Active slots filled} != 1, "Not planned: a made shot fills exactly one slot", IF(OR(COUNTA({Line product has image}) = 0, MIN({Line product has image}) != 1, SUM({References complete}) != 1), "Not planned: a source image is missing",
     IF(AND({Exception} != "", {Exception reason} = ""), "Not planned: an exception needs its reason", "Planned"))),
   IF({Made as} = "Share", IF({Active fulfillments} != "Share", "Not planned: every slot a shared shot fills must be Share", IF({Sharing check} != "Same facts for every product", "Not planned: " & {Sharing check}, IF(OR(COUNTA({Line product has image}) = 0, MIN({Line product has image}) != 1, SUM({References complete}) != 1), "Not planned: a source image is missing",
@@ -1461,17 +1467,19 @@ IF(ARRAYJOIN({Workflow}) = "Collection",
   IF(SUM({Collection guide complete}) != 1, "Not planned: the collection guide isn't Complete",
   IF(FIND(ARRAYJOIN({Guide slot definition line}), {Kept guide plan}) = 0, "Not planned: the shot guide changed since this was planned",
   IF(ARRAYJOIN({Guide slot guide ID}) != ARRAYJOIN({Collection guide ID}), "Not planned: its guide isn't the request's collection guide",
+  IF(AND({Lines in shot count} > 0, {Line request IDs} != ARRAYJOIN({Request ID})), "Not planned: it may include only its request's products",
   IF(ARRAYJOIN({Guide slot includes}) = "Choose",
-    IF(OR(COUNTA({Lines in shot}) != SUM({Guide slot choose count}), NOT({Confirmation current})), "Not planned: choose the products and confirm them", IF(OR(COUNTA({Line product has image}) = 0, MIN({Line product has image}) != 1, SUM({References complete}) != 1), "Not planned: a source image is missing",
+    IF(OR({Lines in shot count} != SUM({Guide slot choose count}), NOT({Confirmation current})), "Not planned: choose the products and confirm them", IF(OR(COUNTA({Line product has image}) = 0, MIN({Line product has image}) != 1, SUM({References complete}) != 1), "Not planned: a source image is missing",
     IF(AND({Exception} != "", {Exception reason} = ""), "Not planned: an exception needs its reason", "Planned"))),
-    IF(COUNTA({Lines in shot}) != SUM({Request line count}), "Not planned: it must include all the request's products", IF(OR(COUNTA({Line product has image}) = 0, MIN({Line product has image}) != 1, SUM({References complete}) != 1), "Not planned: a source image is missing",
-    IF(AND({Exception} != "", {Exception reason} = ""), "Not planned: an exception needs its reason", "Planned")))))))),
+    IF({Lines in shot count} != SUM({Request line count}), "Not planned: it must include all the request's products", IF(OR(COUNTA({Line product has image}) = 0, MIN({Line product has image}) != 1, SUM({References complete}) != 1), "Not planned: a source image is missing",
+    IF(AND({Exception} != "", {Exception reason} = ""), "Not planned: an exception needs its reason", "Planned"))))))))),
   IF(OR({Placement} = "", {Shot direction} = ""), "Not planned: it needs a Placement and a Shot direction",
-  IF(OR(COUNTA({Lines in shot}) = 0, NOT({Confirmation current})), "Not planned: confirm its products",
+  IF(AND({Lines in shot count} > 0, {Line request IDs} != ARRAYJOIN({Request ID})), "Not planned: it may include only its request's products",
+  IF(OR({Lines in shot count} = 0, NOT({Confirmation current})), "Not planned: confirm its products",
   IF(OR(ARRAYJOIN({Workflow}) = "Marketing", ARRAYJOIN({Workflow}) = "Campaign"), IF(OR(COUNTA({Line product has image}) = 0, MIN({Line product has image}) != 1, SUM({References complete}) != 1), "Not planned: a source image is missing",
     IF(AND({Exception} != "", {Exception reason} = ""), "Not planned: an exception needs its reason", "Planned")), IF(OR(COUNTA({Line product has image}) = 0, MIN({Line product has image}) != 1, SUM({References complete}) != 1), "Not planned: a source image is missing",
     IF({Exception} != "", "Not planned: Exceptions aren't used on walkthrough shots; edit Shot direction.",
-    IF(AND({Exception} != "", {Exception reason} = ""), "Not planned: an exception needs its reason", "Planned")))))))))))
+    IF(AND({Exception} != "", {Exception reason} = ""), "Not planned: an exception needs its reason", "Planned"))))))))))))
 ```
 
 **Shots › Planned** · New
@@ -1732,7 +1740,7 @@ IF({State} = "In use", ARRAYJOIN({Source image}), "")
 **Use decisions › Name** · Primary (new): created by connector as Single line text, then converted to this formula in the UI (Install)
 
 ```text
-ARRAYJOIN({Source title}) & " → " & COUNTA({Slots}) & " slots"
+ARRAYJOIN({Source title}) & " → " & {Slot count} & " slots"
 ```
 
 **Use decisions › Decision ID** · New
@@ -2427,7 +2435,10 @@ Where v6 is silent or ambiguous, the source takes the reading below, the one mos
   - "the shot's current standard" on an accepted record is Shot standard now, a lookup through the record's own Shot link, which Accept writes with the candidate's shot; Coverage and Source current both read it;
   - "the candidate is Test" on an accepted record is Candidate is test, a rollup of the candidate's Test (a number); S4 and S5 read it as truthy;
   - Accepted at is a created time, and Generated at the last-modified time of the candidate's Image: neither is written, and S4 accepts a created time for Accepted at.
-- **Existing rollups' aggregations.** The connector's schema read doesn't give a rollup's aggregation. The sim gives Shots › Acceptance coverage `ARRAYJOIN(values, "")`, so Decision counts each "Current standard" (16 characters), and Accepted images › Candidate is test `SUM(values)`. Both are only read, never created here.
+- **Existing rollups' aggregations.** The connector's schema read doesn't give a rollup's aggregation, so the build copy's field settings were read in its UI (2026-10-29): Shots › Acceptance coverage is `ARRAYJOIN(values, "|")` over Accepted images › Coverage, and Accepted images › Candidate is test is `OR(values)` over Candidate record no. › Test, neither with conditions or sorting. The sim gives them the same. Decision counts each "Current standard" (16 characters), so the separator doesn't change its value. Both are only read, never created here.
+- **Counting links and files.** In the build copy a formula's COUNTA reads a link or attachment field as one value: Use decisions › Name read "→ 1 slots" with three slots linked, and a collection shot with all three of its request's lines read "it must include all the request's products" (U2, T6, T7). So a count comes from a Count field (Brief count and Lines in shot count on Shots, Duplicate of count on Product-page slots, Slot count on Use decisions), and COUNTA of a link or attachment field only tests for emptiness: `> 0`, `= 0`, or the COUNTA itself as a truth value. TEXT-counta checks every text for it, and CTRL-TEXT-counta is its control. A lookup is a list, so a lookup's COUNTA isn't affected.
+- **Has image** (Products, References) is 1 for exactly one file (v3, K8). A formula reads an attachment field as its files' text, joined by commas, so one file is a non-empty field with no comma in it. That is v3's reason for comma-free filenames (K8), and a file whose name has a comma reads 0, which stops its shot planning rather than passing a second file. The build copy showed COUNTA give 1 for two files (K8), so it isn't used. K8-has-image checks the sim's function.
+- **Membership belongs to the request.** v6 §7.2's membership row names the count rules only ("v3: All, or Choose with a current confirmation"), but T7 is "as v3", and v3's T7 and §5.2 also require every line in the shot to be one of its request's lines. So a collection or written shot isn't Planned while a line from another request is in it: "Not planned: it may include only its request's products". It compares the lines' Request IDs, made unique (Line request IDs), with the shot's Request ID, before the count rules. A product-page shot already holds only its slot's line (T7-membership).
 - **Test checkboxes.** Products, References and Briefs have no Test field in the live base, so each gets a new checkbox.
 - **New tables with a formula primary.** Product lines, Applications and Use decisions keep v6's display, a formula Name, as the primary. The connector can create a primary only as a stored field and can't change a field's type, so each table is created with "Name" as Single line text and the field is converted to its formula in the UI (Install, step 1). Applications and Use decisions list Name first for that reason.
 - **Held** reads the slot's own Product link, the kept product, for the product's Record intact and for its recorded guide's Adopted definition check. In adopted plan compares Kept product ID with the line's current product.
@@ -2650,7 +2661,7 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
 
   Each control also checks something only a mutated run that finished produces: that the script ran to the end, or the result text it writes. So a crash or a stall can't pass for the guard failing.
 
-  SCHEMA-refs carries its own control, a misspelt field.
+  SCHEMA-refs carries its own control, a misspelt field. TEXT-counta's control, CTRL-TEXT-counta, shows the texts the build copy showed wrong flagged and their emptiness tests passed. TEXT-readme's, CTRL-TEXT-readme, shows a one-character change and a missing text flagged.
 - **Binding and hygiene cases:**
   - BIND-* stops a run before any read or write for a wrong or missing binding or input;
   - BIND-ids* shows each script bound by table and field IDs behaving as when bound by name;
@@ -2660,6 +2671,8 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
   - LIVE-unchanged, LIVE-changed, LIVE-7.8 and LIVE-new-branch check the existing and Changed formulas against the live texts, and the new standard's and prompt's composition (Formula texts);
   - STD-image checks that replacing the product image a new-workflow shot attaches changes its standard, and that on a Share shot only the input product's image counts (Choices: Product facts);
   - TEXT-s3 and TEXT-s4s5 check the scripts' copies of Status texts against `sim/formulas.mjs`;
+  - TEXT-counta checks that no formula counts a link or attachment field with COUNTA, and TEXT-readme that the README's formula texts are `sim/formulas.mjs`'s (Formula texts; Choices: Counting links and files);
+  - K8-has-image checks Has image's one-file rule, and T7-membership a line from another request (Choices);
   - S4-guards covers S4's own refusals;
   - S2-guards covers S2's note for a slot that isn't ok but has a shot.
 
@@ -2674,7 +2687,7 @@ The tests show the scripts' logic on a simulated base. They don't show what Airt
 - **The cell shapes scripts read.** S2 and S3 read lookups and rollups with `getCellValueAsString`, assuming comma-joined text. S4 and S5 accept plain values or `{ value }` items.
 - **The button trigger.** Whether it can pass the clicking user as `account` is unverified.
 - **Snapshot, Accept and G1.** Their behaviour here is the fixtures' stand-ins, not the automations: the Planned gate, the kept payloads (Standard used, Prompt used, Intended use, the image copies, Slots kept, Products kept), and Accept's record (Recorded as, Candidate record no., Shot, Image, Approved for, Standard, Accepted by and its ID). That Accept writes the accepted record's Shot as its candidate's shot, which Shot standard now reads, is the copy's to confirm.
-- **The two existing rollups' aggregations** (Acceptance coverage, Candidate is test) aren't in the connector's schema read; the copy confirms Decision's and Coverage's values on the existing records (§7.8, K11c). A record read of the copy (2026-10-28) shows each existing shot with one acceptance, its Acceptance coverage "Current standard", and Candidate is test 0 (a number) on both accepted records. That fits the sim's aggregations but can't show Acceptance coverage's separator, so confirm both in the copy's UI before the live steps. Decision counts occurrences of "Current standard", so any separator gives the same count.
+- **The two existing rollups' aggregations** (Acceptance coverage, Candidate is test) aren't in the connector's schema read. The copy's UI shows them ([Choices](#choices-made-in-the-source)), and the sim now gives the same. Its records show each existing shot with one acceptance, its Acceptance coverage "Current standard", and Candidate is test 0 on both accepted records.
 - **A newline in a guide slot's View** would break the line-based parsing of Slots kept and Products kept. S4 throws on a malformed line; S5 tolerates it in Decided basis.
 - **Noted for review:**
   - S2's note also lists slots that left the plan, which is noisy, and an old slot can share a name with its new slot.

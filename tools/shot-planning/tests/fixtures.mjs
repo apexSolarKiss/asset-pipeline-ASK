@@ -59,7 +59,7 @@ export function guide(w, name, slots, { destination = 'Product page', test = fal
   return { id, slots: ids };
 }
 export function product(w, { name, style, color, size, facts, image = true, test = false }) {
-  return w.add('Products', { Name: name, Style: style, Color: color, Size: size, 'Must stay true': facts, Image: image ? [{ url: `https://example.test/${name}.jpg`, filename: `${name}.jpg` }] : null, Test: test });
+  return w.add('Products', { Name: name, Style: style, Color: color, Size: size, 'Must stay true': facts, Image: image ? [{ url: `https://example.test/${name}.jpg`, filename: `${name.replaceAll(',', '')}.jpg` }] : null, Test: test });
 }
 export function request(w, { name, workflow = 'Product pages', products = [], supersedes = null, test = false, reference = true }) {
   const refs = reference ? [w.add('References', { Name: `${name} reference`, Image: [{ url: 'https://example.test/ref.jpg', filename: 'ref.jpg' }] })] : null;
