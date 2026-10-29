@@ -668,6 +668,17 @@ add('U30b', 'Under Replace, on a Settled slot with an application in use, a deci
 });
 
 // ---------------------------------------------------------------------------------------------
+add('K9-settled-image', "Settled image (§11) is the picture of the slot's image in use: the accepted image's file while the slot is Settled, nothing once its application reads Needs review, and the file again once it is in use again", async t => {
+  const b = await bathPlanned(new World()), { w } = b;
+  const s = slotAt(w, b.L.towel, 2), st = fx.settle(w, [s]);
+  const file = w.get('Accepted images', st.accepted, 'Image');
+  t.check('Settled: the accepted image\'s file itself, as attachments', placement(w, s) === 'Settled' && JSON.stringify(slot(w, s, 'Settled image')) === JSON.stringify(file) && file[0].filename, slot(w, s, 'Settled image'));
+  await recordSlot(w, s, { 'Not needed': true, 'Not needed reason': 'test: not used' });
+  t.check('waived, Needs review: no image', placement(w, s) === 'Needs review' && slot(w, s, 'Settled image') == null, slot(w, s, 'Settled image'));
+  w.set('Product-page slots', s, { 'Not needed': false, 'Not needed reason': null }); await fx.pressS7Slot(w, s);
+  t.check('reopened and recorded: the same file again', placement(w, s) === 'Settled' && JSON.stringify(slot(w, s, 'Settled image')) === JSON.stringify(file), slot(w, s, 'Settled image'));
+});
+
 add('T40-apps', "T40's application part (CX6), with S4's real applications: a recorded waiver leaves the application's Current as it was and reads Needs review; edits without a press change nothing; only the recorded reopening settles the same application again; a draft departure leaves it Settled", async t => {
   const b = await setup(), { w } = b;
   const s = b.at('towel', 2);

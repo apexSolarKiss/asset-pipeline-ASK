@@ -349,7 +349,8 @@ const TABLES = [
     ['In-use labels', 'rollup', ru('Applications', 'In use label', 'JOIN_NL_COMPACT')],
     ['In-use eligibility', 'rollup', ru('Applications', 'In use eligibility', 'JOIN_NL_COMPACT')],
     ['Alternate titles', 'rollup', ru('Applications', 'Alternate title', 'JOIN_COMMA_COMPACT')],
-    ['Settled image', 'rollup', ru('Applications', 'Settled source image', 'JOIN_NL_COMPACT')],
+    // §11: the page shows the picture itself, so a lookup of the image, kept to the application in use.
+    ['Settled image', 'lookup', lk('Applications', 'Source image', 'Settled source image')],
     ['Placement state', 'formula'],
     ['Status', 'formula'],
     ['Replan result', 'long'], // S3's result on a slot (added by part 2)

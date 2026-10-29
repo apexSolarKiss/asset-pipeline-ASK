@@ -471,7 +471,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | In-use labels | Rollup of In use label through Applications: `ARRAYJOIN(ARRAYCOMPACT(values), "\n")` | New |
 | In-use eligibility | Rollup of In use eligibility through Applications: `ARRAYJOIN(ARRAYCOMPACT(values), "\n")` | New |
 | Alternate titles | Rollup of Alternate title through Applications: `ARRAYJOIN(ARRAYCOMPACT(values), ", ")` | New |
-| Settled image | Rollup of Settled source image through Applications: `ARRAYJOIN(ARRAYCOMPACT(values), "\n")` | New |
+| Settled image | Lookup of Source image through Applications, only where Settled source image is not empty | New |
 | Placement state | Formula (below) | New |
 | Status | Formula (below) | New |
 | Replan result | Long text | New |
@@ -2452,6 +2452,7 @@ Where v6 is silent or ambiguous, the source takes the reading below, the one mos
 - **Has image** (Products, References) is 1 for exactly one file (v3, K8). A formula reads an attachment field as its files' text, joined by commas, so one file is a non-empty field with no comma in it. That is v3's reason for comma-free filenames (K8), and a file whose name has a comma reads 0, which stops its shot planning rather than passing a second file. The build copy showed COUNTA give 1 for two files (K8), so it isn't used. K8-has-image checks the sim's function.
 - **Candidates › Shot withdrawn** is a rollup of the shot's Withdrawn, `OR(values)`, which the Candidates page filters on (§11: "a filter that drops candidates on withdrawn shots"). v6 names the filter, not a field, and the live Candidates table has nothing to filter on.
 - **Product pages › Not in use.** §11 puts inactive slots in a last group, Not in use. A page groups by a field's values, so Page group names the two groups, "On the page" and "Not in use", from Active, and the page groups by it descending, then by product. Grouped by product and then Active, as the copy's page was first, an inactive slot sat under its own product, not in a last group (T40).
+- **Settled image** is a lookup of the applications' Source image, kept to those whose Settled source image is not empty: the application in use. A page shows a lookup of an attachment as the picture, as §11's Product pages page needs ("each slot shows its Settled image only"). As a rollup of Settled source image, a text, the copy's page showed the file's name and address instead (U28). K9-settled-image covers it.
 - **Exception set by and set at** are Airtable's last-modified-by and last-modified time over Exception and Exception reason (v3: "Exception set by (last-modified-by) and Exception set at (last-modified time) over those two fields"; v6 keeps v3's). An earlier version of this folder made them a text and a date anyone could type, so the setter in the kept standard was whatever was typed (the build copy, T8 and T18). The kept standard reads the name Airtable shows for that person. T8-setter covers it.
 - **Membership belongs to the request.** v6 §7.2's membership row names the count rules only ("v3: All, or Choose with a current confirmation"), but T7 is "as v3", and v3's T7 and §5.2 also require every line in the shot to be one of its request's lines. So a collection or written shot isn't Planned while a line from another request is in it: "Not planned: it may include only its request's products". It compares the lines' Request IDs, made unique (Line request IDs), with the shot's Request ID, before the count rules. A product-page shot already holds only its slot's line (T7-membership).
 - **Test checkboxes.** Products, References and Briefs have no Test field in the live base, so each gets a new checkbox.
@@ -2690,7 +2691,7 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
   - STD-image checks that replacing the product image a new-workflow shot attaches changes its standard, and that on a Share shot only the input product's image counts (Choices: Product facts);
   - TEXT-s3 and TEXT-s4s5 check the scripts' copies of Status texts against `sim/formulas.mjs`;
   - TEXT-counta checks that no formula counts a link or attachment field with COUNTA, and TEXT-readme that the README's formula texts are `sim/formulas.mjs`'s (Formula texts; Choices: Counting links and files);
-  - K8-has-image checks Has image's one-file rule, T7-membership a line from another request, K9-candidates-filter the Candidates page's filter field, and T8-setter that Exception set by and set at follow the last edit to the exception (Choices);
+  - K8-has-image checks Has image's one-file rule, T7-membership a line from another request, K9-candidates-filter the Candidates page's filter field, K9-settled-image that Settled image is the picture of the image in use, and T8-setter that Exception set by and set at follow the last edit to the exception (Choices);
   - S4-guards covers S4's own refusals;
   - S2-guards covers S2's note for a slot that isn't ok but has a shot.
 
