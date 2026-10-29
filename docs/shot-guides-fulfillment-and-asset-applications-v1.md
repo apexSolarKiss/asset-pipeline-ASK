@@ -87,7 +87,7 @@ asset application  one accepted image bound to one output slot, with its basis:
 - **shared:** one shot that also fills other slots, where the guide's fill rule allows sharing, more than one slot shares it, and what the view shows is true of every product it fills (§3);
 - **picked up:** an image already accepted, or to be accepted, for another use.
 
-A slot grid says what must be supplied. The fulfillment plan decides what must be made. A grid expanded directly into shots is a duplicate-generation plan.
+A slot grid defines the outputs the pipeline must deliver. The fulfillment plan determines how each output is delivered: made, shared, or picked up. Expanding the grid directly into shots creates a duplicate-generation plan.
 
 **Who plans.** A fulfillment within the guide's fill rule is planning use, decided by the production's planner under the brief's decision owner. A fulfillment that departs from it is an exception under §1, by an authorized decision-maker, with the actor and the reason recorded. Making a slot the guide would share, or picking up an image for a slot the guide says to make, are both departures. Sharing is never chosen against the fill rule, because the rule is what asserts the view does not show the difference.
 
