@@ -156,6 +156,35 @@ add('U2', 'A use decision: a Test collection image accepted; a decision naming t
   t.check('a second press is a no-op: nothing written; Decided at unchanged', again.ok && writesSince(w, n0).length === 0 && ud(w, d, 'Decided at') === at);
 });
 
+// U9's copy finding: a product with no style or color gives a receiving basis that begins with a space.
+async function u9unstyled(t, src5 = SRC.s5) {
+  const b = await setup(), { w } = b;
+  const plain = fx.product(w, { name: 'Plain Vessel', style: null, color: null, size: null, facts: 'A small upright vessel. Keep its form and glaze.' });
+  await assign(w, plain, b.vessel.id, 'a ceramic vessel');
+  const set = fx.request(w, { name: 'Plain set', workflow: 'Collection', products: [plain, b.P.vessel] });
+  w.set('Briefs', set.id, { 'Shot guide (collection)': [b.set.g.id] });
+  await pressS2(w, set.id);
+  const together = w.find(SH, r => r.get('Name') === 'Plain set · Set together')[0];
+  const src = await acceptShot(w, together);
+  const pages = fx.request(w, { name: 'Plain pages', products: [plain, b.P.vessel] });
+  await pressS1(w, pages.id);
+  const slots = pages.lines.map(l => slotAt(w, l, 4));
+  t.check('the plain product\'s slot: its receiving basis begins with a space', String(slot(w, slots[0], 'Receiving basis') || '').startsWith(' '), slot(w, slots[0], 'Receiving basis'));
+  const d = decide(w, { source: src.accepted, slots });
+  const r = await pressS5(w, d, {}, src5);
+  return { w, d, r, slots };
+}
+add('U9-unstyled', "U9's copy finding: a decision to a slot whose product has no style or color (its receiving basis begins with a space) applies; S5 reads the slot's receiving basis as the basis line carries it, untrimmed", async t => {
+  const { w, d, r, slots } = await u9unstyled(t);
+  t.check('both slots applied and Settled; nothing ended', r.ok && appsOf(w, d).length === 2 && slots.every(s => placement(w, s) === 'Settled') && !ud(w, d, 'Ended slots') && ud(w, d, 'Result') === 'Applied to 2 slots.', ud(w, d, 'Result'));
+});
+add('CTRL-U9', "Negative control: with S5 trimming the slot's receiving basis, U9-unstyled's guard fails: the plain product's slot is ended as \"its product's facts changed\"", async t => {
+  const m = mutate(t, SRC.s5, 'receiving: exact(r.getCellValue(S.receiving))', 'receiving: text(r.getCellValue(S.receiving))', 'S5 trims the receiving basis');
+  const { w, d, r, slots } = await u9unstyled(t, m);
+  t.check('the mutated S5 ran to the end and ended the plain slot as changed facts', r.ok && appsOf(w, d).length === 1 && placement(w, slots[0]) !== 'Settled'
+    && String(ud(w, d, 'Result')).includes("its product's facts changed since this decision was fixed"), ud(w, d, 'Result'));
+});
+
 add('U3', 'Refusal: one named slot\'s product isn\'t an input: nothing is applied, and the Result names the slot', async t => {
   const b = await setup(), { w } = b;
   const src = await b.set.source();

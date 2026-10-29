@@ -162,6 +162,9 @@ const HELD_GUIDE = 'adopt the guide again';
 const PICK = 'An accepted image';
 
 const text = v => (v == null ? '' : String(v)).trim();
+// A basis part as its formula gives it, untrimmed: a slot line carries it verbatim, and a receiving
+// basis begins with a space when the product has no style or color (U9).
+const exact = v => (v == null ? '' : String(v));
 const num = v => (typeof v === 'number' ? v : 0);
 const ids = v => (v || []).map(x => x.id);
 // A lookup's values: plain values, or { linkedRecordId, value } items; empty values dropped.
@@ -241,7 +244,7 @@ function slotInfo(r) {
     keyCount: num(r.getCellValue(S.keyCount)), op: text(r.getCellValue(S.operative)), planKept: !!r.getCellValue(S.planKept),
     guideSame: text(r.getCellValue(S.guide)) === SAME, inPlan: num(r.getCellValue(S.inPlan)) === 1,
     superseded: total(r, S.superseded) > 0, test: !!r.getCellValue(S.test),
-    keptLine: text(r.getCellValue(S.keptLine)), keptProduct: text(r.getCellValue(S.keptProduct)), receiving: text(r.getCellValue(S.receiving)),
+    keptLine: exact(r.getCellValue(S.keptLine)), keptProduct: text(r.getCellValue(S.keptProduct)), receiving: exact(r.getCellValue(S.receiving)),
     signature: joined(r, S.shareSignature), size: joined(r, S.size), facts: joined(r, S.facts), status: text(r.getCellValue(S.status)),
   };
 }

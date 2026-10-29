@@ -2543,6 +2543,7 @@ Where v6 is silent or ambiguous, the source takes the reading below, the one mos
   - `legacyMap` is JSON, `{ "<accepted ID>": { "product": "<product ID>", "facts": "<facts>" } }`. Its facts are compared with the receiving product's existing Product facts text, through the Product facts lookup on slots.
   - `refuseEarlierStandard` is empty, no or false (the default), or yes or true, P12's alternative.
 - **Facts reviewed** relaxes only the facts comparison, on the legacy route too. Membership still holds by product ID, or by share key where the source omits size, and size isn't compared.
+- **Comparing a slot's basis.** Step 4 compares the slot's Kept definition line and Receiving basis, read as their formulas give them, with the parts of its line in the Decided basis, untrimmed. A product with no style or color has a receiving basis that begins with a space, and a trimmed read ended its slot as "its product's facts changed" in the run that fixed the decision (the build copy, U9). U9-unstyled covers it, and CTRL-U9 is its control.
 - **By share key** applies only where every Products kept line reads "size omitted". The application's Kept receiving basis is then written in the `⟨size omitted⟩` form, and step 4 compares receiving bases without size.
 - **Decided selection** is one line per slot, `slotID: appA, appB` with the IDs sorted, or `slotID: none`.
 - **What the application keeps.** Kept label is computed from the Decided basis's "Decided by:" line, as decided. Recorded at is Decided at.
@@ -2661,6 +2662,7 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
   | CTRL-S2-OK | S2's Slot ok check before "already planned" | S2-guards |
   | CTRL-LIVE-ready | Ready's "has never had an image" guard (held labels on every candidate) | LIVE-7.8: an image candidate stays "Ready to generate" |
   | CTRL-STD-image | the product image's time in Product facts (lines) and Shared facts line | STD-image: a candidate made from a replaced image reads changed |
+  | CTRL-U9 | S5's untrimmed read of a slot's receiving basis (it trims) | U9-unstyled: a slot whose product has no style or color is applied |
 
   Each control also checks something only a mutated run that finished produces: that the script ran to the end, or the result text it writes. So a crash or a stall can't pass for the guard failing.
 
