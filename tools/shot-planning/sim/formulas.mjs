@@ -375,7 +375,7 @@ IF(FIND("Needs review", {In-use states}), "Needs review", "")))))`,
       // As the text does it: the suffix goes at every line break of the joined lines, so each Product basis line is one line (KEPT_BREAK).
       r => { if (!(r.get('Lines in shot') || []).length) return ''; const suf = N(r.get('Active slots filled')) > 1 ? ' | size omitted' : ' | size shown'; return AJ(r.get('Line product basis'), '\n').split('\n').join(`${suf}\n`) + suf; }),
     'Effective placement': F(`IF(ARRAYJOIN({Workflow}) = "Product pages", IF({Active slot products} = "", "", {Active slot products} & " " & IF({Active slots filled} > 1, SUBSTITUTE({Active placement labels}, "product page", "product pages"), {Active placement labels})),
-IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "Placement: [^\\n]*"), "^Placement: ", ""), "${KEPT_BREAK}", "\\n"), {Placement}))`,
+IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "(?:^|\\n)Placement: [^\\n]*"), "^\\n?Placement: ", ""), "${KEPT_BREAK}", "\\n"), {Placement}))`,
     r => { const wf = AJ(r.get('Workflow'));
       if (wf === 'Product pages') { const p = S(r.get('Active slot products')); if (!p) return ''; const lab = S(r.get('Active placement labels')); return `${p} ${N(r.get('Active slots filled')) > 1 ? lab.split('product page').join('product pages') : lab}`; }
       if (wf === 'Collection') return fromOneLine(lineOf(r.get('Kept guide plan'), 'Placement'));
@@ -383,13 +383,13 @@ IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT(
     'Prompt placement': F('IF(ARRAYJOIN({Workflow}) = "Product pages", {Active placement labels}, {Effective placement})',
       r => (AJ(r.get('Workflow')) === 'Product pages' ? S(r.get('Active placement labels')) : S(r.get('Effective placement')))),
     'Effective direction': F(`IF(ARRAYJOIN({Workflow}) = "Product pages", {Active views} & IF({Active slots filled} > 1, "${TEXT.moreSizes}", ""),
-IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "View: [^\\n]*"), "^View: ", ""), "${KEPT_BREAK}", "\\n"), {Shot direction}))
+IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "(?:^|\\n)View: [^\\n]*"), "^\\n?View: ", ""), "${KEPT_BREAK}", "\\n"), {Shot direction}))
 & IF(AND(ARRAYJOIN({Workflow}) != "Walkthrough", ARRAYJOIN({Workflow}) != "", {Exception}, {Exception reason}), " Exception: " & {Exception}, "")`,
     r => { const wf = AJ(r.get('Workflow'));
       const base = wf === 'Product pages' ? S(r.get('Active views')) + (N(r.get('Active slots filled')) > 1 ? TEXT.moreSizes : '')
         : wf === 'Collection' ? fromOneLine(lineOf(r.get('Kept guide plan'), 'View')) : S(r.get('Shot direction'));
       return base + (wf && wf !== 'Walkthrough' && B(r.get('Exception')) && B(r.get('Exception reason')) ? ` Exception: ${S(r.get('Exception'))}` : ''); }),
-    'Lineage': F(`IF(ARRAYJOIN({Workflow}) = "Product pages", {Active lineage}, IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "Lineage: [^\\n]*"), "^Lineage: ", ""), "${KEPT_BREAK}", "\\n"), ""))`,
+    'Lineage': F(`IF(ARRAYJOIN({Workflow}) = "Product pages", {Active lineage}, IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "(?:^|\\n)Lineage: [^\\n]*"), "^\\n?Lineage: ", ""), "${KEPT_BREAK}", "\\n"), ""))`,
       r => { const wf = AJ(r.get('Workflow')); return wf === 'Product pages' ? S(r.get('Active lineage')) : wf === 'Collection' ? fromOneLine(lineOf(r.get('Kept guide plan'), 'Lineage')) : ''; }),
     'Confirmation current': F('IF(AND({Products confirmed}, OR({Lines changed at} = BLANK(), NOT(IS_BEFORE({Confirmed at}, {Lines changed at})))), 1, 0)',
       r => { const c = MS(r.get('Confirmed at')), l = MS(r.get('Lines changed at')); return bit(B(r.get('Products confirmed')) && (l == null || (c != null && c >= l))); }),
@@ -521,7 +521,10 @@ IF({Eligibility} != "Holds", {Eligibility}, "In use")))))))))`,
     'In use flag': F('IF(AND({Current}, NOT({Withdrawn})), 1, 0)', r => bit(B(r.get('Current')) && !B(r.get('Withdrawn')))),
     'In use state': F('IF({In use flag}, {State}, "")', r => IF(r.get('In use flag'), S(r.get('State')), '')),
     'In use basis': F('IF({In use flag}, {Basis}, "")', r => IF(r.get('In use flag'), S(r.get('Basis')), '')),
-    'In use replaces': F('IF({In use flag}, ARRAYJOIN({Replaces IDs}, ","), "")', r => IF(r.get('In use flag'), AJ(r.get('Replaces IDs'), ','), '')),
+    // A replacement whose use decision is missing can't be finished, so its application replaces nothing
+    // here: the application it was replacing reads Conflict, which a use decision with Replace resolves.
+    'In use replaces': F('IF(AND({In use flag}, OR({Basis} != "Use decision", COUNTA({Use decision}) > 0)), ARRAYJOIN({Replaces IDs}, ","), "")',
+      r => IF(B(r.get('In use flag')) && (S(r.get('Basis')) !== 'Use decision' || (r.get('Use decision') || []).length > 0), AJ(r.get('Replaces IDs'), ','), '')),
     'In use title': F('IF({In use flag}, ARRAYJOIN({Source title}), "")', r => IF(r.get('In use flag'), AJ(r.get('Source title')), '')),
     'In use label': F('IF({In use flag}, {Kept label}, "")', r => IF(r.get('In use flag'), S(r.get('Kept label')), '')),
     'In use eligibility': F('IF({In use flag}, {Eligibility}, "")', r => IF(r.get('In use flag'), S(r.get('Eligibility')), '')),

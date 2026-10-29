@@ -611,7 +611,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | Has image | Formula (below) | Existing |
 | Shot planned | Formula (below) | New |
 | Standard check | Formula (below) | Existing |
-| Ready | Formula (below) | Changed: two held labels for a candidate that has never had an image; the standard label also needs a non-empty Standard check (a departure from v6 §7.6, for review) |
+| Ready | Formula (below) | Changed: two held labels for a candidate that has never had an image; the standard label also needs a non-empty Standard check (a departure from v6 §7.6, which the reviewer accepted) |
 | Status | Formula (below) | Changed: one held branch, after its first branch |
 | Is accepted | Formula (below) | New |
 | Accepted slots kept | Formula (below) | New |
@@ -783,7 +783,8 @@ The live texts are read from the build copy, whose schema is the live base's: `s
 - SCHEMA-refs checks that every `{field}` a text names exists in its table, and that no text holds a placeholder. Its control shows a misspelt field caught.
 - LIVE-unchanged checks that each existing formula is its `LIVE` text, and LIVE-changed that each Changed text is its `LIVE` text with only its change: the default branch of Current standard and Current prompt, Decision's one field, Ready's wrapper and Status's one branch.
 - LIVE-7.8 checks, on a walkthrough shot and its candidates, that the Changed formulas' JavaScript gives the values the live texts give, written out by hand (§7.8), and that the held labels apply only to an imageless candidate. CTRL-LIVE-ready is its control.
-- Nothing in the tests checks a text against its JavaScript function in general, or runs a text in Airtable. The build copy is the first place they run (§9.1 step 4).
+- FORMULA-agree reads ten texts literally, with a small reader for the functions they use, and checks that they give their JavaScript functions' values on every record of seven cases with two-line values, labels inside values, a deleted decision and two live shots. The ten are Definition line, Share signature, Product basis line, Current product basis, Effective placement, Effective direction, Lineage, the slot Status, State and In use replaces. CTRL-FORMULA-agree and CTRL-ML-labels are its controls.
+- No other text is checked against its JavaScript function, and nothing here runs a text in Airtable. The build copy is the first place they run (§9.1 step 4).
 - TEXT-readme checks that every text here is its `sim/formulas.mjs` text, character for character, and that every formula there has its text here. CTRL-TEXT-readme is its control.
 
 <details><summary><b>Shot guides</b> (7 formulas)</summary>
@@ -1428,7 +1429,7 @@ IF(COUNTA({Lines in shot}) = 0, "", SUBSTITUTE(ARRAYJOIN({Line product basis}, "
 
 ```text
 IF(ARRAYJOIN({Workflow}) = "Product pages", IF({Active slot products} = "", "", {Active slot products} & " " & IF({Active slots filled} > 1, SUBSTITUTE({Active placement labels}, "product page", "product pages"), {Active placement labels})),
-IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "Placement: [^\n]*"), "^Placement: ", ""), "⏎", "\n"), {Placement}))
+IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "(?:^|\n)Placement: [^\n]*"), "^\n?Placement: ", ""), "⏎", "\n"), {Placement}))
 ```
 
 **Shots › Prompt placement** · New
@@ -1441,14 +1442,14 @@ IF(ARRAYJOIN({Workflow}) = "Product pages", {Active placement labels}, {Effectiv
 
 ```text
 IF(ARRAYJOIN({Workflow}) = "Product pages", {Active views} & IF({Active slots filled} > 1, " This image is used for more than one size: nothing in it may show the product's size.", ""),
-IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "View: [^\n]*"), "^View: ", ""), "⏎", "\n"), {Shot direction}))
+IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "(?:^|\n)View: [^\n]*"), "^\n?View: ", ""), "⏎", "\n"), {Shot direction}))
 & IF(AND(ARRAYJOIN({Workflow}) != "Walkthrough", ARRAYJOIN({Workflow}) != "", {Exception}, {Exception reason}), " Exception: " & {Exception}, "")
 ```
 
 **Shots › Lineage** · New
 
 ```text
-IF(ARRAYJOIN({Workflow}) = "Product pages", {Active lineage}, IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "Lineage: [^\n]*"), "^Lineage: ", ""), "⏎", "\n"), ""))
+IF(ARRAYJOIN({Workflow}) = "Product pages", {Active lineage}, IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "(?:^|\n)Lineage: [^\n]*"), "^\n?Lineage: ", ""), "⏎", "\n"), ""))
 ```
 
 **Shots › Confirmation current** · New
@@ -1574,7 +1575,7 @@ IF(AND({Shot count} = 1, {Shot planned values} = 1), 1, 0)
 IF({Standard used}="", "", IF(ARRAYJOIN({Current standard}, "")={Standard used}, "Same standard as when this image was made", "The standard has changed since this image was made"))
 ```
 
-**Candidates › Ready** · Changed: replace the live text with this text: the two held labels (§7.6) around the live text, which is kept as each default. One departure from v6 §7.6's predicate, awaiting the reviewer's approval: the standard label also needs `{Standard check} != ""` (Choices: Ready's held standard label)
+**Candidates › Ready** · Changed: replace the live text with this text: the two held labels (§7.6) around the live text, which is kept as each default. One departure from v6 §7.6's predicate, which the reviewer accepted at PR #456's Stage 2: the standard label also needs `{Standard check} != ""` (Choices: Ready's held standard label)
 
 ```text
 IF(AND({Has image} = 0, {Generated at} = BLANK()), IF({Shot planned} != 1, "Held: the shot isn't planned now. See its Plan check.", IF(AND({Standard check} != "", LEFT({Standard check}, 4) != "Same"), "Held: the standard changed since this candidate was kept.", IF(AND(COUNTA({Shot}) > 0, {Standard used}, {Prompt used}, {Intended use}, {Product image used}, {Reference images used}), "Ready to generate", "Preparing…"))), IF(AND(COUNTA({Shot}) > 0, {Standard used}, {Prompt used}, {Intended use}, {Product image used}, {Reference images used}), "Ready to generate", "Preparing…"))
@@ -1714,7 +1715,7 @@ IF({In use flag}, {Basis}, "")
 **Applications › In use replaces** · New
 
 ```text
-IF({In use flag}, ARRAYJOIN({Replaces IDs}, ","), "")
+IF(AND({In use flag}, OR({Basis} != "Use decision", COUNTA({Use decision}) > 0)), ARRAYJOIN({Replaces IDs}, ","), "")
 ```
 
 **Applications › In use title** · New
@@ -2361,7 +2362,7 @@ Each of these throws, writes nothing after it, and shows in the automation's run
 
 ## What it does not support
 
-- **Deleting records** in Guide slots, Product-page slots, Applications or Use decisions (§7.5). Where a deletion shows, it shows as Needs review, for example "its decision record is missing". Retiring a whole guide isn't built: a guide stops applying to a product when the product is assigned to another guide.
+- **Deleting records** in Guide slots, Product-page slots, Applications or Use decisions (§7.5). Where a deletion shows, it shows as Needs review, for example "its decision record is missing". An application whose use decision is missing replaces nothing (In use replaces), so if a Replace decision is deleted before it finished, the application it was replacing reads Conflict, which a use decision with Replace resolves (U29-replace). Retiring a whole guide isn't built: a guide stops applying to a product when the product is assigned to another guide.
 - **Hand edits beyond the detector.** These are unsupported, and nothing detects them:
   - editing a script-written field the detector doesn't watch, such as an application's Application key, Kept destination, Kept receiving basis, Kept label or Replaces, a shot's Pair key, Made as or Kept guide plan, or a candidate's Slots kept or Products kept;
   - editing a watched field within a minute of the script's write, or together with its time;
@@ -2425,15 +2426,15 @@ Where v6 is silent or ambiguous, the source takes the reading below, the one mos
   - A basis line joins its fields with ` ‖ `: slot ID, Kept definition line, product ID, receiving basis.
   - A receiving basis reads `share signature ⟨size: X⟩`, or `share signature ⟨size omitted⟩` without the size.
   - A Kept destination reads `Kept definition line ‖ product ID`.
-- **Collection shots.** The formulas read the Kept guide plan's lines that begin `Placement: `, `View: ` and `Lineage: `, and find the guide slot's Definition line in it. S2 writes six lines in that form: Placement, View, Lineage, Includes, Choose count and Definition. Each value is on its one line, with `⏎` for a line break in it ([Payloads](#schema)), and the formulas turn `⏎` back into a line break. S3 rewrites the plan the same way.
+- **Collection shots.** The formulas read the Kept guide plan's lines that begin `Placement: `, `View: ` and `Lineage: `, each matched at the start of a line, so a value that holds another label's text (a View with "Lineage: " in it) can't be read as that label (ML-labels), and find the guide slot's Definition line in it. S2 writes six lines in that form: Placement, View, Lineage, Includes, Choose count and Definition. Each value is on its one line, with `⏎` for a line break in it ([Payloads](#schema)), and the formulas turn `⏎` back into a line break. S3 rewrites the plan the same way.
 - **Product facts.**
   - Facts without size is the live Product facts text without the product's name, its "Product image as of" time and its size: `Must stay true: … Material: …. Finish: ….`. The name and the image time differ between two sizes of one style and color, so they can't be in the Share signature.
   - Product facts (lines) is the share key, `: `, Facts without size, ` Size: <Size>.` and the live Product facts' closing clause, ` Product image as of <time> UTC.`.
   - The standard uses Shared facts line, the share key, Facts without size and the same image clause, when Active slots filled > 1.
-  - So a new-workflow standard carries the time of each product image the shot attaches, as the live Product facts does (v3 §5.1, "each line's product facts"). Replacing that image changes the standard, so its candidates' Standard check reads "The standard has changed since this image was made", which Accept refuses on (§7.6, as T36 for a color change). A shared shot's Lines in shot holds its input line only, so the time is the input product's; another size's image isn't attached and doesn't change it. v6 is silent on this, and the reviewer is asked to confirm it. Case: STD-image; its control is CTRL-STD-image.
+  - So a new-workflow standard carries the time of each product image the shot attaches, as the live Product facts does (v3 §5.1, "each line's product facts"). Replacing that image changes the standard, so its candidates' Standard check reads "The standard has changed since this image was made", which Accept refuses on (§7.6, as T36 for a color change). A shared shot's Lines in shot holds its input line only, so the time is the input product's; another size's image isn't attached and doesn't change it. v6 is silent on this, and the reviewer accepted it at PR #456's Stage 2. Case: STD-image; its control is CTRL-STD-image.
     - **What the build copy shows** (RQ-std-image, 2026-10-29): replacing a Make shot's product image moved its standard's product line from `… Product image as of 2026-10-29 01:23:41 UTC.` to `… 01:35:50 UTC.`, nothing else in the standard changed, and its kept candidate then read "The standard has changed since this image was made". On a shared shot, replacing the other product's image left the standard and its candidate's Standard check unchanged; replacing the input product's image changed both.
 - **Prompt lines.** Prompt line (lines) is the live Prompt line with ` Size: <Size>.` (v3 §5.1's prompt line: name, Must stay true, material, finish). Shared prompt line is style and color, then Facts without size, so a shared prompt carries the facts with no product name and no size (§7.1).
-  - Including Facts without size (Must stay true, Material, Finish) goes beyond v6 §6's "style and color without the product name or size". It follows v3 §5.1 item 4, where each product's prompt line carries those facts. The reviewer is asked to confirm it.
+  - Including Facts without size (Must stay true, Material, Finish) goes beyond v6 §6's "style and color without the product name or size". It follows v3 §5.1 item 4, where each product's prompt line carries those facts. The reviewer accepted it at PR #456's Stage 2.
   - **What the build copy shows** (RQ-prompt-facts, 2026-10-29): a shared shot's prompt carries its product as `Terry towel, white. Must stay true: … Material: Cotton terry. Finish: Unbleached.`, with no product name, no size and no image time. The size-bearing Prompt line (lines) isn't in it.
   - The sim's demo products have no Material or Finish, so their lines read `Material: . Finish: .`. Enter Material and Finish on the new catalog products (v3 §1: "natural-fiber terry or waffle weave") before the live steps.
 - **The request texts** (v3 §4), in the live brief texts' wording:
@@ -2444,7 +2445,7 @@ Where v6 is silent or ambiguous, the source takes the reading below, the one mos
   - The standard: the request standard; "Products, in image order:" and each line's facts; "Shot: name, for" the Effective placement, and the Effective direction; the Lineage; and, for a complete exception, "Exception reason: … Set by: …." (its text is in the Effective direction).
   - The prompt: the live opening sentence; "Shot: name, for" the Prompt placement, and the Effective direction; the request prompt; v3 §5.1's products paragraph and each line's prompt line; the reference prompt.
 - **Ready's held standard label** needs a kept standard. The live Standard check is empty until Snapshot writes Standard used, so a new candidate reads "Preparing…", not "Held: the standard changed …", while it waits for Snapshot. v6's predicate was written against a Standard check that is never empty.
-  - This adds a condition to an installed formula's text that v6 §7.6's literal predicate doesn't have. It needs the reviewer's approval; if approved, the build record lists it with the other Changed-formula departures. LIVE-7.8 ("a new candidate … not held") and CTRL-LIVE-ready exercise it.
+  - This adds a condition to an installed formula's text that v6 §7.6's literal predicate doesn't have. The reviewer accepted it at PR #456's Stage 2, with the other two readings here (RQ-std-image, RQ-prompt-facts); the build record lists it with the other Changed-formula departures. LIVE-7.8 ("a new candidate … not held") and CTRL-LIVE-ready exercise it.
   - **What the build copy shows** (RQ-ready, 2026-10-29): between a new candidate's creation and Snapshot, under a second there, Ready read "Preparing…" with Standard check empty, where v6's literal predicate would read "Held: the standard changed since this candidate was kept.". After Snapshot both read "Ready to generate".
 - **The live field names** (the build copy's schema read):
   - a candidate's kept standard is Standard used, and the shot's current standard as the candidate sees it is its Current standard lookup;
@@ -2660,7 +2661,7 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
 | T37 | T37-local, T37-s3, T37-s4s5 | real last-modified behaviour, the within-a-minute limit in Airtable, field permissions |
 | T41 | T41-local | the clearing in Airtable, the pages |
 | U13 | U13-local | Accept's alternates in Airtable |
-| U29 | U29-local, the formulas' reading of a deleted use decision | the deletion in Airtable, and the pages |
+| U29 | U29-local and U29-replace, the formulas' reading of a deleted use decision | the deletion in Airtable, and the pages |
 
 **Copy only, with no local test:** T3c, T6, T7, T8, T8d, T13, T16, T17, T18, T19, T32, T34, T36, T38, U8, U9, U11 and U28. Each needs Airtable's own formulas, lookups, automations, pages or concurrency. U9's legacy-map logic is exercised locally by U23.
 
@@ -2669,9 +2670,11 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
   - ML-collection and ML-collection-s3: a collection guide slot's View of two lines, through adoption, S2, S3, Snapshot's stand-in, the prompt and the standard;
   - ML-pages: a product-page View of two lines on a product whose Must stay true has two, through Snapshot's stand-in, an acceptance and S4;
   - ML-facts: a Must stay true of two lines, through Products kept and S5, matched by its kept facts and with Facts reviewed;
-  - FORMULA-agree: the changed formula texts, read literally, give their functions' values on those records;
+  - ML-labels: a Placement label with "View: " in it and a View with "Lineage: " in it; the three Collection texts, read literally, take each value from its own line;
+  - FORMULA-agree: ten texts, the ones this correction changed and Current product basis, read literally, give their functions' values on every record of seven of these cases;
   - TEXT-kept-break: S2's and S3's `⏎` is the formulas';
-  - U29-local, T3b-status and U20-race: a deleted use decision's State, a slot with two live shots, and S5's refusal when an image comes into use during its run.
+  - U29-local and U29-replace: a deleted use decision's State, and the application a deleted Replace decision was replacing;
+  - T3b-status and U20-race: a slot with two live shots, and S5's refusal when an image comes into use during its run.
 - **GPT-A, GPT-A-later, GPT-B-withdrawn, GPT-C:** the clarifications above. GPT-B-withdrawn-stale is a slot whose only shot is Withdrawn, made stale by an adopted change: its step reads "press Replan on this slot", and slot-level Replan refreshes it.
 - **Negative controls,** each a mutated copy of a script or formula, showing the check that guards a mechanism failing for the reason it exists:
 
@@ -2695,12 +2698,14 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
   | CTRL-ML-collection, CTRL-ML-collection-s3 | `⏎` in the kept guide plan (S2 or S3 writes the View as authored) | ML-collection, ML-collection-s3: the direction, prompt and standard keep the second line |
   | CTRL-ML-pages | `⏎` in Definition line and Share signature | ML-pages: S4 applies after the acceptance |
   | CTRL-ML-facts | `⏎` in Product basis line | ML-facts: S5 finds the product among the source's inputs |
-  | CTRL-FORMULA-agree | Current product basis's function as fbc4f24 had it (the size word once per product) | FORMULA-agree |
+  | CTRL-FORMULA-agree | Current product basis's function and Product basis line's text as fbc4f24 had them (no `⏎`; the size word once per product) | FORMULA-agree: both are flagged |
+  | CTRL-ML-labels | the line anchor in Effective direction's and Lineage's texts | ML-labels: each reads its own value |
+  | CTRL-U29-replace | In use replaces' decision-record term | U29-replace: the replaced application reads Conflict, not a retry |
   | CTRL-U29 | State's decision-record branch (it checks Basis finished first) | U29-local: no retry is offered |
   | CTRL-T3b-status | the slot Status's shot-pair branch | T3b-status |
   | CTRL-U20-race | S5's refusal text (it names Pickup ok) | U20-race |
 
-  Each control also checks something only a mutated run that finished produces: that the script ran to the end, or the result text it writes. So a crash or a stall can't pass for the guard failing.
+  Each control that runs a mutated script also checks something only a mutated run that finished produces: that the script ran to the end, or the result text it writes. So a crash or a stall can't pass for the guard failing.
 
   SCHEMA-refs carries its own control, a misspelt field. TEXT-counta's control, CTRL-TEXT-counta, shows the texts the build copy showed wrong flagged and their emptiness tests passed. TEXT-readme's, CTRL-TEXT-readme, shows a one-character change and a missing text flagged.
 - **Binding and hygiene cases:**
@@ -2721,7 +2726,7 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
 
 The tests show the scripts' logic on a simulated base. They don't show what Airtable does. In particular, none of these is observed here:
 
-- **The formula texts.** None has been run in Airtable, including REGEX_EXTRACT and REGEX_REPLACE in the slot Status and in Shots › Effective placement, Effective direction and Lineage, IS_BEFORE in Withdrawal, and the detector's `DATETIME_DIFF(…, 'seconds') > 60` with its blank-time guard. Nothing checks a text against its JavaScript mirror. The copy checks, among others, a collection shot's Current standard ("for Collection grid", without the label), and that an alternate S4 creates with Current unticked reads Alternate.
+- **The formula texts.** None has been run in Airtable, including REGEX_EXTRACT and REGEX_REPLACE in the slot Status and in Shots › Effective placement, Effective direction and Lineage, IS_BEFORE in Withdrawal, and the detector's `DATETIME_DIFF(…, 'seconds') > 60` with its blank-time guard. Locally, FORMULA-agree reads ten texts against their JavaScript (Formula texts: What has been checked); no other text is checked against its function. The copy checks, among others, a collection shot's Current standard ("for Collection grid", without the label), and that an alternate S4 creates with Current unticked reads Alternate.
 - **Conditional lookups.** Live shot count and the slot's Shot lookups take only linked shots whose Not withdrawn is 1. The sim models Airtable's "only include linked records that meet conditions"; the copy checks it.
 - **Last-modified times.** Whether Airtable moves one on an unchanged write is unknown, and T28 depends on it. Under the other model, re-recording a withdrawn record's unchanged decision moves its Decided content time past the kept record's, which makes the withdrawal invalid ("carries a decision"). T28 runs in the default model only; T37 records which model Airtable follows.
 - **Links.** Writing a link from its inverse side ("Slots filled") in a create call, and appending to an existing link, are modelled, not observed. So are lookups through deleted records, and the order of a link and of its inverse. In the sim, a new inverse link is appended at the end, and Slot definitions follows the guide's link order.
@@ -2752,11 +2757,18 @@ The copy tests ran v6 §10.1 in a private copy of the base with this source inst
   - Accept writes the accepted record's Shot as its candidate's shot, and refuses on a shot that isn't planned before it refuses on a changed standard (T16–T20). Like the fixtures' stand-in, it leaves the accepted record's Test empty; S4 and S5 read Candidate is test.
   - G1 was never pressed. Its refusal branch keys only on Can generate, which reads 0 on every shot that isn't Planned (K7′).
 - **A held request resumes** (K2b). With G2a on in dry-run, a held candidate with Generate when ready ticked started no run. When its shot was planned again with the same standard, G2a ran once and wrote "Would request at …". So Status's held text keeps its resume clause.
-- **Double presses.** A double press of S1 can make a slot twice; the slot pair check (Key count) shows it (T2b). Two decisions for one slot pressed together made no Conflict in two tries: the later run's slot read saw the earlier run's application, and it refused (U20).
+- **Double presses.** A double press of S1 can make a slot twice; the slot pair check (Key count) shows it (T2b). Two decisions for one slot pressed together made no Conflict in three tries: the later run's slot read saw the earlier run's application, and it refused. Since `6dabcf1` that refusal reads "it already has an image in use: a use decision with Replace can change it" (U20; U20r after the Stage-2 correction).
 - **An S4 run stopped by a fault** shows in the run history as a script error without its message. It leaves one application reading Unfinished and Applications done clear, and Retry applications finishes it (U17, U27). A slot held by a hand edit waits on Retry until a new version of the request ends it (T37).
 - **Field editing permissions** can keep a field to automations: set to Nobody with automations allowed, a connector write by the base's owner was refused while S6 still wrote the field (T37). The setting is per field.
+- **A line break in a View or a Must stay true** (the Stage-2 correction, `6dabcf1`). The copy repeats ML-collection, ML-collection-s3, ML-pages and ML-facts with the installed formulas and scripts:
+  - **Collection.** A collection guide slot's View of two lines adopts, and S2 writes the kept guide plan's View on one line with `⏎`. The shot is Planned with its guide the Same, and Effective direction is the whole View. The prompt, the standard and Snapshot's Prompt used and Standard used carry both lines. After the View was edited and adopted again, S3 refreshed the plan the same way.
+  - **Product pages.** A product-page View of two lines, on a product whose Must stay true has two, reaches the prompt and the standard whole. Slots kept and Products kept are each one line. After the acceptance, S4 made the application, which holds, and the slot is Settled.
+  - **Picking up the image.** In a collection acceptance's Products kept the two-line product's facts are one line, with one size word. S5 picked that image up for the product by its kept facts and, on another slot, with Facts reviewed.
+  - On the copy's existing records, every value of the changed formulas and of the fields that read them (Plan check, Placement state, Eligibility, Basis check, Standard check, Ready, Source current, and a guide's Complete and Status) was the same before and after the formula change: 6,218 values in ten tables. No existing record has a line break in a kept record.
+- **A deleted use decision** (U29, after the Stage-2 correction). A dedicated test decision was applied, and then that one record was deleted. Its application stays Current, and its State and Eligibility read "Needs review: its decision record is missing". The slot isn't Settled, and its Status says the same. Nothing offers a retry.
 - **Interface pages.** Airtable's field editability is per page, not per record, so Lines in shot and Products confirmed are editable on every Shot Detail page. A rollup of an attachment shows as text and a lookup as the picture (U28).
-- **Noted for review:**
-  - While a slot has two live shots, its Status reads "Fulfillment changed after its shot was made: press Replan on this slot …", because Matches its shot compares the two-value Shot made as ("Make, Make") with "Make". The right next step is the shot pair check, which the Status doesn't name (T3b).
-  - When two decisions for one slot are pressed together, the later one can refuse with "its Pickup ok doesn't hold", which names a formula rather than the image in use (U20).
-  - v6's T38 asks for the acceptance's Coverage to read "Earlier standard", but Coverage, an existing field, is empty for any test acceptance. On a test record the same comparison shows as Source current 0.
+- **Corrected after review** (`6dabcf1`):
+  - While a slot had two live shots, its Status read "Fulfillment changed after its shot was made: press Replan on this slot …", because Matches its shot compares the two-value Shot made as ("Make, Make") with "Make" (T3b). It now reads "More than one live shot fills this slot: see the shot pair check". In the copy, two double presses of S2 each made one shot; a duplicate live shot made by connector, as a double press leaves it, showed that Status with Slot ok 0 (T3b-status).
+  - When two decisions for one slot were pressed together, the later one could refuse with "its Pickup ok doesn't hold", which names a formula (U20). It now names the image in use (U20r).
+  - An application whose use decision was deleted read "Unfinished: press Apply this decision again", a retry that can't run (U29). Its State is now its Eligibility.
+- **Accepted by the reviewer:** v6's T38 asks for the acceptance's Coverage to read "Earlier standard", but Coverage, an existing field, is empty for any test acceptance. On a test record the same comparison shows as Source current 0, and the reviewer accepted that reading for T38.
