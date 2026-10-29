@@ -122,6 +122,7 @@ const Q = x => `"${x.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`; // an Airta
 const STATUS = {
   waivedPending: ', and a change waits for its decision record',
   pair: "Another record has this slot's key: see the slot pair check",
+  shotPair: 'More than one live shot fills this slot: see the shot pair check',
   pendingTail: ': press Record decision to record it, or undo it',
   detach: 'Fulfillment changed after its shot was made: press Replan on this slot to detach it, or set it back and record it',
   replan: 'The shot guide changed: replan',
@@ -130,6 +131,12 @@ const STATUS = {
   waiting: 'Waiting for Make shots',
   needsImage: 'Needs an image: a use decision for an accepted image that shows this product',
 };
+// A kept record is one line: a line break in a value it carries is written ⏎ (KEPT_BREAK), so a
+// record's boundary is never an authored line break. The values that compose a prompt or a standard
+// keep their line breaks, and a value read back from a kept record turns ⏎ back into one.
+export const KEPT_BREAK = '⏎';
+const oneLine = v => S(v).split('\n').join(KEPT_BREAK);
+const fromOneLine = v => S(v).split(KEPT_BREAK).join('\n');
 const firstLine = (text, prefix) => { const m = new RegExp(`${prefix}[^\\n]*`).exec(S(text)); return m ? m[0] : ''; };
 const FILL_TO_FULFILLMENT = { 'Made for each product': 'Make', [SHARE_RULE]: 'Share', 'An accepted image that shows the product': 'An accepted image' };
 
@@ -163,8 +170,8 @@ IF({Complete}, "Adopted, version " & {Adopted version}, "Changed since adoption:
   'Guide slots': {
     'Guide ID': F('ARRAYJOIN({Guide ID (from Guide)})', r => AJ(r.get('Guide ID (from Guide)'))),
     'Guide-slot ID': F('RECORD_ID()', r => r.id),
-    'Definition line': F(`"⟦" & {Guide ID} & " | " & {Guide-slot ID} & " | " & {Name} & " | " & {Position} & " | " & {Placement label} & " | " & {Required} & " | " & {Fill rule} & " | " & {Includes} & " | " & {Choose count} & " | " & IF({Retired}, "retired", "active") & " | " & {View} & "⟧"`,
-      r => `⟦${[r.get('Guide ID'), r.get('Guide-slot ID'), r.get('Name'), r.get('Position'), r.get('Placement label'), r.get('Required'), r.get('Fill rule'), r.get('Includes'), r.get('Choose count'), B(r.get('Retired')) ? 'retired' : 'active', r.get('View')].map(S).join(' | ')}⟧`),
+    'Definition line': F(`SUBSTITUTE("⟦" & {Guide ID} & " | " & {Guide-slot ID} & " | " & {Name} & " | " & {Position} & " | " & {Placement label} & " | " & {Required} & " | " & {Fill rule} & " | " & {Includes} & " | " & {Choose count} & " | " & IF({Retired}, "retired", "active") & " | " & {View} & "⟧", "\\n", "${KEPT_BREAK}")`,
+      r => oneLine(`⟦${[r.get('Guide ID'), r.get('Guide-slot ID'), r.get('Name'), r.get('Position'), r.get('Placement label'), r.get('Required'), r.get('Fill rule'), r.get('Includes'), r.get('Choose count'), B(r.get('Retired')) ? 'retired' : 'active', r.get('View')].map(S).join(' | ')}⟧`)),
     'Is active': F('IF({Retired}, 0, 1)', r => bit(!B(r.get('Retired')))),
     'Is incomplete': F('IF(AND(NOT({Retired}), OR({Placement label} = "", {View} = "")), 1, 0)',
       r => bit(!B(r.get('Retired')) && (!present(r.get('Placement label')) || !present(r.get('View'))))),
@@ -182,7 +189,8 @@ IF({Complete}, "Adopted, version " & {Adopted version}, "Changed since adoption:
     // image's time (each product record has its own) and the size, which is kept apart in Size (§3).
     'Facts without size': F('"Must stay true: " & {Must stay true} & " Material: " & {Material} & ". Finish: " & {Finish} & "."',
       r => `Must stay true: ${S(r.get('Must stay true'))} Material: ${S(r.get('Material'))}. Finish: ${S(r.get('Finish'))}.`),
-    'Share signature': F('{Product share key} & " | " & {Facts without size}', r => `${S(r.get('Product share key'))} | ${S(r.get('Facts without size'))}`),
+    // A kept record's part (Slots kept, Products kept): one line, whatever Must stay true holds.
+    'Share signature': F(`SUBSTITUTE({Product share key} & " | " & {Facts without size}, "\\n", "${KEPT_BREAK}")`, r => oneLine(`${S(r.get('Product share key'))} | ${S(r.get('Facts without size'))}`)),
     // The standard's product lines end with the product image's time, as the live Product facts does,
     // so replacing the image a shot attaches changes its standard (v3 §5.1: "each line's product facts").
     'Product facts (lines)': F(`{Product share key} & ": " & {Facts without size} & IF({Size}, " Size: " & {Size} & ".", "")${IMAGE_AS_OF}`,
@@ -236,8 +244,8 @@ IF({Complete}, "Adopted, version " & {Adopted version}, "Changed since adoption:
   'Product lines': {
     'Name': F('ARRAYJOIN({Request name}) & " · " & ARRAYJOIN({Product name})', r => `${AJ(r.get('Request name'))} · ${AJ(r.get('Product name'))}`),
     'Line ID': F('RECORD_ID()', r => r.id),
-    'Product basis line': F('ARRAYJOIN({Product ID}) & " | " & ARRAYJOIN({Product share key}) & " | " & ARRAYJOIN({Facts without size}) & " | " & ARRAYJOIN({Size})',
-      r => [r.get('Product ID'), r.get('Product share key'), r.get('Facts without size'), r.get('Size')].map(v => AJ(v)).join(' | ')),
+    'Product basis line': F(`SUBSTITUTE(ARRAYJOIN({Product ID}) & " | " & ARRAYJOIN({Product share key}) & " | " & ARRAYJOIN({Facts without size}) & " | " & ARRAYJOIN({Size}), "\\n", "${KEPT_BREAK}")`,
+      r => oneLine([r.get('Product ID'), r.get('Product share key'), r.get('Facts without size'), r.get('Size')].map(v => AJ(v)).join(' | '))),
   },
 
   'Product-page slots': {
@@ -364,24 +372,25 @@ IF(FIND("Needs review", {In-use states}), "Needs review", "")))))`,
       r => { if (S(r.get('Made as')) !== 'Share') return ''; const sig = S(r.get('Share signatures'));
         return sig && !sig.includes('¦') && sig === AJ(r.get('Line share signature')) ? TEXT.sharedSame : TEXT.sharedDiffer + sig.split('¦').join(' / '); }),
     'Current product basis': F(`IF(COUNTA({Lines in shot}) = 0, "", SUBSTITUTE(ARRAYJOIN({Line product basis}, "\\n"), "\\n", IF({Active slots filled} > 1, " | size omitted", " | size shown") & "\\n") & IF({Active slots filled} > 1, " | size omitted", " | size shown"))`,
-      r => { const lines = r.get('Line product basis') || []; if (!(r.get('Lines in shot') || []).length) return ''; const suf = N(r.get('Active slots filled')) > 1 ? ' | size omitted' : ' | size shown'; return lines.map(l => S(l) + suf).join('\n'); }),
+      // As the text does it: the suffix goes at every line break of the joined lines, so each Product basis line is one line (KEPT_BREAK).
+      r => { if (!(r.get('Lines in shot') || []).length) return ''; const suf = N(r.get('Active slots filled')) > 1 ? ' | size omitted' : ' | size shown'; return AJ(r.get('Line product basis'), '\n').split('\n').join(`${suf}\n`) + suf; }),
     'Effective placement': F(`IF(ARRAYJOIN({Workflow}) = "Product pages", IF({Active slot products} = "", "", {Active slot products} & " " & IF({Active slots filled} > 1, SUBSTITUTE({Active placement labels}, "product page", "product pages"), {Active placement labels})),
-IF(ARRAYJOIN({Workflow}) = "Collection", REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "Placement: [^\\n]*"), "^Placement: ", ""), {Placement}))`,
+IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "Placement: [^\\n]*"), "^Placement: ", ""), "${KEPT_BREAK}", "\\n"), {Placement}))`,
     r => { const wf = AJ(r.get('Workflow'));
       if (wf === 'Product pages') { const p = S(r.get('Active slot products')); if (!p) return ''; const lab = S(r.get('Active placement labels')); return `${p} ${N(r.get('Active slots filled')) > 1 ? lab.split('product page').join('product pages') : lab}`; }
-      if (wf === 'Collection') return lineOf(r.get('Kept guide plan'), 'Placement');
+      if (wf === 'Collection') return fromOneLine(lineOf(r.get('Kept guide plan'), 'Placement'));
       return S(r.get('Placement')); }),
     'Prompt placement': F('IF(ARRAYJOIN({Workflow}) = "Product pages", {Active placement labels}, {Effective placement})',
       r => (AJ(r.get('Workflow')) === 'Product pages' ? S(r.get('Active placement labels')) : S(r.get('Effective placement')))),
     'Effective direction': F(`IF(ARRAYJOIN({Workflow}) = "Product pages", {Active views} & IF({Active slots filled} > 1, "${TEXT.moreSizes}", ""),
-IF(ARRAYJOIN({Workflow}) = "Collection", REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "View: [^\\n]*"), "^View: ", ""), {Shot direction}))
+IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "View: [^\\n]*"), "^View: ", ""), "${KEPT_BREAK}", "\\n"), {Shot direction}))
 & IF(AND(ARRAYJOIN({Workflow}) != "Walkthrough", ARRAYJOIN({Workflow}) != "", {Exception}, {Exception reason}), " Exception: " & {Exception}, "")`,
     r => { const wf = AJ(r.get('Workflow'));
       const base = wf === 'Product pages' ? S(r.get('Active views')) + (N(r.get('Active slots filled')) > 1 ? TEXT.moreSizes : '')
-        : wf === 'Collection' ? lineOf(r.get('Kept guide plan'), 'View') : S(r.get('Shot direction'));
+        : wf === 'Collection' ? fromOneLine(lineOf(r.get('Kept guide plan'), 'View')) : S(r.get('Shot direction'));
       return base + (wf && wf !== 'Walkthrough' && B(r.get('Exception')) && B(r.get('Exception reason')) ? ` Exception: ${S(r.get('Exception'))}` : ''); }),
-    'Lineage': F(`IF(ARRAYJOIN({Workflow}) = "Product pages", {Active lineage}, IF(ARRAYJOIN({Workflow}) = "Collection", REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "Lineage: [^\\n]*"), "^Lineage: ", ""), ""))`,
-      r => { const wf = AJ(r.get('Workflow')); return wf === 'Product pages' ? S(r.get('Active lineage')) : wf === 'Collection' ? lineOf(r.get('Kept guide plan'), 'Lineage') : ''; }),
+    'Lineage': F(`IF(ARRAYJOIN({Workflow}) = "Product pages", {Active lineage}, IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "Lineage: [^\\n]*"), "^Lineage: ", ""), "${KEPT_BREAK}", "\\n"), ""))`,
+      r => { const wf = AJ(r.get('Workflow')); return wf === 'Product pages' ? S(r.get('Active lineage')) : wf === 'Collection' ? fromOneLine(lineOf(r.get('Kept guide plan'), 'Lineage')) : ''; }),
     'Confirmation current': F('IF(AND({Products confirmed}, OR({Lines changed at} = BLANK(), NOT(IS_BEFORE({Confirmed at}, {Lines changed at})))), 1, 0)',
       r => { const c = MS(r.get('Confirmed at')), l = MS(r.get('Lines changed at')); return bit(B(r.get('Products confirmed')) && (l == null || (c != null && c >= l))); }),
     'Plan check': F(PLAN_CHECK_TEXT(), r => planCheck(r)),
@@ -491,14 +500,17 @@ IF(AND({Basis} = "Use decision", SUM({Decision record intact}) = 0), "Needs revi
 IF({Current check}, "${HAND}",
 IF(AND(NOT({Current}), COUNTA({Replaced by})), "Replaced by " & ARRAYJOIN({Replaced by name}),
 IF(NOT({Current}), "Alternate",
+IF(AND({Basis} = "Use decision", COUNTA({Use decision}) = 0), {Eligibility},
 IF(NOT({Basis finished}), IF({Basis} = "Use decision", "Unfinished: press Apply this decision again", "Unfinished: press Retry applications on the accepted image"),
 IF(FIND({Application ID}, ARRAYJOIN({Slot in-use replaces})), "Replacement unfinished: press Apply this decision again on the replacing decision",
 IF(SUM({Slot in use count}) - 1 - SUM({Replaces in use}) > 0, "Conflict",
-IF({Eligibility} != "Holds", {Eligibility}, "In use"))))))))`,
+IF({Eligibility} != "Holds", {Eligibility}, "In use")))))))))`,
     r => {
       if (B(r.get('Withdrawn'))) return 'Withdrawn duplicate';
       if (present(r.get('Current check'))) return HAND;
       if (!B(r.get('Current'))) return (r.get('Replaced by') || []).length ? `Replaced by ${AJ(r.get('Replaced by name'))}` : 'Alternate';
+      // A use decision's record missing: no press can finish it, so its eligibility, which names that, is the State.
+      if (S(r.get('Basis')) === 'Use decision' && !(r.get('Use decision') || []).length) return S(r.get('Eligibility'));
       if (!B(r.get('Basis finished'))) return S(r.get('Basis')) === 'Use decision' ? 'Unfinished: press Apply this decision again' : 'Unfinished: press Retry applications on the accepted image';
       if (FIND(r.get('Application ID'), AJ(r.get('Slot in-use replaces')))) return 'Replacement unfinished: press Apply this decision again on the replacing decision';
       if (N(r.get('Slot in use count')) - 1 - N(r.get('Replaces in use')) > 0) return 'Conflict';
@@ -597,6 +609,7 @@ function slotStatus(r) {
   const pending = present(r.get('Change pending'));
   if (B(r.get('Waived'))) return `Not needed: ${S(r.get('Recorded summary'))}${pending ? STATUS.waivedPending : ''}`;
   if (N(r.get('Key count')) > 1) return STATUS.pair;
+  if (N(r.get('Live shot count')) > 1) return STATUS.shotPair;
   if (!B(r.get('In adopted plan'))) return `Not in the adopted plan: ${notInPlanReason(r)}`;
   if (pending) return TEXT.changePending + STATUS.pendingTail;
   const op = S(r.get('Operative fulfillment')), state = S(r.get('Placement state'));
@@ -640,6 +653,7 @@ IF(LEFT({Withdrawal}, 20) = "Withdrawal not valid", {Withdrawal},
 IF({Held}, IF({Kept plan check}, ${Q(TEXT.heldPlan)}, IF({Record check}, ${Q(TEXT.heldSlot)}, IF(AND(COUNTA({Product record intact}) > 0, MIN({Product record intact}) = 0), ${Q(TEXT.heldProduct)}, ${Q(TEXT.heldGuide)}))),
 IF({Waived}, "Not needed: " & {Recorded summary} & IF({Change pending}, ${Q(STATUS.waivedPending)}, ""),
 IF({Key count} > 1, ${Q(STATUS.pair)},
+IF({Live shot count} > 1, ${Q(STATUS.shotPair)},
 IF(NOT({In adopted plan}), "Not in the adopted plan: " & ${reason},
 IF({Change pending}, ${Q(TEXT.changePending + STATUS.pendingTail)},
 IF(AND(NOT({Matches its shot}), {Covered}, NOT(${byDecision})), IF({Operative fulfillment} = "An accepted image", ${Q(TEXT.coveredPickup)}, ${Q(TEXT.coveredRefusal)}),
@@ -655,7 +669,7 @@ IF({In use count} > 0, ${Q(STATUS.currentByHand)},
 IF({Live shot count} > 0, "Being made: " & ARRAYJOIN({Shot name}),
 IF(AND({Operative fulfillment} = "Share", FIND("Nothing was shared", ARRAYJOIN({Request shot planning note})) > 0, FIND(ARRAYJOIN({Product name}), ARRAYJOIN({Request shot planning note})) > 0), ${Q(STATUS.notShared)},
 IF(OR({Operative fulfillment} = "Make", {Operative fulfillment} = "Share"), ${Q(STATUS.waiting)},
-${Q(STATUS.needsImage)}))))))))))))))))))))`;
+${Q(STATUS.needsImage)})))))))))))))))))))))`;
 }
 
 // Planned (§7.2): Plan check names the first condition missing, or reads "Planned".

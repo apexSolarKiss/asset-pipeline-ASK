@@ -759,6 +759,10 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 **Payloads that Snapshot keeps,** and that S4 and S5 parse (§6, §7.6). Snapshot copies them verbatim, and its change is outside this folder:
 - **Slots kept** is the shot's Current slot basis: one line per active slot the shot fills, `slot ID ‖ Kept definition line ‖ product ID ‖ receiving basis`. A shot that fills more than one slot keeps the receiving basis without the size: `share signature ⟨size omitted⟩`, otherwise `share signature ⟨size: Size⟩`.
 - **Products kept** is the shot's Current product basis: one line per line in the shot, `product ID | share key | Facts without size | Size | size shown` (or `size omitted`).
+- **A kept record is one line,** so a line break in a payload is always a record boundary.
+  - A guide slot's View and a product's Must stay true are long text, and can hold a line break. Definition line, Share signature and Product basis line write each line break in what they carry as `⏎`. So every line above, every Definition line, and each slot line of a use decision's basis is one line.
+  - What a prompt or a standard is made from keeps its line breaks: Kept view, Facts without size, Product facts (lines), Shared facts line and the prompt lines.
+  - A collection shot's Kept guide plan is a kept record too. S2 and S3 write each value on one line, with `⏎` for a line break, and Effective placement, Effective direction and Lineage turn `⏎` back into a line break.
 
 ## Formula texts
 
@@ -849,7 +853,7 @@ RECORD_ID()
 **Guide slots › Definition line** · New
 
 ```text
-"⟦" & {Guide ID} & " | " & {Guide-slot ID} & " | " & {Name} & " | " & {Position} & " | " & {Placement label} & " | " & {Required} & " | " & {Fill rule} & " | " & {Includes} & " | " & {Choose count} & " | " & IF({Retired}, "retired", "active") & " | " & {View} & "⟧"
+SUBSTITUTE("⟦" & {Guide ID} & " | " & {Guide-slot ID} & " | " & {Name} & " | " & {Position} & " | " & {Placement label} & " | " & {Required} & " | " & {Fill rule} & " | " & {Includes} & " | " & {Choose count} & " | " & IF({Retired}, "retired", "active") & " | " & {View} & "⟧", "\n", "⏎")
 ```
 
 **Guide slots › Is active** · New
@@ -907,7 +911,7 @@ RECORD_ID()
 **Products › Share signature** · New
 
 ```text
-{Product share key} & " | " & {Facts without size}
+SUBSTITUTE({Product share key} & " | " & {Facts without size}, "\n", "⏎")
 ```
 
 **Products › Product facts (lines)** · New; proposal: ends with the live Product facts' image time
@@ -1057,7 +1061,7 @@ RECORD_ID()
 **Product lines › Product basis line** · New
 
 ```text
-ARRAYJOIN({Product ID}) & " | " & ARRAYJOIN({Product share key}) & " | " & ARRAYJOIN({Facts without size}) & " | " & ARRAYJOIN({Size})
+SUBSTITUTE(ARRAYJOIN({Product ID}) & " | " & ARRAYJOIN({Product share key}) & " | " & ARRAYJOIN({Facts without size}) & " | " & ARRAYJOIN({Size}), "\n", "⏎")
 ```
 
 </details>
@@ -1368,6 +1372,7 @@ IF(LEFT({Withdrawal}, 20) = "Withdrawal not valid", {Withdrawal},
 IF({Held}, IF({Kept plan check}, "Edited by hand: plan it in a new version of the request", IF({Record check}, "Edited by hand: check this slot's decision, then press Record decision to record it again", IF(AND(COUNTA({Product record intact}) > 0, MIN({Product record intact}) = 0), "Edited by hand: check the product's assignment, then press Record decision on the product", "Edited by hand: adopt the guide again"))),
 IF({Waived}, "Not needed: " & {Recorded summary} & IF({Change pending}, ", and a change waits for its decision record", ""),
 IF({Key count} > 1, "Another record has this slot's key: see the slot pair check",
+IF({Live shot count} > 1, "More than one live shot fills this slot: see the shot pair check",
 IF(NOT({In adopted plan}), "Not in the adopted plan: " & IF(SUM({Request superseded}) > 0, "the request was superseded",
   IF({Kept guide ID} != ARRAYJOIN({Assigned guide ID}), "the product was reassigned",
   IF({Kept product ID} != ARRAYJOIN({Line product ID}), "the line's product was changed",
@@ -1388,7 +1393,7 @@ IF({In use count} > 0, "Edited by hand: an application's Current was changed by 
 IF({Live shot count} > 0, "Being made: " & ARRAYJOIN({Shot name}),
 IF(AND({Operative fulfillment} = "Share", FIND("Nothing was shared", ARRAYJOIN({Request shot planning note})) > 0, FIND(ARRAYJOIN({Product name}), ARRAYJOIN({Request shot planning note})) > 0), "Not shared: the products' facts differ (see the Shot planning note)",
 IF(OR({Operative fulfillment} = "Make", {Operative fulfillment} = "Share"), "Waiting for Make shots",
-"Needs an image: a use decision for an accepted image that shows this product"))))))))))))))))))))
+"Needs an image: a use decision for an accepted image that shows this product")))))))))))))))))))))
 ```
 
 </details>
@@ -1423,7 +1428,7 @@ IF(COUNTA({Lines in shot}) = 0, "", SUBSTITUTE(ARRAYJOIN({Line product basis}, "
 
 ```text
 IF(ARRAYJOIN({Workflow}) = "Product pages", IF({Active slot products} = "", "", {Active slot products} & " " & IF({Active slots filled} > 1, SUBSTITUTE({Active placement labels}, "product page", "product pages"), {Active placement labels})),
-IF(ARRAYJOIN({Workflow}) = "Collection", REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "Placement: [^\n]*"), "^Placement: ", ""), {Placement}))
+IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "Placement: [^\n]*"), "^Placement: ", ""), "⏎", "\n"), {Placement}))
 ```
 
 **Shots › Prompt placement** · New
@@ -1436,14 +1441,14 @@ IF(ARRAYJOIN({Workflow}) = "Product pages", {Active placement labels}, {Effectiv
 
 ```text
 IF(ARRAYJOIN({Workflow}) = "Product pages", {Active views} & IF({Active slots filled} > 1, " This image is used for more than one size: nothing in it may show the product's size.", ""),
-IF(ARRAYJOIN({Workflow}) = "Collection", REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "View: [^\n]*"), "^View: ", ""), {Shot direction}))
+IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "View: [^\n]*"), "^View: ", ""), "⏎", "\n"), {Shot direction}))
 & IF(AND(ARRAYJOIN({Workflow}) != "Walkthrough", ARRAYJOIN({Workflow}) != "", {Exception}, {Exception reason}), " Exception: " & {Exception}, "")
 ```
 
 **Shots › Lineage** · New
 
 ```text
-IF(ARRAYJOIN({Workflow}) = "Product pages", {Active lineage}, IF(ARRAYJOIN({Workflow}) = "Collection", REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "Lineage: [^\n]*"), "^Lineage: ", ""), ""))
+IF(ARRAYJOIN({Workflow}) = "Product pages", {Active lineage}, IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT({Kept guide plan}, "Lineage: [^\n]*"), "^Lineage: ", ""), "⏎", "\n"), ""))
 ```
 
 **Shots › Confirmation current** · New
@@ -1675,10 +1680,11 @@ IF({Withdrawn}, "Withdrawn duplicate",
 IF({Current check}, "Edited by hand",
 IF(AND(NOT({Current}), COUNTA({Replaced by})), "Replaced by " & ARRAYJOIN({Replaced by name}),
 IF(NOT({Current}), "Alternate",
+IF(AND({Basis} = "Use decision", COUNTA({Use decision}) = 0), {Eligibility},
 IF(NOT({Basis finished}), IF({Basis} = "Use decision", "Unfinished: press Apply this decision again", "Unfinished: press Retry applications on the accepted image"),
 IF(FIND({Application ID}, ARRAYJOIN({Slot in-use replaces})), "Replacement unfinished: press Apply this decision again on the replacing decision",
 IF(SUM({Slot in use count}) - 1 - SUM({Replaces in use}) > 0, "Conflict",
-IF({Eligibility} != "Holds", {Eligibility}, "In use"))))))))
+IF({Eligibility} != "Holds", {Eligibility}, "In use")))))))))
 ```
 
 **Applications › Delivery name** · New
@@ -1891,7 +1897,7 @@ IF({Decided basis} = "", "Not applied", IF({Applied}, IF(LEFT({Result}, 15) = "A
   - each active Make slot that is ok and has no shot that counts gets its own shot, with Made as Make, its line, its Pair key and the slot, all in the create call. A slot still linked to a Withdrawn shot is relinked to the new shot by an update of its own, after the create;
   - active Share slots that are ok are grouped by guide slot and share key, and a group with one share signature gets one shot, or joins its existing shot where the signatures are equal and that shot has no accepted image;
   - a group whose facts differ gets none.
-- **Does, on a Collection request:** one shot per active guide slot of the request's adopted, Complete collection guide that has no shot, with its Kept guide plan, Made as Collection and Pair key.
+- **Does, on a Collection request:** one shot per active guide slot of the request's adopted, Complete collection guide that has no shot, with its Kept guide plan, Made as Collection and Pair key. The plan has one value per line, and a line break in a value (a View of two lines) is written `⏎`.
 - **Does, on other workflows:** a note that the request's shots are written in it.
 - **Writes:** new Shots, created with their slots (the "Slots filled" side of the link); a slot's own Shot link where it joins a shot or is relinked from a Withdrawn one; the request's Shot planning note.
 - **Never:** writes an existing shot's own fields, joins an accepted shot, shares across differing facts, or changes a fulfillment or a decision.
@@ -1972,7 +1978,7 @@ IF({Decided basis} = "", "Not applied", IF({Applied}, IF(LEFT({Result}, 15) = "A
 - **Does, on a slot:** it refreshes that slot's kept plan if it is in reach. A slot whose recorded fulfillment no longer matches its shot, or that its accepted shot's acceptances don't cover, is detached first, with its Detach log, in the same update. On an unaccepted shot that still matches, it points to the shot's Replan.
   - **The slot's shot** is its linked shot that isn't Withdrawn. A slot linked only to Withdrawn shots is treated as having no shot: it is refreshed if in reach, and S2 relinks it.
   - **GPT-A's route:** a slot that an acceptance of its shot covers, whose recorded fulfillment is "An accepted image", is never detached. It stays on its shot, is refreshed if in reach, and its result repeats the route's guidance: apply a use decision with Replace. Any other covered slot whose fulfillment no longer matches is refused (§7.5).
-- **Does, on a collection shot without an accepted image:** it refreshes the Kept guide plan.
+- **Does, on a collection shot without an accepted image:** it refreshes the Kept guide plan, one value per line, as S2 writes it.
 - **Writes:**
   - the refreshed kept-plan fields, with Kept plan written at;
   - Lines in shot on a product-page shot;
@@ -2117,7 +2123,7 @@ IF({Decided basis} = "", "Not applied", IF({Applied}, IF(LEFT({Result}, 15) = "A
 - **Trigger:** the Apply this decision button on a use decision.
 - **Does,** in v6 §7.7's five steps:
   1. An applied decision does nothing. A decision whose own record was edited by hand is ended "Applied in part", after finishing any replacement it had started.
-  2. The first press checks the decision as entered. A refusal writes only the Result, naming each refused slot.
+  2. The first press checks the decision as entered. A refusal writes only the Result, naming each refused slot and the condition that stops it. When a slot's own fields show an image in use that this run's read of the applications didn't include, the refusal says so: "it already has an image in use: a use decision with Replace can change it", or, under Replace, "an image came into use on it after this run read its applications: press Apply this decision again".
   3. It fixes the decision: Decided basis, Decided selection, Decided at and Decision label, in one update.
   4. It applies one slot at a time, keyed `ud:` + decision ID + `/` + slot ID, deciding for each slot whether it is applied, superseded, ended (final) or waiting. A superseded or ended slot is recorded in Ended slots at once, and a later press reports it from there without checking it again.
   5. Unless a slot waits, it writes the Result and ticks Applied, the last write.
@@ -2367,6 +2373,7 @@ Each of these throws, writes nothing after it, and shows in the automation's run
   - The checks are observed-state checks, with no exclusion.
   - A change made after a run's read and before its write isn't seen by that run. Movement after a run's final read is seen only by the formulas and the next press.
   - Nothing is all-or-nothing across two writes.
+- **The character `⏎` in a View or a Must stay true.** A kept record writes a line break as `⏎`, so an authored `⏎` reads back as a line break in a collection shot's direction, and a definition line can't tell the two apart.
 - **Reordering a guide's slot links.** The Slot definitions rollup follows link order, so a reorder reads as a change and unadopts the guide, which is the fail-safe direction. Whether the rollup can be sorted by position is for the build to find (T24).
 - **Outside this unit:** technical renditions, creative derivatives, export or delivery, assignment by rule or agent, and applications for collection, marketing or campaign destinations (§0).
 
@@ -2418,7 +2425,7 @@ Where v6 is silent or ambiguous, the source takes the reading below, the one mos
   - A basis line joins its fields with ` ‖ `: slot ID, Kept definition line, product ID, receiving basis.
   - A receiving basis reads `share signature ⟨size: X⟩`, or `share signature ⟨size omitted⟩` without the size.
   - A Kept destination reads `Kept definition line ‖ product ID`.
-- **Collection shots.** The formulas read the Kept guide plan's lines that begin `Placement: `, `View: ` and `Lineage: `, and find the guide slot's Definition line in it. S2 writes six lines in that form: Placement, View, Lineage, Includes, Choose count and Definition.
+- **Collection shots.** The formulas read the Kept guide plan's lines that begin `Placement: `, `View: ` and `Lineage: `, and find the guide slot's Definition line in it. S2 writes six lines in that form: Placement, View, Lineage, Includes, Choose count and Definition. Each value is on its one line, with `⏎` for a line break in it ([Payloads](#schema)), and the formulas turn `⏎` back into a line break. S3 rewrites the plan the same way.
 - **Product facts.**
   - Facts without size is the live Product facts text without the product's name, its "Product image as of" time and its size: `Must stay true: … Material: …. Finish: ….`. The name and the image time differ between two sizes of one style and color, so they can't be in the Share signature.
   - Product facts (lines) is the share key, `: `, Facts without size, ` Size: <Size>.` and the live Product facts' closing clause, ` Product image as of <time> UTC.`.
@@ -2645,7 +2652,7 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
 | v6 row | Local part | What stays copy-only |
 |---|---|---|
 | T2b | T2b-local, a forced double press of S1 | what a real double press does |
-| T3b | T3b-local, a forced double press of S2; T3b-withdrawn, its duplicate only ticked Withdrawn | what a real double press does |
+| T3b | T3b-local, a forced double press of S2; T3b-withdrawn, its duplicate only ticked Withdrawn; T3b-status, the slot's Status while both shots are live | what a real double press does |
 | T12, U1 | T12-s4, S4's part | Accept, Approved for, the pages |
 | T20 | T20-s1, S1's part and the formulas | the shots, G1, Accept and pages |
 | T21, U22 | U22-local | the guide edit in Airtable, the pages |
@@ -2653,10 +2660,18 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
 | T37 | T37-local, T37-s3, T37-s4s5 | real last-modified behaviour, the within-a-minute limit in Airtable, field permissions |
 | T41 | T41-local | the clearing in Airtable, the pages |
 | U13 | U13-local | Accept's alternates in Airtable |
+| U29 | U29-local, the formulas' reading of a deleted use decision | the deletion in Airtable, and the pages |
 
-**Copy only, with no local test:** T3c, T6, T7, T8, T8d, T13, T16, T17, T18, T19, T32, T34, T36, T38, U8, U9, U11, U28 and U29. Each needs Airtable's own formulas, lookups, automations, pages or concurrency. U9's legacy-map logic is exercised locally by U23.
+**Copy only, with no local test:** T3c, T6, T7, T8, T8d, T13, T16, T17, T18, T19, T32, T34, T36, T38, U8, U9, U11 and U28. Each needs Airtable's own formulas, lookups, automations, pages or concurrency. U9's legacy-map logic is exercised locally by U23.
 
 **Other cases:**
+- **Kept records and the recovery texts** (`tests/kept-records.test.mjs`, from the Stage-2 review of PR #456):
+  - ML-collection and ML-collection-s3: a collection guide slot's View of two lines, through adoption, S2, S3, Snapshot's stand-in, the prompt and the standard;
+  - ML-pages: a product-page View of two lines on a product whose Must stay true has two, through Snapshot's stand-in, an acceptance and S4;
+  - ML-facts: a Must stay true of two lines, through Products kept and S5, matched by its kept facts and with Facts reviewed;
+  - FORMULA-agree: the changed formula texts, read literally, give their functions' values on those records;
+  - TEXT-kept-break: S2's and S3's `⏎` is the formulas';
+  - U29-local, T3b-status and U20-race: a deleted use decision's State, a slot with two live shots, and S5's refusal when an image comes into use during its run.
 - **GPT-A, GPT-A-later, GPT-B-withdrawn, GPT-C:** the clarifications above. GPT-B-withdrawn-stale is a slot whose only shot is Withdrawn, made stale by an adopted change: its step reads "press Replan on this slot", and slot-level Replan refreshes it.
 - **Negative controls,** each a mutated copy of a script or formula, showing the check that guards a mechanism failing for the reason it exists:
 
@@ -2677,6 +2692,13 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
   | CTRL-LIVE-ready | Ready's "has never had an image" guard (held labels on every candidate) | LIVE-7.8: an image candidate stays "Ready to generate" |
   | CTRL-STD-image | the product image's time in Product facts (lines) and Shared facts line | STD-image: a candidate made from a replaced image reads changed |
   | CTRL-U9 | S5's untrimmed read of a slot's receiving basis (it trims) | U9-unstyled: a slot whose product has no style or color is applied |
+  | CTRL-ML-collection, CTRL-ML-collection-s3 | `⏎` in the kept guide plan (S2 or S3 writes the View as authored) | ML-collection, ML-collection-s3: the direction, prompt and standard keep the second line |
+  | CTRL-ML-pages | `⏎` in Definition line and Share signature | ML-pages: S4 applies after the acceptance |
+  | CTRL-ML-facts | `⏎` in Product basis line | ML-facts: S5 finds the product among the source's inputs |
+  | CTRL-FORMULA-agree | Current product basis's function as fbc4f24 had it (the size word once per product) | FORMULA-agree |
+  | CTRL-U29 | State's decision-record branch (it checks Basis finished first) | U29-local: no retry is offered |
+  | CTRL-T3b-status | the slot Status's shot-pair branch | T3b-status |
+  | CTRL-U20-race | S5's refusal text (it names Pickup ok) | U20-race |
 
   Each control also checks something only a mutated run that finished produces: that the script ran to the end, or the result text it writes. So a crash or a stall can't pass for the guard failing.
 
@@ -2707,7 +2729,7 @@ The tests show the scripts' logic on a simulated base. They don't show what Airt
 - **The button trigger.** Whether it can pass the clicking user as `account` is unverified.
 - **Snapshot, Accept and G1.** Their behaviour here is the fixtures' stand-ins, not the automations: the Planned gate, the kept payloads (Standard used, Prompt used, Intended use, the image copies, Slots kept, Products kept), and Accept's record (Recorded as, Candidate record no., Shot, Image, Approved for, Standard, Accepted by and its ID). That Accept writes the accepted record's Shot as its candidate's shot, which Shot standard now reads, is the copy's to confirm.
 - **The two existing rollups' aggregations** (Acceptance coverage, Candidate is test) aren't in the connector's schema read. The copy's UI shows them ([Choices](#choices-made-in-the-source)), and the sim now gives the same. Its records show each existing shot with one acceptance, its Acceptance coverage "Current standard", and Candidate is test 0 on both accepted records.
-- **A newline in a guide slot's View** would break the line-based parsing of Slots kept and Products kept. S4 throws on a malformed line; S5 tolerates it in Decided basis.
+- **A line break in a View or a Must stay true.** A kept record carries it as `⏎` ([Payloads](#schema)). ML-collection, ML-collection-s3, ML-pages and ML-facts take a two-line View and Must stay true through the formulas' functions, Snapshot's stand-in, S2, S3, S4 and S5. FORMULA-agree reads the changed texts literally and compares them with those functions. Airtable's own reading of the texts is the copy's to show.
 - **Noted for review:**
   - S2's note also lists slots that left the plan, which is noisy, and an old slot can share a name with its new slot.
   - Replan copies the guide's current Adopted version even when a slot's line is unchanged, so a version-only refresh changes the shot's lineage, and its earlier candidates read "changed".

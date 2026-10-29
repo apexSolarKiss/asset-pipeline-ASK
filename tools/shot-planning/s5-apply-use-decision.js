@@ -280,7 +280,10 @@ function slotRefusal(s, src, replace, inUse, reviewed) {
     if (!pickup && !ofItsShot) return `its fulfillment is ${s.op}, and the source isn't an acceptance of its shot`;
   } else {
     if (!pickup) return `its fulfillment is ${s.op}: it is to be ${s.op === 'Make' ? 'made' : 'shared'}, not picked up`;
-    if (!s.pickupOk) return "its Pickup ok doesn't hold";
+    // Each other term of the slot's Pickup ok is checked above from the same read, so what is left
+    // is an image in use on the slot that this run's read of the applications didn't include.
+    if (!s.pickupOk) return replace ? 'an image came into use on it after this run read its applications: press Apply this decision again'
+      : 'it already has an image in use: a use decision with Replace can change it';
   }
   return productRefusal(s, src, reviewed).why;
 }

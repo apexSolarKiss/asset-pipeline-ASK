@@ -39,6 +39,10 @@ const bind = (t, key, ...types) => {
   return f.id;
 };
 const TEXT = ['singleLineText', 'multilineText'];
+// The kept guide plan is a kept record, one value per line: a line break in a value (a View of two
+// lines) is written ⏎, and the shot's Effective placement, Effective direction and Lineage read it back.
+const KEPT_BREAK = '⏎';
+const oneLine = v => String(v).split('\n').join(KEPT_BREAK);
 const LOOKUP = ['multipleLookupValues', 'rollup', 'formula'];
 const R = {
   lines: bind('R', 'requestLinesField', 'multipleRecordLinks'),
@@ -301,12 +305,12 @@ async function replanCollection(shot, at, guides, guideSlots, done) {
   if (lineOf(kept, 'Includes') !== includes || lineOf(kept, 'Choose count') !== (choose == null ? '' : String(choose))) return done('Not replanned: its obligation changed (Includes or Choose count): plan it in a new version of the request.');
   const version = num(guide.getCellValue(G.version));
   const plan = [
-    `Placement: ${text(gs.getCellValue(GS.placement))}`,
-    `View: ${text(gs.getCellValue(GS.view))}`,
-    `Lineage: Shot guide: ${text(guide.getCellValue(G.name))}, version ${version}, ${text(gs.getCellValue(GS.name))} (guide ${gid}, guide slot ${gs.id}).`,
+    `Placement: ${oneLine(text(gs.getCellValue(GS.placement)))}`,
+    `View: ${oneLine(text(gs.getCellValue(GS.view)))}`,
+    `Lineage: ${oneLine(`Shot guide: ${text(guide.getCellValue(G.name))}, version ${version}, ${text(gs.getCellValue(GS.name))} (guide ${gid}, guide slot ${gs.id}).`)}`,
     `Includes: ${includes}`,
     `Choose count: ${choose == null ? '' : choose}`,
-    `Definition: ${text(gs.getCellValue(GS.line))}`,
+    `Definition: ${oneLine(text(gs.getCellValue(GS.line)))}`,
   ].join('\n');
   await tables.SH.updateRecordAsync(recordId, { [SH.plan]: plan, [SH.result]: `Replan, ${at}: kept guide plan refreshed from ${text(guide.getCellValue(G.name))}, version ${version}.` });
   console.log('refreshed the kept guide plan');
