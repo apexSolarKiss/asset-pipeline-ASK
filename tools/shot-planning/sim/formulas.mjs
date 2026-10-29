@@ -304,6 +304,8 @@ IF(AND({Carries decision}, OR({Pending use decisions} > 0, SUM({Duplicate has de
       r => bit(N(r.get('Validly withdrawn')) === 0 && N(r.get('Waived')) === 0 && N(r.get('Held')) === 0 && (B(r.get('In adopted plan')) || (B(r.get('Stale by adoption')) && B(r.get('Obligation unchanged')))))),
     'Active': F('IF(AND({In adopted plan}, {Validly withdrawn} = 0, {Waived} = 0), 1, 0)',
       r => bit(B(r.get('In adopted plan')) && N(r.get('Validly withdrawn')) === 0 && N(r.get('Waived')) === 0)),
+    // §11: the Product pages page groups by this, descending, so inactive slots sit in a last group.
+    'Page group': F('IF({Active} = 1, "On the page", "Not in use")', r => (N(r.get('Active')) === 1 ? 'On the page' : 'Not in use')),
     // v6 §7.3: a Withdrawn shot doesn't count; Live shot count and the Shot … lookups skip it.
     'Matches its shot': F('IF(OR({Live shot count} = 0, ARRAYJOIN({Shot made as}) = {Operative fulfillment}), 1, 0)',
       r => bit(N(r.get('Live shot count')) === 0 || AJ(r.get('Shot made as')) === S(r.get('Operative fulfillment')))),

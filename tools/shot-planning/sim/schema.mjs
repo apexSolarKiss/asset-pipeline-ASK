@@ -317,6 +317,7 @@ const TABLES = [
     ['Waived', 'formula'],
     ['Replan reach', 'formula'],
     ['Active', 'formula'],
+    ['Page group', 'formula'],
     ['Matches its shot', 'formula'],
     ['Shot accepted', 'formula'],
     ['Covered', 'formula'],
@@ -367,8 +368,9 @@ const TABLES = [
     ['Pair key', 'text'],
     ['Exception', 'long'],
     ['Exception reason', 'long'],
-    ['Exception set by', 'text'],
-    ['Exception set at', 'date'],
+    // Who last set the exception, and when: Airtable's own record of the edit (v3), not typed in.
+    ['Exception set by', 'modifiedBy', { watch: ['Exception', 'Exception reason'] }],
+    ['Exception set at', 'modified', { watch: ['Exception', 'Exception reason'] }],
     ['Withdrawn', 'checkbox'],
     ['Note', 'long'],
     ['Test', 'checkbox'],
@@ -596,7 +598,7 @@ const TABLES = [
 const KIND = {
   text: 'singleLineText', long: 'multilineText', number: 'number', checkbox: 'checkbox', select: 'singleSelect',
   link: 'multipleRecordLinks', attachments: 'multipleAttachments', date: 'dateTime', autonumber: 'autoNumber',
-  formula: 'formula', lookup: 'multipleLookupValues', rollup: 'rollup', count: 'count', modified: 'lastModifiedTime',
+  formula: 'formula', lookup: 'multipleLookupValues', rollup: 'rollup', count: 'count', modified: 'lastModifiedTime', modifiedBy: 'lastModifiedBy',
   created: 'createdTime',
 };
 export const STORED = new Set(['text', 'long', 'number', 'checkbox', 'select', 'link', 'attachments', 'date']);

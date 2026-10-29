@@ -150,6 +150,24 @@ add('K9-candidates-filter', "Candidates › Shot withdrawn, the Candidates page'
   t.check('its shot Withdrawn: 1', w.get('Candidates', c, 'Shot withdrawn') === 1, w.get('Candidates', c, 'Shot withdrawn'));
 });
 
+add('T8-setter', "Exception set by and Exception set at are Airtable's record of the last edit to Exception or Exception reason (v3): the kept standard names who set it, an edit elsewhere moves neither, and neither can be typed", async t => {
+  const b = bath(new World({ actor: 'ASK' })), { w } = b;
+  const mk = fx.request(w, { name: 'Bath message', workflow: 'Marketing', products: [b.P.vessel] });
+  const id = w.add(SH, { Name: 'Message', Brief: [mk.id], Placement: 'Website hero', 'Shot direction': 'The vessel in a calm room.', 'Lines in shot': [mk.lines[0]] });
+  w.advance(60000); w.set(SH, id, { Exception: 'Show the lid off, beside it.', 'Exception reason': 'the page shows the opening' });
+  const setAt = w.iso(w.clock);
+  t.check('set by the person who edited them, at that edit', shot(w, id, 'Exception set by') === 'ASK' && shot(w, id, 'Exception set at') === setAt, [shot(w, id, 'Exception set by'), shot(w, id, 'Exception set at')]);
+  t.check('the standard names the setter', shot(w, id, 'Current standard').endsWith('\nException reason: the page shows the opening. Set by: ASK.'), shot(w, id, 'Current standard'));
+  w.advance(60000); w.set(SH, id, { Note: 'A note.' });
+  t.check('an edit to another field moves neither', shot(w, id, 'Exception set by') === 'ASK' && shot(w, id, 'Exception set at') === setAt, shot(w, id, 'Exception set at'));
+  w.actor = 'Another editor'; w.advance(60000); w.set(SH, id, { 'Exception reason': 'the page shows the glaze inside' });
+  t.check('another person editing the reason: set by and set at follow, and so does the standard', shot(w, id, 'Exception set by') === 'Another editor' && shot(w, id, 'Exception set at') === w.iso(w.clock)
+    && shot(w, id, 'Current standard').endsWith('Set by: Another editor.'), [shot(w, id, 'Exception set by'), shot(w, id, 'Exception set at')]);
+  let refused = '';
+  try { w.set(SH, id, { 'Exception set by': 'Someone else' }); } catch (e) { refused = e.message; }
+  t.check('neither can be typed', /computed/.test(refused), refused);
+});
+
 add('T3b-local', 'A double press of S2 (forced interleaving): the outcome is recorded; the duplicate shows in the shot pair check, and its slot is not ok until it is resolved (Copy records what Airtable does)', async t => {
   const b = bath(new World()), { w } = b;
   await adopt(w, b.vessel.id); await assign(w, b.P.vessel, b.vessel.id); await pressS1(w, b.req.id);

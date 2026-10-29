@@ -5,7 +5,7 @@
 //
 // API for tests and for later parts (S2–S5 add tests on this without changing it):
 //
-//   const w = new World(opts)          opts: seed, torn, tick, clock, lmtOnUnchangedWrite, formulas
+//   const w = new World(opts)          opts: seed, torn, tick, clock, lmtOnUnchangedWrite, actor, formulas
 //     seed                 drives record IDs and torn reads
 //     torn                 a query sees every record committed before it began, and only some of
 //                          those created while it was in flight (as N2's torn mode)
@@ -14,6 +14,9 @@
 //     lmtOnUnchangedWrite  false (default): a last-modified time moves only when a watched value
 //                          changes; true: any write to a watched field moves it. v6 allows either;
 //                          the copy records which Airtable does (T37)
+//     actor                the person a setup or hand edit is made by, as a last-modified-by field
+//                          shows it (default 'ASK'). No script writes a field one of those watches,
+//                          so a run's write is shown as 'a script', a name the sim doesn't claim
 //     formulas             { [table]: { [field]: fn } } overrides, for negative controls
 //
 //   Setup and hand edits, outside any run (Airtable's UI or connector, by a person):
@@ -58,7 +61,7 @@ const clone = v => (v == null ? v : JSON.parse(JSON.stringify(v)));
 const same = (a, b) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
 
 export class World {
-  constructor({ seed = 1, torn = false, tick = 250, clock = Date.UTC(2026, 9, 28, 9, 0, 0), lmtOnUnchangedWrite = false, formulas = {} } = {}) {
+  constructor({ seed = 1, torn = false, tick = 250, clock = Date.UTC(2026, 9, 28, 9, 0, 0), lmtOnUnchangedWrite = false, actor = 'ASK', formulas = {} } = {}) {
     this.schema = buildSchema();
     this.tables = new Map();
     for (const t of this.schema.tables) {
@@ -76,7 +79,7 @@ export class World {
     for (const [tn, fs] of Object.entries(FORMULAS)) for (const fn of Object.keys(fs)) {
       const f = this.t(tn).byKey.get(fn); if (!f || f.kind !== 'formula') throw new Error(`sim: formulas.mjs has ${tn}.${fn}, which the schema doesn't declare as a formula`);
     }
-    this.torn = torn; this.tick = tick; this.clock = clock; this.lmtOnUnchangedWrite = lmtOnUnchangedWrite;
+    this.torn = torn; this.tick = tick; this.clock = clock; this.lmtOnUnchangedWrite = lmtOnUnchangedWrite; this.actor = actor;
     this.idRng = mulberry32(seed * 7 + 3); this.rng = mulberry32(seed * 13 + 5);
     this.pending = []; this.applied = 0; this.writes = [];
     this.cache = new Map(); this.computing = new Set();
@@ -129,6 +132,7 @@ export class World {
     const rec = t.records.get(id); if (!rec) return null;
     if (STORED.has(f.kind) || f.kind === 'autonumber') return rec.cells[f.id] ?? null;
     if (f.kind === 'modified') return rec.lmt[f.id] != null ? this.iso(rec.lmt[f.id]) : null;
+    if (f.kind === 'modifiedBy') return rec.lmb[f.id] ?? null;
     if (f.kind === 'created') return this.iso(rec.created);
     const key = `${t.id}|${id}|${f.id}`;
     if (this.cache.has(key)) return this.cache.get(key);
@@ -166,6 +170,7 @@ export class World {
       case 'singleSelect': return v ? { id: `sel${v}`, name: v, color: 'grayLight2' } : null;
       case 'multipleRecordLinks': { const tt = this.t(f.opts.table); return v && v.length ? v.map(x => ({ id: x, name: this.primaryName(tt, x) })) : null; }
       case 'formula': case 'rollup': return v === '' ? null : clone(v);
+      case 'lastModifiedBy': return v ? { id: `usr${v}`, email: '', name: v } : null;
       default: return v === '' ? null : clone(v);
     }
   }
@@ -195,17 +200,21 @@ export class World {
         for (const x of after) if (!before.includes(x)) { const r2 = tt.records.get(x); const arr = r2.cells[inv.id] || []; if (!arr.includes(id)) { r2.cells[inv.id] = [...arr, id]; sideEffects.push([tt, x, inv.id]); } }
       }
     }
-    this.stamp(t, rec, this.lmtOnUnchangedWrite || create ? new Set([...touched, ...changed]) : changed);
-    for (const [tt, x, fid] of sideEffects) this.stamp(tt, tt.records.get(x), new Set([fid]));
+    const who = by === 'run' ? 'a script' : this.actor;
+    this.stamp(t, rec, this.lmtOnUnchangedWrite || create ? new Set([...touched, ...changed]) : changed, who);
+    for (const [tt, x, fid] of sideEffects) this.stamp(tt, tt.records.get(x), new Set([fid]), who);
     this.cache.clear();
     this.writes.push({ table: t.name, id, fields: norm.map(([f]) => f.name), by, create });
   }
-  stamp(t, rec, fids) {
-    for (const f of t.fields) if (f.kind === 'modified' && f.opts.watch.some(n => fids.has(this.f(t, n).id))) rec.lmt[f.id] = this.clock;
+  stamp(t, rec, fids, who) {
+    for (const f of t.fields) {
+      if ((f.kind !== 'modified' && f.kind !== 'modifiedBy') || !f.opts.watch.some(n => fids.has(this.f(t, n).id))) continue;
+      if (f.kind === 'modified') rec.lmt[f.id] = this.clock; else rec.lmb[f.id] = who;
+    }
   }
   create(t, cells, { by, strict = false } = {}) {
     const id = this.newId();
-    t.records.set(id, { cells: {}, lmt: {}, created: this.clock });
+    t.records.set(id, { cells: {}, lmt: {}, lmb: {}, created: this.clock });
     for (const f of t.fields) if (f.kind === 'autonumber') t.records.get(id).cells[f.id] = ++t.auto;
     try { this.write(t, id, cells, { by, create: true, strict }); } catch (e) { t.records.delete(id); throw e; }
     return id;

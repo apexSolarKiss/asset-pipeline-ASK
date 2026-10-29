@@ -339,7 +339,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 
 </details>
 
-<details><summary><b>Product-page slots</b> (new table, 135 fields and 2 buttons)</summary>
+<details><summary><b>Product-page slots</b> (new table, 136 fields and 2 buttons)</summary>
 
 | Field | Type | Status |
 |---|---|---|
@@ -439,6 +439,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | Waived | Formula (below) | New |
 | Replan reach | Formula (below) | New |
 | Active | Formula (below) | New |
+| Page group | Formula (below) | New |
 | Matches its shot | Formula (below) | New |
 | Shot accepted | Formula (below) | New |
 | Covered | Formula (below) | New |
@@ -499,8 +500,8 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | Pair key | Single line text | New |
 | Exception | Long text | New |
 | Exception reason | Long text | New |
-| Exception set by | Single line text | New |
-| Exception set at | Date, with time | New |
+| Exception set by | Last modified by of: Exception, Exception reason | New |
+| Exception set at | Last modified time of: Exception, Exception reason | New |
 | Withdrawn | Checkbox | New |
 | Note | Long text | New |
 | Test | Checkbox | New |
@@ -1203,6 +1204,12 @@ IF(AND({Validly withdrawn} = 0, {Waived} = 0, {Held} = 0, OR({In adopted plan}, 
 
 ```text
 IF(AND({In adopted plan}, {Validly withdrawn} = 0, {Waived} = 0), 1, 0)
+```
+
+**Product-page slots › Page group** · New
+
+```text
+IF({Active} = 1, "On the page", "Not in use")
 ```
 
 **Product-page slots › Matches its shot** · New
@@ -2307,7 +2314,7 @@ IF({Decided basis} = "", "Not applied", IF({Applied}, IF(LEFT({Result}, 15) = "A
 
 **After installing:**
 - No other automation should watch the fields these scripts write.
-- On interface pages, keep the kept-plan fields and Issued numbers on no page, and Retry applications on no public page. The Product pages view shows Settled images only (K9, §11).
+- On interface pages, keep the kept-plan fields and Issued numbers on no page, and Retry applications on no public page. The Product pages view shows Settled images only (K9, §11). It groups by Page group, descending, then by Product name: inactive slots sit in a last group, Not in use, each with its Status (§11).
 - The Shots gallery's cards show Effective placement and Effective direction, and it leaves out shots whose Withdrawn is ticked. The Candidates gallery leaves out candidates whose Shot withdrawn is 1 (K9, §11). Both are page settings, made in the UI.
 - The scripts need a plan that runs scripts in automations. Every run, including one that stops or refuses, counts toward the plan's automation runs.
 
@@ -2444,6 +2451,8 @@ Where v6 is silent or ambiguous, the source takes the reading below, the one mos
 - **Counting links and files.** In the build copy a formula's COUNTA reads a link or attachment field as one value: Use decisions › Name read "→ 1 slots" with three slots linked, and a collection shot with all three of its request's lines read "it must include all the request's products" (U2, T6, T7). So a count comes from a Count field (Brief count and Lines in shot count on Shots, Duplicate of count on Product-page slots, Slot count on Use decisions), and COUNTA of a link or attachment field only tests for emptiness: `> 0`, `= 0`, or the COUNTA itself as a truth value. TEXT-counta checks every text for it, and CTRL-TEXT-counta is its control. A lookup is a list, so a lookup's COUNTA isn't affected.
 - **Has image** (Products, References) is 1 for exactly one file (v3, K8). A formula reads an attachment field as its files' text, joined by commas, so one file is a non-empty field with no comma in it. That is v3's reason for comma-free filenames (K8), and a file whose name has a comma reads 0, which stops its shot planning rather than passing a second file. The build copy showed COUNTA give 1 for two files (K8), so it isn't used. K8-has-image checks the sim's function.
 - **Candidates › Shot withdrawn** is a rollup of the shot's Withdrawn, `OR(values)`, which the Candidates page filters on (§11: "a filter that drops candidates on withdrawn shots"). v6 names the filter, not a field, and the live Candidates table has nothing to filter on.
+- **Product pages › Not in use.** §11 puts inactive slots in a last group, Not in use. A page groups by a field's values, so Page group names the two groups, "On the page" and "Not in use", from Active, and the page groups by it descending, then by product. Grouped by product and then Active, as the copy's page was first, an inactive slot sat under its own product, not in a last group (T40).
+- **Exception set by and set at** are Airtable's last-modified-by and last-modified time over Exception and Exception reason (v3: "Exception set by (last-modified-by) and Exception set at (last-modified time) over those two fields"; v6 keeps v3's). An earlier version of this folder made them a text and a date anyone could type, so the setter in the kept standard was whatever was typed (the build copy, T8 and T18). The kept standard reads the name Airtable shows for that person. T8-setter covers it.
 - **Membership belongs to the request.** v6 §7.2's membership row names the count rules only ("v3: All, or Choose with a current confirmation"), but T7 is "as v3", and v3's T7 and §5.2 also require every line in the shot to be one of its request's lines. So a collection or written shot isn't Planned while a line from another request is in it: "Not planned: it may include only its request's products". It compares the lines' Request IDs, made unique (Line request IDs), with the shot's Request ID, before the count rules. A product-page shot already holds only its slot's line (T7-membership).
 - **Test checkboxes.** Products, References and Briefs have no Test field in the live base, so each gets a new checkbox.
 - **New tables with a formula primary.** Product lines, Applications and Use decisions keep v6's display, a formula Name, as the primary. The connector can create a primary only as a stored field and can't change a field's type, so each table is created with "Name" as Single line text and the field is converted to its formula in the UI (Install, step 1). Applications and Use decisions list Name first for that reason.
@@ -2610,6 +2619,7 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
 | T1, T2, T4, T4b, T5, T8b, T14, T25, T26, T30b, T33, T42 | the same IDs (T25's row is Copy; its local case checks Complete) |
 | T3 | T3, T3-collection |
 | T4c | T4c, T4c-s3 |
+| T8 (Copy) | T8-setter checks the setter fields only |
 | T8c | T8c, T8c-s2 |
 | T9, T39 (CX5) | T9/CX5, T39/CX5, T39-s1 |
 | T10, T11 | T10, T11 |
@@ -2680,7 +2690,7 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
   - STD-image checks that replacing the product image a new-workflow shot attaches changes its standard, and that on a Share shot only the input product's image counts (Choices: Product facts);
   - TEXT-s3 and TEXT-s4s5 check the scripts' copies of Status texts against `sim/formulas.mjs`;
   - TEXT-counta checks that no formula counts a link or attachment field with COUNTA, and TEXT-readme that the README's formula texts are `sim/formulas.mjs`'s (Formula texts; Choices: Counting links and files);
-  - K8-has-image checks Has image's one-file rule, T7-membership a line from another request, and K9-candidates-filter the Candidates page's filter field (Choices);
+  - K8-has-image checks Has image's one-file rule, T7-membership a line from another request, K9-candidates-filter the Candidates page's filter field, and T8-setter that Exception set by and set at follow the last edit to the exception (Choices);
   - S4-guards covers S4's own refusals;
   - S2-guards covers S2's note for a slot that isn't ok but has a shot.
 

@@ -416,18 +416,19 @@ async function t40(t, opts = {}) {
   for (const clearReason of [false, true]) {
     const b = await bathPlanned(new World(opts)), { w } = b;
     const s = slotAt(w, b.L.towel, 2); const st = fx.settle(w, [s]); const app = st.apps[0];
-    t.check(`[${clearReason ? 'reason cleared' : 'reason kept'}] Settled`, placement(w, s) === 'Settled');
+    t.check(`[${clearReason ? 'reason cleared' : 'reason kept'}] Settled, in the page's first group`, placement(w, s) === 'Settled' && slot(w, s, 'Page group') === 'On the page');
     await recordSlot(w, s, { 'Not needed': true, 'Not needed reason': 'test: hanging not used' });
     t.check('waived, inactive, image Needs review with Current unchanged, not Settled', slot(w, s, 'Waived') === 1 && slot(w, s, 'Active') === 0 && placement(w, s) === 'Needs review'
       && w.get('Applications', app, 'Current') === true && appState(w, app) === 'Needs review: the slot is marked not needed');
-    t.check('its Status reads the recorded waiver (the Not in use group)', slot(w, s, 'Status') === 'Not needed: Not needed · decided by ASK · test: hanging not used', slot(w, s, 'Status'));
+    t.check('its Status reads the recorded waiver, in the Not in use group, which sorts last descending', slot(w, s, 'Status') === 'Not needed: Not needed · decided by ASK · test: hanging not used'
+      && slot(w, s, 'Page group') === 'Not in use' && ['On the page', 'Not in use'].sort().reverse()[1] === 'Not in use', [slot(w, s, 'Status'), slot(w, s, 'Page group')]);
     w.set(PS, s, { 'Not needed reason': 'test: hanging not used here' });
     t.check('reason edited without a press: still waived and not Settled; a change waits', slot(w, s, 'Waived') === 1 && placement(w, s) !== 'Settled' && slot(w, s, 'Status').endsWith(', and a change waits for its decision record'), slot(w, s, 'Status'));
     w.set(PS, s, { 'Not needed': false, ...(clearReason ? { 'Not needed reason': null } : {}) });
     t.check('Not needed unticked without a press: still waived and not Settled', slot(w, s, 'Waived') === 1 && slot(w, s, 'Active') === 0 && placement(w, s) !== 'Settled');
     const r = await pressS7Slot(w, s);
     t.check('S7 records the reopening, since it checks the values it records', r.ok && slot(w, s, 'Recorded not needed') == null && /^Recorded: Make/.test(slot(w, s, 'Record result')), slot(w, s, 'Record result'));
-    t.check('only now: active and Settled again', slot(w, s, 'Waived') === 0 && slot(w, s, 'Active') === 1 && placement(w, s) === 'Settled' && appState(w, app) === 'In use');
+    t.check('only now: active and Settled again, back on the page', slot(w, s, 'Waived') === 0 && slot(w, s, 'Active') === 1 && placement(w, s) === 'Settled' && appState(w, app) === 'In use' && slot(w, s, 'Page group') === 'On the page');
     // A draft departure on a Settled slot: the image stays Settled while new work is blocked.
     w.set(PS, s, { Fulfillment: 'An accepted image', 'Fulfillment reason': 'test: a pickup instead' });
     t.check('draft departure: still Settled; not ok, no pickup, a change waits', placement(w, s) === 'Settled' && slot(w, s, 'Slot ok') === 0 && slot(w, s, 'Pickup ok') === 0 && slot(w, s, 'Change pending') === TEXT.changePending);
@@ -604,7 +605,7 @@ function schemaProblems(w, extraText = {}) {
       if (f.kind !== 'count' && !w.t(l.opts.table).byKey.has(f.opts.field)) out.push(`${t.name}.${f.name}: ${l.opts.table} has no ${f.opts.field}`);
       if (f.opts.where && !w.t(l.opts.table).byKey.has(f.opts.where)) out.push(`${t.name}.${f.name}: ${l.opts.table} has no ${f.opts.where}`);
     }
-    if (f.kind === 'modified') for (const n of f.opts.watch) if (!t.byKey.has(n)) out.push(`${t.name}.${f.name} watches ${n}, not a field`);
+    if (f.kind === 'modified' || f.kind === 'modifiedBy') for (const n of f.opts.watch) if (!t.byKey.has(n)) out.push(`${t.name}.${f.name} watches ${n}, not a field`);
   }
   return out;
 }
