@@ -142,6 +142,57 @@ const FILL_TO_FULFILLMENT = { 'Made for each product': 'Make', [SHARE_RULE]: 'Sh
 
 const lineOf = (text, label) => { const m = new RegExp(`(?:^|\\n)${label}: ([^\\n]*)`).exec(S(text)); return m ? m[1] : ''; };
 
+// The texts installed in the live base before the rendition and continuity change (2026-10-30): the
+// README's texts until then. Each formula that change touches is built from its installed text by one
+// addition (swap), so the rest of it is that text, character for character (RND-text, CNT-text).
+export const INSTALLED = {
+  currentStandard: `IF(${NEW_WORKFLOW},
+ARRAYJOIN({Request standard}, "") & "\\nProducts, in image order:\\n" & IF({Active slots filled} > 1, ARRAYJOIN({Line shared facts}, "\\n"), ARRAYJOIN({Line facts}, "\\n")) & "\\nShot: " & {Name} & ", for " & {Effective placement} & ". " & {Effective direction} & IF({Lineage}, "\\n" & {Lineage}, "") & IF(AND({Exception}, {Exception reason}), "\\nException reason: " & {Exception reason} & ". Set by: " & {Exception set by} & ".", ""),
+${LIVE.currentStandard})`,
+  currentPrompt: `IF(${NEW_WORKFLOW},
+"Generate one single commercial photograph. Not a grid, collage, contact sheet or multi-image layout.\\n\\nShot: " & {Name} & ", for " & {Prompt placement} & ". " & {Effective direction} & "\\n\\n" & ARRAYJOIN({Request prompt}, "") & "\\n\\n${PRODUCTS_PARAGRAPH}\\n" & IF({Active slots filled} > 1, ARRAYJOIN({Line shared prompt lines}, "\\n"), ARRAYJOIN({Line prompt lines}, "\\n")) & "\\n\\n" & ARRAYJOIN({Reference prompt}, ""),
+${LIVE.currentPrompt})`,
+  eligibility: `IF(SUM({Slot active}) = 0, IF(SUM({Slot waived}) > 0, "Needs review: the slot is marked not needed", IF(SUM({Slot in adopted plan}) = 0, "Needs review: the slot is no longer in the adopted plan", "Needs review: the slot is withdrawn")),
+IF(ARRAYJOIN({Slot kept destination}) != {Kept destination}, "Needs review: the slot was replanned since this image was applied",
+IF(AND({Kept receiving basis} != ARRAYJOIN({Slot receiving basis}), {Kept receiving basis} != ARRAYJOIN({Slot receiving basis without size})), "Needs review: the product's facts changed since this image was applied",
+IF(ARRAYJOIN({Source complete}) != "Complete", "Needs review: its source record isn't complete",
+IF(AND({Basis} = "Use decision", COUNTA({Use decision}) = 0), "Needs review: its decision record is missing",
+IF(SUM({Slot held}) > 0, "Needs review: the slot is edited by hand",
+IF(AND({Basis} = "Use decision", SUM({Decision record intact}) = 0), "Needs review: its decision's record was edited by hand",
+"Holds")))))))`,
+  settledSourceImage: 'IF({State} = "In use", ARRAYJOIN({Source image}), "")',
+  decisionContent: `"Fulfillment: " & {Fulfillment} & "\\nFulfillment reason: " & {Fulfillment reason} & "\\nNot needed: " & IF({Not needed}, "yes", "no") & "\\nNot needed reason: " & {Not needed reason} & ${decisionFieldsText}`,
+  changePending: `IF(IF({Decided content} != "", {Decision content} != {Decided content}, OR({Fulfillment} != {Fill rule fulfillment}, {Not needed})), "${TEXT.changePending}", "")`,
+  planCheck: PLAN_CHECK_TEXT(),
+  // Read from the live base (Candidates › Acceptance), field names for field IDs.
+  acceptance: 'IF(COUNTA({Accepted images}) = 0, "Not accepted", IF(AND(ARRAYJOIN({Accepted record status}, "") != "", SUBSTITUTE(ARRAYJOIN({Accepted record status}, ""), "Complete", "") = ""), "Accepted for " & {Intended use}, "Recording acceptance…"))',
+};
+// The continuity reference's fixed limit, in the standard and in the prompt.
+export const CONTINUITY = {
+  notStandard: 'It does not decide the products, which products appear, or whether a person appears.',
+  notPrompt: 'It is not an authority for any product, for which products appear, or for whether a person appears: the product images and the shot above decide those.',
+  // Continuity check's texts (v2): a configured reference that isn't complete stops the shot's planning.
+  notNewWorkflow: 'Incomplete: a continuity reference is used only on a product-page, collection, marketing or campaign shot',
+  count: 'Incomplete: link exactly one candidate as the continuity reference',
+  image: 'Incomplete: the continuity reference needs exactly one image, with no comma in its name',
+  role: 'Incomplete: enter what the continuity reference may decide',
+  ready: 'Ready',
+  notPlanned: 'Not planned: the continuity reference is incomplete: ',
+};
+// Rendition state's texts, and the eligibility that a needed, unapproved rendition gives (v2). Approved
+// is the one approval S8 recorded: its ID, the copy of the file it approved, and its record, which
+// name this application's slot and accepted image.
+export const RENDITION = {
+  none: 'Needs a rendition: attach it with its operation and decision record, then press Approve rendition',
+  notApproved: 'Not approved: check the rendition, then press Approve rendition',
+  hand: 'Edited by hand: the approved rendition or its record no longer matches its approval; check the rendition, then press Approve rendition',
+  approved: 'Approved',
+  pending: 'Approved; a change waits: the rendition, its operation or its decision record changed in or after the second of its approval. The approved file is still delivered; press Approve rendition to approve the change',
+  needed: 'Needs review: it needs an approved rendition',
+};
+// The approval ID S8 writes: R8-<slot ID>-<accepted image ID>-<time>; the approved copy's filename begins with it and "__".
+export const approvalPrefix = (slotId, sourceId) => `R8-${slotId}-${sourceId}-`;
+
 export const FORMULAS = {
   'Shot guides': {
     'Guide ID': F('RECORD_ID()', r => r.id),
@@ -290,12 +341,17 @@ IF(AND({Carries decision}, OR({Pending use decisions} > 0, SUM({Duplicate has de
       r => (present(r.get('Decided content')) ? S(r.get('Recorded fulfillment')) : S(r.get('Fill rule fulfillment')))),
     'Departure': F('IF(OR({Operative fulfillment} != {Fill rule fulfillment}, AND({Recorded not needed}, {Kept required} = "Always")), 1, 0)',
       r => bit(S(r.get('Operative fulfillment')) !== S(r.get('Fill rule fulfillment')) || (B(r.get('Recorded not needed')) && S(r.get('Kept required')) === 'Always'))),
-    'Decision content': F(`"Fulfillment: " & {Fulfillment} & "\\nFulfillment reason: " & {Fulfillment reason} & "\\nNot needed: " & IF({Not needed}, "yes", "no") & "\\nNot needed reason: " & {Not needed reason} & ${decisionFieldsText}`,
-      r => `Fulfillment: ${S(r.get('Fulfillment'))}\nFulfillment reason: ${S(r.get('Fulfillment reason'))}\nNot needed: ${B(r.get('Not needed')) ? 'yes' : 'no'}\nNot needed reason: ${S(r.get('Not needed reason'))}${decisionFields(r)}`),
-    'Change pending': F(`IF(IF({Decided content} != "", {Decision content} != {Decided content}, OR({Fulfillment} != {Fill rule fulfillment}, {Not needed})), "${TEXT.changePending}", "")`,
+    // Rendition required is part of the draft (2026-10-30, v2): its line appears only while it is ticked, so no
+    // other slot's content changes, and it operates only once S7 records it (Rendition requirement).
+    'Decision content': F(swap(INSTALLED.decisionContent, ` & ${decisionFieldsText}`, ` & IF({Rendition required}, "\\nRendition required: yes", "") & ${decisionFieldsText}`),
+      r => `Fulfillment: ${S(r.get('Fulfillment'))}\nFulfillment reason: ${S(r.get('Fulfillment reason'))}\nNot needed: ${B(r.get('Not needed')) ? 'yes' : 'no'}\nNot needed reason: ${S(r.get('Not needed reason'))}${B(r.get('Rendition required')) ? '\nRendition required: yes' : ''}${decisionFields(r)}`),
+    'Change pending': F(swap(INSTALLED.changePending, '{Not needed})', '{Not needed}, {Rendition required})'),
       r => (present(r.get('Decided content'))
         ? S(r.get('Decision content')) !== S(r.get('Decided content'))
-        : S(r.get('Fulfillment')) !== S(r.get('Fill rule fulfillment')) || B(r.get('Not needed'))) ? TEXT.changePending : ''),
+        : S(r.get('Fulfillment')) !== S(r.get('Fill rule fulfillment')) || B(r.get('Not needed')) || B(r.get('Rendition required'))) ? TEXT.changePending : ''),
+    // The operative requirement: what S7 recorded, never the box. Unticking the box is a change that waits.
+    'Rendition requirement': F('IF(AND({Decided content} != "", FIND("\\nRendition required: yes\\nDecided by: ", {Decided content}) > 0), 1, 0)',
+      r => bit(present(r.get('Decided content')) && FIND('\nRendition required: yes\nDecided by: ', r.get('Decided content')) > 0)),
     'In adopted plan': F(`IF(AND({Kept guide ID} != "", {Kept guide ID} = ARRAYJOIN({Assigned guide ID}), {Kept product ID} = ARRAYJOIN({Line product ID}), {Kept definition line} != "", FIND({Kept definition line}, ARRAYJOIN({Guide adopted definition})) > 0, FIND(" | active | ", {Kept definition line}) > 0, SUM({Request superseded}) = 0), 1, 0)`,
       r => bit(present(r.get('Kept guide ID')) && S(r.get('Kept guide ID')) === AJ(r.get('Assigned guide ID')) && S(r.get('Kept product ID')) === AJ(r.get('Line product ID'))
         && FIND(r.get('Kept definition line'), AJ(r.get('Guide adopted definition'))) > 0 && FIND(' | active | ', r.get('Kept definition line')) > 0 && N(r.get('Request superseded')) === 0)),
@@ -393,7 +449,11 @@ IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT(
       r => { const wf = AJ(r.get('Workflow')); return wf === 'Product pages' ? S(r.get('Active lineage')) : wf === 'Collection' ? fromOneLine(lineOf(r.get('Kept guide plan'), 'Lineage')) : ''; }),
     'Confirmation current': F('IF(AND({Products confirmed}, OR({Lines changed at} = BLANK(), NOT(IS_BEFORE({Confirmed at}, {Lines changed at})))), 1, 0)',
       r => { const c = MS(r.get('Confirmed at')), l = MS(r.get('Lines changed at')); return bit(B(r.get('Products confirmed')) && (l == null || (c != null && c >= l))); }),
-    'Plan check': F(PLAN_CHECK_TEXT(), r => planCheck(r)),
+    // v2 (2026-10-30): a configured continuity reference that isn't complete stops planning, so Snapshot,
+    // G2a's trigger and Accept, which all require a planned shot, stop with it; one not configured stops nothing.
+    'Plan check': F(`IF(LEFT({Continuity check}, 10) = "Incomplete", "${CONTINUITY.notPlanned}" & SUBSTITUTE({Continuity check}, "Incomplete: ", ""),
+${INSTALLED.planCheck})`,
+      r => (S(r.get('Continuity check')).startsWith('Incomplete') ? CONTINUITY.notPlanned + S(r.get('Continuity check')).split('Incomplete: ').join('') : planCheck(r))),
     'Planned': F('IF({Plan check} = "Planned", 1, 0)', r => bit(S(r.get('Plan check')) === 'Planned')),
     'Shot-guide check': F(`IF(ARRAYJOIN({Workflow}) = "Product pages", IF({Slots guide changed} = 0, "${TEXT.guideSame}", "${TEXT.guideChanged}"),
 IF(ARRAYJOIN({Workflow}) = "Collection", IF(AND(FIND(ARRAYJOIN({Guide slot definition line}), {Kept guide plan}) > 0, SUM({Collection guide complete}) = 1), "${TEXT.guideSame}", "${TEXT.guideChanged}"), ""))`,
@@ -403,18 +463,14 @@ IF(ARRAYJOIN({Workflow}) = "Collection", IF(AND(FIND(ARRAYJOIN({Guide slot defin
       return ''; }),
     // Workflow branch (§7.1): the four new workflows take v3 §5.1's composition with v6's changes; any
     // other Workflow, an empty one included, keeps today's text character for character (LIVE).
-    'Current standard': F(`IF(${NEW_WORKFLOW},
-ARRAYJOIN({Request standard}, "") & "\\nProducts, in image order:\\n" & IF({Active slots filled} > 1, ARRAYJOIN({Line shared facts}, "\\n"), ARRAYJOIN({Line facts}, "\\n")) & "\\nShot: " & {Name} & ", for " & {Effective placement} & ". " & {Effective direction} & IF({Lineage}, "\\n" & {Lineage}, "") & IF(AND({Exception}, {Exception reason}), "\\nException reason: " & {Exception reason} & ". Set by: " & {Exception set by} & ".", ""),
-${LIVE.currentStandard})`,
+    'Current standard': F(swap(INSTALLED.currentStandard, 'Set by: " & {Exception set by} & ".", ""),', 'Set by: " & {Exception set by} & ".", "") & IF({Continuity ready}, "\\n" & {Continuity line}, ""),'),
     r => (isNewWorkflow(r)
-      ? `${AJ(r.get('Request standard'))}\nProducts, in image order:\n${AJ(N(r.get('Active slots filled')) > 1 ? r.get('Line shared facts') : r.get('Line facts'), '\n')}\nShot: ${S(r.get('Name'))}, for ${S(r.get('Effective placement'))}. ${S(r.get('Effective direction'))}${IF(r.get('Lineage'), `\n${S(r.get('Lineage'))}`, '')}${B(r.get('Exception')) && B(r.get('Exception reason')) ? `\nException reason: ${S(r.get('Exception reason'))}. Set by: ${S(r.get('Exception set by'))}.` : ''}`
+      ? `${AJ(r.get('Request standard'))}\nProducts, in image order:\n${AJ(N(r.get('Active slots filled')) > 1 ? r.get('Line shared facts') : r.get('Line facts'), '\n')}\nShot: ${S(r.get('Name'))}, for ${S(r.get('Effective placement'))}. ${S(r.get('Effective direction'))}${IF(r.get('Lineage'), `\n${S(r.get('Lineage'))}`, '')}${B(r.get('Exception')) && B(r.get('Exception reason')) ? `\nException reason: ${S(r.get('Exception reason'))}. Set by: ${S(r.get('Exception set by'))}.` : ''}${B(r.get('Continuity ready')) ? `\n${S(r.get('Continuity line'))}` : ''}`
       : `${AJ(r.get('Brief standard'))}\nShot: ${S(r.get('Name'))}, for ${S(r.get('Placement'))}. ${S(r.get('Shot direction'))}`)),
     // v3 §5.1's order: the opening, the shot, the request prompt, the products, the references.
-    'Current prompt': F(`IF(${NEW_WORKFLOW},
-"Generate one single commercial photograph. Not a grid, collage, contact sheet or multi-image layout.\\n\\nShot: " & {Name} & ", for " & {Prompt placement} & ". " & {Effective direction} & "\\n\\n" & ARRAYJOIN({Request prompt}, "") & "\\n\\n${PRODUCTS_PARAGRAPH}\\n" & IF({Active slots filled} > 1, ARRAYJOIN({Line shared prompt lines}, "\\n"), ARRAYJOIN({Line prompt lines}, "\\n")) & "\\n\\n" & ARRAYJOIN({Reference prompt}, ""),
-${LIVE.currentPrompt})`,
+    'Current prompt': F(swap(INSTALLED.currentPrompt, 'ARRAYJOIN({Reference prompt}, ""),', 'ARRAYJOIN({Reference prompt}, "") & IF({Continuity ready}, "\\n\\n" & {Continuity prompt}, ""),'),
     r => (isNewWorkflow(r)
-      ? `Generate one single commercial photograph. Not a grid, collage, contact sheet or multi-image layout.\n\nShot: ${S(r.get('Name'))}, for ${S(r.get('Prompt placement'))}. ${S(r.get('Effective direction'))}\n\n${AJ(r.get('Request prompt'))}\n\n${PRODUCTS_PARAGRAPH}\n${AJ(N(r.get('Active slots filled')) > 1 ? r.get('Line shared prompt lines') : r.get('Line prompt lines'), '\n')}\n\n${AJ(r.get('Reference prompt'))}`
+      ? `Generate one single commercial photograph. Not a grid, collage, contact sheet or multi-image layout.\n\nShot: ${S(r.get('Name'))}, for ${S(r.get('Prompt placement'))}. ${S(r.get('Effective direction'))}\n\n${AJ(r.get('Request prompt'))}\n\n${PRODUCTS_PARAGRAPH}\n${AJ(N(r.get('Active slots filled')) > 1 ? r.get('Line shared prompt lines') : r.get('Line prompt lines'), '\n')}\n\n${AJ(r.get('Reference prompt'))}${B(r.get('Continuity ready')) ? `\n\n${S(r.get('Continuity prompt'))}` : ''}`
       : `Generate one single commercial photograph. Not a grid, collage, contact sheet or multi-image layout.\n\nShot: ${S(r.get('Name'))}, for ${S(r.get('Placement'))}. ${S(r.get('Shot direction'))}\n\n${AJ(r.get('Brief prompt'))}`)),
     // The live Decision with {Placement} replaced by {Effective placement} (§6), which is Placement on a walkthrough shot.
     'Decision': F(swap(LIVE.decision, '"Accepted for " & {Placement}', '"Accepted for " & {Effective placement}'),
@@ -427,6 +483,31 @@ ${LIVE.currentPrompt})`,
       r => bit(N(r.get('Planned')) === 1 && (r.get('Product image') || []).length > 0 && (r.get('Reference images') || []).length > 0)),
     // Existing, not edited: the live text.
     'Title': F(LIVE.shotTitle, r => S(r.get('Name'))),
+    // The continuity reference (2026-10-30, v2): optional. Not configured (no link, nothing it may decide):
+    // empty, and nothing changes. Configured: Ready only on a new-workflow shot with exactly one linked
+    // candidate whose Image is exactly one comma-free file, and what it may decide stated; otherwise
+    // Incomplete, which stops the shot's planning (Plan check). Only a Ready reference reaches the
+    // standard, the prompt and the candidates' Continuity image now.
+    'Continuity check': F(`IF(AND({Continuity count} = 0, TRIM({Continuity may decide}) = ""), "",
+IF(NOT(${NEW_WORKFLOW}), "${CONTINUITY.notNewWorkflow}",
+IF({Continuity count} != 1, "${CONTINUITY.count}",
+IF(SUM({Continuity has image}) != 1, "${CONTINUITY.image}",
+IF(TRIM({Continuity may decide}) = "", "${CONTINUITY.role}",
+"${CONTINUITY.ready}")))))`,
+      r => {
+        const n = N(r.get('Continuity count')), may = present(S(r.get('Continuity may decide')).trim());
+        if (n === 0 && !may) return '';
+        if (!isNewWorkflow(r)) return CONTINUITY.notNewWorkflow;
+        if (n !== 1) return CONTINUITY.count;
+        if (N(r.get('Continuity has image')) !== 1) return CONTINUITY.image;
+        if (!may) return CONTINUITY.role;
+        return CONTINUITY.ready;
+      }),
+    'Continuity ready': F(`IF({Continuity check} = "${CONTINUITY.ready}", 1, 0)`, r => bit(S(r.get('Continuity check')) === CONTINUITY.ready)),
+    'Continuity line': F(`IF({Continuity ready}, "Continuity reference: No. " & ARRAYJOIN({Continuity record no.}) & ", " & ARRAYJOIN({Continuity title}) & ", image as of " & ARRAYJOIN({Continuity image as of}) & ". May decide: " & {Continuity may decide} & " ${CONTINUITY.notStandard} Set by: " & {Continuity set by} & ".", "")`,
+      r => IF(r.get('Continuity ready'), `Continuity reference: No. ${AJ(r.get('Continuity record no.'))}, ${AJ(r.get('Continuity title'))}, image as of ${AJ(r.get('Continuity image as of'))}. May decide: ${S(r.get('Continuity may decide'))} ${CONTINUITY.notStandard} Set by: ${S(r.get('Continuity set by'))}.`, '')),
+    'Continuity prompt': F(`IF({Continuity ready}, "The last attached image is a continuity reference, from an earlier image. Use it only for: " & {Continuity may decide} & " ${CONTINUITY.notPrompt}", "")`,
+      r => IF(r.get('Continuity ready'), `The last attached image is a continuity reference, from an earlier image. Use it only for: ${S(r.get('Continuity may decide'))} ${CONTINUITY.notPrompt}`, '')),
   },
 
   'Candidates': {
@@ -455,6 +536,18 @@ ${LIVE.currentPrompt})`,
         return liveStatusAfterImage(r); }),
     'Is accepted': F('IF(COUNTA({Accepted images}) > 0, 1, 0)', r => bit((r.get('Accepted images') || []).length > 0)),
     'Accepted slots kept': F('IF({Is accepted}, {Slots kept}, "")', r => IF(r.get('Is accepted'), S(r.get('Slots kept')), '')),
+    // Exactly one comma-free file, as Has image on Products and References (K8): what a continuity reference needs (v2).
+    'One image': F(ONE_FILE, oneFile),
+    // The live Acceptance, with the acceptance's condition shown after its use (v2): an image accepted
+    // only through its approved rendition says so wherever its acceptance shows.
+    'Acceptance': F(swap(INSTALLED.acceptance, '"Accepted for " & {Intended use}', '"Accepted for " & {Intended use} & IF(ARRAYJOIN({Accepted on condition}, "") != "", ", on condition: " & ARRAYJOIN({Accepted on condition}, ""), "")'),
+      r => {
+        if (!(r.get('Accepted images') || []).length) return 'Not accepted';
+        const st = AJ(r.get('Accepted record status'));
+        if (st === '' || st.split('Complete').join('') !== '') return 'Recording acceptance…';
+        const cond = AJ(r.get('Accepted on condition'));
+        return `Accepted for ${S(r.get('Intended use'))}${cond !== '' ? `, on condition: ${cond}` : ''}`;
+      }),
   },
 
   'Accepted images': {
@@ -473,14 +566,7 @@ ${LIVE.currentPrompt})`,
     'Name': F('ARRAYJOIN({Slot name}) & " ← " & ARRAYJOIN({Source title})', r => `${AJ(r.get('Slot name'))} ← ${AJ(r.get('Source title'))}`),
     'Application ID': F('RECORD_ID()', r => r.id),
     'Current check': detector(['Current'], 'Current changed at', 'Current set at'),
-    'Eligibility': F(`IF(SUM({Slot active}) = 0, IF(SUM({Slot waived}) > 0, "Needs review: the slot is marked not needed", IF(SUM({Slot in adopted plan}) = 0, "Needs review: the slot is no longer in the adopted plan", "Needs review: the slot is withdrawn")),
-IF(ARRAYJOIN({Slot kept destination}) != {Kept destination}, "Needs review: the slot was replanned since this image was applied",
-IF(AND({Kept receiving basis} != ARRAYJOIN({Slot receiving basis}), {Kept receiving basis} != ARRAYJOIN({Slot receiving basis without size})), "Needs review: the product's facts changed since this image was applied",
-IF(ARRAYJOIN({Source complete}) != "Complete", "Needs review: its source record isn't complete",
-IF(AND({Basis} = "Use decision", COUNTA({Use decision}) = 0), "Needs review: its decision record is missing",
-IF(SUM({Slot held}) > 0, "Needs review: the slot is edited by hand",
-IF(AND({Basis} = "Use decision", SUM({Decision record intact}) = 0), "Needs review: its decision's record was edited by hand",
-"Holds")))))))`,
+    'Eligibility': F(swap(INSTALLED.eligibility, '\n"Holds")))))))', `\nIF(AND({Rendition needed}, LEFT({Rendition state}, 8) != "${RENDITION.approved}"), "${RENDITION.needed}",\n"Holds"))))))))`),
     r => {
       if (N(r.get('Slot active')) === 0) return N(r.get('Slot waived')) > 0 ? 'Needs review: the slot is marked not needed'
         : N(r.get('Slot in adopted plan')) === 0 ? 'Needs review: the slot is no longer in the adopted plan' : 'Needs review: the slot is withdrawn';
@@ -492,6 +578,7 @@ IF(AND({Basis} = "Use decision", SUM({Decision record intact}) = 0), "Needs revi
       if (ud && !(r.get('Use decision') || []).length) return 'Needs review: its decision record is missing';
       if (N(r.get('Slot held')) > 0) return 'Needs review: the slot is edited by hand';
       if (ud && N(r.get('Decision record intact')) === 0) return "Needs review: its decision's record was edited by hand";
+      if (B(r.get('Rendition needed')) && !S(r.get('Rendition state')).startsWith(RENDITION.approved)) return RENDITION.needed;
       return 'Holds';
     }),
     'Basis finished': F('IF({Basis} = "Use decision", IF(SUM({Decision applied}), 1, 0), IF(SUM({Source applications done}), 1, 0))',
@@ -530,7 +617,41 @@ IF({Eligibility} != "Holds", {Eligibility}, "In use")))))))))`,
     'In use eligibility': F('IF({In use flag}, {Eligibility}, "")', r => IF(r.get('In use flag'), S(r.get('Eligibility')), '')),
     'Alternate title': F('IF(AND(NOT({Current}), NOT({Withdrawn}), COUNTA({Replaced by}) = 0), ARRAYJOIN({Source title}), "")',
       r => IF(!B(r.get('Current')) && !B(r.get('Withdrawn')) && !(r.get('Replaced by') || []).length, AJ(r.get('Source title')), '')),
-    'Settled source image': F('IF({State} = "In use", ARRAYJOIN({Source image}), "")', r => IF(S(r.get('State')) === 'In use', (r.get('Source image') || []).map(a => (a && a.filename) || S(a)).join(', '), '')),
+    // A rendition is needed where the slot's recorded decision requires one or the accepted image was
+    // accepted on condition (2026-10-30, v2). Then the application delivers its approved rendition,
+    // never the accepted image itself.
+    'Rendition needed': F('IF(OR(SUM({Slot rendition requirement}) > 0, ARRAYJOIN({Source condition}, "") != ""), 1, 0)',
+      r => bit(N(r.get('Slot rendition requirement')) > 0 || AJ(r.get('Source condition')) !== '')),
+    'Settled source image': F(swap(INSTALLED.settledSourceImage, '{State} = "In use"', 'AND({State} = "In use", {Rendition needed} = 0)'),
+      r => IF(S(r.get('State')) === 'In use' && N(r.get('Rendition needed')) === 0, (r.get('Source image') || []).map(a => (a && a.filename) || S(a)).join(', '), '')),
+    // Rendition state (v2): Approved only while S8's approval stands as S8 wrote it: its ID names this
+    // application's slot and accepted image, the approved copy's file name begins with that ID (one file:
+    // no comma), and its record begins with it. Anything else written there is Edited by hand. A change
+    // to the draft (the file, its operation or its decision record) in the second of the approval or
+    // later waits for S8 and changes nothing delivered: S8 writes a whole second, and the test is "not
+    // before" it, so the race is seen whether Airtable keeps its times to the millisecond or to the
+    // second. An attachment field is read as text, as the live Has image texts read Image.
+    'Rendition state': F(`IF({Rendition needed} = 0, "",
+IF(AND({Rendition approval ID} = "", COUNTA({Approved rendition}) = 0, {Rendition approved} = "", {Rendition approved at} = BLANK()), IF(COUNTA({Rendition}) = 0, "${RENDITION.none}", "${RENDITION.notApproved}"),
+IF(OR({Rendition approval ID} = "", {Rendition approved} = "", {Rendition approved at} = BLANK(),
+LEFT({Rendition approval ID}, LEN("R8-" & ARRAYJOIN({Slot ID}) & "-" & ARRAYJOIN({Source ID}) & "-")) != "R8-" & ARRAYJOIN({Slot ID}) & "-" & ARRAYJOIN({Source ID}) & "-",
+LEFT({Approved rendition} & "", LEN({Rendition approval ID}) + 2) != {Rendition approval ID} & "__",
+FIND(",", {Approved rendition} & "") > 0,
+LEFT({Rendition approved}, LEN({Rendition approval ID})) != {Rendition approval ID}), "${RENDITION.hand}",
+IF(AND({Rendition draft changed at} != BLANK(), NOT(IS_BEFORE({Rendition draft changed at}, {Rendition approved at}))), "${RENDITION.pending}",
+"${RENDITION.approved}"))))`,
+    r => {
+      if (N(r.get('Rendition needed')) === 0) return '';
+      const id = S(r.get('Rendition approval ID')), copy = r.get('Approved rendition') || [], record = S(r.get('Rendition approved')), at = MS(r.get('Rendition approved at'));
+      if (id === '' && !copy.length && record === '' && at == null) return (r.get('Rendition') || []).length ? RENDITION.notApproved : RENDITION.none;
+      const asText = copy.map(a => (a && a.filename) || S(a)).join(', ');
+      if (id === '' || record === '' || at == null || !id.startsWith(approvalPrefix(AJ(r.get('Slot ID')), AJ(r.get('Source ID'))))
+        || !asText.startsWith(`${id}__`) || asText.includes(',') || !record.startsWith(id)) return RENDITION.hand;
+      const ch = MS(r.get('Rendition draft changed at'));
+      return ch != null && ch >= at ? RENDITION.pending : RENDITION.approved;
+    }),
+    'Settled rendition': F(`IF(AND({State} = "In use", {Rendition needed}, LEFT({Rendition state}, 8) = "${RENDITION.approved}"), {Approved rendition} & "", "")`,
+      r => IF(S(r.get('State')) === 'In use' && B(r.get('Rendition needed')) && S(r.get('Rendition state')).startsWith(RENDITION.approved), (r.get('Approved rendition') || []).map(a => (a && a.filename) || S(a)).join(', '), '')),
   },
 
   'Use decisions': {

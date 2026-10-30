@@ -355,6 +355,12 @@ const TABLES = [
     ['Status', 'formula'],
     ['Replan result', 'long'], // S3's result on a slot (added by part 2)
     ['Product facts', 'lookup', lk('Product', 'Product facts')], // the existing facts text, for S5's legacy map (added by part 3)
+    // A slot delivered as a rendition of its accepted image (added 2026-10-30, v2). The box is part of the
+    // draft decision; Rendition requirement is what S7 recorded, and only it operates. The page shows
+    // Settled rendition, S8's copy of the approved file.
+    ['Rendition required', 'checkbox'],
+    ['Rendition requirement', 'formula'],
+    ['Settled rendition', 'lookup', lk('Applications', 'Approved rendition', 'Settled rendition')],
   ]),
   T('Shots', 'SH', [
     ['Name', 'text'],
@@ -444,6 +450,22 @@ const TABLES = [
     ['Decision', 'formula'],
     ['Can generate', 'formula'],
     ['Replan result', 'long'], // S3's result on a shot (added by part 2)
+    // A shot's continuity reference (added 2026-10-30): one earlier candidate whose image the shot's
+    // candidates receive last, for what Continuity may decide only. Set by: Airtable's record of the edit.
+    // v2: Continuity check tells an absent reference from an incomplete one, which stops planning.
+    ['Continuity reference', 'link', link('Candidates', 'Continuity reference for')],
+    ['Continuity may decide', 'long'],
+    ['Continuity set by', 'modifiedBy', { watch: ['Continuity reference', 'Continuity may decide'] }],
+    ['Continuity count', 'count', { link: 'Continuity reference' }],
+    ['Continuity record no.', 'lookup', lk('Continuity reference', 'Record no.')],
+    ['Continuity title', 'lookup', lk('Continuity reference', 'Title')],
+    ['Continuity image', 'lookup', lk('Continuity reference', 'Image')],
+    ['Continuity image as of', 'lookup', lk('Continuity reference', 'Generated at')],
+    ['Continuity has image', 'lookup', lk('Continuity reference', 'One image')],
+    ['Continuity check', 'formula'],
+    ['Continuity ready', 'formula'],
+    ['Continuity line', 'formula'],
+    ['Continuity prompt', 'formula'],
   ]),
   T('Candidates', 'CA', [
     ['Record no.', 'autonumber'],
@@ -478,6 +500,22 @@ const TABLES = [
     ['Status', 'formula'],
     ['Is accepted', 'formula'],
     ['Accepted slots kept', 'formula'],
+    // The shot's continuity image while it is ready (added 2026-10-30): Snapshot keeps it after the
+    // reference images, and G2a checks the kept copy against it. v2: G2a also reads the shot's
+    // Continuity check, and stops visibly while it is Incomplete.
+    ['Continuity image now', 'lookup', lk('Shot', 'Continuity image', 'Continuity ready')],
+    ['Continuity check now', 'lookup', lk('Shot', 'Continuity check')],
+    ['One image', 'formula'],
+    // existing: what G2a also reads (the shot's current files; its own log), modelled for its harness (v2)
+    ['Current product image', 'lookup', lk('Shot', 'Product image')],
+    ['Current reference images', 'lookup', lk('Shot', 'Reference images')],
+    ['Check log', 'long'],
+    // An acceptance's condition (added 2026-10-30, v2): the draft Accept copies into the accepted record,
+    // and the live Acceptance (existing; changed) showing it.
+    ['Accept on condition', 'long'],
+    ['Accepted record status', 'lookup', lk('Accepted images', 'Record complete')], // existing
+    ['Accepted on condition', 'lookup', lk('Accepted images', 'Accepted on condition')],
+    ['Acceptance', 'formula'],
   ]),
   T('Accepted images', 'AI', [
     // existing: every field down to Current title, as Accept writes and the live base computes them
@@ -504,6 +542,7 @@ const TABLES = [
     ['Slots kept', 'lookup', lk('Candidate record no.', 'Slots kept')],
     ['Products kept', 'lookup', lk('Candidate record no.', 'Products kept')],
     ['Source current', 'formula'],
+    ['Accepted on condition', 'long'], // added 2026-10-30 (v2): Accept copies the candidate's Accept on condition
   ]),
   T('Applications', 'AP', [
     ['Name', 'formula'], // the primary: created by connector as Single line text, converted to this formula in the UI (README, Install)
@@ -564,6 +603,26 @@ const TABLES = [
     ['In use eligibility', 'formula'],
     ['Alternate title', 'formula'],
     ['Settled source image', 'formula'],
+    // The rendition (added 2026-10-30, v2): a delivery file made from the accepted image. Rendition,
+    // its operation and its decision record are the draft; S8 approves it by copying the file it read
+    // into Approved rendition, under its approval ID, with its record. Only that copy is delivered.
+    ['Rendition', 'attachments'],
+    ['Rendition operation', 'long'],
+    ['Rendition decided by', 'text'],
+    ['Rendition decision source', 'text'],
+    ['Rendition entered by', 'text'],
+    ['Approved rendition', 'attachments'], // written only by S8
+    ['Rendition approval ID', 'text'],     // written only by S8
+    ['Rendition approved', 'long'],        // written only by S8
+    ['Rendition approved at', 'date'],     // written only by S8
+    ['Rendition result', 'long'],          // S8's result
+    ['Rendition draft changed at', 'modified', { watch: ['Rendition', 'Rendition operation', 'Rendition decided by', 'Rendition decision source', 'Rendition entered by'] }],
+    ['Slot ID', 'lookup', lk('Slot', 'Slot ID')],
+    ['Slot rendition requirement', 'lookup', lk('Slot', 'Rendition requirement')],
+    ['Source condition', 'lookup', lk('Accepted image', 'Accepted on condition')],
+    ['Rendition needed', 'formula'],
+    ['Rendition state', 'formula'],
+    ['Settled rendition', 'formula'],
   ]),
   T('Use decisions', 'UD', [
     ['Name', 'formula'], // the primary: created by connector as Single line text, converted to this formula in the UI (README, Install)
@@ -772,5 +831,14 @@ export const BINDINGS = {
     appReplacedByField: 'Replaced by', appReplacedAtField: 'Replaced at', appWithdrawnField: 'Withdrawn', appTestField: 'Test',
     appStateField: 'State', appNameField: 'Name',
     legacyMap: '', refuseEarlierStandard: '', faultAfterWrites: '', account: '',
+  },
+  // S8 Approve rendition (added 2026-10-30; v2), on Applications.
+  s8: {
+    table: 'Applications', renditionField: 'Rendition', operationField: 'Rendition operation',
+    decidedByField: 'Rendition decided by', decisionSourceField: 'Rendition decision source', enteredByField: 'Rendition entered by',
+    approvedFileField: 'Approved rendition', approvalIdField: 'Rendition approval ID',
+    approvedField: 'Rendition approved', approvedAtField: 'Rendition approved at', resultField: 'Rendition result',
+    neededField: 'Rendition needed', slotIdField: 'Slot ID', slotNameField: 'Slot name', sourceIdField: 'Source ID', sourceTitleField: 'Source title',
+    sourceConditionField: 'Source condition', currentField: 'Current', withdrawnField: 'Withdrawn',
   },
 };
