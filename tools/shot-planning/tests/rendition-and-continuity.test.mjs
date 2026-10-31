@@ -12,7 +12,7 @@
 // its script is exercised on this base by the change's own harness, kept with its proposal.
 import * as fx from './fixtures.mjs';
 import { World, start, runAlone, stepRun, holdBefore, kindIs } from '../sim/world.mjs';
-import { FORMULAS, INSTALLED, RENDITION, CONTINUITY, HELD, TEXT, approvalPrefix } from '../sim/formulas.mjs';
+import { FORMULAS, INSTALLED, CONTINUITY_INSTALLED, RENDITION, CONTINUITY, HELD, TEXT, approvalPrefix } from '../sim/formulas.mjs';
 
 const { bath, bathPlanned, pressS2, pressS4, pressS8, slotAt, recordSlot, SRC } = fx;
 const PS = 'Product-page slots', AP = 'Applications', AI = 'Accepted images', SH = 'Shots', CA = 'Candidates';
@@ -428,8 +428,10 @@ add('CNT-image-changed', "The reference's image replaced: Life in use's standard
   t.check("No. 33's image replaced: the line names its new time, and the candidate reads changed", w.get(SH, x.life, 'Continuity line').includes(`image as of ${w.get(CA, anchor, 'Generated at')}.`) && w.get(CA, next, 'Standard check') === 'The standard has changed since this image was made');
 });
 
-add('CNT-text', 'Current standard and Current prompt are their installed texts plus one addition each, inside the new-workflow branch; Plan check is its installed text inside one test of Continuity check; Continuity ready reads Continuity check', async t => {
-  const std = text(SH, 'Current standard'), prompt = text(SH, 'Current prompt'), plan = text(SH, 'Plan check');
+// The texts this change installed are CONTINUITY_INSTALLED, the human composition change's baseline (the
+// change of 2026-10-31, HCR-text), so they, not the texts this folder now holds, are checked against INSTALLED.
+add('CNT-text', 'Current standard and Current prompt, as this change installed them, are their installed texts plus one addition each, inside the new-workflow branch; Plan check is its installed text inside one test of Continuity check; Continuity ready reads Continuity check', async t => {
+  const std = CONTINUITY_INSTALLED.currentStandard, prompt = CONTINUITY_INSTALLED.currentPrompt, plan = CONTINUITY_INSTALLED.planCheck;
   const addStd = ' & IF({Continuity ready}, "\\n" & {Continuity line}, "")', addPrompt = ' & IF({Continuity ready}, "\\n\\n" & {Continuity prompt}, "")';
   t.check('Current standard: the installed text with one addition after the exception', std.split(addStd).length === 2 && std.replace(addStd, '') === INSTALLED.currentStandard, std);
   t.check('Current prompt: the installed text with one addition after the references', prompt.split(addPrompt).length === 2 && prompt.replace(addPrompt, '') === INSTALLED.currentPrompt, prompt);

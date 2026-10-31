@@ -9,9 +9,9 @@ This folder holds the eight automation scripts that plan and apply product-page 
 
 This file covers the schema the scripts run on, the text of every formula the unit adds or changes, each script's trigger, inputs and writes, the install order, retry, what stops a run, what is unsupported, and the tests.
 
-**The specification** is the build proposal, v6, the plan for this extension. It is kept with the operator's records, outside the repository. Section references (§) below are to it, and so are test IDs (T…, U…), counterexamples (CX…) and build checks (K…). Where v6 is silent or ambiguous, the source takes a reading, and [Choices made in the source](#choices-made-in-the-source) lists each one. Three clarifications from the reviewer's Stage-1 pass are built in and tested as GPT-A, GPT-B and GPT-C ([Clarifications built in](#clarifications-built-in)). S8 and a shot's continuity reference are a later change, of 2026-10-30, with its own proposal rather than v6 ([Rendition and continuity](#rendition-and-continuity)).
+**The specification** is the build proposal, v6, the plan for this extension. It is kept with the operator's records, outside the repository. Section references (§) below are to it, and so are test IDs (T…, U…), counterexamples (CX…) and build checks (K…). Where v6 is silent or ambiguous, the source takes a reading, and [Choices made in the source](#choices-made-in-the-source) lists each one. Three clarifications from the reviewer's Stage-1 pass are built in and tested as GPT-A, GPT-B and GPT-C ([Clarifications built in](#clarifications-built-in)). S8 and a shot's continuity reference are a later change, of 2026-10-30, with its own proposal rather than v6, and a shot's human composition reference a change of 2026-10-31, with its own proposal ([Rendition, continuity and human composition](#rendition-continuity-and-human-composition)).
 
-**Contents:** [The scripts](#the-scripts) · [How it works](#how-it-works) · [The hand-edit detector](#the-hand-edit-detector) · [Rendition and continuity](#rendition-and-continuity) · [Schema](#schema) · [Formula texts](#formula-texts) · [Scripts: triggers, inputs and writes](#scripts-triggers-inputs-and-writes) · [Install](#install) · [Retry](#retry) · [What stops a run](#what-stops-a-run) · [What it does not support](#what-it-does-not-support) · [Clarifications built in](#clarifications-built-in) · [Choices made in the source](#choices-made-in-the-source) · [Tests](#tests) · [What the local tests do not show](#what-the-local-tests-do-not-show) · [What the build copy shows](#what-the-build-copy-shows)
+**Contents:** [The scripts](#the-scripts) · [How it works](#how-it-works) · [The hand-edit detector](#the-hand-edit-detector) · [Rendition, continuity and human composition](#rendition-continuity-and-human-composition) · [Schema](#schema) · [Formula texts](#formula-texts) · [Scripts: triggers, inputs and writes](#scripts-triggers-inputs-and-writes) · [Install](#install) · [Retry](#retry) · [What stops a run](#what-stops-a-run) · [What it does not support](#what-it-does-not-support) · [Clarifications built in](#clarifications-built-in) · [Choices made in the source](#choices-made-in-the-source) · [Tests](#tests) · [What the local tests do not show](#what-the-local-tests-do-not-show) · [What the build copy shows](#what-the-build-copy-shows)
 
 ## The scripts
 
@@ -33,7 +33,7 @@ Each script is a standalone automation script, in the style of [`tools/candidate
 - it checks each binding's field type before any read or write;
 - it ends with `await main();`.
 
-Snapshot's reference list has no table or field bindings: its three inputs are values of Snapshot's trigger, and it reads and writes no table ([Snapshot's reference list](#snapshots-reference-list)).
+Snapshot's reference list has no table or field bindings: its five inputs are values of Snapshot's trigger, and it reads and writes no table ([Snapshot's reference list](#snapshots-reference-list)).
 
 ## How it works
 
@@ -109,14 +109,16 @@ It is a **limited detector of hand edits**, not proof that a field was written b
 - **It misses** an edit within those 60 seconds, an edit by someone who also rewrites the time beside it, and any field it doesn't watch, such as an application's Kept destination or a candidate's Slots kept.
 - **Where it flags, the record is held.** A held slot isn't waived, ok or Settled, its shot isn't Planned, Replan and detaching refuse it, and S4 and S5 wait for it. It stays held until its own press records it again: S7 on the slot or the product, S6 on the guide. A flagged kept slot plan can't be recorded again; the remedy is a new version of the request.
 - **A use decision whose own record is flagged** writes no new application: S5 ends it "Applied in part". **An application whose Current is flagged** reads Edited by hand, and a use decision with Replace resolves its slot.
-- **A rendition's approval isn't this detector's.** Rendition state checks S8's copy against its approval ID, with no 60-second window ([Rendition and continuity](#rendition-and-continuity)).
+- **A rendition's approval isn't this detector's.** Rendition state checks S8's copy against its approval ID, with no 60-second window ([Rendition, continuity and human composition](#rendition-continuity-and-human-composition)).
 - **Where it misses, the edit operates** as if a script had written it.
 - **A press is never flagged,** whether or not Airtable moves a last-modified time on an unchanged write. The tests run both models (T37-local, T37-s3, T37-s4s5).
 - Field editing permissions are the stronger guard. The build copy shows they can keep a field to automations, one field at a time (T37; [What the build copy shows](#what-the-build-copy-shows)).
 
-## Rendition and continuity
+## Rendition, continuity and human composition
 
 A change of 2026-10-30, after v6, for two needs the demo showed. Its specification is its proposal, kept with the operator's records. It adds S8, Snapshot's reference list, fields on five tables and nine formulas, and changes eight formulas ([Schema](#schema), [Formula texts](#formula-texts): the statuses marked rendition or continuity). Snapshot's node set, G2a's after-script and Accept's mapping are outside this folder ([Install](#install)).
+
+The human composition reference is a change of 2026-10-31, with its own proposal, also kept with the operator's records. It adds 16 fields on two tables and four formulas, changes three formulas, and gives Snapshot's reference list two more inputs ([Schema](#schema), [Formula texts](#formula-texts): the statuses marked human composition). Its G2a after-script and Snapshot node set are outside this folder ([Install](#install)).
 
 **A rendition delivers a slot.** A rendition is a delivery file made from the accepted image for a slot's format, such as a crop to its aspect ratio, for the same view and use. It belongs to the application, as [Shot Guides, Fulfillment and Asset Applications](../../docs/shot-guides-fulfillment-and-asset-applications-v1.md) §3 places it, and needs its own approval, held where it is delivered.
 - **What needs one.** An application needs a rendition (Rendition needed) when its slot's recorded decision requires one, or when its accepted image was accepted on condition.
@@ -159,6 +161,32 @@ A change of 2026-10-30, after v6, for two needs the demo showed. Its specificati
 - **Setting it changes the shot's standard,** so the shot's earlier candidates read "The standard has changed since this image was made". So does replacing the referenced image later, since the line carries its time. The referenced candidate's own shot and standard don't change.
 - **It confers nothing on the referenced image.** It doesn't accept it, add it to a request's references, or change its standard. Its record shows only the link's pair, Continuity reference for.
 
+**A human composition reference carries an earlier image's figure into a shot.** A shot can name one more earlier candidate whose image its new candidates receive, for what Human composition may decide states, such as the figure's pose, orientation and body framing, within fixed limits of its own. It mirrors the continuity reference field for field.
+- **It is set on the shot.** Human composition reference links the candidate, and Human composition may decide states in words what its image may decide. Human composition set by is Airtable's record of who last edited either.
+- **It is optional, and checked when configured.** Human composition check is empty while no candidate is linked and Human composition may decide is blank (empty or only spaces), and the shot is then unchanged: its Plan check, Current standard and Current prompt are, character for character, what the continuity change's texts give. Otherwise it reads Ready only when all of these hold:
+  - the shot is a new-workflow shot;
+  - exactly one candidate is linked;
+  - that candidate's Image is one file with no comma in its name (One image);
+  - it is a different candidate from the continuity reference, while the continuity reference links one;
+  - Human composition may decide isn't blank.
+
+  Otherwise it reads "Incomplete: " and the reason. Human composition ready is 1 exactly when it reads Ready.
+- **An incomplete reference stops generation, visibly.** Plan check reads "Not planned: the human composition reference is incomplete: " and the reason, so the shot isn't Planned. Snapshot doesn't start, and the shot's candidates read Held, so G2a's trigger doesn't hold. G2a also reads Human composition check now itself, and stops with the reason in Input check. Plan check tests the continuity reference first, so it names that one when both are incomplete. A configured reference never drops out of the inputs.
+- **It is part of the shot's standard and prompt.** When it is ready, Current standard gains Human composition line, before any continuity line: the candidate's record number and title, its image's time, what it may decide, what it doesn't decide, and who set it. Current prompt gains Human composition prompt, before any continuity paragraph. It limits the reference to what it may decide, and names its image the second-to-last attached image while the continuity reference is ready, and the last otherwise.
+- **It is never an authority for the products, the room or who the person is.** The product images stay first and stay the authority for each product. Whatever Human composition may decide says, the fixed texts exclude the products, which products appear, where they stand and how large they are, the room, its architecture, its materials and the light, and who the person is. Whether a person appears is the shot's decision.
+- **Its image is kept after the reference images and before the continuity image,** so the continuity image stays last in every case. Candidates › Human composition image now looks up the shot's Human composition image while it is ready.
+  - Snapshot's reference list keeps it in that place, in the same one write, and stops on it in the same three ways as on the continuity image: configured but not Ready, Ready with no file or more than one, or a file with nothing configured.
+  - G2a checks the kept copies against the shot's reference images, Human composition image now and Continuity image now, in that order.
+
+  | Configured | Reference images used (attached after the product images) |
+  |---|---|
+  | neither | the shot's reference images, as before |
+  | continuity only | the reference images, then the continuity image, as before |
+  | human composition only | the reference images, then the human composition image |
+  | both | the reference images, then the human composition image, then the continuity image |
+- **Setting it changes the shot's standard,** so the shot's earlier candidates read "The standard has changed since this image was made". So do changing it and replacing the referenced image later, since the line carries its time. Clearing it puts back the standard without the line, so candidates kept while it was set read changed, and candidates kept before it was set read the same again. A kept candidate's own kept inputs never change.
+- **It confers nothing on the referenced image.** It doesn't accept it, add it to a request's references, or change its standard. Its record shows only the link's pair, Human composition reference for.
+
 ## Schema
 
 The tables and fields below are the schema the scripts and formulas run on, as [`sim/schema.mjs`](sim/schema.mjs) declares it, field by field and in its order. The new fields' names are the demo's, and an installation binds its own by ID or name. The existing fields carry the live base's names, types and configurations.
@@ -169,7 +197,8 @@ The tables and fields below are the schema the scripts and formulas run on, as [
   - five result fields v6 doesn't name: Adoption result, Record result on Products and on Product-page slots, and Replan result on Product-page slots and on Shots;
   - a Product facts lookup on Product-page slots, for S5's legacy map.
 - **Changed:** an existing field this unit changes, and how.
-- **New (rendition), New (continuity):** added by the change of 2026-10-30 ([Rendition and continuity](#rendition-and-continuity)), not by v6. Changed (rendition) and Changed (continuity) name what it changes in a field this unit made or changed.
+- **New (rendition), New (continuity):** added by the change of 2026-10-30 ([Rendition, continuity and human composition](#rendition-continuity-and-human-composition)), not by v6. Changed (rendition) and Changed (continuity) name what it changes in a field this unit made or changed.
+- **New (human composition):** added by the change of 2026-10-31 ([Rendition, continuity and human composition](#rendition-continuity-and-human-composition)), not by v6. Changed (human composition) names what it changes in a field this unit made or changed.
 - **Existing:** a live field this unit reads and doesn't change. Its name, type and configuration (link and its pair, lookup or rollup field and link, last-modified field, select choices) are the build copy's, from its schema read of 2026-10-28, whose schema is the live base's (§9.1). An existing formula's text is the live text ([Formula texts](#formula-texts)).
 - **Primary (new):** the primary field of a new table whose primary is a formula. The connector creates a table's primary only as a stored field, so it is created as Single line text "Name" and converted to its formula in the UI ([Install](#install)).
 
@@ -540,7 +569,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 
 </details>
 
-<details><summary><b>Shots</b> (changed table, 100 fields and 1 button)</summary>
+<details><summary><b>Shots</b> (changed table, 113 fields and 1 button)</summary>
 
 | Field | Type | Status |
 |---|---|---|
@@ -620,11 +649,11 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | Effective direction | Formula (below) | New |
 | Lineage | Formula (below) | New |
 | Confirmation current | Formula (below) | New |
-| Plan check | Formula (below) | New. Changed (continuity): Not planned while Continuity check is Incomplete |
+| Plan check | Formula (below) | New. Changed (continuity): Not planned while Continuity check is Incomplete. Changed (human composition): Not planned while Human composition check is Incomplete, tested after Continuity check |
 | Planned | Formula (below) | New |
 | Shot-guide check | Formula (below) | New |
-| Current standard | Formula (below) | Changed: a Workflow branch; the default branch keeps today's text. Changed (continuity): the Workflow branch ends with Continuity line when Continuity ready is 1 |
-| Current prompt | Formula (below) | Changed: a Workflow branch; the default branch keeps today's text. Changed (continuity): the Workflow branch ends with Continuity prompt when Continuity ready is 1 |
+| Current standard | Formula (below) | Changed: a Workflow branch; the default branch keeps today's text. Changed (continuity): the Workflow branch ends with Continuity line when Continuity ready is 1. Changed (human composition): Human composition line before it, when Human composition ready is 1 |
+| Current prompt | Formula (below) | Changed: a Workflow branch; the default branch keeps today's text. Changed (continuity): the Workflow branch ends with Continuity prompt when Continuity ready is 1. Changed (human composition): Human composition prompt before it, when Human composition ready is 1 |
 | Decision | Formula (below) | Changed: reads Effective placement instead of Placement |
 | Can generate | Formula (below) | Changed: requires Planned = 1 |
 | Replan result | Long text | New |
@@ -641,6 +670,19 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | Continuity ready | Formula (below) | New (continuity) |
 | Continuity line | Formula (below) | New (continuity) |
 | Continuity prompt | Formula (below) | New (continuity) |
+| Human composition reference | Link to Candidates; paired with Candidates › Human composition reference for | New (human composition) |
+| Human composition may decide | Long text | New (human composition) |
+| Human composition set by | Last modified by of: Human composition reference, Human composition may decide | New (human composition) |
+| Human composition count | Count of Human composition reference | New (human composition) |
+| Human composition record no. | Lookup of Record no. through Human composition reference | New (human composition) |
+| Human composition title | Lookup of Title through Human composition reference | New (human composition) |
+| Human composition image | Lookup of Image through Human composition reference | New (human composition) |
+| Human composition image as of | Lookup of Generated at through Human composition reference | New (human composition) |
+| Human composition has image | Lookup of One image through Human composition reference | New (human composition) |
+| Human composition check | Formula (below) | New (human composition) |
+| Human composition ready | Formula (below) | New (human composition) |
+| Human composition line | Formula (below) | New (human composition) |
+| Human composition prompt | Formula (below) | New (human composition) |
 | Slots filled | Link to Product-page slots; paired with Product-page slots › Shot | New |
 | Candidates | Link to Candidates; paired with Candidates › Shot | Existing |
 | Accepted images | Link to Accepted images; paired with Accepted images › Shot | Existing |
@@ -648,7 +690,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 
 </details>
 
-<details><summary><b>Candidates</b> (changed table, 44 fields)</summary>
+<details><summary><b>Candidates</b> (changed table, 47 fields)</summary>
 
 | Field | Type | Status |
 |---|---|---|
@@ -686,6 +728,8 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | Accepted slots kept | Formula (below) | New |
 | Continuity image now | Lookup of Continuity image through Shot, only linked records where Continuity ready is 1 | New (continuity) |
 | Continuity check now | Lookup of Continuity check through Shot | New (continuity) |
+| Human composition image now | Lookup of Human composition image through Shot, only linked records where Human composition ready is 1 | New (human composition) |
+| Human composition check now | Lookup of Human composition check through Shot | New (human composition) |
 | One image | Formula (below) | New (continuity) |
 | Current product image | Lookup of Product image through Shot | Existing |
 | Current reference images | Lookup of Reference images through Shot | Existing |
@@ -695,6 +739,7 @@ The build's reconcile reads the live schema before any change (§9.1 step 2) and
 | Accepted on condition | Lookup of Accepted on condition through Accepted images | New (rendition) |
 | Acceptance | Formula (below) | Existing. Changed (rendition): one clause, the acceptance's condition after its use |
 | Continuity reference for | Link to Shots; paired with Shots › Continuity reference | New (continuity) |
+| Human composition reference for | Link to Shots; paired with Shots › Human composition reference | New (human composition) |
 | Accepted images | Link to Accepted images; paired with Accepted images › Candidate record no. | Existing |
 
 </details>
@@ -875,8 +920,10 @@ Each text below is the `airtable` text of one formula in [`sim/formulas.mjs`](si
 - **Primary (new):** a new table's primary field: created as Single line text "Name", then converted in the UI to this text ([Install](#install)).
 - **Changed:** replace the live formula with this exact text, after saving the old text as its rollback (§7.8). Each is the live text plus only v6's change, which its status names: nothing is spliced into the live text at install.
 - **Existing, not changed: the live text:** the live formula this unit reads and leaves alone, with field names for field IDs. **Don't install it.**
-- **New (rendition), New (continuity):** added by the change of 2026-10-30 ([Rendition and continuity](#rendition-and-continuity)); install the text as written.
-- **Changed (rendition), Changed (continuity):** a text changed on 2026-10-30 by one addition, which its status names. The text before is `INSTALLED` in `sim/formulas.mjs`: the text this unit installed, or, for Candidates › Acceptance, the live text read on 2026-10-30. Save the base's text first and compare it with that: a difference stops the change. RND-text and CNT-text check that each is its `INSTALLED` text plus its one addition.
+- **New (rendition), New (continuity):** added by the change of 2026-10-30 ([Rendition, continuity and human composition](#rendition-continuity-and-human-composition)); install the text as written.
+- **Changed (rendition), Changed (continuity):** a text changed on 2026-10-30 by one addition, which its status names. The text before is `INSTALLED` in `sim/formulas.mjs`: the text this unit installed, or, for Candidates › Acceptance, the live text read on 2026-10-30. Save the base's text first and compare it with that: a difference stops the change. RND-text checks that each rendition text is its `INSTALLED` text plus its one addition, and CNT-text the same of each continuity text as that change installed it (`CONTINUITY_INSTALLED`).
+- **New (human composition):** added by the change of 2026-10-31 ([Rendition, continuity and human composition](#rendition-continuity-and-human-composition)); install the text as written.
+- **Changed (human composition):** a text changed on 2026-10-31 by one addition, which its status names. The text before is `CONTINUITY_INSTALLED` in `sim/formulas.mjs`: the text the change of 2026-10-30 installed, which the live base holds. Save the base's text first and compare it with that: a difference stops the change. HCR-text checks that each is its `CONTINUITY_INSTALLED` text plus its one addition, and that `CONTINUITY_INSTALLED` is the text main `e753aa3` carries, by its SHA-256.
 
 The live texts are read from the build copy, whose schema is the live base's: `sim/formulas.mjs` holds them as `LIVE`, and each Changed text is built from its `LIVE` text. Eight of them (Product facts, Prompt line, Current standard, Current prompt, Decision, Can generate, Ready and Status) were also read from the live base itself, and are the same.
 
@@ -885,6 +932,7 @@ The live texts are read from the build copy, whose schema is the live base's: `s
 - LIVE-unchanged checks that each existing formula is its `LIVE` text, and LIVE-changed that each Changed text is its `LIVE` text with only its change: the default branch of Current standard and Current prompt, Decision's one field, Ready's wrapper and Status's one branch.
 - LIVE-7.8 checks, on a walkthrough shot and its candidates, that the Changed formulas' JavaScript gives the values the live texts give, written out by hand (§7.8), and that the held labels apply only to an imageless candidate. CTRL-LIVE-ready is its control.
 - FORMULA-agree reads ten texts literally, with a small reader for the functions they use, and checks that they give their JavaScript functions' values on every record of seven cases with two-line values, labels inside values, a deleted decision and two live shots. The ten are Definition line, Share signature, Product basis line, Current product basis, Effective placement, Effective direction, Lineage, the slot Status, State and In use replaces. CTRL-FORMULA-agree and CTRL-ML-labels are its controls.
+- HCR-absent reads the three baseline texts (`CONTINUITY_INSTALLED`) literally with FORMULA-agree's reader. On each shot with no human composition reference, with and without a continuity reference, they give the values the changed formulas' functions give. HCR-absent, HCR-ready, HCR-alone, HCR-continuity-added, HCR-incomplete and HCR-continuity-first read Plan check, Current standard, Current prompt and Human composition check, ready, line and prompt the same way, and check them against their functions. CTRL-HCR-absent is HCR-absent's control.
 - No other text is checked against its JavaScript function, and nothing here runs a text in Airtable. The build copy is the first place they run (§9.1 step 4).
 - TEXT-readme checks that every text here is its `sim/formulas.mjs` text, character for character, and that every formula there has its text here. CTRL-TEXT-readme is its control.
 
@@ -1506,7 +1554,7 @@ IF(OR({Operative fulfillment} = "Make", {Operative fulfillment} = "Share"), "Wai
 
 </details>
 
-<details><summary><b>Shots</b> (21 formulas)</summary>
+<details><summary><b>Shots</b> (25 formulas)</summary>
 
 **Shots › Shot ID** · New
 
@@ -1565,10 +1613,11 @@ IF(ARRAYJOIN({Workflow}) = "Product pages", {Active lineage}, IF(ARRAYJOIN({Work
 IF(AND({Products confirmed}, OR({Lines changed at} = BLANK(), NOT(IS_BEFORE({Confirmed at}, {Lines changed at})))), 1, 0)
 ```
 
-**Shots › Plan check** · New. Changed (continuity): the installed text inside one test, `IF(LEFT({Continuity check}, 10) = "Incomplete", "Not planned: the continuity reference is incomplete: " & …, <the installed text>)`
+**Shots › Plan check** · New. Changed (continuity): the installed text inside one test, `IF(LEFT({Continuity check}, 10) = "Incomplete", "Not planned: the continuity reference is incomplete: " & …, <the installed text>)`. Changed (human composition): one more test directly after it, around the rest, `IF(LEFT({Human composition check}, 10) = "Incomplete", "Not planned: the human composition reference is incomplete: " & …, <the rest>)`; the text before is the continuity change's installed text (`CONTINUITY_INSTALLED`)
 
 ```text
 IF(LEFT({Continuity check}, 10) = "Incomplete", "Not planned: the continuity reference is incomplete: " & SUBSTITUTE({Continuity check}, "Incomplete: ", ""),
+IF(LEFT({Human composition check}, 10) = "Incomplete", "Not planned: the human composition reference is incomplete: " & SUBSTITUTE({Human composition check}, "Incomplete: ", ""),
 IF({Brief count} != 1, "Not planned: it needs one request",
 IF({Withdrawn}, "Not planned: withdrawn",
 IF(SUM({Request superseded}) > 0, "Not planned: its request is superseded",
@@ -1601,7 +1650,7 @@ IF(ARRAYJOIN({Workflow}) = "Collection",
   IF(OR(ARRAYJOIN({Workflow}) = "Marketing", ARRAYJOIN({Workflow}) = "Campaign"), IF(OR(COUNTA({Line product has image}) = 0, MIN({Line product has image}) != 1, SUM({References complete}) != 1), "Not planned: a source image is missing",
     IF(AND({Exception} != "", {Exception reason} = ""), "Not planned: an exception needs its reason", "Planned")), IF(OR(COUNTA({Line product has image}) = 0, MIN({Line product has image}) != 1, SUM({References complete}) != 1), "Not planned: a source image is missing",
     IF({Exception} != "", "Not planned: Exceptions aren't used on walkthrough shots; edit Shot direction.",
-    IF(AND({Exception} != "", {Exception reason} = ""), "Not planned: an exception needs its reason", "Planned")))))))))))))
+    IF(AND({Exception} != "", {Exception reason} = ""), "Not planned: an exception needs its reason", "Planned"))))))))))))))
 ```
 
 **Shots › Planned** · New
@@ -1617,19 +1666,19 @@ IF(ARRAYJOIN({Workflow}) = "Product pages", IF({Slots guide changed} = 0, "Same"
 IF(ARRAYJOIN({Workflow}) = "Collection", IF(AND(FIND(ARRAYJOIN({Guide slot definition line}), {Kept guide plan}) > 0, SUM({Collection guide complete}) = 1), "Same", "The shot guide changed since this was planned"), ""))
 ```
 
-**Shots › Current standard** · Changed: replace the live text with this text. Its default branch is the live text, character for character; the Workflow branch is v3 §5.1's composition with v6 §7.1's changes. Changed (continuity): the Workflow branch ends with `IF({Continuity ready}, "\n" & {Continuity line}, "")`
+**Shots › Current standard** · Changed: replace the live text with this text. Its default branch is the live text, character for character; the Workflow branch is v3 §5.1's composition with v6 §7.1's changes. Changed (continuity): the Workflow branch ends with `IF({Continuity ready}, "\n" & {Continuity line}, "")`. Changed (human composition): `IF({Human composition ready}, "\n" & {Human composition line}, "")` directly before it; the text before is the continuity change's installed text (`CONTINUITY_INSTALLED`)
 
 ```text
 IF(OR(ARRAYJOIN({Workflow}) = "Product pages", ARRAYJOIN({Workflow}) = "Collection", ARRAYJOIN({Workflow}) = "Marketing", ARRAYJOIN({Workflow}) = "Campaign"),
-ARRAYJOIN({Request standard}, "") & "\nProducts, in image order:\n" & IF({Active slots filled} > 1, ARRAYJOIN({Line shared facts}, "\n"), ARRAYJOIN({Line facts}, "\n")) & "\nShot: " & {Name} & ", for " & {Effective placement} & ". " & {Effective direction} & IF({Lineage}, "\n" & {Lineage}, "") & IF(AND({Exception}, {Exception reason}), "\nException reason: " & {Exception reason} & ". Set by: " & {Exception set by} & ".", "") & IF({Continuity ready}, "\n" & {Continuity line}, ""),
+ARRAYJOIN({Request standard}, "") & "\nProducts, in image order:\n" & IF({Active slots filled} > 1, ARRAYJOIN({Line shared facts}, "\n"), ARRAYJOIN({Line facts}, "\n")) & "\nShot: " & {Name} & ", for " & {Effective placement} & ". " & {Effective direction} & IF({Lineage}, "\n" & {Lineage}, "") & IF(AND({Exception}, {Exception reason}), "\nException reason: " & {Exception reason} & ". Set by: " & {Exception set by} & ".", "") & IF({Human composition ready}, "\n" & {Human composition line}, "") & IF({Continuity ready}, "\n" & {Continuity line}, ""),
 ARRAYJOIN({Brief standard}, "") & "\nShot: " & {Name} & ", for " & {Placement} & ". " & {Shot direction})
 ```
 
-**Shots › Current prompt** · Changed: replace the live text with this text. Its default branch is the live text, character for character; the Workflow branch is v3 §5.1's composition with v6 §7.1's changes. Changed (continuity): the Workflow branch ends with `IF({Continuity ready}, "\n\n" & {Continuity prompt}, "")`
+**Shots › Current prompt** · Changed: replace the live text with this text. Its default branch is the live text, character for character; the Workflow branch is v3 §5.1's composition with v6 §7.1's changes. Changed (continuity): the Workflow branch ends with `IF({Continuity ready}, "\n\n" & {Continuity prompt}, "")`. Changed (human composition): `IF({Human composition ready}, "\n\n" & {Human composition prompt}, "")` directly before it; the text before is the continuity change's installed text (`CONTINUITY_INSTALLED`)
 
 ```text
 IF(OR(ARRAYJOIN({Workflow}) = "Product pages", ARRAYJOIN({Workflow}) = "Collection", ARRAYJOIN({Workflow}) = "Marketing", ARRAYJOIN({Workflow}) = "Campaign"),
-"Generate one single commercial photograph. Not a grid, collage, contact sheet or multi-image layout.\n\nShot: " & {Name} & ", for " & {Prompt placement} & ". " & {Effective direction} & "\n\n" & ARRAYJOIN({Request prompt}, "") & "\n\nThe first attached images are the products, one each, in this order. Each is the authority for its product. Do not redesign, substitute, embellish or alter any product.\n" & IF({Active slots filled} > 1, ARRAYJOIN({Line shared prompt lines}, "\n"), ARRAYJOIN({Line prompt lines}, "\n")) & "\n\n" & ARRAYJOIN({Reference prompt}, "") & IF({Continuity ready}, "\n\n" & {Continuity prompt}, ""),
+"Generate one single commercial photograph. Not a grid, collage, contact sheet or multi-image layout.\n\nShot: " & {Name} & ", for " & {Prompt placement} & ". " & {Effective direction} & "\n\n" & ARRAYJOIN({Request prompt}, "") & "\n\nThe first attached images are the products, one each, in this order. Each is the authority for its product. Do not redesign, substitute, embellish or alter any product.\n" & IF({Active slots filled} > 1, ARRAYJOIN({Line shared prompt lines}, "\n"), ARRAYJOIN({Line prompt lines}, "\n")) & "\n\n" & ARRAYJOIN({Reference prompt}, "") & IF({Human composition ready}, "\n\n" & {Human composition prompt}, "") & IF({Continuity ready}, "\n\n" & {Continuity prompt}, ""),
 "Generate one single commercial photograph. Not a grid, collage, contact sheet or multi-image layout.\n\nShot: " & {Name} & ", for " & {Placement} & ". " & {Shot direction} & "\n\n" & ARRAYJOIN({Brief prompt}, ""))
 ```
 
@@ -1682,6 +1731,36 @@ IF({Continuity ready}, "Continuity reference: No. " & ARRAYJOIN({Continuity reco
 
 ```text
 IF({Continuity ready}, "The last attached image is a continuity reference, from an earlier image. Use it only for: " & {Continuity may decide} & " It is not an authority for any product, for which products appear, or for whether a person appears: the product images and the shot above decide those.", "")
+```
+
+**Shots › Human composition check** · New (human composition): empty when no reference is configured; "Incomplete: …" with the reason when one is configured but can't be used, or is the continuity reference's candidate; "Ready"
+
+```text
+IF(AND({Human composition count} = 0, TRIM({Human composition may decide}) = ""), "",
+IF(NOT(OR(ARRAYJOIN({Workflow}) = "Product pages", ARRAYJOIN({Workflow}) = "Collection", ARRAYJOIN({Workflow}) = "Marketing", ARRAYJOIN({Workflow}) = "Campaign")), "Incomplete: a human composition reference is used only on a product-page, collection, marketing or campaign shot",
+IF({Human composition count} != 1, "Incomplete: link exactly one candidate as the human composition reference",
+IF(SUM({Human composition has image}) != 1, "Incomplete: the human composition reference needs exactly one image, with no comma in its name",
+IF(AND({Continuity count} = 1, ARRAYJOIN({Human composition record no.}) = ARRAYJOIN({Continuity record no.})), "Incomplete: the human composition reference must be a different candidate from the continuity reference",
+IF(TRIM({Human composition may decide}) = "", "Incomplete: enter what the human composition reference may decide",
+"Ready"))))))
+```
+
+**Shots › Human composition ready** · New (human composition): 1 exactly when Human composition check is Ready
+
+```text
+IF({Human composition check} = "Ready", 1, 0)
+```
+
+**Shots › Human composition line** · New (human composition)
+
+```text
+IF({Human composition ready}, "Human composition reference: No. " & ARRAYJOIN({Human composition record no.}) & ", " & ARRAYJOIN({Human composition title}) & ", image as of " & ARRAYJOIN({Human composition image as of}) & ". May decide: " & {Human composition may decide} & " It does not decide the products, which products appear, where they stand or how large they are, the room, its architecture, its materials or the light, who the person is, or whether a person appears. Set by: " & {Human composition set by} & ".", "")
+```
+
+**Shots › Human composition prompt** · New (human composition): its image is the second-to-last attached while the continuity reference is ready, and the last otherwise
+
+```text
+IF({Human composition ready}, IF({Continuity ready}, "The second-to-last attached image", "The last attached image") & " is a human composition reference, from an earlier image. Use it only for: " & {Human composition may decide} & " It is not an authority for any product, for which products appear, for where they stand or how large they are, for the room, its architecture, its materials or the light, or for who the person is. The product images and the shot above decide the products; the shot above decides whether a person appears.", "")
 ```
 
 </details>
@@ -2500,11 +2579,11 @@ IF({Decided basis} = "", "Not applied", IF({Applied}, IF(LEFT({Result}, 15) = "A
 ### Snapshot's reference list
 
 - **Trigger:** Snapshot's, as a script step before its update: a candidate with a shot, no Standard used and no Image, whose Shot planned is 1. It is not an automation of its own.
-- **Does:** it assembles the reference image files Snapshot keeps, in order, from the trigger's values, never from a later read of the shot: the shot's reference images (Current reference images) in their order, then Continuity image now, last, while Continuity check now reads Ready. With nothing configured it is the reference images alone, as Snapshot kept them before. It sets one output, `referenceUrls`, and logs how many files it kept.
-- **Stops,** before the update, so nothing is kept:
-  - a configured continuity reference that isn't Ready (Continuity check now has a text other than Ready);
-  - Ready, with no continuity file or more than one;
-  - a continuity file with nothing configured;
+- **Does:** it assembles the reference image files Snapshot keeps, in order, from the trigger's values, never from a later read of the shot: the shot's reference images (Current reference images) in their order, then Human composition image now while Human composition check now reads Ready, then Continuity image now, last, while Continuity check now reads Ready. With neither configured it is the reference images alone, as Snapshot kept them before. It sets one output, `referenceUrls`, and logs how many files it kept and which reference images followed them.
+- **Stops,** before the update, so nothing is kept, on either reference, the continuity reference checked first:
+  - a configured reference that isn't Ready (its check now has a text other than Ready);
+  - Ready, with no file for it or more than one;
+  - a file with nothing configured;
   - an input missing, not a list, or holding an item that isn't a non-empty string.
 - **Writes:** nothing. Snapshot's update writes `referenceUrls` to Reference images used, with Standard used, Prompt used, Intended use, Settings used, Product image used, Slots kept and Products kept, in its one update. Those seven mappings are unchanged.
 
@@ -2513,8 +2592,10 @@ IF({Decided basis} = "", "Not applied", IF({Applied}, IF(LEFT({Result}, 15) = "A
 | `referenceUrls` | Current reference images: each file's download URL, as a list | `insertAsData(map(map(…, value), expiringDownloadUrl))` |
 | `continuityUrls` | Continuity image now: the same | the same |
 | `continuityChecks` | Continuity check now: its text, as a list | `insertAsData(map(…, value))` |
+| `humanCompositionUrls` | Human composition image now: each file's download URL, as a list (the change of 2026-10-31) | as `continuityUrls` |
+| `humanCompositionChecks` | Human composition check now: its text, as a list (the change of 2026-10-31) | as `continuityChecks` |
 
-This table is written by hand: the step has no bindings. Each input is wrapped in `insertAsData`, so it arrives as a list rather than comma-joined text. The connector reads an empty Continuity check now as `[null]`; the exact value `insertAsData` passes for it wasn't logged. The step reads `[null]` and the other empty forms (an empty list, empty text, no value) as nothing configured, and the local tests cover each. The step declares `referenceUrls` as an array of strings in its output schema, and the update's Reference images used is that output alone.
+This table is written by hand: the step has no bindings. Each input is wrapped in `insertAsData`, so it arrives as a list rather than comma-joined text. The connector reads an empty Continuity check now as `[null]`; the exact value `insertAsData` passes for it wasn't logged. The step reads `[null]` and the other empty forms (an empty list, empty text, no value) as nothing configured, and the local tests cover each. It reads Human composition check now the same way, and SNP-hcr-absent covers its empty forms. The step declares `referenceUrls` as an array of strings in its output schema, and the update's Reference images used is that output alone.
 
 ## Install
 
@@ -2554,8 +2635,8 @@ This table is written by hand: the step has no bindings. Each input is wrapped i
    - None of them changes a §7.8 value.
    - None runs until pressed, except S4, which runs when an acceptance becomes Complete.
 
-**The change of 2026-10-30** ([Rendition and continuity](#rendition-and-continuity)) follows the route above, with a fresh private copy as its build copy. It is committed on its branch, validated in the copy from those bytes, merged through its source PR, then installed on the live base as it stands, from the merged bytes (K15). A fix found in the copy is made in the source, committed, reinstalled in the copy and retested there before the PR.
-- **What isn't in this folder:** G2a's after-script, Snapshot's node set and Accept's mapping. Each is installed from the object the change's proposal declares, by its identity, and read back against it. Snapshot's node set carries the exact bytes of `snapshot-references.js`. A fix to one of them found in the copy goes back to ASK as a revised proposal object before the PR.
+**The change of 2026-10-30** ([Rendition, continuity and human composition](#rendition-continuity-and-human-composition)) follows the route above, with a fresh private copy as its build copy. It is committed on its branch, validated in the copy from those bytes, merged through its source PR, then installed on the live base as it stands, from the merged bytes (K15). A fix found in the copy is made in the source, committed, reinstalled in the copy and retested there before the PR.
+- **What isn't in this folder:** G2a's after-script, Snapshot's node set and Accept's mapping. Each is installed from the object the change's proposal declares, by its identity, and read back against it. Snapshot's node set carries the exact bytes of `snapshot-references.js` as that change left it (`e753aa3`; the change of 2026-10-31 below replaces them). A fix to one of them found in the copy goes back to ASK as a revised proposal object before the PR.
 - **The copy:** a fresh private duplicate of the live base, with its records and without comments. It is never the preserved provenance base, and no Test record is added to the live base for it.
   - Before anything else:
     - confirm it has no base or page share, and every automation is off;
@@ -2586,9 +2667,9 @@ This table is written by hand: the step has no bindings. Each input is wrapped i
   4. **G2a:** the exact after-script kept with the change's record, in place of the saved script, through its byte gate. With no reference configured it decides as before.
      - Before the edit, the live script is the saved baseline's bytes.
      - After it, the script is the after-script's bytes with exactly two replacements: `FIELD_ID_OF_CANDIDATES_CONTINUITY_IMAGE_NOW` by Continuity image now's ID, and `FIELD_ID_OF_CANDIDATES_CONTINUITY_CHECK_NOW` by Continuity check now's.
-  5. **Snapshot:** a script step before its update, with the exact bytes of `snapshot-references.js` and its three inputs, and the update's Reference images used becomes that step's `referenceUrls` ([Snapshot's reference list](#snapshots-reference-list)). Nothing else in Snapshot changes.
+  5. **Snapshot:** a script step before its update, with the exact bytes of `snapshot-references.js` as at `e753aa3` and its three inputs (the file now has five, from the change of 2026-10-31 below), and the update's Reference images used becomes that step's `referenceUrls` ([Snapshot's reference list](#snapshots-reference-list)). Nothing else in Snapshot changes.
      - Its node set goes in with exactly two replacements: `FIELD_ID_OF_CANDIDATES_CONTINUITY_IMAGE_NOW` by Continuity image now's ID, and `FIELD_ID_OF_CANDIDATES_CONTINUITY_CHECK_NOW` by Continuity check now's.
-     - Read both automations back (K0). Snapshot's read-back has its name, description and trigger as saved; the step's script byte-equal to the file, and its three inputs, output schema and description as declared; and the update's key, table, record, description and eight mappings, seven unchanged and Reference images used the step's `referenceUrls` under the step's saved key. Then turn them on.
+     - Read both automations back (K0). Snapshot's read-back has its name, description and trigger as saved; the step's script byte-equal to the file as at `e753aa3`, and its three inputs, output schema and description as declared; and the update's key, table, record, description and eight mappings, seven unchanged and Reference images used the step's `referenceUrls` under the step's saved key. Then turn them on.
   6. **Accept:** one mapping, Accepted images › Accepted on condition from Candidates › Accept on condition, and one addition to its description, " and any condition entered in Accept on condition" after "the intended use", so it reads "a copy of the image, the intended use and any condition entered in Accept on condition, the kept standard, …". Read it back: its configuration is the saved one plus that one entry, sourced and targeted by the two fields' IDs, and that one addition.
   7. **S8:** one automation, "When a button is clicked" on Applications, with the exact bytes of `s8-approve-rendition.js` and its bindings. Read its script back against the file (K0), then turn it on. Its button is placed in step 8.
   8. **Permissions and pages, in the UI.**
@@ -2609,7 +2690,7 @@ This table is written by hand: the step has no bindings. Each input is wrapped i
      - Record a slot's requirement with S7 before its acceptance applies.
      - Enter an acceptance's condition in Accept on condition, on the candidate page, and read it back on the candidate, before the image is accepted.
      - Set a continuity reference only once its shot's earlier candidates may read "standard changed", in the same update as any shot text that relies on it.
-- **Rollback,** data first, with Snapshot and G2a off while anything they read changes:
+- **Rollback,** data first, with Snapshot and G2a off while anything they read changes. If the change of 2026-10-31 (below) is installed, roll it back first:
   1. Turn Snapshot and G2a off, once no run of theirs is pending (as above).
   2. Clear every shot's Continuity reference and Continuity may decide. In the same update for each shot, put back any of its text that was set to rely on the reference, such as an Exception that defers to it. Then no shot's prompt names a continuity image or defers to one.
   3. **Permissions, in the UI:** Continuity reference, Continuity may decide and Accept on condition become editable by automations only. No automation writes them, so no reference or condition can be entered that nothing would use.
@@ -2619,6 +2700,35 @@ This table is written by hand: the step has no bindings. Each input is wrapped i
   7. **Pages, in the UI:** take Accept on condition off the candidate page and set its Edit fields back to Off, Rendition required off the slot page, Approve rendition off the application page and Continuity check off the shot page. Publish once, under step 8's gates: the only pending drafts are these, sharing is unchanged, and the shared pages load logged out.
   8. Put back Decision content, Change pending, Acceptance, Eligibility and Settled source image only while no accepted image carries a condition and no slot's recorded decision requires a rendition. Otherwise their old texts would deliver, or show as accepted for its use, an image selected only through its rendition, or read a recorded requirement as a change that waits, so the rollback stops there for ASK.
   9. The new fields stay, with whatever the data entered in them. Removing them is ASK's act. Undoing a recorded decision, an acceptance or an approval is a decision of its own, not a rollback step.
+
+**The change of 2026-10-31** (the human composition reference, [Rendition, continuity and human composition](#rendition-continuity-and-human-composition)) follows the same route: a fresh private copy as its build copy, the branch's committed bytes validated there, its source PR, then the live base from the merged bytes (K15). It adds no page, no S-script and no change to Accept.
+- **What isn't in this folder:** G2a's after-script and Snapshot's node set for this change. Each is installed from the object the change's proposal declares, by its identity, and read back against it. The node set carries the exact bytes of `snapshot-references.js`.
+- **The copy,** made and set up as for the change of 2026-10-30: no base or page share, G2a in `dry-run`, G1 and G2b off. Exercise there:
+  - the human composition reference absent, incomplete in each way Human composition check names, and Ready, alone and with a continuity reference, through Snapshot and G2a's dry run. An incomplete reference holds its shot's candidates, so G2a's trigger doesn't hold for them. For each way it is incomplete, read each held candidate's Human composition check now beside its shot's Human composition check, the same text, and its Ready, "Held";
+  - the referenced candidate's image replaced: Human composition line names the new image time, and a candidate kept under the old reads changed;
+  - each order of [the reference files](#rendition-continuity-and-human-composition), read on a kept candidate's Reference images used by count, and by each file's size against its source rather than by its name;
+  - every record's Plan check, Current standard, Current prompt and Standard check, compared before and after each changed formula.
+- **Pending runs first,** as for the change of 2026-10-30: no Snapshot or G2a run in progress, and no candidate waiting for one. Save G2a's and Snapshot's configurations as read, with their SHA-256, then turn both off. Make no candidate while they are off: turned on again, they don't run for a record that came to match while they were off.
+- **The order.** Read each changed formula's text first: it must be its `CONTINUITY_INSTALLED` text in `sim/formulas.mjs`, with field names, and a difference stops the step. With nothing linked or entered, no existing value moves. Read Plan check, Current standard and Current prompt on every shot, and Standard check and Ready on every candidate, before step 3 and after each changed formula, and compare.
+  1. **Fields** ([Schema](#schema): the rows marked New (human composition)), except the formulas and the lookups step 2 names. Shots › Human composition reference has Candidates › Human composition reference for as its pair. Human composition has image looks up One image, which the change of 2026-10-30 made.
+  2. **New formulas, each before the lookups that read it:** Human composition check, Human composition ready, Human composition line and Human composition prompt, then Candidates › Human composition image now and Human composition check now. Each reads empty or 0.
+     - Then read the base's schema and compare each new field with its Schema row: its type, its lookup and condition, and the link's pair. A difference stops the step.
+     - Human composition set by is read in its field dialog in the UI: Specific fields, Human composition reference and Human composition may decide.
+  3. **Changed formulas,** each with its text above: Plan check, Current standard and Current prompt.
+  4. **G2a:** the exact after-script declared for this change, in place of the saved script, through its byte gate. With no human composition reference configured it decides as before.
+     - Before the edit, the live script is the baseline this change's proposal declares, by its SHA-256: the continuity change's G2a script as installed, `7b96c0b6906c668e53830c258505b2a9040fae02cca6e83c5edec7261074b602`.
+     - After it, the script is the declared after-script's bytes with exactly its two placeholders replaced: `FIELD_ID_OF_CANDIDATES_HUMAN_COMPOSITION_IMAGE_NOW` by Human composition image now's ID, and `FIELD_ID_OF_CANDIDATES_HUMAN_COMPOSITION_CHECK_NOW` by Human composition check now's.
+  5. **Snapshot:** its script step takes the exact bytes of `snapshot-references.js`, its two new inputs and the step's declared description. Nothing else in Snapshot changes: not the automation's trigger, name or description, and not its update, whose Reference images used stays the step's `referenceUrls`.
+     - Its node set goes in with exactly two replacements, the same two placeholders by the same two IDs.
+     - Read both automations back (K0). Snapshot's read-back has its name, description and trigger as saved; the step's script byte-equal to the file, and its five inputs, output schema and description as declared; and the update's key, table, record, description and other mappings as saved, and Reference images used the step's `referenceUrls` under the key Airtable gives the step. Airtable may give the step a new key when it is saved, and the update's reference follows it; the checker allows for that. Then turn them on.
+  6. **Data, last:** set a human composition reference only once its shot's earlier candidates may read "standard changed", in the same update as any shot text that relies on it.
+- **Rollback,** data first, with Snapshot and G2a off while anything they read changes:
+  1. Turn Snapshot and G2a off, once no run of theirs is pending (as above).
+  2. Clear every shot's Human composition reference and Human composition may decide. In the same update for each shot, put back any of its text that was set to rely on the reference. Then no shot's prompt names a human composition image.
+  3. **Permissions, in the UI:** Human composition reference and Human composition may decide become editable by automations only. No automation writes them, so no reference can be entered that nothing would use.
+  4. Put back Plan check, Current standard and Current prompt from their saved texts. With no reference set, their values don't move.
+  5. Put back Snapshot's and G2a's saved configurations, read them back (K0), and turn them on.
+  6. The new fields stay, with whatever the data entered in them. Removing them is ASK's act.
 
 **After installing:**
 - No other automation should watch the fields these scripts write.
@@ -2661,7 +2771,7 @@ Each of these throws, writes nothing after it, and shows in the automation's run
   - `legacyMap` that isn't a JSON object of record IDs, each naming a product record ID and its facts;
   - `refuseEarlierStandard` other than empty, no, false, yes or true;
   - a Live basis that doesn't name the source and slots as read, or a Decided basis that names none. These are internal invariants, and nothing is written.
-- **Snapshot's reference list:** a configured continuity reference that isn't Ready, a continuity file that disagrees with its check, or an input missing or not a list. It stops before Snapshot's update, so the candidate keeps nothing. Snapshot's trigger keeps the first from arising, and Continuity check with Continuity image now's condition keeps the second ([Snapshot's reference list](#snapshots-reference-list)).
+- **Snapshot's reference list:** a configured continuity or human composition reference that isn't Ready, a file that disagrees with its check, or an input missing or not a list. It stops before Snapshot's update, so the candidate keeps nothing. Snapshot's trigger keeps the first from arising, and each check with its "… image now" condition keeps the second ([Snapshot's reference list](#snapshots-reference-list)).
 - **Any write** that Airtable rejects, or a run that times out. The next press finishes it ([Retry](#retry)).
 
 ## What it does not support
@@ -2681,6 +2791,7 @@ Each of these throws, writes nothing after it, and shows in the automation's run
   - Nothing is all-or-nothing across two writes.
 - **The character `⏎` in a View or a Must stay true.** A kept record writes a line break as `⏎`, so an authored `⏎` reads back as a line break in a collection shot's direction, and a definition line can't tell the two apart.
 - **Reordering a guide's slot links.** The Slot definitions rollup follows link order, so a reorder reads as a change and unadopts the guide, which is the fail-safe direction. Whether the rollup can be sorted by position is for the build to find (T24).
+- **A third shot reference, or a general table of them.** A shot carries two named references, the continuity reference and the human composition reference, each with its own fields, fixed limits and place among the attached images. That is an implementation limit of this demo, not an architectural rule. A third reference, or a general table of them, isn't built.
 - **Renditions beyond one per application.** An application carries one rendition file, for its own slot. A second format of the same image for another slot is that slot's application's. A rendition isn't checked against the accepted image: S8 approves the file, its operation and its decision record, and what the file depicts is the approver's to judge.
 - **Derivatives beyond a delivery rendition** (the note's technical rendition). A rendition keeps its accepted image's view and use. A crop to its slot's frame may leave out what the shot's or slot's requirements exclude (the note's §3). A file that shows another view, alters what it keeps of the picture, or serves another use is a new image, made and accepted as one.
 - **Outside this unit:** creative derivatives, export or delivery, assignment by rule or agent, and applications for collection, marketing or campaign destinations (§0).
@@ -2919,6 +3030,15 @@ Where v6 is silent or ambiguous, the source takes the reading below, the one mos
 - **Continuity may decide is the operator's words,** not a list of options. The line and the prompt add the fixed sentence of what it doesn't decide (`CONTINUITY` in `sim/formulas.mjs`).
 - **Snapshot assembles its reference list in a script step** (v3), because Airtable's automation configuration accepted neither attachment template the change first declared: one joining the two lists with `flatten`, and one with `spread`. The step reads only the trigger's values, so the list comes from the same read as the standard and the prompt it is kept with, and it stops rather than keep the references without a configured continuity image.
 
+**The human composition reference** (2026-10-31)
+- **A second named reference, built as the continuity reference is,** rather than a general table of shot references: the smallest change that carries two shot-scoped images with separate roles. Two named references are an implementation limit of this demo, not an architectural rule; a third reference, or a general table of them, isn't built ([What it does not support](#what-it-does-not-support)).
+- **Its image is kept before the continuity image,** so the continuity image stays last in every case, and its place and its prompt text don't change. The human composition paragraph names its own image the second-to-last attached while the continuity reference is ready, and the last otherwise.
+- **Its limits are fixed, not left to its role text.** Whatever Human composition may decide says, its line and paragraph add the fixed sentences of what it doesn't decide (`HUMAN_COMPOSITION` in `sim/formulas.mjs`), and the paragraph leaves whether a person appears to the shot.
+- **It must be a different candidate from the continuity reference,** so one candidate is never both references. The test runs while the continuity reference links one candidate; with two, the shot is already Not planned on the continuity reference, and the test applies once that is corrected.
+- **Plan check tests it after the continuity reference,** so with both incomplete it names the continuity reference, and the continuity test stays as installed.
+- **The three changed texts are built from `CONTINUITY_INSTALLED`,** the texts the change of 2026-10-30 installed, not from `INSTALLED`, the texts from before it. Each is that text plus one addition.
+- **Snapshot's reference list checks both references with one helper,** the continuity reference first, so the human composition reference stops the run in the same three ways, with messages that name it.
+
 ## Tests
 
 ```bash
@@ -2938,7 +3058,7 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
 - One table operation is applied at a time, in an order a test can script, which is how the double-press cases force an overlap.
 - The sim's clock is controlled, which places a hand edit more than a minute after a script's write, or within it.
 - The formulas are the JavaScript functions in `sim/formulas.mjs`, computed on read.
-- `tests/fixtures.mjs` holds the demo catalog and the presses. It stands in for Snapshot and Accept with setup writes of what v6, and the change of 2026-10-30, say they write.
+- `tests/fixtures.mjs` holds the demo catalog and the presses. It stands in for Snapshot and Accept with setup writes of what v6, and the changes of 2026-10-30 and 2026-10-31, say they write.
 - The sim also has N2's crash injection and torn-read mode. No case uses either: interruption is tested through `faultAfterWrites`, and overlap through scripted interleavings.
 
 **Local and copy-only rows.** v6 §10.1 marks each row Local, Copy or Both. In a Both row, the local run checks the scripts' decisions against simulated formula values. The formulas' own values, and what a page shows, are checked only in the build copy.
@@ -3009,15 +3129,30 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
   - CNT-absent: nothing configured, the shot as installed;
   - CNT-carried: Ready; the standard's and prompt's one addition each, the image kept last, the anchor shot unchanged, an earlier candidate reading changed;
   - CNT-incomplete: a reference with no role, a role of only spaces, a role with no link, two links, no image, two files, a comma in the name, the image removed, a walkthrough shot: each Not planned with its reason, no Snapshot, a kept candidate Held; only spaces and no link: nothing configured; completed, Planned again;
-  - CNT-image-changed and CNT-text;
+  - CNT-image-changed, and CNT-text, which checks the continuity texts as that change installed them (`CONTINUITY_INSTALLED`) against `INSTALLED`;
   - BIND-ids-s8.
-- **Snapshot's reference list** (`tests/snapshot-references.test.mjs`, the change of 2026-10-30, v3):
+- **Human composition reference** (`tests/human-composition-reference.test.mjs`, the change of 2026-10-31):
+  - HCR-absent: nothing configured, on two campaign shots, a walkthrough shot and the product-page shots S2 makes, with and without a continuity reference on the campaign shot: Plan check, Current standard and Current prompt are the baseline texts' values, read literally; the kept references as before;
+  - HCR-ready: Life in use with No. 48 as its human composition reference and No. 33 as its continuity reference: the human composition line, then the continuity line; the paragraph naming the second-to-last attached image, then the continuity paragraph; Snapshot's reference list and the stand-in keep the reference images, then 48's image, then 33's; the texts read literally give the functions' values;
+  - HCR-alone: the human composition reference alone: its paragraph names the last attached image, and its image is kept last;
+  - HCR-continuity-added: the human composition reference set first, the continuity reference added afterwards: its paragraph changes from the last attached image to the second-to-last, a candidate kept before reads changed, and a new candidate keeps 48's image, then 33's;
+  - HCR-incomplete: a reference with no role, a role of only spaces, a role with no link, two links, no image, two files, a comma in the name, the continuity reference's own candidate, the image removed, a walkthrough shot: each Not planned with its reason, no Snapshot, a candidate kept while it was Ready Held; only spaces and no link: nothing configured; completed, Planned again;
+  - HCR-continuity-first: both references configured and the continuity reference incomplete: Plan check names it first; with two continuity links, the different-candidate test waits until it links one;
+  - HCR-image-changed: the referenced image replaced: the standard names its new time, and a candidate kept under the old reads changed;
+  - HCR-kept-unchanged: set, changed and cleared: earlier candidates' stored fields stay as kept, and they read changed only through Standard check;
+  - HCR-confers-nothing: the referenced candidate isn't accepted, and its fields don't change apart from the link's pair;
+  - HCR-text: each changed text is its `CONTINUITY_INSTALLED` text plus one addition, and `CONTINUITY_INSTALLED` is main `e753aa3`'s text, by its SHA-256.
+- **Snapshot's reference list** (`tests/snapshot-references.test.mjs`, the change of 2026-10-30, v3, with the two inputs of the change of 2026-10-31):
   - SNP-absent: nothing configured, the reference images alone, in order, with the check in each empty form: `[null]` (as the connector reads an empty check), `['']`, empty text, an empty list and nothing;
   - SNP-ready: Ready, the continuity image last;
   - SNP-incomplete: each of Continuity check's Incomplete texts, with and without a continuity file, stops the run;
   - SNP-disagree: Ready with no continuity file or two, and a file with nothing configured, stop the run;
-  - SNP-inputs: an input missing, joined into one string, or holding an item that isn't a non-empty string;
-  - SNP-sim: a Life in use candidate's own values, absent and Ready, give the fixtures' stand-in's list; an incomplete reference, which the trigger already stops, is refused if run.
+  - SNP-inputs: an input missing, joined into one string, or holding an item that isn't a non-empty string, the human composition reference's two among them;
+  - SNP-sim: a Life in use candidate's own values, absent and Ready, give the fixtures' stand-in's list; an incomplete reference, which the trigger already stops, is refused if run;
+  - SNP-hcr-absent: no human composition reference, its check in each empty form, `[null]` included: the run gives what it gave before, with the continuity reference absent, Ready, incomplete or disagreeing;
+  - SNP-hcr-ready: Ready alone, its image last; Ready with a Ready continuity reference, its image, then the continuity image last;
+  - SNP-hcr-incomplete: each of Human composition check's Incomplete texts, with and without a file, and with a Ready continuity reference, stops the run;
+  - SNP-hcr-disagree: Ready with no file or two, and a file with nothing configured, stop the run.
 - **GPT-A, GPT-A-later, GPT-B-withdrawn, GPT-C:** the clarifications above. GPT-B-withdrawn-stale is a slot whose only shot is Withdrawn, made stale by an adopted change: its step reads "press Replan on this slot", and slot-level Replan refreshes it.
 - **Negative controls,** each a mutated copy of a script or formula, showing the check that guards a mechanism failing for the reason it exists:
 
@@ -3056,6 +3191,12 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
   | CTRL-SNP-order | the reference list's order (the continuity image first) | SNP-ready: the continuity image is last |
   | CTRL-SNP-incomplete | the reference list's not-ready stop | SNP-incomplete: an incomplete reference is named, never kept as if Ready |
   | CTRL-SNP-null | the reference list's reading of an empty check (it reads `null` as text) | SNP-absent: a shot with no reference, its check `[null]` as the connector reads it, keeps its references |
+  | CTRL-HCR-absent | Current standard's function with nothing configured (it adds the human composition line's line break anyway) | HCR-absent: a shot without the reference reads its baseline text's value |
+  | CTRL-HCR-incomplete | Plan check's human composition test (the baseline text's) | HCR-incomplete: the shot Planned, Snapshot starting, a new candidate kept without the reference; the candidate kept with it Held only because its standard changed |
+  | CTRL-HCR-order | the reference list's order (the human composition image after the continuity image) | HCR-ready: 48's image, then 33's |
+  | CTRL-HCR-distinct | Human composition check's different-candidate test | HCR-incomplete: the continuity reference's own candidate taken as the human composition reference too |
+  | CTRL-SNP-hcr-order | the reference list's order (the human composition image last) | SNP-hcr-ready: the continuity image is last |
+  | CTRL-SNP-hcr-incomplete | the reference list's checks on the human composition reference (its image taken without its check) | SNP-hcr-incomplete: an incomplete reference is named, never kept as if Ready |
 
   Each control that runs a mutated script also checks something only a mutated run that finished produces: that the script ran to the end, or the result text it writes. So a crash or a stall can't pass for the guard failing.
 
@@ -3078,7 +3219,7 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
 
 The tests show the scripts' logic on a simulated base. They don't show what Airtable does. In particular, none of these is observed here:
 
-- **The formula texts.** These local tests don't execute them in Airtable, including REGEX_EXTRACT and REGEX_REPLACE in the slot Status and in Shots › Effective placement, Effective direction and Lineage, IS_BEFORE in Withdrawal, and the detector's `DATETIME_DIFF(…, 'seconds') > 60` with its blank-time guard. Locally, FORMULA-agree reads ten texts against their JavaScript (Formula texts: What has been checked); no other text is checked against its function. The copy checks, among others, a collection shot's Current standard ("for Collection grid", without the label), and that an alternate S4 creates with Current unticked reads Alternate.
+- **The formula texts.** These local tests don't execute them in Airtable, including REGEX_EXTRACT and REGEX_REPLACE in the slot Status and in Shots › Effective placement, Effective direction and Lineage, IS_BEFORE in Withdrawal, and the detector's `DATETIME_DIFF(…, 'seconds') > 60` with its blank-time guard. Locally, FORMULA-agree reads ten texts against their JavaScript, and the HCR cases six more and the three baseline texts (Formula texts: What has been checked); no other text is checked against its function. The copy checks, among others, a collection shot's Current standard ("for Collection grid", without the label), and that an alternate S4 creates with Current unticked reads Alternate.
 - **Conditional lookups.** Live shot count and the slot's Shot lookups take only linked shots whose Not withdrawn is 1. The sim models Airtable's "only include linked records that meet conditions"; the copy checks it.
 - **Last-modified times.** Whether Airtable moves one on an unchanged write is unknown, and T28 depends on it. Under the other model, re-recording a withdrawn record's unchanged decision moves its Decided content time past the kept record's, which makes the withdrawal invalid ("carries a decision"). T28 runs in the default model only; T37 records which model Airtable follows.
 - **Links.** Writing a link from its inverse side ("Slots filled") in a create call, and appending to an existing link, are modelled, not observed. So are lookups through deleted records, and the order of a link and of its inverse. In the sim, a new inverse link is appended at the end, and Slot definitions follows the guide's link order.
@@ -3087,6 +3228,7 @@ The tests show the scripts' logic on a simulated base. They don't show what Airt
 - **Snapshot, Accept and G1.** Their behaviour here is the fixtures' stand-ins, not the automations: the Planned gate, the kept payloads (Standard used, Prompt used, Intended use, the image copies, Slots kept, Products kept), and Accept's record (Recorded as, Candidate record no., Shot, Image, Approved for, Standard, Accepted by and its ID). That Accept writes the accepted record's Shot as its candidate's shot, which Shot standard now reads, is the copy's to confirm.
 - **The two existing rollups' aggregations** (Acceptance coverage, Candidate is test) aren't in the connector's schema read. The copy's UI shows them ([Choices](#choices-made-in-the-source)), and the sim now gives the same. Its records show each existing shot with one acceptance, its Acceptance coverage "Current standard", and Candidate is test 0 on both accepted records.
 - **The change of 2026-10-30.** These tests don't run its texts in Airtable. Among them: FIND over a recorded Decided content (Rendition requirement); SUM over the lookup of a formula (Continuity has image, Slot rendition requirement; Basis finished's live SUM is over the lookup of a checkbox); Approved rendition read as text, its file name first and a comma between files (Rendition state, Settled rendition), as One image reads Image; IS_BEFORE between a last-modified time and the whole second S8 writes, which needs Rendition approved at to read back as written; ARRAYJOIN of the lookup of a last-modified time in Continuity line; and S8's copy of an attachment by its URL under a name it sets, and its read of `type`, `width` and `height`. Snapshot's reference list runs here on its own, and SNP-sim compares its list with the fixtures' stand-in on this simulated base; what Airtable's `insertAsData` passes it, and Snapshot's update writing its output as attachments, are the copy's to show. G2a's change is exercised on this simulated base by the change's own harness, kept with its proposal, not by these tests. The change's private copy ran them, within the limits its results record ([What the build copy shows](#what-the-build-copy-shows): the change of 2026-10-30).
+- **The change of 2026-10-31.** These tests don't run its texts in Airtable. Among them: Human composition check's TRIM of Human composition may decide, its SUM over the lookup of One image (Human composition has image), and its different-candidate test, which compares the ARRAYJOIN of two record-number lookups as text; and the ARRAYJOIN of the lookup of a last-modified time in Human composition line. The HCR cases read the new texts and the changed ones with FORMULA-agree's reader, not with Airtable. Snapshot's reference list runs here on its own and on candidates' values; what `insertAsData` passes it for Human composition image now and check now, and Snapshot's update writing the longer list as attachments, are the copy's to show. G2a's change is exercised on this simulated base by the change's own harness, kept with its proposal, not by these tests. This change hasn't run in a copy of the base yet.
 - **A line break in a View or a Must stay true.** A kept record carries it as `⏎` ([Payloads](#schema)). ML-collection, ML-collection-s3, ML-pages and ML-facts take a two-line View and Must stay true through the formulas' functions, Snapshot's stand-in, S2, S3, S4 and S5. FORMULA-agree reads the changed texts literally and compares them with those functions. Airtable's own reading of the texts is the copy's to show.
 - **Noted for review:**
   - S2's note also lists slots that left the plan, which is noisy, and an old slot can share a name with its new slot.
