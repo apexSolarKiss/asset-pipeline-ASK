@@ -11,7 +11,7 @@ This file covers the schema the scripts run on, the text of every formula the un
 
 **The specification** is the build proposal, v6, the plan for this extension. It is kept with the operator's records, outside the repository. Section references (§) below are to it, and so are test IDs (T…, U…), counterexamples (CX…) and build checks (K…). Where v6 is silent or ambiguous, the source takes a reading, and [Choices made in the source](#choices-made-in-the-source) lists each one. Three clarifications from the reviewer's Stage-1 pass are built in and tested as GPT-A, GPT-B and GPT-C ([Clarifications built in](#clarifications-built-in)). S8 and a shot's continuity reference are a later change, of 2026-10-30, with its own proposal rather than v6 ([Rendition and continuity](#rendition-and-continuity)).
 
-**Contents:** [The scripts](#the-scripts) · [How it works](#how-it-works) · [The hand-edit detector](#the-hand-edit-detector) · [Rendition and continuity](#rendition-and-continuity) · [Schema](#schema) · [Formula texts](#formula-texts) · [Scripts: triggers, inputs and writes](#scripts-triggers-inputs-and-writes) · [Install](#install) · [Retry](#retry) · [What stops a run](#what-stops-a-run) · [What it does not support](#what-it-does-not-support) · [Clarifications built in](#clarifications-built-in) · [Choices made in the source](#choices-made-in-the-source) · [Tests](#tests) · [What the local tests do not show](#what-the-local-tests-do-not-show)
+**Contents:** [The scripts](#the-scripts) · [How it works](#how-it-works) · [The hand-edit detector](#the-hand-edit-detector) · [Rendition and continuity](#rendition-and-continuity) · [Schema](#schema) · [Formula texts](#formula-texts) · [Scripts: triggers, inputs and writes](#scripts-triggers-inputs-and-writes) · [Install](#install) · [Retry](#retry) · [What stops a run](#what-stops-a-run) · [What it does not support](#what-it-does-not-support) · [Clarifications built in](#clarifications-built-in) · [Choices made in the source](#choices-made-in-the-source) · [Tests](#tests) · [What the local tests do not show](#what-the-local-tests-do-not-show) · [What the build copy shows](#what-the-build-copy-shows)
 
 ## The scripts
 
@@ -2514,7 +2514,7 @@ IF({Decided basis} = "", "Not applied", IF({Applied}, IF(LEFT({Result}, 15) = "A
 | `continuityUrls` | Continuity image now: the same | the same |
 | `continuityChecks` | Continuity check now: its text, as a list | `insertAsData(map(…, value))` |
 
-This table is written by hand: the step has no bindings. Each input is wrapped in `insertAsData`, so it arrives as a list rather than comma-joined text; an empty Continuity check now arrives as `[null]`, which reads as nothing configured. The step declares `referenceUrls` as an array of strings in its output schema, and the update's Reference images used is that output alone.
+This table is written by hand: the step has no bindings. Each input is wrapped in `insertAsData`, so it arrives as a list rather than comma-joined text. The connector reads an empty Continuity check now as `[null]`; the exact value `insertAsData` passes for it wasn't logged. The step reads `[null]` and the other empty forms (an empty list, empty text, no value) as nothing configured, and the local tests cover each. The step declares `referenceUrls` as an array of strings in its output schema, and the update's Reference images used is that output alone.
 
 ## Install
 
@@ -3012,7 +3012,7 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
   - CNT-image-changed and CNT-text;
   - BIND-ids-s8.
 - **Snapshot's reference list** (`tests/snapshot-references.test.mjs`, the change of 2026-10-30, v3):
-  - SNP-absent: nothing configured, the reference images alone, in order, including the check as the copy passes it (`[null]`);
+  - SNP-absent: nothing configured, the reference images alone, in order, with the check in each empty form: `[null]` (as the connector reads an empty check), `['']`, empty text, an empty list and nothing;
   - SNP-ready: Ready, the continuity image last;
   - SNP-incomplete: each of Continuity check's Incomplete texts, with and without a continuity file, stops the run;
   - SNP-disagree: Ready with no continuity file or two, and a file with nothing configured, stop the run;
@@ -3055,7 +3055,7 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
   | CTRL-CNT | Plan check's continuity test (as installed) | CNT-incomplete: the shot Planned, Snapshot starting, the kept candidate Ready to generate without its reference |
   | CTRL-SNP-order | the reference list's order (the continuity image first) | SNP-ready: the continuity image is last |
   | CTRL-SNP-incomplete | the reference list's not-ready stop | SNP-incomplete: an incomplete reference is named, never kept as if Ready |
-  | CTRL-SNP-null | the reference list's reading of an empty check (it reads `null` as text) | SNP-absent: a shot with no reference, as the copy passes it, keeps its references |
+  | CTRL-SNP-null | the reference list's reading of an empty check (it reads `null` as text) | SNP-absent: a shot with no reference, its check `[null]` as the connector reads it, keeps its references |
 
   Each control that runs a mutated script also checks something only a mutated run that finished produces: that the script ran to the end, or the result text it writes. So a crash or a stall can't pass for the guard failing.
 
@@ -3078,7 +3078,7 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
 
 The tests show the scripts' logic on a simulated base. They don't show what Airtable does. In particular, none of these is observed here:
 
-- **The formula texts.** None has been run in Airtable, including REGEX_EXTRACT and REGEX_REPLACE in the slot Status and in Shots › Effective placement, Effective direction and Lineage, IS_BEFORE in Withdrawal, and the detector's `DATETIME_DIFF(…, 'seconds') > 60` with its blank-time guard. Locally, FORMULA-agree reads ten texts against their JavaScript (Formula texts: What has been checked); no other text is checked against its function. The copy checks, among others, a collection shot's Current standard ("for Collection grid", without the label), and that an alternate S4 creates with Current unticked reads Alternate.
+- **The formula texts.** These local tests don't execute them in Airtable, including REGEX_EXTRACT and REGEX_REPLACE in the slot Status and in Shots › Effective placement, Effective direction and Lineage, IS_BEFORE in Withdrawal, and the detector's `DATETIME_DIFF(…, 'seconds') > 60` with its blank-time guard. Locally, FORMULA-agree reads ten texts against their JavaScript (Formula texts: What has been checked); no other text is checked against its function. The copy checks, among others, a collection shot's Current standard ("for Collection grid", without the label), and that an alternate S4 creates with Current unticked reads Alternate.
 - **Conditional lookups.** Live shot count and the slot's Shot lookups take only linked shots whose Not withdrawn is 1. The sim models Airtable's "only include linked records that meet conditions"; the copy checks it.
 - **Last-modified times.** Whether Airtable moves one on an unchanged write is unknown, and T28 depends on it. Under the other model, re-recording a withdrawn record's unchanged decision moves its Decided content time past the kept record's, which makes the withdrawal invalid ("carries a decision"). T28 runs in the default model only; T37 records which model Airtable follows.
 - **Links.** Writing a link from its inverse side ("Slots filled") in a create call, and appending to an existing link, are modelled, not observed. So are lookups through deleted records, and the order of a link and of its inverse. In the sim, a new inverse link is appended at the end, and Slot definitions follows the guide's link order.
