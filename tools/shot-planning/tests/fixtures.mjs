@@ -16,6 +16,10 @@ export const SRC = { s1: script('s1-make-product-slots.js'), s6: script('s6-adop
 SRC.s2 = script('s2-make-shots.js'); SRC.s3 = script('s3-replan.js');
 // Added by part 3: S4 and S5 (their own tests are in applications.test.mjs).
 SRC.s4 = script('s4-apply-acceptance.js'); SRC.s5 = script('s5-apply-use-decision.js');
+// Added 2026-10-30: S8 (its tests are in rendition-and-continuity.test.mjs).
+SRC.s8 = script('s8-approve-rendition.js');
+// Added 2026-10-30 (v3): Snapshot's reference list (its tests are in snapshot-references.test.mjs).
+SRC.snapshot = script('snapshot-references.js');
 
 // Input config for a press, by field name (the default) or translated to table and field IDs.
 export const cfg = (name, recordId, extra = {}) => ({ ...BINDINGS[name], recordId, ...extra });
@@ -23,7 +27,7 @@ export function idConfig(w, name, recordId, extra = {}) {
   const b = BINDINGS[name], out = {};
   const tableKeys = Object.keys(b).filter(k => k.endsWith('Table') || k === 'table');
   const tableOf = k => { // the table a field key belongs to, by the script's own grouping
-    if (name === 's7product' || name === 's7slot') return b.table;
+    if (name === 's7product' || name === 's7slot' || name === 's8') return b.table;
     if (name === 's6') return b.guidesTable;
     const prefix = { request: 'requestsTable', slotPlanningNote: 'requestsTable', line: 'linesTable', product: 'productsTable', assigned: 'productsTable', assignment: 'productsTable', guide: 'guidesTable', adopted: 'guidesTable', gs: 'guideSlotsTable' };
     for (const [p, t] of Object.entries(prefix)) if (k.startsWith(p)) return b[t];
@@ -46,6 +50,7 @@ export const pressS3Shot = (w, shotId, extra, src = SRC.s3) => press(w, src, cfg
 export const pressS3Slot = (w, slotId, extra, src = SRC.s3) => press(w, src, cfg('s3', slotId, { kind: 'slot', ...extra }));
 export const pressS4 = (w, acceptedId, extra, src = SRC.s4) => press(w, src, cfg('s4', acceptedId, extra));
 export const pressS5 = (w, decisionId, extra, src = SRC.s5) => press(w, src, cfg('s5', decisionId, extra));
+export const pressS8 = (w, applicationId, extra, src = SRC.s8) => press(w, src, cfg('s8', applicationId, extra));
 
 // A decision record: by ASK, entered on ASK's relay, from a source that names its own occasion.
 let occasion = 0;
@@ -140,11 +145,18 @@ export function makeShot(w, slotIds, { madeAs, name } = {}) {
 // Snapshot's stand-in writes the kept inputs (Standard used, Prompt used, Intended use, the image
 // copies, Slots kept, Products kept); the generator's write of Image moves Generated at (the
 // last-modified time of Image), so a candidate made without an image has no Image cell at all.
+// The reference copies are the shot's reference images, then its continuity image while the shot's
+// Continuity ready is 1 (the change of 2026-10-30, which Snapshot makes through Continuity image now).
 export const snapshotCells = (w, shotId) => ({ Shot: [shotId], 'Number in shot': (w.get('Shots', shotId, 'Candidates') || []).length + 1,
   'Standard used': w.get('Shots', shotId, 'Current standard'), 'Prompt used': w.get('Shots', shotId, 'Current prompt'), 'Intended use': w.get('Shots', shotId, 'Effective placement'),
-  'Product image used': w.get('Shots', shotId, 'Product image'), 'Reference images used': w.get('Shots', shotId, 'Reference images'),
+  'Product image used': w.get('Shots', shotId, 'Product image'),
+  'Reference images used': [...(w.get('Shots', shotId, 'Reference images') || []), ...(w.get('Shots', shotId, 'Continuity ready') === 1 ? w.get('Shots', shotId, 'Continuity image') || [] : [])],
   'Slots kept': w.get('Shots', shotId, 'Current slot basis'), 'Products kept': w.get('Shots', shotId, 'Current product basis') });
 export const CANDIDATE_IMAGE = shotId => [{ url: 'https://example.test/c.jpg', filename: `candidate-${shotId}.jpg` }];
+// Snapshot's trigger (the live automation's conditions): a candidate linked to a shot, with Standard used
+// and Image empty, whose Shot planned is 1. A shot that isn't planned (its Plan check) starts no Snapshot.
+export const snapshotTriggers = (w, candidateId) => (w.get('Candidates', candidateId, 'Shot') || []).length > 0
+  && !w.get('Candidates', candidateId, 'Standard used') && !w.get('Candidates', candidateId, 'Image') && w.get('Candidates', candidateId, 'Shot planned') === 1;
 export function snapshotCandidate(w, shotId, { image = true } = {}) {
   return w.add('Candidates', { ...snapshotCells(w, shotId), ...(image ? { Image: CANDIDATE_IMAGE(shotId) } : {}) });
 }
@@ -152,6 +164,7 @@ export function snapshotCandidate(w, shotId, { image = true } = {}) {
 export const accept = (w, candidateId) => w.add('Accepted images', {
   'Recorded as': w.get('Candidates', candidateId, 'Title'), 'Candidate record no.': [candidateId], Shot: w.get('Candidates', candidateId, 'Shot'),
   Image: w.get('Candidates', candidateId, 'Image'), 'Approved for': w.get('Candidates', candidateId, 'Intended use'), Standard: w.get('Candidates', candidateId, 'Standard used'),
+  'Accepted on condition': w.get('Candidates', candidateId, 'Accept on condition'), // v2 (2026-10-30): Accept's one added mapping
   'Accepted by': 'ASK', 'Accepted by ID': 'usrSIMULATED00001' });
 export function applyAcceptance(w, acceptedId) {
   const cand = w.get('Accepted images', acceptedId, 'Candidate record no.')[0];
