@@ -445,5 +445,5 @@ add('CTRL-CNT', "Negative control: with Plan check as installed (no continuity t
   const installed = { [SH]: { 'Plan check': Object.assign(r => FORMULAS[SH]['Plan check'](r).startsWith(CONTINUITY.notPlanned) ? FORMULAS[SH]['Plan check']({ id: r.id, get: n => (n === 'Continuity check' ? '' : r.get(n)) }) : FORMULAS[SH]['Plan check'](r), { airtable: 'installed' }) } };
   await control(t, incomplete, { formulas: installed }, 'a link with nothing it may decide: Continuity check');
   const failed = (await recorded(incomplete, { formulas: installed })).filter(([, ok]) => !ok).map(([l]) => l);
-  t.check('mutated: Snapshot starts for the incomplete reference and the kept candidate stays Ready to generate', failed.some(l => l.startsWith('a link with nothing it may decide: a new candidate starts no Snapshot')) && failed.some(l => l.startsWith('a link with nothing it may decide: the candidate kept with the reference is Held')), failed);
+  t.check('mutated: Snapshot starts for the incomplete reference; the kept candidate is Held because its standard changed, not because the shot is unplanned', failed.some(l => l.startsWith('a link with nothing it may decide: a new candidate starts no Snapshot')) && failed.some(l => l.startsWith('a link with nothing it may decide: the candidate kept with the reference is Held')), failed);
 });

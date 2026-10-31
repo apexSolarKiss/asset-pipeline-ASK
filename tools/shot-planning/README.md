@@ -3187,7 +3187,7 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
   | CTRL-RND-requirement | Rendition requirement's read of the recorded decision (it reads the box) | RND-requirement: unticking the box alone ends the rendition's delivery |
   | CTRL-RND-race | S8's time taken before its read (taken after it) | RND-race: a change during the press doesn't read as waiting |
   | CTRL-RND-seconds | Rendition state's "not before" test (strictly after), and S8's whole second (its milliseconds kept) | RND-seconds: a change during the press reads plain Approved |
-  | CTRL-CNT | Plan check's continuity test (as installed) | CNT-incomplete: the shot Planned, Snapshot starting, the kept candidate Ready to generate without its reference |
+  | CTRL-CNT | Plan check's continuity test (as installed) | CNT-incomplete: the shot Planned, Snapshot starting, a new candidate kept without its reference; the candidate kept with it Held only because its standard changed |
   | CTRL-SNP-order | the reference list's order (the continuity image first) | SNP-ready: the continuity image is last |
   | CTRL-SNP-incomplete | the reference list's not-ready stop | SNP-incomplete: an incomplete reference is named, never kept as if Ready |
   | CTRL-SNP-null | the reference list's reading of an empty check (it reads `null` as text) | SNP-absent: a shot with no reference, its check `[null]` as the connector reads it, keeps its references |
