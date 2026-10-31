@@ -18,6 +18,8 @@ SRC.s2 = script('s2-make-shots.js'); SRC.s3 = script('s3-replan.js');
 SRC.s4 = script('s4-apply-acceptance.js'); SRC.s5 = script('s5-apply-use-decision.js');
 // Added 2026-10-30: S8 (its tests are in rendition-and-continuity.test.mjs).
 SRC.s8 = script('s8-approve-rendition.js');
+// Added 2026-10-30 (v3): Snapshot's reference list (its tests are in snapshot-references.test.mjs).
+SRC.snapshot = script('snapshot-references.js');
 
 // Input config for a press, by field name (the default) or translated to table and field IDs.
 export const cfg = (name, recordId, extra = {}) => ({ ...BINDINGS[name], recordId, ...extra });

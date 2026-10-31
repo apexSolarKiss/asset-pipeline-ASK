@@ -1,6 +1,6 @@
 # tools/shot-planning
 
-This folder holds the eight automation scripts that plan and apply product-page images in the AP-ASK demo base's four-workflow extension (S1–S8), with their tests. They put into the base the model in [Shot Guides, Fulfillment and Asset Applications](../../docs/shot-guides-fulfillment-and-asset-applications-v1.md):
+This folder holds the eight automation scripts that plan and apply product-page images in the AP-ASK demo base's four-workflow extension (S1–S8), and the script step that assembles Snapshot's reference list, with their tests. They put into the base the model in [Shot Guides, Fulfillment and Asset Applications](../../docs/shot-guides-fulfillment-and-asset-applications-v1.md):
 
 - a shot guide is adopted as a whole definition;
 - an output slot, a shot and an asset application are three different records;
@@ -25,12 +25,15 @@ This file covers the schema the scripts run on, the text of every formula the un
 | S6 | Adopt guide | `s6-adopt-guide.js` | the Adopt this definition button on a shot guide | Adopted definition, Adopted version, Adopted at, Decided content, Adoption log, Adoption result |
 | S7 | Record decision | `s7-record-decision.js` | the Record decision button on a product, and on a product-page slot (installed twice) | Decided content, Decision recorded at and the Recorded fields; Record result |
 | S8 | Approve rendition | `s8-approve-rendition.js` | the Approve rendition button on an application | the application's Approved rendition, Rendition approval ID, Rendition approved, Rendition approved at and Rendition result |
+| | Snapshot's reference list | `snapshot-references.js` | a script step of the Snapshot automation, before its update | nothing: its output, the ordered reference image files, is what Snapshot's update writes to Reference images used |
 
 Each script is a standalone automation script, in the style of [`tools/candidate-numbering`](../candidate-numbering/README.md):
 - it has no imports and reads `input.config()` once;
 - it takes every table and field from its inputs, by ID or by name;
 - it checks each binding's field type before any read or write;
 - it ends with `await main();`.
+
+Snapshot's reference list has no table or field bindings: its three inputs are values of Snapshot's trigger, and it reads and writes no table ([Snapshot's reference list](#snapshots-reference-list)).
 
 ## How it works
 
@@ -113,7 +116,7 @@ It is a **limited detector of hand edits**, not proof that a field was written b
 
 ## Rendition and continuity
 
-A change of 2026-10-30, after v6, for two needs the demo showed. Its specification is its proposal, kept with the operator's records. It adds S8, fields on five tables and nine formulas, and changes eight formulas ([Schema](#schema), [Formula texts](#formula-texts): the statuses marked rendition or continuity). Snapshot's, G2a's and Accept's changes are outside this folder ([Install](#install)).
+A change of 2026-10-30, after v6, for two needs the demo showed. Its specification is its proposal, kept with the operator's records. It adds S8, Snapshot's reference list, fields on five tables and nine formulas, and changes eight formulas ([Schema](#schema), [Formula texts](#formula-texts): the statuses marked rendition or continuity). Snapshot's node set, G2a's after-script and Accept's mapping are outside this folder ([Install](#install)).
 
 **A rendition delivers a slot.** A rendition is a delivery file made from the accepted image for a slot's format, such as a crop to its aspect ratio, for the same view and use. It belongs to the application, as [Shot Guides, Fulfillment and Asset Applications](../../docs/shot-guides-fulfillment-and-asset-applications-v1.md) §3 places it, and needs its own approval, held where it is delivered.
 - **What needs one.** An application needs a rendition (Rendition needed) when its slot's recorded decision requires one, or when its accepted image was accepted on condition.
@@ -151,6 +154,8 @@ A change of 2026-10-30, after v6, for two needs the demo showed. Its specificati
 - **It is part of the shot's standard and prompt.** When it is ready, Current standard ends with Continuity line: the candidate's record number and title, its image's time, what it may decide, what it doesn't decide, and who set it. Current prompt ends with Continuity prompt, which names the last attached image as a continuity reference and limits it to what it may decide.
 - **It is never an authority for a product.** The product images stay first and stay the authority for each product. The reference doesn't decide the products, which products appear, or whether a person appears.
 - **Its image is kept last.** Candidates › Continuity image now looks up the shot's Continuity image while it is ready. Snapshot keeps it after the shot's reference images in Reference images used, and G2a checks that copy against the shot's reference images and Continuity image now.
+  - **In one write, from one read.** Snapshot's reference list, a script step before its update, assembles the list from the values of the trigger that started the run: the values the update copies the standard and the prompt from. The update writes it with the other kept fields, once, and nothing is appended to a kept candidate later.
+  - **A configured reference that isn't Ready stops the step,** and so does a continuity image that disagrees with the check, so nothing is kept. Snapshot's trigger already keeps a shot whose reference isn't Ready from starting a run, and Continuity image now's condition keeps a stray file out; the step is the second stop.
 - **Setting it changes the shot's standard,** so the shot's earlier candidates read "The standard has changed since this image was made". So does replacing the referenced image later, since the line carries its time. The referenced candidate's own shot and standard don't change.
 - **It confers nothing on the referenced image.** It doesn't accept it, add it to a request's references, or change its standard. Its record shows only the link's pair, Continuity reference for.
 
@@ -2492,6 +2497,25 @@ IF({Decided basis} = "", "Not applied", IF({Applied}, IF(LEFT({Result}, 15) = "A
 | `currentField` | Current | checkbox |
 | `withdrawnField` | Withdrawn | checkbox |
 
+### Snapshot's reference list
+
+- **Trigger:** Snapshot's, as a script step before its update: a candidate with a shot, no Standard used and no Image, whose Shot planned is 1. It is not an automation of its own.
+- **Does:** it assembles the reference image files Snapshot keeps, in order, from the trigger's values, never from a later read of the shot: the shot's reference images (Current reference images) in their order, then Continuity image now, last, while Continuity check now reads Ready. With nothing configured it is the reference images alone, as Snapshot kept them before. It sets one output, `referenceUrls`, and logs how many files it kept.
+- **Stops,** before the update, so nothing is kept:
+  - a configured continuity reference that isn't Ready (Continuity check now has a text other than Ready);
+  - Ready, with no continuity file or more than one;
+  - a continuity file with nothing configured;
+  - an input missing, not a list, or holding an item that isn't a non-empty string.
+- **Writes:** nothing. Snapshot's update writes `referenceUrls` to Reference images used, with Standard used, Prompt used, Intended use, Settings used, Product image used, Slots kept and Products kept, in its one update. Those seven mappings are unchanged.
+
+| Input | Value (from Snapshot's trigger, on Candidates) | Shape |
+|---|---|---|
+| `referenceUrls` | Current reference images: each file's download URL, as a list | `insertAsData(map(map(…, value), expiringDownloadUrl))` |
+| `continuityUrls` | Continuity image now: the same | the same |
+| `continuityChecks` | Continuity check now: its text, as a list | `insertAsData(map(…, value))` |
+
+This table is written by hand: the step has no bindings. Each input is wrapped in `insertAsData`, so it arrives as a list rather than comma-joined text; an empty Continuity check now arrives as `[null]`, which reads as nothing configured. The step declares `referenceUrls` as an array of strings in its output schema, and the update's Reference images used is that output alone.
+
 ## Install
 
 **The route** (§9.1): source, then the build copy, then the source PR, then the live base.
@@ -2531,7 +2555,7 @@ IF({Decided basis} = "", "Not applied", IF({Applied}, IF(LEFT({Result}, 15) = "A
    - None runs until pressed, except S4, which runs when an acceptance becomes Complete.
 
 **The change of 2026-10-30** ([Rendition and continuity](#rendition-and-continuity)) follows the route above, with a fresh private copy as its build copy. It is committed on its branch, validated in the copy from those bytes, merged through its source PR, then installed on the live base as it stands, from the merged bytes (K15). A fix found in the copy is made in the source, committed, reinstalled in the copy and retested there before the PR.
-- **What isn't in this folder:** G2a's after-script, Snapshot's template and Accept's mapping. Each is installed from the object the change's proposal declares, by its identity, and read back against it. A fix to one of them found in the copy goes back to ASK as a revised proposal object before the PR.
+- **What isn't in this folder:** G2a's after-script, Snapshot's node set and Accept's mapping. Each is installed from the object the change's proposal declares, by its identity, and read back against it. Snapshot's node set carries the exact bytes of `snapshot-references.js`. A fix to one of them found in the copy goes back to ASK as a revised proposal object before the PR.
 - **The copy:** a fresh private duplicate of the live base, with its records and without comments. It is never the preserved provenance base, and no Test record is added to the live base for it.
   - Before anything else:
     - confirm it has no base or page share, and every automation is off;
@@ -2557,26 +2581,33 @@ IF({Decided basis} = "", "Not applied", IF({Applied}, IF(LEFT({Result}, 15) = "A
   1. **Fields** ([Schema](#schema): the rows marked New (rendition) or New (continuity)), except the formulas and the lookups step 2 names. Shots › Continuity reference has Candidates › Continuity reference for as its pair.
   2. **New formulas, each before the lookups that read it:** One image, then Shots › Continuity has image; Continuity check, Continuity ready, Continuity line and Continuity prompt, then Candidates › Continuity image now and Continuity check now; Rendition requirement, then Applications › Slot rendition requirement; Rendition needed, Rendition state and Settled rendition, then Product-page slots › Settled rendition (a lookup with a condition, as Settled image). Each reads empty or 0, except One image, which reads 1 on each candidate whose Image is one file with no comma in its name; only a continuity link reads it.
      - Then read the base's schema and compare each new field with its Schema row: its type, its lookup and condition, the fields a last-modified time watches, and the link's pair. A difference stops the step.
+     - Continuity set by, a last-modified-by field, is read in its field dialog in the UI, since the connector shows no watched fields for it: Specific fields, Continuity reference and Continuity may decide.
   3. **Changed formulas,** each with its text above: Decision content, then Change pending; Acceptance; Settled source image, then Eligibility; Plan check; Current standard and Current prompt.
   4. **G2a:** the exact after-script kept with the change's record, in place of the saved script, through its byte gate. With no reference configured it decides as before.
      - Before the edit, the live script is the saved baseline's bytes.
      - After it, the script is the after-script's bytes with exactly two replacements: `FIELD_ID_OF_CANDIDATES_CONTINUITY_IMAGE_NOW` by Continuity image now's ID, and `FIELD_ID_OF_CANDIDATES_CONTINUITY_CHECK_NOW` by Continuity check now's.
-  5. **Snapshot:** Reference images used becomes the shot's reference images followed by Continuity image now. Read both automations back (K0), then turn them on.
+  5. **Snapshot:** a script step before its update, with the exact bytes of `snapshot-references.js` and its three inputs, and the update's Reference images used becomes that step's `referenceUrls` ([Snapshot's reference list](#snapshots-reference-list)). Nothing else in Snapshot changes.
+     - Its node set goes in with exactly two replacements: `FIELD_ID_OF_CANDIDATES_CONTINUITY_IMAGE_NOW` by Continuity image now's ID, and `FIELD_ID_OF_CANDIDATES_CONTINUITY_CHECK_NOW` by Continuity check now's.
+     - Read both automations back (K0). Snapshot's read-back has its name, description and trigger as saved; the step's script byte-equal to the file, and its three inputs, output schema and description as declared; and the update's key, table, record, description and eight mappings, seven unchanged and Reference images used the step's `referenceUrls` under the step's saved key. Then turn them on.
   6. **Accept:** one mapping, Accepted images › Accepted on condition from Candidates › Accept on condition, and one addition to its description, " and any condition entered in Accept on condition" after "the intended use", so it reads "a copy of the image, the intended use and any condition entered in Accept on condition, the kept standard, …". Read it back: its configuration is the saved one plus that one entry, sourced and targeted by the two fields' IDs, and that one addition.
   7. **S8:** one automation, "When a button is clicked" on Applications, with the exact bytes of `s8-approve-rendition.js` and its bindings. Read its script back against the file (K0), then turn it on. Its button is placed in step 8.
   8. **Permissions and pages, in the UI.**
      - **First, the field editing permissions:** Approved rendition, Rendition approval ID, Rendition approved, Rendition approved at and Rendition result, and Accepted images › Accepted on condition, allow automations only.
      - **Then the pages:**
        - the Product pages page shows Settled rendition beside Settled image;
-       - **the application page,** new, since no page opens an application today: the record detail page for Applications, opened from the slot's Applications on the Product page slot Detail (shown there if it isn't). It shows the rendition draft, editable; the Approve rendition button (Run automation, S8); Rendition state and Rendition result; and S8's five fields, read-only;
-       - the candidate page (Candidate Detail) shows Accept on condition and Acceptance;
+       - **the slot page** (Product page slot Detail) shows Settled rendition, read-only, beside Settled image, and Rendition required, editable, with the decision draft, after Not needed reason and before the decision record. Its Record decision button (S7) stays the action that records it;
+       - **the application page,** new, since no page opens an application today: the record detail page for Applications, opened from the slot's Applications on the Product page slot Detail (shown there if it isn't). Its Approve rendition button runs S8 (Run automation), and its comments and revision history are off. Its fields are these and only these; Airtable's default fields for a new record detail page are taken off, among them Account, which shows a person's name:
+         - Name, as the page's title, then Application key and Current;
+         - the rendition draft, editable: Rendition, Rendition operation, Rendition decided by, Rendition decision source and Rendition entered by;
+         - read-only: Rendition approval ID, Rendition state, Rendition result, Rendition approved, Rendition approved at and Approved rendition, then State and Eligibility;
+       - **the candidate page** (Candidate Detail) shows Acceptance, and Accept on condition as its one field editable inline, where an interface editor enters the condition before the image is accepted. Its Edit fields is Inline with every other field read-only, since Airtable makes every field editable when a page goes Inline. That a shared page doesn't let it be edited is read logged out at the publish (below). Accept copies the entry once; after it, Acceptance shows the recorded condition, and an edit to the entry changes nothing recorded. Accepted images › Accepted on condition stays automations-only;
        - the Accepted images page's cards and the Accepted image Detail show Accepted on condition;
-       - the shot page (Shot Detail) shows Continuity check.
-     - **Then every page that shows an image.** Open each page and record detail page on Candidates, Accepted images, Shots, Product-page slots and Applications. Wherever a candidate's or an accepted image's Image appears, Acceptance or Accepted on condition appears with it. A page that shows the image without either is given Accepted on condition, or the step stops.
-     - **Publish once.** Before it, the only pending drafts are this step's. After it, confirm sharing is unchanged and the shared pages load logged out. In the full-base share, logged out, Accepted images shows Accepted on condition beside Image; if its view hides the field, show it there.
+       - **the shot page** (Shot Detail) shows Continuity check, and its Accepted images cards show Accepted on condition, after Approved for.
+     - **Then every page that shows an image.** Open each page and record detail page on Candidates, Accepted images, Shots, Product-page slots and Applications, each on a record that has what the page shows, its linked records' cards included: the Shot Detail on a shot with an accepted image, one of them accepted on condition. Wherever a candidate's or an accepted image's Image appears, Acceptance or Accepted on condition appears with it. A page that shows the image without either is given Accepted on condition, or the step stops.
+     - **Publish once.** Before it, the only pending drafts are this step's. After it, confirm sharing is unchanged and the shared pages load logged out. In the full-base share, logged out, Accepted images shows Accepted on condition beside Image; if its view hides the field, show it there. On a shared page that opens the candidate page, logged out, Accept on condition can't be edited; if it can, the step stops.
   9. **Data, last:**
      - Record a slot's requirement with S7 before its acceptance applies.
-     - Enter an acceptance's condition, and read it back on the candidate, before the image is accepted.
+     - Enter an acceptance's condition in Accept on condition, on the candidate page, and read it back on the candidate, before the image is accepted.
      - Set a continuity reference only once its shot's earlier candidates may read "standard changed", in the same update as any shot text that relies on it.
 - **Rollback,** data first, with Snapshot and G2a off while anything they read changes:
   1. Turn Snapshot and G2a off, once no run of theirs is pending (as above).
@@ -2585,7 +2616,7 @@ IF({Decided basis} = "", "Not applied", IF({Applied}, IF(LEFT({Result}, 15) = "A
   4. Put back Plan check, Current standard and Current prompt. With no reference set, their values don't move.
   5. Put back Snapshot's and G2a's saved configurations, read them back (K0), and turn them on. By now no shot can be given a reference, and no formula names one.
   6. Put back Accept's saved configuration, and turn S8 off.
-  7. **Pages, in the UI:** take Accept on condition off the candidate page, Approve rendition off the application page and Continuity check off the shot page. Publish once, under step 8's gates: the only pending drafts are these, sharing is unchanged, and the shared pages load logged out.
+  7. **Pages, in the UI:** take Accept on condition off the candidate page and set its Edit fields back to Off, Rendition required off the slot page, Approve rendition off the application page and Continuity check off the shot page. Publish once, under step 8's gates: the only pending drafts are these, sharing is unchanged, and the shared pages load logged out.
   8. Put back Decision content, Change pending, Acceptance, Eligibility and Settled source image only while no accepted image carries a condition and no slot's recorded decision requires a rendition. Otherwise their old texts would deliver, or show as accepted for its use, an image selected only through its rendition, or read a recorded requirement as a change that waits, so the rollback stops there for ASK.
   9. The new fields stay, with whatever the data entered in them. Removing them is ASK's act. Undoing a recorded decision, an acceptance or an approval is a decision of its own, not a rollback step.
 
@@ -2630,6 +2661,7 @@ Each of these throws, writes nothing after it, and shows in the automation's run
   - `legacyMap` that isn't a JSON object of record IDs, each naming a product record ID and its facts;
   - `refuseEarlierStandard` other than empty, no, false, yes or true;
   - a Live basis that doesn't name the source and slots as read, or a Decided basis that names none. These are internal invariants, and nothing is written.
+- **Snapshot's reference list:** a configured continuity reference that isn't Ready, a continuity file that disagrees with its check, or an input missing or not a list. It stops before Snapshot's update, so the candidate keeps nothing. Snapshot's trigger keeps the first from arising, and Continuity check with Continuity image now's condition keeps the second ([Snapshot's reference list](#snapshots-reference-list)).
 - **Any write** that Airtable rejects, or a run that times out. The next press finishes it ([Retry](#retry)).
 
 ## What it does not support
@@ -2885,6 +2917,7 @@ Where v6 is silent or ambiguous, the source takes the reading below, the one mos
 - **The continuity reference is a link to a candidate,** not an image copied onto the shot, so the line names the record and its image's time, and a replaced image changes the standard.
 - **The continuity addition is inside the Workflow branch,** after the exception, so a walkthrough shot's standard and prompt are still the live texts, and a shot without a reference is unchanged. A walkthrough shot with a reference configured reads Incomplete, with that reason.
 - **Continuity may decide is the operator's words,** not a list of options. The line and the prompt add the fixed sentence of what it doesn't decide (`CONTINUITY` in `sim/formulas.mjs`).
+- **Snapshot assembles its reference list in a script step** (v3), because Airtable's automation configuration accepted neither attachment template the change first declared: one joining the two lists with `flatten`, and one with `spread`. The step reads only the trigger's values, so the list comes from the same read as the standard and the prompt it is kept with, and it stops rather than keep the references without a configured continuity image.
 
 ## Tests
 
@@ -2978,6 +3011,13 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
   - CNT-incomplete: a reference with no role, a role of only spaces, a role with no link, two links, no image, two files, a comma in the name, the image removed, a walkthrough shot: each Not planned with its reason, no Snapshot, a kept candidate Held; only spaces and no link: nothing configured; completed, Planned again;
   - CNT-image-changed and CNT-text;
   - BIND-ids-s8.
+- **Snapshot's reference list** (`tests/snapshot-references.test.mjs`, the change of 2026-10-30, v3):
+  - SNP-absent: nothing configured, the reference images alone, in order, including the check as the copy passes it (`[null]`);
+  - SNP-ready: Ready, the continuity image last;
+  - SNP-incomplete: each of Continuity check's Incomplete texts, with and without a continuity file, stops the run;
+  - SNP-disagree: Ready with no continuity file or two, and a file with nothing configured, stop the run;
+  - SNP-inputs: an input missing, joined into one string, or holding an item that isn't a non-empty string;
+  - SNP-sim: a Life in use candidate's own values, absent and Ready, give the fixtures' stand-in's list; an incomplete reference, which the trigger already stops, is refused if run.
 - **GPT-A, GPT-A-later, GPT-B-withdrawn, GPT-C:** the clarifications above. GPT-B-withdrawn-stale is a slot whose only shot is Withdrawn, made stale by an adopted change: its step reads "press Replan on this slot", and slot-level Replan refreshes it.
 - **Negative controls,** each a mutated copy of a script or formula, showing the check that guards a mechanism failing for the reason it exists:
 
@@ -3013,6 +3053,9 @@ node tools/shot-planning/run-tests.mjs T22 CX6    # cases whose ID or file name 
   | CTRL-RND-race | S8's time taken before its read (taken after it) | RND-race: a change during the press doesn't read as waiting |
   | CTRL-RND-seconds | Rendition state's "not before" test (strictly after), and S8's whole second (its milliseconds kept) | RND-seconds: a change during the press reads plain Approved |
   | CTRL-CNT | Plan check's continuity test (as installed) | CNT-incomplete: the shot Planned, Snapshot starting, the kept candidate Ready to generate without its reference |
+  | CTRL-SNP-order | the reference list's order (the continuity image first) | SNP-ready: the continuity image is last |
+  | CTRL-SNP-incomplete | the reference list's not-ready stop | SNP-incomplete: an incomplete reference is named, never kept as if Ready |
+  | CTRL-SNP-null | the reference list's reading of an empty check (it reads `null` as text) | SNP-absent: a shot with no reference, as the copy passes it, keeps its references |
 
   Each control that runs a mutated script also checks something only a mutated run that finished produces: that the script ran to the end, or the result text it writes. So a crash or a stall can't pass for the guard failing.
 
@@ -3043,7 +3086,7 @@ The tests show the scripts' logic on a simulated base. They don't show what Airt
 - **The button trigger.** Whether it can pass the clicking user as `account` is unverified.
 - **Snapshot, Accept and G1.** Their behaviour here is the fixtures' stand-ins, not the automations: the Planned gate, the kept payloads (Standard used, Prompt used, Intended use, the image copies, Slots kept, Products kept), and Accept's record (Recorded as, Candidate record no., Shot, Image, Approved for, Standard, Accepted by and its ID). That Accept writes the accepted record's Shot as its candidate's shot, which Shot standard now reads, is the copy's to confirm.
 - **The two existing rollups' aggregations** (Acceptance coverage, Candidate is test) aren't in the connector's schema read. The copy's UI shows them ([Choices](#choices-made-in-the-source)), and the sim now gives the same. Its records show each existing shot with one acceptance, its Acceptance coverage "Current standard", and Candidate is test 0 on both accepted records.
-- **The change of 2026-10-30.** None of its texts has run in Airtable. Among them: FIND over a recorded Decided content (Rendition requirement); SUM over the lookup of a formula (Continuity has image, Slot rendition requirement; Basis finished's live SUM is over the lookup of a checkbox); Approved rendition read as text, its file name first and a comma between files (Rendition state, Settled rendition), as One image reads Image; IS_BEFORE between a last-modified time and the whole second S8 writes, which needs Rendition approved at to read back as written; ARRAYJOIN of the lookup of a last-modified time in Continuity line; and S8's copy of an attachment by its URL under a name it sets, and its read of `type`, `width` and `height`. Snapshot's change is the fixtures' stand-in here. G2a's change is exercised on this simulated base by the change's own harness, kept with its proposal, not by these tests. The private copy is the first place any of them runs ([Install](#install)).
+- **The change of 2026-10-30.** None of its texts has run in Airtable. Among them: FIND over a recorded Decided content (Rendition requirement); SUM over the lookup of a formula (Continuity has image, Slot rendition requirement; Basis finished's live SUM is over the lookup of a checkbox); Approved rendition read as text, its file name first and a comma between files (Rendition state, Settled rendition), as One image reads Image; IS_BEFORE between a last-modified time and the whole second S8 writes, which needs Rendition approved at to read back as written; ARRAYJOIN of the lookup of a last-modified time in Continuity line; and S8's copy of an attachment by its URL under a name it sets, and its read of `type`, `width` and `height`. Snapshot's reference list runs here on its own, and SNP-sim compares its list with the fixtures' stand-in on this simulated base; what Airtable's `insertAsData` passes it, and Snapshot's update writing its output as attachments, are the copy's to show. G2a's change is exercised on this simulated base by the change's own harness, kept with its proposal, not by these tests. The private copy is the first place any of them runs ([Install](#install)).
 - **A line break in a View or a Must stay true.** A kept record carries it as `⏎` ([Payloads](#schema)). ML-collection, ML-collection-s3, ML-pages and ML-facts take a two-line View and Must stay true through the formulas' functions, Snapshot's stand-in, S2, S3, S4 and S5. FORMULA-agree reads the changed texts literally and compares them with those functions. Airtable's own reading of the texts is the copy's to show.
 - **Noted for review:**
   - S2's note also lists slots that left the plan, which is noisy, and an old slot can share a name with its new slot.
