@@ -30,7 +30,7 @@ const cfgOf = (refs, cont, check) => ({ referenceUrls: refs, continuityUrls: con
 const refused = (t, label, r, why) => t.check(`${label}: the run stops before the update, with no output, naming "${why}"`, !r.ok && !r.set.length && r.error.includes(why), r);
 
 add('SNP-absent', 'No continuity reference configured: the list is the shot\'s reference images alone, in their order', async t => {
-  for (const [label, check, cont] of [['Continuity check now as the copy passed it for a shot with none, [null]', [null], []], ['Continuity check now empty', [''], []], ['empty text', '', []], ['no check value at all', [], []], ['the lookups empty as nothing', null, null]]) {
+  for (const [label, check, cont] of [['Continuity check now as the connector reads it for a shot with none, [null]', [null], []], ['Continuity check now empty', [''], []], ['empty text', '', []], ['no check value at all', [], []], ['the lookups empty as nothing', null, null]]) {
     const r = await run(cfgOf(REFS, cont, check));
     t.check(`${label}: the reference images, in order, and nothing else`, r.ok && same(r.out, REFS), r);
   }
@@ -74,7 +74,8 @@ add('SNP-inputs', 'Its inputs are checked before anything is set: each must be p
 
 // The values a candidate of the shot carries, as Snapshot's inputs pass them: each attachment lookup's
 // file URLs (the copy maps them to expiringDownloadUrl), and the check's text.
-// An empty check reaches the script as [null], one linked shot with no value, as the copy passed it.
+// An empty check is given as [null], one linked shot with no value, as the connector reads it (what
+// insertAsData passes for it wasn't logged; SNP-absent covers the other empty forms).
 const checkOf = v => (v === null || v === undefined || v === '' ? [null] : [].concat(v));
 const fromCandidate = (w, c) => cfgOf((w.get(CA, c, 'Current reference images') || []).map(f => f.url),
   (w.get(CA, c, 'Continuity image now') || []).map(f => f.url), checkOf(w.get(CA, c, 'Continuity check now')));
@@ -121,7 +122,7 @@ add('CTRL-SNP-incomplete', "Negative control: with the not-ready stop removed, S
   t.check('mutated, with a continuity image: the incomplete reference is kept as if Ready', r2.ok && same(r2.out, [...REFS, CONT]), r2);
 });
 
-add('CTRL-SNP-null', "Negative control: with an empty check read as the text 'null', SNP-absent's case for [null], the shape the copy passes for a shot with no reference, fails: the run stops instead of keeping the references", async t => {
+add('CTRL-SNP-null', "Negative control: with an empty check read as the text 'null', SNP-absent's case for [null], the shape the connector reads for a shot with no reference, fails: the run stops instead of keeping the references", async t => {
   const src = mutate("(c === null || c === undefined ? '' : String(c))", 'String(c)');
   const r = await run(cfgOf(REFS, [], [null]), src);
   t.check('mutated: the run stops, naming the check as "null", so the references aren\'t kept', !r.ok && r.error.includes('not ready (null)'), r);
