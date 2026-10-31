@@ -145,12 +145,14 @@ export function makeShot(w, slotIds, { madeAs, name } = {}) {
 // Snapshot's stand-in writes the kept inputs (Standard used, Prompt used, Intended use, the image
 // copies, Slots kept, Products kept); the generator's write of Image moves Generated at (the
 // last-modified time of Image), so a candidate made without an image has no Image cell at all.
-// The reference copies are the shot's reference images, then its continuity image while the shot's
-// Continuity ready is 1 (the change of 2026-10-30, which Snapshot makes through Continuity image now).
+// The reference copies are the shot's reference images, then its human composition image while the
+// shot's Human composition ready is 1 (the change of 2026-10-31), then its continuity image while its
+// Continuity ready is 1 (the change of 2026-10-30): Snapshot makes them through the "… image now" lookups.
+const imageWhileReady = (w, shotId, ref) => (w.get('Shots', shotId, `${ref} ready`) === 1 ? w.get('Shots', shotId, `${ref} image`) || [] : []);
 export const snapshotCells = (w, shotId) => ({ Shot: [shotId], 'Number in shot': (w.get('Shots', shotId, 'Candidates') || []).length + 1,
   'Standard used': w.get('Shots', shotId, 'Current standard'), 'Prompt used': w.get('Shots', shotId, 'Current prompt'), 'Intended use': w.get('Shots', shotId, 'Effective placement'),
   'Product image used': w.get('Shots', shotId, 'Product image'),
-  'Reference images used': [...(w.get('Shots', shotId, 'Reference images') || []), ...(w.get('Shots', shotId, 'Continuity ready') === 1 ? w.get('Shots', shotId, 'Continuity image') || [] : [])],
+  'Reference images used': [...(w.get('Shots', shotId, 'Reference images') || []), ...imageWhileReady(w, shotId, 'Human composition'), ...imageWhileReady(w, shotId, 'Continuity')],
   'Slots kept': w.get('Shots', shotId, 'Current slot basis'), 'Products kept': w.get('Shots', shotId, 'Current product basis') });
 export const CANDIDATE_IMAGE = shotId => [{ url: 'https://example.test/c.jpg', filename: `candidate-${shotId}.jpg` }];
 // Snapshot's trigger (the live automation's conditions): a candidate linked to a shot, with Standard used

@@ -466,6 +466,22 @@ const TABLES = [
     ['Continuity ready', 'formula'],
     ['Continuity line', 'formula'],
     ['Continuity prompt', 'formula'],
+    // A shot's human composition reference (added 2026-10-31): one more earlier candidate, not the continuity
+    // reference's, whose image the shot's candidates receive just before the continuity image, for what Human
+    // composition may decide only. Its fields mirror the continuity reference's, and so does its check.
+    ['Human composition reference', 'link', link('Candidates', 'Human composition reference for')],
+    ['Human composition may decide', 'long'],
+    ['Human composition set by', 'modifiedBy', { watch: ['Human composition reference', 'Human composition may decide'] }],
+    ['Human composition count', 'count', { link: 'Human composition reference' }],
+    ['Human composition record no.', 'lookup', lk('Human composition reference', 'Record no.')],
+    ['Human composition title', 'lookup', lk('Human composition reference', 'Title')],
+    ['Human composition image', 'lookup', lk('Human composition reference', 'Image')],
+    ['Human composition image as of', 'lookup', lk('Human composition reference', 'Generated at')],
+    ['Human composition has image', 'lookup', lk('Human composition reference', 'One image')],
+    ['Human composition check', 'formula'],
+    ['Human composition ready', 'formula'],
+    ['Human composition line', 'formula'],
+    ['Human composition prompt', 'formula'],
   ]),
   T('Candidates', 'CA', [
     ['Record no.', 'autonumber'],
@@ -505,6 +521,10 @@ const TABLES = [
     // Continuity check, and stops visibly while it is Incomplete.
     ['Continuity image now', 'lookup', lk('Shot', 'Continuity image', 'Continuity ready')],
     ['Continuity check now', 'lookup', lk('Shot', 'Continuity check')],
+    // The shot's human composition image while it is ready (added 2026-10-31): Snapshot keeps it after the
+    // reference images and before the continuity image. G2a reads it and the shot's Human composition check.
+    ['Human composition image now', 'lookup', lk('Shot', 'Human composition image', 'Human composition ready')],
+    ['Human composition check now', 'lookup', lk('Shot', 'Human composition check')],
     ['One image', 'formula'],
     // existing: what G2a also reads (the shot's current files; its own log), modelled for its harness (v2)
     ['Current product image', 'lookup', lk('Shot', 'Product image')],

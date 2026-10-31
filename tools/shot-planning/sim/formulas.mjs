@@ -179,6 +179,30 @@ export const CONTINUITY = {
   ready: 'Ready',
   notPlanned: 'Not planned: the continuity reference is incomplete: ',
 };
+// The texts installed in the live base by the continuity reference (the change of 2026-10-30, installed
+// 2026-10-31): the baseline for the human composition change (2026-10-31). Each is its INSTALLED text
+// plus the continuity addition, as main e753aa3 has them. Each formula the human composition change
+// touches is built from its text here by one addition (swap), so the rest of it is that text, character
+// for character (HCR-text; CNT-text checks each of these against INSTALLED).
+export const CONTINUITY_INSTALLED = {
+  planCheck: `IF(LEFT({Continuity check}, 10) = "Incomplete", "${CONTINUITY.notPlanned}" & SUBSTITUTE({Continuity check}, "Incomplete: ", ""),
+${INSTALLED.planCheck})`,
+  currentStandard: swap(INSTALLED.currentStandard, 'Set by: " & {Exception set by} & ".", ""),', 'Set by: " & {Exception set by} & ".", "") & IF({Continuity ready}, "\\n" & {Continuity line}, ""),'),
+  currentPrompt: swap(INSTALLED.currentPrompt, 'ARRAYJOIN({Reference prompt}, ""),', 'ARRAYJOIN({Reference prompt}, "") & IF({Continuity ready}, "\\n\\n" & {Continuity prompt}, ""),'),
+};
+// The human composition reference's fixed limit, in the standard and in the prompt.
+export const HUMAN_COMPOSITION = {
+  notStandard: 'It does not decide the products, which products appear, where they stand or how large they are, the room, its architecture, its materials or the light, who the person is, or whether a person appears.',
+  notPrompt: 'It is not an authority for any product, for which products appear, for where they stand or how large they are, for the room, its architecture, its materials or the light, or for who the person is. The product images and the shot above decide the products; the shot above decides whether a person appears.',
+  // Human composition check's texts: a configured reference that isn't complete stops the shot's planning.
+  notNewWorkflow: 'Incomplete: a human composition reference is used only on a product-page, collection, marketing or campaign shot',
+  count: 'Incomplete: link exactly one candidate as the human composition reference',
+  image: 'Incomplete: the human composition reference needs exactly one image, with no comma in its name',
+  distinct: 'Incomplete: the human composition reference must be a different candidate from the continuity reference',
+  role: 'Incomplete: enter what the human composition reference may decide',
+  ready: 'Ready',
+  notPlanned: 'Not planned: the human composition reference is incomplete: ',
+};
 // Rendition state's texts, and the eligibility that a needed, unapproved rendition gives (v2). Approved
 // is the one approval S8 recorded: its ID, the copy of the file it approved, and its record, which
 // name this application's slot and accepted image.
@@ -451,9 +475,11 @@ IF(ARRAYJOIN({Workflow}) = "Collection", SUBSTITUTE(REGEX_REPLACE(REGEX_EXTRACT(
       r => { const c = MS(r.get('Confirmed at')), l = MS(r.get('Lines changed at')); return bit(B(r.get('Products confirmed')) && (l == null || (c != null && c >= l))); }),
     // v2 (2026-10-30): a configured continuity reference that isn't complete stops planning, so Snapshot,
     // G2a's trigger and Accept, which all require a planned shot, stop with it; one not configured stops nothing.
-    'Plan check': F(`IF(LEFT({Continuity check}, 10) = "Incomplete", "${CONTINUITY.notPlanned}" & SUBSTITUTE({Continuity check}, "Incomplete: ", ""),
-${INSTALLED.planCheck})`,
-      r => (S(r.get('Continuity check')).startsWith('Incomplete') ? CONTINUITY.notPlanned + S(r.get('Continuity check')).split('Incomplete: ').join('') : planCheck(r))),
+    // 2026-10-31: so does a human composition reference, tested directly after the continuity reference.
+    'Plan check': F(swap(CONTINUITY_INSTALLED.planCheck, 'SUBSTITUTE({Continuity check}, "Incomplete: ", ""),\n', `SUBSTITUTE({Continuity check}, "Incomplete: ", ""),
+IF(LEFT({Human composition check}, 10) = "Incomplete", "${HUMAN_COMPOSITION.notPlanned}" & SUBSTITUTE({Human composition check}, "Incomplete: ", ""),\n`) + ')',
+      r => (S(r.get('Continuity check')).startsWith('Incomplete') ? CONTINUITY.notPlanned + S(r.get('Continuity check')).split('Incomplete: ').join('')
+        : S(r.get('Human composition check')).startsWith('Incomplete') ? HUMAN_COMPOSITION.notPlanned + S(r.get('Human composition check')).split('Incomplete: ').join('') : planCheck(r))),
     'Planned': F('IF({Plan check} = "Planned", 1, 0)', r => bit(S(r.get('Plan check')) === 'Planned')),
     'Shot-guide check': F(`IF(ARRAYJOIN({Workflow}) = "Product pages", IF({Slots guide changed} = 0, "${TEXT.guideSame}", "${TEXT.guideChanged}"),
 IF(ARRAYJOIN({Workflow}) = "Collection", IF(AND(FIND(ARRAYJOIN({Guide slot definition line}), {Kept guide plan}) > 0, SUM({Collection guide complete}) = 1), "${TEXT.guideSame}", "${TEXT.guideChanged}"), ""))`,
@@ -463,14 +489,16 @@ IF(ARRAYJOIN({Workflow}) = "Collection", IF(AND(FIND(ARRAYJOIN({Guide slot defin
       return ''; }),
     // Workflow branch (§7.1): the four new workflows take v3 §5.1's composition with v6's changes; any
     // other Workflow, an empty one included, keeps today's text character for character (LIVE).
-    'Current standard': F(swap(INSTALLED.currentStandard, 'Set by: " & {Exception set by} & ".", ""),', 'Set by: " & {Exception set by} & ".", "") & IF({Continuity ready}, "\\n" & {Continuity line}, ""),'),
+    // 2026-10-31: the human composition line, directly before the continuity line.
+    'Current standard': F(swap(CONTINUITY_INSTALLED.currentStandard, ' & IF({Continuity ready}, "\\n" & {Continuity line}, "")', ' & IF({Human composition ready}, "\\n" & {Human composition line}, "") & IF({Continuity ready}, "\\n" & {Continuity line}, "")'),
     r => (isNewWorkflow(r)
-      ? `${AJ(r.get('Request standard'))}\nProducts, in image order:\n${AJ(N(r.get('Active slots filled')) > 1 ? r.get('Line shared facts') : r.get('Line facts'), '\n')}\nShot: ${S(r.get('Name'))}, for ${S(r.get('Effective placement'))}. ${S(r.get('Effective direction'))}${IF(r.get('Lineage'), `\n${S(r.get('Lineage'))}`, '')}${B(r.get('Exception')) && B(r.get('Exception reason')) ? `\nException reason: ${S(r.get('Exception reason'))}. Set by: ${S(r.get('Exception set by'))}.` : ''}${B(r.get('Continuity ready')) ? `\n${S(r.get('Continuity line'))}` : ''}`
+      ? `${AJ(r.get('Request standard'))}\nProducts, in image order:\n${AJ(N(r.get('Active slots filled')) > 1 ? r.get('Line shared facts') : r.get('Line facts'), '\n')}\nShot: ${S(r.get('Name'))}, for ${S(r.get('Effective placement'))}. ${S(r.get('Effective direction'))}${IF(r.get('Lineage'), `\n${S(r.get('Lineage'))}`, '')}${B(r.get('Exception')) && B(r.get('Exception reason')) ? `\nException reason: ${S(r.get('Exception reason'))}. Set by: ${S(r.get('Exception set by'))}.` : ''}${B(r.get('Human composition ready')) ? `\n${S(r.get('Human composition line'))}` : ''}${B(r.get('Continuity ready')) ? `\n${S(r.get('Continuity line'))}` : ''}`
       : `${AJ(r.get('Brief standard'))}\nShot: ${S(r.get('Name'))}, for ${S(r.get('Placement'))}. ${S(r.get('Shot direction'))}`)),
-    // v3 §5.1's order: the opening, the shot, the request prompt, the products, the references.
-    'Current prompt': F(swap(INSTALLED.currentPrompt, 'ARRAYJOIN({Reference prompt}, ""),', 'ARRAYJOIN({Reference prompt}, "") & IF({Continuity ready}, "\\n\\n" & {Continuity prompt}, ""),'),
+    // v3 §5.1's order: the opening, the shot, the request prompt, the products, the references; then the
+    // human composition paragraph and the continuity paragraph, in the order their images are attached.
+    'Current prompt': F(swap(CONTINUITY_INSTALLED.currentPrompt, ' & IF({Continuity ready}, "\\n\\n" & {Continuity prompt}, "")', ' & IF({Human composition ready}, "\\n\\n" & {Human composition prompt}, "") & IF({Continuity ready}, "\\n\\n" & {Continuity prompt}, "")'),
     r => (isNewWorkflow(r)
-      ? `Generate one single commercial photograph. Not a grid, collage, contact sheet or multi-image layout.\n\nShot: ${S(r.get('Name'))}, for ${S(r.get('Prompt placement'))}. ${S(r.get('Effective direction'))}\n\n${AJ(r.get('Request prompt'))}\n\n${PRODUCTS_PARAGRAPH}\n${AJ(N(r.get('Active slots filled')) > 1 ? r.get('Line shared prompt lines') : r.get('Line prompt lines'), '\n')}\n\n${AJ(r.get('Reference prompt'))}${B(r.get('Continuity ready')) ? `\n\n${S(r.get('Continuity prompt'))}` : ''}`
+      ? `Generate one single commercial photograph. Not a grid, collage, contact sheet or multi-image layout.\n\nShot: ${S(r.get('Name'))}, for ${S(r.get('Prompt placement'))}. ${S(r.get('Effective direction'))}\n\n${AJ(r.get('Request prompt'))}\n\n${PRODUCTS_PARAGRAPH}\n${AJ(N(r.get('Active slots filled')) > 1 ? r.get('Line shared prompt lines') : r.get('Line prompt lines'), '\n')}\n\n${AJ(r.get('Reference prompt'))}${B(r.get('Human composition ready')) ? `\n\n${S(r.get('Human composition prompt'))}` : ''}${B(r.get('Continuity ready')) ? `\n\n${S(r.get('Continuity prompt'))}` : ''}`
       : `Generate one single commercial photograph. Not a grid, collage, contact sheet or multi-image layout.\n\nShot: ${S(r.get('Name'))}, for ${S(r.get('Placement'))}. ${S(r.get('Shot direction'))}\n\n${AJ(r.get('Brief prompt'))}`)),
     // The live Decision with {Placement} replaced by {Effective placement} (§6), which is Placement on a walkthrough shot.
     'Decision': F(swap(LIVE.decision, '"Accepted for " & {Placement}', '"Accepted for " & {Effective placement}'),
@@ -508,6 +536,33 @@ IF(TRIM({Continuity may decide}) = "", "${CONTINUITY.role}",
       r => IF(r.get('Continuity ready'), `Continuity reference: No. ${AJ(r.get('Continuity record no.'))}, ${AJ(r.get('Continuity title'))}, image as of ${AJ(r.get('Continuity image as of'))}. May decide: ${S(r.get('Continuity may decide'))} ${CONTINUITY.notStandard} Set by: ${S(r.get('Continuity set by'))}.`, '')),
     'Continuity prompt': F(`IF({Continuity ready}, "The last attached image is a continuity reference, from an earlier image. Use it only for: " & {Continuity may decide} & " ${CONTINUITY.notPrompt}", "")`,
       r => IF(r.get('Continuity ready'), `The last attached image is a continuity reference, from an earlier image. Use it only for: ${S(r.get('Continuity may decide'))} ${CONTINUITY.notPrompt}`, '')),
+    // The human composition reference (2026-10-31): optional, and checked as the continuity reference is,
+    // with one more condition: it is a different candidate from the continuity reference (tested while
+    // that holds one). Only a Ready reference reaches the standard, the prompt and the candidates' Human
+    // composition image now. Its image is attached just before the continuity image, so its paragraph
+    // names it the second-to-last image while the continuity reference is ready, and the last otherwise.
+    'Human composition check': F(`IF(AND({Human composition count} = 0, TRIM({Human composition may decide}) = ""), "",
+IF(NOT(${NEW_WORKFLOW}), "${HUMAN_COMPOSITION.notNewWorkflow}",
+IF({Human composition count} != 1, "${HUMAN_COMPOSITION.count}",
+IF(SUM({Human composition has image}) != 1, "${HUMAN_COMPOSITION.image}",
+IF(AND({Continuity count} = 1, ARRAYJOIN({Human composition record no.}) = ARRAYJOIN({Continuity record no.})), "${HUMAN_COMPOSITION.distinct}",
+IF(TRIM({Human composition may decide}) = "", "${HUMAN_COMPOSITION.role}",
+"${HUMAN_COMPOSITION.ready}"))))))`,
+      r => {
+        const n = N(r.get('Human composition count')), may = present(S(r.get('Human composition may decide')).trim());
+        if (n === 0 && !may) return '';
+        if (!isNewWorkflow(r)) return HUMAN_COMPOSITION.notNewWorkflow;
+        if (n !== 1) return HUMAN_COMPOSITION.count;
+        if (N(r.get('Human composition has image')) !== 1) return HUMAN_COMPOSITION.image;
+        if (N(r.get('Continuity count')) === 1 && AJ(r.get('Human composition record no.')) === AJ(r.get('Continuity record no.'))) return HUMAN_COMPOSITION.distinct;
+        if (!may) return HUMAN_COMPOSITION.role;
+        return HUMAN_COMPOSITION.ready;
+      }),
+    'Human composition ready': F(`IF({Human composition check} = "${HUMAN_COMPOSITION.ready}", 1, 0)`, r => bit(S(r.get('Human composition check')) === HUMAN_COMPOSITION.ready)),
+    'Human composition line': F(`IF({Human composition ready}, "Human composition reference: No. " & ARRAYJOIN({Human composition record no.}) & ", " & ARRAYJOIN({Human composition title}) & ", image as of " & ARRAYJOIN({Human composition image as of}) & ". May decide: " & {Human composition may decide} & " ${HUMAN_COMPOSITION.notStandard} Set by: " & {Human composition set by} & ".", "")`,
+      r => IF(r.get('Human composition ready'), `Human composition reference: No. ${AJ(r.get('Human composition record no.'))}, ${AJ(r.get('Human composition title'))}, image as of ${AJ(r.get('Human composition image as of'))}. May decide: ${S(r.get('Human composition may decide'))} ${HUMAN_COMPOSITION.notStandard} Set by: ${S(r.get('Human composition set by'))}.`, '')),
+    'Human composition prompt': F(`IF({Human composition ready}, IF({Continuity ready}, "The second-to-last attached image", "The last attached image") & " is a human composition reference, from an earlier image. Use it only for: " & {Human composition may decide} & " ${HUMAN_COMPOSITION.notPrompt}", "")`,
+      r => IF(r.get('Human composition ready'), `${B(r.get('Continuity ready')) ? 'The second-to-last attached image' : 'The last attached image'} is a human composition reference, from an earlier image. Use it only for: ${S(r.get('Human composition may decide'))} ${HUMAN_COMPOSITION.notPrompt}`, '')),
   },
 
   'Candidates': {

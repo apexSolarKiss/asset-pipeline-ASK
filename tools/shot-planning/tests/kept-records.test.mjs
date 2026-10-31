@@ -200,10 +200,10 @@ add('CTRL-ML-facts', 'Negative control: with Product basis line as fbc4f24 had i
 // ---------------------------------------------------------------------------------------------
 // The changed formula texts read literally, as Airtable reads them: a reader for the functions they
 // use (&, + and -, the comparisons, IF, AND, OR, NOT, COUNTA, SUM, MIN, LEFT, FIND, ARRAYJOIN,
-// SUBSTITUTE, REGEX_EXTRACT, REGEX_REPLACE). A link or lookup is its values; & and the string
+// SUBSTITUTE, REGEX_EXTRACT, REGEX_REPLACE, TRIM). A link or lookup is its values; & and the string
 // functions read a value as text (S); COUNTA of a link is 1 when it has any record (the build copy).
-// This is a reading of the text, not Airtable.
-function evaluate(text, get) {
+// This is a reading of the text, not Airtable. human-composition-reference.test.mjs reads its texts with it.
+export function evaluate(text, get) {
   const toks = []; let i = 0;
   while (i < text.length) {
     const c = text[i];
@@ -221,7 +221,7 @@ function evaluate(text, get) {
   const FN = {
     IF: a => (B(a[0]) ? a[1] : a[2] ?? ''), AND: a => (a.every(B) ? 1 : 0), OR: a => (a.some(B) ? 1 : 0), NOT: a => (B(a[0]) ? 0 : 1),
     SUM: a => a.reduce((x, v) => x + N(v), 0), MIN: a => { const v = [].concat(...a.map(x => (Array.isArray(x) ? x : [x]))).filter(x => x != null).map(N); return v.length ? Math.min(...v) : 0; },
-    LEFT: a => S(a[0]).slice(0, N(a[1])), FIND: a => FIND(a[0], a[1]),
+    LEFT: a => S(a[0]).slice(0, N(a[1])), FIND: a => FIND(a[0], a[1]), TRIM: a => S(a[0]).trim(),
     COUNTA: a => (B(a[0]) ? 1 : 0), ARRAYJOIN: a => AJ(a[0], a[1] ?? ''), SUBSTITUTE: a => S(a[0]).split(S(a[1])).join(S(a[2])),
     REGEX_EXTRACT: a => { const m = new RegExp(S(a[1])).exec(S(a[0])); return m ? m[0] : ''; }, REGEX_REPLACE: a => S(a[0]).replace(new RegExp(S(a[1]), 'g'), S(a[2])),
   };
