@@ -67,7 +67,7 @@ What the forward decision actually covers: this worked package contains a comple
 
 ## Selection remains distinct from governance
 
-Selection is the adjudicative transition from run state to governed record. Its rationale may be carried in the governed record; governance is the durable recording and elevation of the selected candidate. Co-location in one carrier does not collapse the event into the record. The 2c package's own `co_location_note` marks this: the shape carries both `selection_rationale` (the makes-true adjudication) and `governance_record` (the durable record), and does not preclude their separation (campaign-mode evidence separated upstream authorship from the seam).
+Selection is the adjudicative transition from run state to governed record. Its rationale may be carried in the governed record; governance is the durable recording and elevation of the selected candidate. Co-location in one carrier does not collapse the event into the record. The 2c package's own `co_location_note` marks this: the shape carries both `selection_rationale` (the stated basis of the selection) and `governance_record` (the durable record), and does not preclude their separation (campaign-mode evidence separated upstream authorship from the seam).
 
 ## Reader-facing calibration (what the package's surfaces should carry)
 

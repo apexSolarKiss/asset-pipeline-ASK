@@ -58,7 +58,7 @@ window.TREE_ONTOLOGY = {
         { label: 'bounded by constraints', note: 'discretion operates inside the constraint envelope' },
         { label: 'shaped by references', note: 'approved references guide the permitted variance' },
         { label: 'assigned to decision ownership', note: 'a decision owner is granted or withheld the latitude' },
-        { label: 'exercised at selection; recorded at governance', note: 'the decision makes the candidate true to intent; governance records it — selection is not governance' },
+        { label: 'exercised at selection; recorded at governance', note: 'chooses the candidate judged truest to intent; governance records it — selection is not governance' },
       ],
     },
     {

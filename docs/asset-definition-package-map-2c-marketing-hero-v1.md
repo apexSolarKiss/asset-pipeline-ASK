@@ -29,7 +29,7 @@ The worked case is a "Spring Refresh" marketing hero for the prototype's synthet
 | **Selection** (closing the aperture) | The curator selected one candidate (the post-remediation take) as the one that best carries the offer within the envelope — an authorship-bearing choice made across the full candidate set, with the reason recorded. |
 | **Governed asset** (the record) | `ASSET-MSG-HG-001-HERO-001` — the selected candidate, captured as a governed output with its curation reason, curator, and provenance; the output slot moved to *accepted*. |
 
-The topology reads top to bottom as a function-order projection: **the brief opens an aperture → generation fills it with candidates → a human selects one and makes it true to the intent → artifact governance binds the result (the governance record carries the trace).**
+The topology reads top to bottom as a function-order projection: **the brief opens an aperture → generation fills it with candidates → a human selects the candidate judged truest to the intent → artifact governance binds the result (the governance record carries the trace).**
 
 ### Reading the three lifecycle states
 
@@ -55,7 +55,7 @@ This one end-to-end run shows the full loop running inside the system:
 
 - the **definition layer drives generation** — the slot prompt, constraints, and references shape what is produced;
 - **candidates accumulate** as a set, not a single inevitable answer;
-- **human selection closes the aperture** — one candidate is chosen and made true to the intent, against the alternatives;
+- **human selection closes the aperture** — the candidate judged truest to the intent is chosen against the alternatives;
 - the **governed asset records the result** — what was chosen, by whom, for what reason, with provenance.
 
 That is the portable package doing its job, demonstrated once, end to end, with no external import.

@@ -10,7 +10,7 @@ A convincing image is not necessarily the image a commercial brief calls for. Th
 - **constraints** — what must not be violated
 - **references** — the visual anchors that override a model's defaults
 - **creative discretion** — the bounded judgment exercised within the permitted-variance aperture (granted by the brief) and at selection to close it
-- **selection** — the adjudicative transition that chooses one candidate and makes it true to the intent
+- **selection** — the adjudicative transition that chooses the candidate judged truest to the intent
 - **artifact governance** — the mechanism that binds the accepted result to its claim, use, and answerability
 - **the governance record** — the durable trace of that mechanism, not the mechanism itself
 
