@@ -8,7 +8,7 @@ A convincing image is not necessarily the image a commercial brief calls for. Th
 
 - **intent** — the aim the asset must express
 - **constraints** — what must not be violated
-- **references** — the visual anchors that override a model's defaults
+- **references** — the visual anchors that can counter a model's defaults; a reference's assigned role states what it should contribute, not what the generator will take from it
 - **creative discretion** — the bounded judgment exercised within the permitted-variance aperture (granted by the brief) and at selection to close it
 - **selection** — the adjudicative transition that chooses the candidate judged truest to the intent
 - **artifact governance** — the mechanism that binds the accepted result to its claim, use, and answerability
