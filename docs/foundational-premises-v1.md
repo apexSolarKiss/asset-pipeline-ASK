@@ -13,11 +13,11 @@ A prompt is an instruction event — a single request, composed and evaluated on
 
 The durable layer is the structured definition of intent, inputs, constraints, references, outputs, and governance — not the prompt text composed from it. Any prompt, and any generation interface, is a view on top of the definition layer. Optimizing the interface that triggers generation is not the same as defining the structure the interface reads.
 
-### 2. Visual anchoring is a structural override, not decoration
+### 2. Visual anchoring is structural, not decoration
 
 External image-generation models carry strong defaults. Under text-only steering, prose tends to converge on those defaults no matter how detailed it is: words can *describe* composition, light behavior, surface treatment, and atmospheric register, but cannot *encode* them at the bandwidth required to move a model off its defaults.
 
-An approved reference image is the structural override — it carries the micro-decisions prose cannot. This is why references are modeled as first-class carriers with their own normative force, not as illustrative attachments. Visual anchoring is load-bearing for fidelity; it is not ornamental.
+An approved reference image can counter those defaults by carrying micro-decisions that prose alone may not specify effectively. It is not a guaranteed override. The role a reference is assigned states what it should contribute; the generator responds to what the image shows, and may take from it what that role excludes, or reproduce it nearly whole. The assigned role directs the work and is the basis for judging the result; the influence the generator actually follows is observed in the candidates. This is why references are modeled as first-class carriers with their own normative force, not as illustrative attachments. Visual anchoring is load-bearing for fidelity; it is not ornamental.
 
 ### 3. Product truth, reference, constraint, example, and output are different objects with different jobs
 
