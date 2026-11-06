@@ -19,7 +19,9 @@
                     the COMPLETE current public path — plus the optional authored
                     local list, and a legacy configured root where one survives
      two placements one authored mark, upgraded in place, plus a derived seated
-                    instance for the mobile handoff
+                    instance for the mobile handoff; where the mark opts into an
+                    expanded identity, its symbol alone is the control, and the
+                    wordmark stays with the page
 
    WHAT IT NEVER DOES
      author a second mark tree · author a second breadcrumb · synchronize
@@ -39,6 +41,19 @@
 
   var mark = surface.querySelector('.surface-mark');
   if (!mark) return;                         /* the mark IS the disclosure */
+
+  /* EXPANDED IDENTITY is opt-in and authored, never inferred. A mark marked
+     data-surface-identity="expanded" supplies its identity as two parts: the
+     symbol, which becomes the navigation control, and the wordmark, which stays
+     with the page. The runtime never guesses which part of a logo is the
+     symbol. A mark missing either part takes the single-mark path unchanged. */
+  var idSymbol = null, idWord = null, identity = null;
+  if (mark.getAttribute('data-surface-identity') === 'expanded') {
+    idSymbol = mark.querySelector(':scope > .surface-identity-symbol');
+    idWord = mark.querySelector(':scope > .surface-identity-wordmark');
+    if (!idSymbol || !idWord) idSymbol = idWord = null;
+  }
+  var EXPANDED = !!idSymbol;
 
   var PANEL_ID = 'surface-nav-panel';
   var cfg = source.dataset || {};
@@ -323,8 +338,24 @@
   if (mark.tagName === 'A' && mark.getAttribute('href')) {
     trigger.setAttribute('data-surface-mark-home', mark.getAttribute('href'));
   }
-  while (mark.firstChild) trigger.appendChild(mark.firstChild);
-  mark.parentNode.replaceChild(trigger, mark);
+  if (EXPANDED) {
+    /* The symbol's artwork becomes the trigger, which sits in the symbol's own
+       slot; the slot stays in the lockup as the placeholder the geometry is
+       measured from. The wordmark stays beside it and leaves with the page. The
+       lockup itself is no longer a link, so it carries no name: the trigger
+       names the action, and the page title names the surface. */
+    while (idSymbol.firstChild) trigger.appendChild(idSymbol.firstChild);
+    identity = doc.createElement('div');
+    identity.className = 'surface-identity';
+    idSymbol.appendChild(trigger);
+    idWord.setAttribute('aria-hidden', 'true');
+    identity.appendChild(idSymbol);
+    identity.appendChild(idWord);
+    mark.parentNode.replaceChild(identity, mark);
+  } else {
+    while (mark.firstChild) trigger.appendChild(mark.firstChild);
+    mark.parentNode.replaceChild(trigger, mark);
+  }
 
   var seat = doc.createElement('div');
   seat.className = 'surface-nav-seat';
@@ -340,6 +371,9 @@
      and always non-deterministically. Rewrite the clone's ids and every
      internal reference to them before it enters the document. */
   uniquifyIds(seatBtn, '-surface-nav-seat');
+  /* With an expanded identity the seated control carries the symbol alone,
+     because the trigger it is cloned from holds nothing else; setLive() below
+     marks it for the compact box. */
   /* The fade is a SIBLING of the seat, and deliberately so: it has to stand
      outside the seat's transform, or its gradient no longer matches the
      page's. The seat keeps what actually travels — the hit shield and the
@@ -365,7 +399,103 @@
     root.style.setProperty(name, value);
   }
 
+  /* EXPANDED IDENTITY GEOMETRY. idE is the symbol slot's box in document
+     coordinates: where the lockup draws its symbol. idC is the compact box: the
+     symbol at its compact size, declared by the consumer or fitted inside the
+     shell's footprint, aspect preserved, and seated where the persistent desktop
+     mark settles. Both are measured from
+     laid-out boxes, never from the artwork's file. */
+  var idE = null, idC = null, identityLive = false;
+
+  /* Per-element writes: the values go on the element that uses them, not on
+     the root, so a frame restyles one control rather than the document. */
+  function writeVarOn(el, name, value) {
+    if (el.style.getPropertyValue(name) === value) return;
+    el.style.setProperty(name, value);
+  }
+
+  /* LIVE only while the consumer declares a composition. The test reads the
+     declared properties, never the layout, so it cannot flip with what it
+     controls. Undeclared, the expanded presentation is withdrawn and the
+     symbol stands in the slot as a single mark, rather than as an unseen
+     control. */
+  function composed() {
+    var cs = getComputedStyle(idSymbol);
+    return ['--surface-identity-ratio', '--surface-identity-symbol-w', '--surface-identity-symbol-h']
+      .every(function (n) { return cs.getPropertyValue(n).trim() !== ''; });
+  }
+  function setLive(on) {
+    if (on === identityLive) return;
+    identityLive = on;
+    [root, surface].forEach(function (el) {
+      if (on) el.setAttribute('data-surface-identity', 'expanded');
+      else el.removeAttribute('data-surface-identity');
+    });
+    seatBtn.toggleAttribute('data-surface-identity-compact', on);
+    if (!on) { idE = idC = null; root.removeAttribute('data-surface-identity-compact'); }
+  }
+
+  /* A length the consumer declares in px; any other value counts as undeclared,
+     so a unit the runtime cannot resolve never becomes a wrong size. */
+  function declaredPx(cs, name) {
+    var m = /^\s*(\d+(?:\.\d+)?)px\s*$/.exec(cs.getPropertyValue(name));
+    return m ? parseFloat(m[1]) : 0;
+  }
+
+  function measureIdentity() {
+    setLive(composed());
+    if (!identityLive) return 0;
+    /* Read where the composition is read: a consumer declares its identity on
+       .surface, and the root does not inherit from it. */
+    var cs = getComputedStyle(idSymbol);
+    var rest = parseFloat(getComputedStyle(root).getPropertyValue('--space-8')) || 64;
+    var sr = idSymbol.getBoundingClientRect();
+    if (!sr.width || !sr.height) return 0;     /* not laid out: keep the last geometry */
+    var a = sr.width / sr.height;
+    /* THE COMPACT SIZE. A consumer may declare the compact symbol's height, and
+       its width then follows from the artwork's own aspect, capped only where the
+       consumer also declares a maximum width. Undeclared, the symbol is fitted
+       inside the shell's footprint. Either way the seated control is its own
+       element, so it is never capped by the lockup's size: a narrow phone still
+       seats the full compact box, even where it is larger than the symbol it
+       takes over from. */
+    var cw, ch, H = declaredPx(cs, '--surface-identity-compact-height');
+    if (H > 0) {
+      ch = H; cw = H * a;
+      var cap = declaredPx(cs, '--surface-identity-compact-max-inline');
+      if (cap > 0 && cw > cap) { cw = cap; ch = cap / a; }
+    } else {
+      var fw = declaredPx(cs, '--surface-identity-compact-inline') || 116;
+      var fh = declaredPx(cs, '--surface-identity-compact-block') || 52;
+      cw = Math.min(fw, fh * a); ch = cw / a;
+    }
+    idE = { top: sr.top + window.scrollY, left: sr.left, w: sr.width, h: sr.height };
+    idC = { top: Math.min(rest - SETTLE_TO, idE.top), left: identity.getBoundingClientRect().left, w: cw, h: ch };
+    writeVarOn(seatBtn, '--surface-identity-compact-w', cw.toFixed(2) + 'px');
+    writeVarOn(seatBtn, '--surface-identity-compact-h', ch.toFixed(2) + 'px');
+    /* the desktop band behind the compact control ends at its bottom edge */
+    writeVar('--surface-identity-compact-top', idC.top.toFixed(2) + 'px');
+    return ch;
+  }
+
   function measure() {
+    if (EXPANDED) {
+      var cb = measureIdentity();
+      if (identityLive) {
+        /* The navigation geometry downstream (the seat, the fade, the terminal
+           reserve) keys to the COMPACT symbol, which is what persists. */
+        if (cb && Math.abs(cb - markBlock) >= 0.5) {
+          markBlock = cb;
+          writeVar('--surface-nav-mark-block', markBlock.toFixed(2) + 'px');
+        }
+        /* on mobile the trigger fills the in-flow slot, so the handoff is timed
+           by the symbol's own exit, as a single mark's is */
+        exitSpan = MOBILE() ? (idSymbol.getBoundingClientRect().bottom + window.scrollY) : 0;
+        /* new geometry and the frame drawn from it land in the same paint */
+        if (!MOBILE() && idE) identityFrame();
+        return;
+      }
+    }
     var r = trigger.getBoundingClientRect();
     var block = r.height;
     if (block && Math.abs(block - markBlock) >= 0.5) {
@@ -429,6 +559,11 @@
       writeVar('--surface-nav-settle', '0px');
     }
 
+    if (EXPANDED) {
+      if (identityLive && !MOBILE() && idE) identityFrame();
+      else root.removeAttribute('data-surface-identity-compact');
+    }
+
     /* Exactly one operable trigger, and its operability always matches what is
        on screen — a visible-but-inert mark is the defect this replaces.
 
@@ -441,6 +576,55 @@
     var seated = MOBILE() && !isShort && p > 0.999;
     if (seated) { setOperable(seatBtn, true);  setOperable(trigger, false); }
     else        { setOperable(trigger, true);  setOperable(seatBtn, false); }
+  }
+
+  /* Desktop, expanded identity. The symbol is one fixed control whose box is
+     set here each frame, so it is the same element, and the same trigger, at
+     every scroll position, and its focus ring and press feedback are drawn at
+     its true size rather than scaled with it.
+
+       first   it rides with the page, as the lockup's own symbol, until its top
+               reaches the settled height of the persistent mark;
+       then    its top holds there while its size moves to the compact box, one
+               pixel of height per pixel scrolled, aspect preserved: a symbol
+               larger than the compact box shrinks, its bottom riding with the
+               page as the wordmark leaves; a smaller one grows downward;
+       last    at the compact box it stays, as the persistent mark does.
+
+     At the top of the page it sits exactly in its slot, so the reverse path
+     restores the lockup with no jump. Reduced motion keeps the two end states
+     only: the symbol rides with the page at full size, and is replaced by the
+     compact box at the scroll position where the change of size would have
+     finished. */
+  function identityFrame() {
+    var y = window.scrollY;
+    var ch = idC.h;
+    var rigid = idE.top - y;
+    var settleAt = Math.max(0, idE.top - idC.top);   /* its top reaches the compact top */
+    var doneAt = settleAt + Math.abs(idE.h - ch);
+    var compact = y >= doneAt, top, h;
+    if (compact)            { top = idC.top; h = ch; }
+    else if (REDUCED())     { top = rigid;   h = idE.h; }
+    else if (idE.h >= ch)   {
+      top = Math.max(idC.top, rigid);
+      h = Math.max(ch, Math.min(idE.h, idE.top + idE.h - y - top));
+    } else {
+      top = Math.max(idC.top, rigid);
+      h = Math.min(ch, idE.h + Math.max(0, y - settleAt));
+    }
+    /* r is the size change's progress; for a symbol already the compact size,
+       which has none, it is the ride's progress instead. Reduced motion has no
+       progress between its two end states. */
+    var r = compact ? 1 : REDUCED() ? 0 : (idE.h > ch ? (idE.h - h) / (idE.h - ch)
+                         : ch > idE.h ? (h - idE.h) / (ch - idE.h)
+                         : (doneAt ? y / doneAt : 1));
+    var left = idE.left + (idC.left - idE.left) * r;
+    writeVarOn(trigger, '--surface-identity-top', top.toFixed(2) + 'px');
+    writeVarOn(trigger, '--surface-identity-left', left.toFixed(2) + 'px');
+    writeVarOn(trigger, '--surface-identity-w', (h * idE.w / idE.h).toFixed(2) + 'px');
+    writeVarOn(trigger, '--surface-identity-h', h.toFixed(2) + 'px');
+    writeVarOn(fade, '--surface-identity-r', r.toFixed(4));
+    root.toggleAttribute('data-surface-identity-compact', compact);
   }
 
   function schedule() { if (!scheduled) { scheduled = true; requestAnimationFrame(frame); } }
@@ -553,6 +737,7 @@
   function openPanel(invoker) {
     if (isOpen) return;
     isOpen = true;
+    pendingFragment = null;    /* a destination from an earlier close never carries over */
     cancelOpeningFrames();
     var gen = ++openGen;
     lastInvoker = invoker || visibleTrigger();
@@ -580,6 +765,45 @@
         panel.classList.add('is-open');
       });
     });
+  }
+
+  /* A same-document destination chosen in the panel, waiting for the close to
+     finish (see SAME-DOCUMENT DESTINATIONS below): its hash, and whether it was
+     chosen from the keyboard. */
+  var pendingFragment = null;
+  function fragmentTarget(raw) {
+    /* As the browser finds a fragment's target: an id, then an anchor's name,
+       first as written and then percent-decoded. */
+    var tries = [raw], dec = raw, i, j, named;
+    try { dec = decodeURIComponent(raw); } catch (err) {}
+    if (dec !== raw) tries.push(dec);
+    for (i = 0; i < tries.length; i++) {
+      if (doc.getElementById(tries[i])) return doc.getElementById(tries[i]);
+      named = doc.querySelectorAll('a[name]');
+      for (j = 0; j < named.length; j++) if (named[j].getAttribute('name') === tries[i]) return named[j];
+    }
+    return null;
+  }
+  function followFragment(f) {
+    var t = fragmentTarget(f.hash.slice(1));
+    /* The hash setter does nothing when the fragment is unchanged, so a second
+       press on the current section reveals its target directly. Either way the
+       landing honors the page's scroll-padding and the target's scroll-margin. */
+    if (location.hash !== f.hash) location.hash = f.hash;
+    else if (t && t.scrollIntoView) t.scrollIntoView();
+    /* From the keyboard, focus follows the destination, as after a skip link;
+       otherwise the next Tab can lead back up the page. From a pointer or touch
+       the runtime moves no focus itself: iOS Safari paints any programmatic
+       focus as :focus-visible, and the destination is page content, outside the
+       shell's pointer-focus suppression (INPUT MODALITY above), so focus is left
+       to the browser's own fragment navigation. A non-focusable target takes
+       tabindex="-1" only until focus leaves it. */
+    if (!f.key || !t || typeof t.focus !== 'function') return;
+    if (!t.hasAttribute('tabindex') && !t.matches('a[href], button, input, select, textarea, summary')) {
+      t.setAttribute('tabindex', '-1');
+      t.addEventListener('blur', function () { t.removeAttribute('tabindex'); }, { once: true });
+    }
+    t.focus({ preventScroll: true });
   }
 
   var closeTimer = null;
@@ -626,6 +850,8 @@
       unlockPageScroll();
       restoreFocus();
       if (pendingMode) { var m = pendingMode; pendingMode = null; commitMode(m); }
+      /* after a mode committed during the exit, so the landing uses the new geometry */
+      if (pendingFragment !== null) { var f = pendingFragment; pendingFragment = null; followFragment(f); }
       schedule();
     }
     function onEnd(e) { if (e.target === panel && e.propertyName === 'transform') finish(); }
@@ -763,6 +989,29 @@
         e.clientY < r.top  || e.clientY > r.bottom) closePanel();
   });
 
+  /* SAME-DOCUMENT DESTINATIONS. A row or utility may name a section of the page
+     it is on. Followed while the panel is open, the fragment's scroll would be
+     undone by the scroll lock and the panel would still cover the page. So the
+     panel closes first and the fragment is followed once the lock has released;
+     the hash, the history entry and the landing stay the browser's own. Keyboard
+     activation arrives here as a click too. A modified press, another target,
+     another document and a bare "#" (no fragment to follow) are left to the
+     browser. */
+  panel.addEventListener('click', function (e) {
+    if (!isOpen) return;
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a || !panel.contains(a) || e.defaultPrevented) return;
+    if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (a.target && a.target !== '_self') return;
+    var url;
+    try { url = new URL(a.getAttribute('href'), location.href); } catch (err) { return; }
+    if (!url.hash || url.origin !== location.origin || url.pathname !== location.pathname ||
+        url.search !== location.search) return;
+    e.preventDefault();
+    pendingFragment = { hash: url.hash, key: lastModality === 'key' };
+    closePanel();
+  });
+
   /* Commit a mode: publish it, then re-derive everything that depends on it. */
   function commitMode(next) {
     mode = next;
@@ -814,11 +1063,18 @@
      move it. .surface itself is not observed — its bottom padding is part of
      what these measurements feed. All of it batches into one scheduled frame. */
   if (typeof ResizeObserver === 'function') {
-    var ro = new ResizeObserver(function () { measure(); schedule(); });
+    var ro = new ResizeObserver(function (entries) {
+      /* With a live expanded identity on desktop, the trigger's box changes with
+         every frame of the scroll, by design, and the frame has already drawn
+         it. Only a change around it, such as its slot's, calls for a new
+         measurement. */
+      if (identityLive && !MOBILE() && entries.every(function (en) { return en.target === trigger; })) return;
+      measure(); schedule();
+    });
     [surface.querySelector('.surface-head'),
      surface.querySelector('.surface-payload'),
      surface.querySelector('.surface-footer'),
-     trigger, seatBtn].forEach(function (el) { if (el) ro.observe(el); });
+     trigger, seatBtn, idSymbol].forEach(function (el) { if (el) ro.observe(el); });
   }
 
   window.addEventListener('scroll', schedule, { passive: true });

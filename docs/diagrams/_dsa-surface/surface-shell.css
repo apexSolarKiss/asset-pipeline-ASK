@@ -219,6 +219,86 @@ button.surface-mark[data-surface-nav-pointer-focus]:focus-visible {
 .theme-dark .surface-mark-light { display: none; }
 .theme-dark .surface-mark-dark { display: block; }
 
+/* ---------- Expanded identity — OPTIONAL ----------
+   For an identity whose symbol and wordmark are separate things, and whose
+   symbol must sometimes stand alone. The mark opts in with
+   data-surface-identity="expanded" and supplies its two parts as children:
+   .surface-identity-symbol and .surface-identity-wordmark, each holding its own
+   correctly bounded artwork, with the same light/dark pairing as any mark.
+
+   The page opens on the full lockup, at the width of the content column. Where
+   the surface adopts navigation, the symbol alone becomes the control: on
+   desktop it moves into the persistent mark's place, changing size, as the
+   wordmark leaves with the page, and on a phone the seated control carries the
+   symbol alone.
+   A single-mark surface is unaffected by everything here.
+
+   THE COMPOSITION IS THE CONSUMER'S, the layout is the shell's. The consumer
+   declares, from its own source lockup, the lockup's aspect ratio and each
+   part's box within it, as percentages of the lockup's width and height. The
+   shell scales that composition to the column, so it keeps its proportions at
+   every width, and never infers which part of the artwork is the symbol.
+
+     --surface-identity-ratio                   the lockup's width / height
+     --surface-identity-symbol-x, -y, -w, -h    the symbol's box, in %
+     --surface-identity-wordmark-x, -y, -w, -h  the wordmark's box, in %
+
+   They are inherited, so the consumer declares them once, on .surface, and
+   they reach both the authored link and the element the runtime puts in its
+   place. Without them the lockup has no size, so an undeclared composition
+   draws nothing and shows at once, rather than the shell inventing one. With
+   navigation the runtime goes further: an undeclared composition is withdrawn,
+   and the symbol stands in the slot as a single mark. */
+.surface-mark[data-surface-identity="expanded"],
+.surface[data-surface-identity="expanded"] .surface-identity {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--surface-identity-ratio, auto);
+  margin-bottom: var(--space-5);
+}
+.surface-mark[data-surface-identity="expanded"] > .surface-identity-symbol,
+.surface[data-surface-identity="expanded"] .surface-identity > .surface-identity-symbol {
+  position: absolute;
+  left: var(--surface-identity-symbol-x, 0);
+  top: var(--surface-identity-symbol-y, 0);
+  width: var(--surface-identity-symbol-w, 0);
+  height: var(--surface-identity-symbol-h, 0);
+}
+.surface-mark[data-surface-identity="expanded"] > .surface-identity-wordmark,
+.surface[data-surface-identity="expanded"] .surface-identity > .surface-identity-wordmark {
+  position: absolute;
+  left: var(--surface-identity-wordmark-x, 0);
+  top: var(--surface-identity-wordmark-y, 0);
+  width: var(--surface-identity-wordmark-w, 0);
+  height: var(--surface-identity-wordmark-h, 0);
+}
+/* Width and height only: display stays with the light/dark pairing above. */
+.surface-identity-symbol > img,
+.surface-identity-symbol > svg,
+.surface-identity-wordmark > img,
+.surface-identity-wordmark > svg {
+  width: 100%;
+  height: 100%;
+  vertical-align: top;
+}
+/* The control fills the symbol's slot wherever it is in flow, and its
+   artwork fills the control, as it fills the slot without JavaScript. */
+.surface[data-surface-identity="expanded"] .surface-identity-symbol > button.surface-mark {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+.surface[data-surface-identity="expanded"] .surface-identity-symbol > button.surface-mark > * {
+  width: 100%;
+  height: 100%;
+}
+/* Withdrawn (no declared composition): the symbol is a single mark in the
+   slot, and the wordmark is not shown. */
+.surface:not([data-surface-identity="expanded"]) .surface-identity > .surface-identity-wordmark {
+  display: none;
+}
+
 /* ---------- Identity ---------- */
 /* The structural identity line, on the STRUCTURAL-LOCATOR role: mono, Body
    size, light weight, tight tracking. Mono belongs to this role rather than to
@@ -456,6 +536,33 @@ button.surface-mark[data-surface-nav-pointer-focus]:focus-visible {
 .surface-badge::before { content: "/// "; color: inherit; }
 @supports (content: "a" / "b") {
   .surface-badge::before { content: "/// " / ""; }
+}
+
+/* ---------- The structural title, visually hidden — OPTIONAL ----------
+   For a brand-led opening whose identity already shows the surface's name, so
+   a visible title would repeat it: an expanded identity's wordmark, for one.
+   The plain title opts in with data-surface-title="visually-hidden". It stays
+   the document's h1 and the source of the panel's current row, in the
+   accessibility tree, and gives up its box, so the header's next item follows
+   the identity directly.
+
+   Only the PLAIN form, and only while it holds nothing focusable: a breadcrumb
+   title is a child of its landmark, not of .surface-head-main, and a hidden
+   link would take focus where nothing is drawn. A browser without :has() drops
+   the rule, and the title simply stays visible. */
+.surface-head-main > .surface-title[data-surface-title="visually-hidden"]:not(:has(a[href], button, input, select, textarea, [tabindex])) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.surface-head-main > .surface-title[data-surface-title="visually-hidden"]:not(:has(a[href], button, input, select, textarea, [tabindex])) + :is(.surface-lede, .surface-badge) {
+  margin-top: 0;
 }
 
 .surface-rule {
@@ -802,6 +909,87 @@ button.surface-mark[data-surface-nav-pointer-focus]:focus-visible {
 :root[data-surface-nav-short] { scroll-padding-bottom: 0; }
 :root[data-surface-nav-short] .surface-nav-seat,
 :root[data-surface-nav-short] .surface-nav-fade { display: none; }
+
+/* ---------- Expanded identity, with navigation ----------
+   THE COMPACT SIZE is the consumer's to declare, in px, on .surface:
+
+     --surface-identity-compact-height      the compact symbol's height, in both
+                                            placements; its width follows from
+                                            the artwork's aspect
+     --surface-identity-compact-max-inline  optional: a cap on that width, which
+                                            then sets the height instead
+
+   Undeclared, the shell's FOOTPRINT applies: the symbol alone is fitted, aspect
+   preserved, inside the slot's 116px width and a 52px block, about the box
+   this repository's own mark fills in the slot, so a symbol-only control has a
+   single-mark surface's block height and placement.
+
+   Every clearance follows the compact box the runtime measures, never a
+   constant: the desktop band behind the control, the phone's seated unit, the
+   terminal reserve and the scroll padding all key to its height, written as
+   --surface-nav-mark-block. The runtime writes the box itself onto the seated
+   control as --surface-identity-compact-w and -h. */
+:root[data-surface-nav="ready"] {
+  --surface-identity-compact-inline: 116px;
+  --surface-identity-compact-block: 52px;
+
+  /* Written by the runtime from measured boxes onto the element that uses each
+     one; these are only the values before its first measurement. */
+  --surface-identity-top: var(--space-8);   /* the desktop control's box */
+  --surface-identity-left: var(--space-6);
+  --surface-identity-w: 52px;
+  --surface-identity-h: 52px;
+  --surface-identity-r: 0;                  /* size-change progress 0..1, on the fade */
+  --surface-identity-compact-w: 52px;       /* the compact box, on the seat */
+  --surface-identity-compact-h: 52px;
+  --surface-identity-compact-top: calc(var(--space-8) - 24px);   /* the settled top, on the root */
+}
+/* With an expanded identity the band behind the persistent control is shown
+   only once the symbol is compact (its opacity is the size change's progress,
+   below), and the compact symbol always sits at the settled top. So the opaque zone ends
+   at the compact symbol's own bottom edge, rather than at a resting position
+   this control never takes; a consumer's fragment landing that clears the band
+   clears the control too. */
+:root[data-surface-nav="ready"][data-surface-identity="expanded"] {
+  --surface-nav-top-depth: calc(var(--surface-identity-compact-top) + var(--surface-nav-mark-block));
+}
+
+/* Desktop. The symbol is ONE fixed control whose box the runtime sets each
+   frame, so it is the same element, and the same trigger, from the full
+   lockup to the compact mark. Its box is its drawn size, never a transform of
+   a larger one, so the focus ring and the press feedback are the single
+   mark's at every size. Nothing here transitions, because the movement is the
+   scroll itself. The lockup stays in flow, so the header needs none of the
+   single mark's reserved padding. */
+:root[data-surface-nav-mode="desktop"] .surface[data-surface-identity="expanded"][data-surface-nav="ready"] .surface-identity .surface-mark {
+  position: fixed;
+  top: var(--surface-identity-top);
+  left: var(--surface-identity-left);
+  width: var(--surface-identity-w);
+  height: var(--surface-identity-h);
+  margin: 0;
+  z-index: 40;
+}
+:root[data-surface-nav-mode="desktop"] .surface[data-surface-identity="expanded"][data-surface-nav="ready"] .surface-head {
+  padding-top: 0;
+}
+/* The fade behind the persistent mark arrives with the compact mark. At the top
+   of the page it would cover the lockup, so it takes the size change's progress
+   as its opacity, and its hit shield engages only once the mark is compact. */
+:root[data-surface-nav-mode="desktop"][data-surface-identity="expanded"] .surface-nav-fade {
+  opacity: var(--surface-identity-r);
+}
+:root[data-surface-nav-mode="desktop"][data-surface-identity="expanded"]:not([data-surface-identity-compact]) .surface-nav-fade::before {
+  pointer-events: none;
+}
+
+/* Mobile. The opening control is the symbol in its slot, in flow; the seated
+   control is the symbol alone at the compact size, which may be larger than
+   the opening symbol on a narrow phone: the seat is its own element. */
+:root[data-surface-nav-mode="mobile"] .surface-nav-trigger[data-surface-identity-compact] {
+  width: var(--surface-identity-compact-w);
+  height: var(--surface-identity-compact-h);
+}
 
 /* ---------- The panel ----------
    A native <dialog> opened with showModal(), so the background leaves the
