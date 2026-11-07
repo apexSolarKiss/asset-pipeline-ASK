@@ -1,6 +1,7 @@
 /* =========================================================================
    surface-treatments — separate surfaces composed from three axes; the
-   disclosure; content emphasis.
+   disclosure; content emphasis; the bordered label; the labeled range; rail
+   paint; the scope underline.
 
    An OPT-IN VISUAL RULE under Foundations. It owns PRESENTATION ONLY: no
    markup, no semantics, no template, and no generated preview. A consuming
@@ -144,7 +145,8 @@
      owner           this module
      reuses          --ask-emphasis-magenta, --ask-emphasis-violet,
                      --ask-emphasis-cyan; operative-label metrics for the chip;
-                     --fg-1 for the chip's words
+                     --fg-1 for the chip's words; the bordered label's box and
+                     edge for the chip
      variation       the accent (.surface-emphasis--magenta | --violet | --cyan)
                      supplied by the content's role; the dose per theme
      exclusions      no hover, press, focus or animation; the chip's words stay
@@ -155,6 +157,274 @@
                      perimeter and the chip border
      counterexample  a hard directional drop shadow with no visible border,
                      or chip words set in the accent
+
+   BORDERED LABEL
+     meaning         a short inert label inside a thin border: a word that is
+                     read, never operated. One box for every such label, so a
+                     label measures the same wherever it appears and only its
+                     meaning changes its color
+     population      .surface-bordered-label, neutral by default: a status
+                     word such as DRAFT. Two governed meanings take the same
+                     box: the emphasis chip, by selector grouping in this file,
+                     its border the emphasis accent; and Review Semantics'
+                     review mark, which carries the class, its border the
+                     review role's value
+     owner           this module: display, size, baseline, wrapping, padding,
+                     corners, the 1px layout border, the per-theme edge
+                     reinforcement, the clearance that keeps the reinforcement
+                     visible, and the neutral border. The words take the
+                     composing text role (.doc-label in a document, the chip's
+                     operative-label metrics); the border color comes from the
+                     composing meaning, through --surface-bordered-label-color
+     reuses          --fg-3 for the neutral border; --radius-sm; --space-2
+     variation       the border color, set only by a governed meaning; the
+                     edge dose per theme
+     exclusions      no fill, wash, bloom, depth shadow, hover, press, focus
+                     or animation; this treatment takes --radius-sm (8px),
+                     not --radius-pill; corner shape alone assigns no
+                     interaction. Never a color chosen for contrast or
+                     decoration: a neutral label stays --fg-3, and a color
+                     arrives only with the emphasis chip or a review mark.
+                     Evidence dots, state squares and the not-yet-testable
+                     rail are not bordered labels, and the status badge
+                     (surface-shell) is an unbordered note
+     example         a neutral DRAFT; a THESIS chip in the emphasis magenta; a
+                     PROPOSED review mark in its role value — one box, three
+                     meanings
+     counterexample  a review module or a consumer setting its own padding,
+                     edge width or corner for a label; a bordered label used as
+                     a button
+
+   LABELED RANGE
+     meaning         the exact run of blocks one label governs: a scope rail
+                     in the outer margin, beginning beside the label at the
+                     range's head and ending after its last block, so a reader
+                     sees where the label's scope starts and ends without
+                     inferring it from placement
+     population      .surface-labeled-range on the element that holds the run,
+                     or on one whole list item, which is then the range itself
+                     (the item host, below). Neutral by default: its first
+                     child is the label itself, a
+                     neutral bordered label such as DRAFT, over the blocks it
+                     marks; a neutral range claims no judgment, and content
+                     inside it keeps its own marks. One governed meaning sets
+                     its color: Review Semantics' annotation range, whose first
+                     child is the row naming its one review judgment, and whose
+                     rail takes that judgment's value
+     owner           this module: the rail's stroke, its lane outside the
+                     content edge, its reach past the range's first child, the
+                     label or its row, and its last block (whose outer margins
+                     it removes, so the rail ends just past them), the buffer
+                     between two ranges and at the edge of a list that opens
+                     or closes on an item host, the item host's lane and inset
+                     ends, and the neutral color. The run's own
+                     flow is its composition's (.doc-group in a document); the
+                     color comes from the composing meaning, through
+                     --surface-labeled-range-color, and that color's paint as
+                     a rail (RAIL PAINT) through --surface-labeled-range-paint
+     reuses          --fg-3 for the neutral rail; --space-1, --space-3 and
+                     --space-5
+     variation       the rail color, set only by a governed meaning, with its
+                     color's rail paint; for an item host, the list's
+                     indentation, which the host names through
+                     --surface-labeled-range-indent
+     exclusions      draws nothing on the range's own box and moves nothing it
+                     holds sideways: no inline margin, no padding, border,
+                     offset, transform, indent, fill or wash. Never a rail at
+                     the content edge, which belongs to the passage roles
+                     (quotation, preformatted block, callout). Never nested in
+                     another range, and never inside a list item, a railed
+                     passage, a separate surface or panel, a hierarchy level
+                     or an annotation note, whose own edges or markers sit
+                     where its rail would; a list inside a range keeps its
+                     markers inside its own padding. An item host is the item
+                     itself, never a block inside it, and an item of a list in
+                     the flow, never of a list inside another item; like any
+                     range it takes no content role, so its words sit in its
+                     own blocks. No ornament at the rail's ends: no foot, cap,
+                     dot or arrow. Never the cue for words inside a block:
+                     that is the scope underline. Colors other than neutral
+                     and the governed review value are not admitted: emphasis
+                     keeps its own rail
+     example         two paragraphs beside a magenta scope rail under
+                     PROPOSED, then one beside a green rail under ACCEPTED; a
+                     quotation and the sentence that reads it, beside one
+                     scope rail that runs outside the quotation's own violet
+                     rail; two judged items of one list, each beside its own
+                     rail in that same lane, outside the bullets
+     counterexample  a review color on a paragraph's own rail; a scope rail
+                     with no label at its head; one annotation range over
+                     blocks whose judgments differ
+
+   RAIL PAINT
+     meaning         how a governed color is painted as a rail, in each
+                     theme: the same color drawn as the same rail in the same
+                     theme takes the same paint, whichever meaning draws it
+     population      the rails a governed meaning colors: the labeled range's
+                     scope rail (this module) and the comparison table's
+                     assessment rail (surface-document.css). One paint for
+                     each color both of them draw, the Spectral State values
+                     earned (green), structural (yellow) and deflated (red):
+                     --surface-rail-paint-earned,
+                     --surface-rail-paint-structural and
+                     --surface-rail-paint-deflated
+     owner           this module: each paint and its dose per theme. Spectral
+                     State owns each color and its theme. The composing meaning
+                     binds a role to its color and to that color's paint:
+                     Review Semantics for a range, Criterion Assessment for an
+                     assessment. Each rail's composition keeps its place,
+                     length, gap and containment
+     reuses          the rail's own color, through currentColor; the root
+                     theme, [data-theme] and prefers-color-scheme, as Spectral
+                     State resolves its values
+     variation       the dose, per color and theme: structural takes a 1px
+                     same-color, zero-blur ring in light, 4px apparent, and
+                     none in dark; earned and deflated take none in either
+     exclusions      paint only: no width, place, length or gap, and nothing
+                     that moves text. A rail only: never a bordered label's
+                     edge, an emphasis perimeter or bloom, the hierarchy rail,
+                     the not-yet-testable dashed rail, a scope underline, a
+                     diagram's stroke, a dot or a square. It assigns no
+                     color: a meaning paints only colors it is already
+                     admitted. A rail in a color with no paint here, such as
+                     a passage rail's emphasis accent, a proposed or open
+                     range's, or a neutral, keeps the plain stroke; a paint
+                     for one of those colors would bind every rail drawn in it
+     example         a declined range's scope rail and an adverse
+                     assessment's rail: one red, one paint, in two places;
+                     caution's yellow ring the same beside a summary, a value
+                     field and the key
+     counterexample  a meaning setting its own dose or theme branch for a
+                     color this module paints; the bordered label's edge
+                     recipe copied onto a rail; a rail's dose that follows a
+                     .theme-dark subtree while its color follows the root
+
+   SCOPE UNDERLINE
+     meaning         the exact words inside a block that one label governs:
+                     one solid line under them, so a reader sees which words a
+                     record concerns without a field painted behind them. The
+                     inline counterpart of the labeled range
+     population      .surface-scope-underline on the inline element that holds
+                     the words. Neutral by default; a neutral underline claims
+                     no judgment. One governed meaning sets its color: Review
+                     Semantics' passage mark, which names the note recording
+                     its judgment and takes that judgment's value
+     owner           this module: the line's style, weight and place, its
+                     run through descenders, the words' unchanged color, the
+                     absence of fill, padding and corner, and the neutral
+                     color. The color comes from the composing meaning,
+                     through --surface-scope-underline-color
+     reuses          --fg-3 for the neutral line
+     variation       the line color, set only by a governed meaning
+     exclusions      the words keep their color, weight and box: no text
+                     color, fill, wash, padding, corner, border or rail. One
+                     solid line: never dotted, dashed, wavy or doubled, and
+                     never thinned, raised or lightened toward a text link's
+                     line. Inert: no cursor, hover, focus or other interactive
+                     behavior; never on a link or a control and never composed
+                     onto one, while a link inside the words keeps its own
+                     line and its states. Never the cue for whole blocks: that
+                     is the labeled range
+     example         "two props or fewer" underlined in the emphasis magenta,
+                     its CORRECTION REQUESTED note after the paragraph
+     counterexample  a tinted field behind the words; the words recolored; an
+                     underline that brightens on hover; a text link's 1px line
+                     reused to mark scope
+
+   THE BORDERED LABEL'S EDGE. An apparent 2px edge in light and 1.5px in
+   dark: the fixed 1px border plus a same-color, zero-blur reinforcement of
+   1px light and 0.5px dark. The reinforcement is paint, not layout, so the
+   box measures the same in both themes and nothing moves when the theme
+   changes. Because it paints outside the border, a clipping box (a
+   scrolling table, a scrolling block) would cut it where a label meets its
+   edge, and that side would fall back to the bare 1px border. The label
+   therefore keeps 1px of inline margin, the larger of the two doses, in
+   both themes: on its inline sides the reinforcement lands inside the
+   label's own margin box, so a label at the start of a table's first column
+   or the end of its last, scrolled fully into view, keeps its whole edge.
+   Above and below, the composing box keeps the clearance, as the document
+   table's cells do with their block padding; the label takes no block
+   margin, which would change the line it sits on. On a
+   surface with an accent of its own the chip's edge is heavier than the
+   panel's perimeter (2px against 1.5px in light, 1.5px against 1px in
+   dark); a compact label and a whole unit's perimeter work at different
+   scales, and neither is adjusted to match the other.
+
+   THE LABELED RANGE'S LANE. Every passage rail in the register sits at the
+   content edge and insets its text. A range's scope rail sits outside that
+   edge, in the outer margin, so it is never read as a passage's own rail: a
+   quotation inside a range keeps its violet rail, and the scope rail runs
+   beside it, outside, as it does beside a callout of its own color. The label
+   at its head names the range, and the rail ends with the last block it
+   covers; two ranges in a row keep the passage buffer between them, so their
+   rails never join, even where they share a color. The stroke is 2px, the
+   passage rails' width: one straight line with plain ends, its outer edge
+   14px and its inner edge 12px (--space-3) outside the content edge. It
+   extends 4px (--space-1) above the range's first child, its label or the row
+   that holds it, and below its last block; the range removes those two
+   children's outer margins, so the rail ends just past them. It is paint on
+   the range's ::before, so no line of the range's content moves sideways; the
+   buffer between two ranges moves what follows down. The host keeps the lane:
+   at least 14px of unclipped space to the left of the content edge, and
+   --space-5 (24px) of side padding is recommended at the narrowest page
+   width, so the rail stays clear of the screen edge. A scrolling or
+   paint-contained box clips the lane at its own edge. In a document table a
+   range hangs into the gutter of the column before it; the first column has
+   none, so a table with a range in its first or only column keeps the lane in
+   its own box: .doc-table-scroll--range-lane (surface-document.css) reaches
+   the lane's width into the page's margin and pads it back, so no column
+   moves and the rail sits where a range's in the flow does.
+
+   THE ITEM HOST. One whole list item may itself be the range. It keeps its
+   list semantics: display: list-item, its marker, its indentation and its
+   place in the list's order. Its rail is the same 2px stroke in the same
+   lane as every other scope rail, reached back across the list's
+   indentation and then 14px outside the content edge, so it clears the
+   marker and lines up with the rail of a range in the flow beside the list.
+   That indentation is --surface-labeled-range-indent, 24px (--space-5) by
+   default; a list indented otherwise sets it. The rail's ends sit 2px inside
+   the item instead of 4px beyond it, so two item hosts in a row never join,
+   even in one color, and the list keeps its own item spacing between them:
+   no passage buffer opens between the items of one list. The marker sits on
+   a line of the item's own font, which can hold the first block a few pixels
+   below the item's top, so the rail may begin just above the label. A list that opens
+   or closes on an item host keeps the 24px passage buffer from a range, or
+   from another such list, beside it, whether the list stands directly
+   beside it or is the first or last child of one block that wraps it. A
+   deeper wrapper is not reached; a host that nests its lists deeper
+   composes its own buffer.
+
+   THE RAIL'S PAINT. A paint is a dose with no color of its own: a
+   zero-blur box-shadow layer, or none. The rail that takes it sets its
+   own color and draws both its 2px stroke and the paint in that color, so
+   a paint can never drift from its rail's color. Structural's light ring
+   paints 1px beyond the stroke on every side, 4px apparent and 1px past
+   each end; it is paint, not layout, so no text moves. The yellow is
+   Spectral State's recorded brightness watch-point on the light field,
+   and as a bare 2px rail on the light lavender ground it all but
+   disappears; green and red read as a bare stroke in both themes, and
+   every rail in dark keeps the bare stroke. A dose resolves where its
+   color does: Spectral State's values follow the root theme only, so a
+   .theme-dark subtree on a light page keeps the light value and the light
+   dose. A paint of none leaves its rail with no shadow at all, as the
+   labeled range's contract asks of every color it admits; a dose for
+   green or red would reach the scope rail too, and that contract with it.
+   Under forced colors the browser drops every shadow and gives the stroke
+   a system color; a print without background graphics drops the ring.
+
+   THE SCOPE UNDERLINE'S PLACE. One solid 2px line, 0.36em below the
+   baseline, drawn straight through descenders (no skip-ink), in the full
+   value of the composing meaning. A text link's own line
+   (surface-text-link.css) is 1px, at half its value at rest and full on
+   hover, 0.22em below the baseline and broken at descenders, and its
+   keyboard focus is a 2px foreground line 2px below the baseline. The two
+   lines differ in weight, place and continuity at rest, and each keeps its
+   place while a link is hovered or focused. A link inside underlined words
+   keeps its own line above the scope line, which runs on under the whole
+   phrase. At body leading the line can paint just past the line box: it is
+   paint, not layout, so no line of text moves, and what follows the words
+   keeps its own clearance (Review Semantics gives a note in a list item its
+   attachment space).
 
    THE EMPHASIS DOSE. The themes are deliberately not numerically equal,
    because equal numbers do not read as equal emphasis: light has an apparent
@@ -171,8 +441,21 @@
      22px 1px              the emphasis bloom's blur and spread
      -90deg                the closed disclosure indicator's rotation
      1                     the disclosure indicator's leading
-     2px                   the emphasis chip's block padding
+     2px                   the bordered label's block padding
+     1px, 0.5px            the bordered label's edge reinforcement, light and
+                           dark: an apparent 2px and 1.5px edge
+     1px                   the bordered label's inline margin, the larger dose
+     calc(100% - 2px)      the bordered label's widest box: its container less
+                           its two 1px margins
      2px                   the disclosure trigger's focus-outline width
+     2px                   the labeled range's scope-rail stroke, and the width
+                           of the ::before that draws it; with --space-3 it
+                           sets the rail's lane, 14px outside the content edge
+     2px                   the item host's rail ends, inside the item
+     0 0 0 1px, none       the structural rail paint, light and dark: a 1px
+                           zero-blur ring, 4px apparent, and none
+     2px, 0.36em           the scope underline's thickness and its offset
+                           below the baseline
 
    LIMITS
      - Hover and focus colors on the disclosure trigger depend on the
@@ -183,6 +466,26 @@
      - The trigger's focus outline is drawn --space-1 outside the summary,
        inside the disclosure's --space-6 inset; a consumer that clips that
        band hides it.
+     - The labeled range's scope rail is its ::before. A consumer that draws
+       its own ::before on a range replaces the rail. A host with less than
+       14px of space left of the content edge, or a clipping box at the
+       content edge, cuts it. The rail is drawn on the left: a right-to-left
+       document is not yet served.
+     - The rail's color for an annotation range comes through :has(). A
+       browser without :has() draws the neutral rail beside the colored
+       label. The buffer at a list's edge comes through :has() too: without
+       it, an item host's rail can meet a neighboring range's. It counts
+       siblings, so a wrapper laid out beside its neighbor, a grid or flex
+       column, takes the margin too; a host that sets such lists side by side
+       composes its own spacing.
+     - CSS cannot read a list's indentation, so the item host's rail reaches
+       back by --surface-labeled-range-indent: a list indented otherwise that
+       does not set it puts its item rails out of the lane.
+     - The scope underline is text decoration, so it runs under everything
+       inline inside the words; an inline element that draws its own line, a
+       text link, draws it beside the scope line. The 0.36em offset follows
+       the font's metrics, so the line sits a little differently in another
+       family.
    ========================================================================= */
 
 /* ---- Surface axes ----------------------------------------------------- */
@@ -347,12 +650,53 @@
 .surface-emphasis--violet  { --surface-emphasis-accent: var(--ask-emphasis-violet); }
 .surface-emphasis--cyan    { --surface-emphasis-accent: var(--ask-emphasis-cyan); }
 
-/* The marker that names why a unit is emphasized. Two channels on purpose:
-   the accent arrives on the border, where it cannot drift from the perimeter
-   it belongs to, and the words are set in the primary text role. Outside an
-   accented surface the border falls back to the tertiary foreground. */
+/* ---- Bordered label --------------------------------------------------- */
+
+/* The edge dose, per theme, set as the emphasis dose is set. */
+:root                             { --surface-bordered-label-reinforce: 1px; }
+:root[data-theme="dark"],
+.theme-dark                       { --surface-bordered-label-reinforce: 0.5px; }
+:root[data-theme="light"]         { --surface-bordered-label-reinforce: 1px; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --surface-bordered-label-reinforce: 0.5px; }
+}
+
+/* The box. One atomic inline box on the text baseline, as wide as its words
+   on one line: a flex or grid parent never stretches it, and neither a flex
+   row nor a table column squeezes it, so a line never breaks inside it while
+   it fits. Only a
+   label wider than its container wraps, inside its border, rather than
+   overflow. An inline-block, not a flex box: a label may hold inline
+   emphasis (strong, em), which a flex box would split into separate items
+   and close up. Neutral by default; a governed meaning sets
+   --surface-bordered-label-color and nothing else. The 1px inline margin
+   holds the reinforcement inside the label's own margin box (THE BORDERED
+   LABEL'S EDGE, above). */
+.surface-bordered-label,
 .surface-emphasis-chip {
   display: inline-block;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: calc(100% - 2px);
+  flex-shrink: 0;
+  vertical-align: baseline;
+  white-space: normal;
+  margin: 0 1px;
+  padding: 2px var(--space-2);
+  border: 1px solid var(--surface-bordered-label-color, var(--fg-3));
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 0 var(--surface-bordered-label-reinforce) var(--surface-bordered-label-color, var(--fg-3));
+}
+
+/* The marker that names why a unit is emphasized: the emphasis member of the
+   bordered label. Two channels on purpose: the accent arrives on the border,
+   where it cannot drift from the perimeter it belongs to, and the words are
+   set in the primary text role. Outside an accented surface the border falls
+   back to the tertiary foreground. Its box is the bordered label's. It keeps
+   its own placement at the start of the unit it names (align-self), so in a
+   flex row it sits at the row's start rather than on the row's baseline. */
+.surface-emphasis-chip {
+  --surface-bordered-label-color: var(--surface-emphasis-accent, var(--fg-3));
   align-self: flex-start;
   font-family: var(--font-mono);
   font-size: var(--fs-caption);
@@ -361,13 +705,100 @@
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   color: var(--fg-1);
-  border: 1px solid var(--surface-emphasis-accent, var(--fg-3));
-  border-radius: var(--radius-sm);
-  padding: 2px var(--space-2);
-  margin: 0;
 }
 
 /* Inline emphasis inside the trigger and the chip. Scoped, so strong and em
    elsewhere keep their own styling. */
 :where(.surface-disclosure, .surface-emphasis-chip) strong { font-weight: var(--fw-medium); color: var(--fg-1); }
 :where(.surface-disclosure, .surface-emphasis-chip) em { font-style: italic; }
+
+/* ---- Rail paint ------------------------------------------------------- */
+
+/* One paint for each governed color a rail draws, per theme (RAIL PAINT and
+   THE RAIL'S PAINT, above): a dose drawn in the rail's own color, or none.
+   It follows the root theme, as the Spectral State values it paints do. */
+:root {
+  --surface-rail-paint-earned:     none;
+  --surface-rail-paint-structural: 0 0 0 1px;
+  --surface-rail-paint-deflated:   none;
+}
+:root[data-theme="dark"] { --surface-rail-paint-structural: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) { --surface-rail-paint-structural: none; }
+}
+
+/* ---- Labeled range ---------------------------------------------------- */
+
+/* The scope rail: one straight stroke in the outer lane beside the label at
+   the range's head and the blocks it governs, from just above the label to
+   just below the last block, its ends plain. Paint only: the range takes no
+   inline margin, padding or border, so nothing it holds moves sideways. The
+   host keeps the lane free and unclipped (THE LABELED RANGE'S LANE, above).
+   The stroke and its color's paint are drawn in the rail's color. */
+.surface-labeled-range { position: relative; }
+/* The rail ends just past the first and last child, not their outer margins. */
+.surface-labeled-range > :first-child { margin-top: 0; }
+.surface-labeled-range > :last-child { margin-bottom: 0; }
+.surface-labeled-range::before {
+  content: "";
+  position: absolute;
+  top: calc(-1 * var(--space-1));
+  bottom: calc(-1 * var(--space-1));
+  left: calc(-1 * (var(--space-3) + 2px));
+  box-sizing: border-box;
+  width: 2px;
+  color: var(--surface-labeled-range-color, var(--fg-3));
+  border-left: 2px solid currentColor;
+  box-shadow: var(--surface-labeled-range-paint, none);
+  pointer-events: none;
+}
+/* Two ranges in a row keep the passage buffer, so their rails never read as
+   one. */
+.surface-labeled-range + .surface-labeled-range { margin-top: var(--space-5); }
+
+/* The item host: one whole list item that is itself the range. It keeps its
+   marker and indentation; its rail sits in every range's lane, reached back
+   across the list's indentation, and ends 2px inside the item, so two item
+   hosts in a row never join and the list keeps its own spacing between them
+   (THE ITEM HOST, above). */
+li.surface-labeled-range::before {
+  top: 2px;
+  bottom: 2px;
+  left: calc(-1 * (var(--surface-labeled-range-indent, var(--space-5)) + var(--space-3) + 2px));
+}
+li.surface-labeled-range + li.surface-labeled-range { margin-top: 0; }
+/* A list that opens or closes on an item host keeps the passage buffer from a
+   range or from another such list beside it: the list directly beside it, or
+   the first or last child of one block that wraps it. */
+.surface-labeled-range + :is(
+    :is(ul, ol):has(> li.surface-labeled-range:first-child),
+    :has(> :is(ul, ol):first-child > li.surface-labeled-range:first-child)),
+:is(
+    :is(ul, ol):has(> li.surface-labeled-range:last-child),
+    :has(> :is(ul, ol):last-child > li.surface-labeled-range:last-child)) + :is(
+    .surface-labeled-range,
+    :is(ul, ol):has(> li.surface-labeled-range:first-child),
+    :has(> :is(ul, ol):first-child > li.surface-labeled-range:first-child)) {
+  margin-top: var(--space-5);
+}
+
+/* ---- Scope underline -------------------------------------------------- */
+
+/* The exact words one label governs: one solid 2px line 0.36em below the
+   baseline, straight through descenders, in the composing meaning's value.
+   The words keep their color and their box, so an element that paints its
+   own, such as a mark, is reset: no fill, padding or corner. Neutral by
+   default; a governed meaning sets --surface-scope-underline-color and
+   nothing else (THE SCOPE UNDERLINE'S PLACE, above). */
+.surface-scope-underline {
+  color: inherit;
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.36em;
+  text-decoration-skip-ink: none;
+  text-decoration-color: var(--surface-scope-underline-color, var(--fg-3));
+}
