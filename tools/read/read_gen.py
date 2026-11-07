@@ -121,6 +121,10 @@ OUTPUT_DIR = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 # index's and source views' copy
 IDENTITY_KEYS = ("name", "index_description", "index_lede", "documents_title", "records_intro", "source_note",
                  "source_card")
+# The breadcrumb's ancestors above the repository, outermost first, when the declaration names none. A declared
+# "ancestry" replaces the whole chain; these two entries reproduce the chain this copy rendered before the key existed.
+ANCESTRY_DEFAULT = ({"label": "ASK", "href": "https://a-s-k.studio/"},
+                    {"label": "apex solar kiss", "href": "https://a-s-k.studio/apex-solar-kiss"})
 PASSAGE_ROLES = ("quotation", "callout", "framing", "synthesis")
 BLOCK_SHAPES = ("groups-rail", "groups-aligned")
 
@@ -388,6 +392,28 @@ def config_problems(tree):
     front_link = ident.get("front_link") or {}
     if not front_link.get("label") or not front_link.get("href"):
         out.append("STRUCTURE-IDENTITY  identity.front_link: a label and a site path")
+    if "ancestry" in cfg:
+        chain = cfg["ancestry"]
+        if not isinstance(chain, list) or not chain:
+            out.append("STRUCTURE-ANCESTRY  ancestry: a list of the breadcrumb's ancestors, outermost first")
+        else:
+            for a in chain:
+                label = a.get("label") if isinstance(a, dict) else None
+                href = a.get("href") if isinstance(a, dict) else None
+                parts = urlsplit(href) if isinstance(href, str) else None
+                if not isinstance(label, str) or not label.strip() or not parts or parts.scheme != "https" or not parts.netloc:
+                    out.append("STRUCTURE-ANCESTRY  ancestry entry %r: an ancestor names a label and an https URL" % (a,))
+    if "utilities" in cfg:
+        routes = cfg["utilities"]
+        if not isinstance(routes, list) or not routes:
+            out.append("STRUCTURE-UTILITIES  utilities: a list of the navigation panel's off-path routes, in order")
+        else:
+            for u in routes:
+                label = u.get("label") if isinstance(u, dict) else None
+                href = u.get("href") if isinstance(u, dict) else None
+                parts = urlsplit(href) if isinstance(href, str) else None
+                if not isinstance(label, str) or not label.strip() or not parts or parts.scheme != "https" or not parts.netloc:
+                    out.append("STRUCTURE-UTILITIES  utilities entry %r: a route names a label and an https URL" % (u,))
     chrome = cfg.get("chrome") or {}
     for key in ("stylesheets", "scripts"):
         if not isinstance(chrome.get(key), list) or not chrome.get(key):
@@ -1417,6 +1443,9 @@ def shell_open(tree, page, crumb_tail, lede=""):
     home page itself crumb_tail is None and the name is the current leaf."""
     name = tree.ident["name"]
     mark, mark_label = tree.home_path(), "%s home" % name
+    ancestry = "".join('<a%s href="%s">%s</a> <span class="sep" aria-hidden="true">//</span> '
+                       % (' class="org"' if i == 0 else "", esc(a["href"]), esc(a["label"]))
+                       for i, a in enumerate(tree.cfg.get("ancestry") or ANCESTRY_DEFAULT))
     if crumb_tail is None:
         here = '<span class="page doc-nowrap" aria-current="page">%s</span>' % esc(name)
     else:
@@ -1428,21 +1457,26 @@ def shell_open(tree, page, crumb_tail, lede=""):
             "        <img class=\"surface-mark-dark\" src=\"%(dark)s\" alt=\"\" aria-hidden=\"true\" width=\"2160\" height=\"974\">\n"
             "      </a>\n"
             "      <nav class=\"surface-breadcrumb\" aria-label=\"Breadcrumb\">\n"
-            "        <h1 class=\"surface-title\"><a class=\"org\" href=\"https://a-s-k.studio/\">ASK</a> <span class=\"sep\" aria-hidden=\"true\">//</span> "
-            "<a href=\"https://a-s-k.studio/apex-solar-kiss\">apex solar kiss</a> <span class=\"sep\" aria-hidden=\"true\">//</span> "
-            "%(here)s</h1>\n"
+            "        <h1 class=\"surface-title\">%(ancestry)s%(here)s</h1>\n"
             "      </nav>\n%(lede)s"
             "    </div>\n  </header>\n\n  <hr class=\"surface-rule\">\n\n  <main class=\"surface-payload\">\n") % {
         "home": esc(tree.rel(page, mark)), "mark_label": esc(mark_label),
         "light": esc(tree.rel(page, tree.cfg["chrome"]["logo_light"])),
         "dark": esc(tree.rel(page, tree.cfg["chrome"]["logo_dark"])),
-        "here": here, "lede": lede}
+        "ancestry": ancestry, "here": here, "lede": lede}
 
 
 def action(href, label, primary=False, external=False):
     cls = "surface-action" if primary else "surface-action surface-action--secondary"
     ext = ' target="_blank" rel="noopener"' if external else ""
     return '<a class="%s" href="%s"%s>%s</a>' % (cls, esc(href), ext, esc(label))
+
+
+def off_path(tree):
+    """The navigation panel's utilities tail: the declared off-path routes (routes outside the repository's own tree,
+    such as another branch of the same family site), then the repository. Without the key nothing precedes it."""
+    return ([action(u["href"], u["label"]) for u in tree.cfg.get("utilities") or ()]
+            + [action("https://github.com/" + tree.cfg["repo"], "repository", external=True)])
 
 
 def shell_close(tree, page, footer_actions, nav_local, nav_utilities):
@@ -1536,8 +1570,7 @@ def render_document(tree, entry, report):
          action("https://github.com/" + cfg["repo"], "repository", external=True)],
         "".join(siblings),
         [action(front, fl["label"]), action(tree.github(path), "source on GitHub", external=True),
-         action(raw_href, raw_label, external=raw_href.startswith("https:")),
-         action("https://github.com/" + cfg["repo"], "repository", external=True)])
+         action(raw_href, raw_label, external=raw_href.startswith("https:"))] + off_path(tree))
     report[path] = {"links": links, "images": images, "headings": headings, "title": title, "findings": findings}
     if not title and not any(k.startswith("STRUCTURE") for _, _, k in findings):
         report[path]["findings"].append(("", "", "NO-TITLE (the H1 has no text)"))
@@ -1589,8 +1622,7 @@ def render_source(tree, entry):
          action(tree.github(path), "GitHub", external=True), action(rel_raw, "raw file")],
         '      <li data-surface-nav-current></li>\n',
         [action(index, "documents"), action(rel_fig, "open figure"),
-         action(tree.github(path), "source on GitHub", external=True),
-         action("https://github.com/" + cfg["repo"], "repository", external=True)])
+         action(tree.github(path), "source on GitHub", external=True)] + off_path(tree))
     return doc
 
 
@@ -1671,7 +1703,7 @@ def render_index(tree, report):
         [action(diagrams, fl["label"]), action("https://github.com/" + cfg["repo"], "repository", external=True),
          action("https://a-s-k.studio/", "A-S-K.studio", external=True)],
         "".join(local),
-        [action(diagrams, fl["label"]), action("https://github.com/" + cfg["repo"], "repository", external=True)])
+        [action(diagrams, fl["label"])] + off_path(tree))
     return doc
 
 
@@ -1699,7 +1731,7 @@ def render_home(tree):
         tree, page,
         [action(repo, "repository", external=True), action("https://a-s-k.studio/", "A-S-K.studio", external=True)],
         "      <li data-surface-nav-current>\n        <ul>\n" + "".join(local) + "        </ul>\n      </li>\n",
-        [action(repo, "repository", external=True)])
+        off_path(tree))
     return doc
 
 

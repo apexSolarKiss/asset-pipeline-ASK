@@ -45,8 +45,9 @@
                      table's cells), entry title,
                      quotation text, operative label, metadata, inline code
                      (standing alone as a field value, the document locator),
-                     table-of-contents entry, dense table cell; Caption
-                     through the foundation's .caption
+                     table-of-contents entry, dense table cell, comparison
+                     table head, cell and summary; Caption through the
+                     foundation's .caption
      owner           this module; the Caption role stays the foundation's
      reuses          foundation family, size, weight, leading, tracking and
                      foreground tokens
@@ -68,11 +69,14 @@
      meaning         the space between one role and the next, carried by a
                      composition as a gap because every role sets margin 0
      population      a document flow, its sections, prose runs, titled
-                     groups, groups, labeled values and action rows
+                     groups, groups, labeled values and action rows, and a
+                     flow of peer parts nested inside a section
      owner           this module
      reuses          foundation space tokens
-     variation       a section nested inside a section leads by --space-4; an
-                     item's action row may sit at the item's end (below)
+     variation       a section, or a flow of peer parts, nested inside a
+                     section leads by --space-4, and the nested flow sets its
+                     peers --space-8 apart at any depth; an item's action row
+                     may sit at the item's end (below)
      exclusions      page grid, column count, order and payload stay with the
                      consuming surface
      example         a heading and its body sit --space-3 apart wherever the
@@ -422,17 +426,99 @@
                      role on a cell and not by the table element, so a table
                      without both markers keeps its consumer's geometry, and a
                      table nested inside a cell takes none of the cell rules. It is
-                     not a compact review density, and it has no stacked
-                     narrow-width layout: a surface that must not scroll a
-                     table sideways, or that stacks its rows, keeps its own
-                     geometry and does not adopt it. Text keeps its role: the
-                     composition sets no family, size, weight, leading,
-                     tracking or foreground
+                     not itself a compact density: a comparison read across
+                     options adds the comparison table composition (below).
+                     It has no stacked narrow-width layout: a surface that
+                     must not scroll a table sideways, or that stacks its
+                     rows, keeps its own geometry and does not adopt it. Text
+                     keeps its role: the composition sets no family, size,
+                     weight, leading, tracking or foreground
      example         a dense table with an end-aligned count column, its header
                      row on the --line-1 rule, scrolling in its box at a phone
                      width with the cue beneath it
      counterexample  every table on a page given the composition because it is
                      a table; a compact layout made by overriding this padding
+
+   COMPARISON TABLE
+     meaning         a compact table that sets options side by side against
+                     the same rows: short summaries, figures and their
+                     qualifications, read across. Its cells sit on the Small
+                     step. Each column outside the first has a content edge,
+                     where its headers begin, and each of its body cells keeps
+                     an assessment lane from that edge, so a rail never
+                     begins before the content edge of the column it
+                     assesses, and by default begins on it
+     population      table.doc-compare-table, a population marker, on a table
+                     that adopts the document table composition. Its th carry
+                     .doc-compare-head and its td .doc-compare-cell; a cell's
+                     source summary takes .doc-compare-summary; a numeric
+                     column keeps .doc-table-num. tr.doc-compare-groups, above
+                     the column headers, holds one th scope="colgroup" per
+                     group, its first cell empty. Inside a cell:
+                     .doc-compare-points for independent statements and
+                     .doc-compare-facts for fields the source names. A
+                     .doc-compare-assessed wrapper holds what one assessment
+                     concerns, with .doc-compare-word on the word that names
+                     it; .doc-compare-key lists the assessments a table uses.
+                     .doc-compare-legend-led on the table lets its key name
+                     the assessments, and data-value-field on a rated
+                     figure's wrapper places it in a value field
+     owner           this module for the roles, the cell geometry, the group
+                     rule, the lists and the lane with its rail's geometry.
+                     The consumer owns the content, the columns and their
+                     widths, the criteria, every assignment, and the table's
+                     placement in its page. Whether a wrapper draws its rail,
+                     and its color, is the composing meaning's: Criterion
+                     Assessment (criterion-assessment.css) is the one
+                     admitted, through --doc-compare-rail-color, with that
+                     color's paint as a rail (surface-treatments.css, RAIL
+                     PAINT) through --doc-compare-rail-paint
+     reuses          the document table composition, and inside it
+                     the 32rem measure, --space-3 block padding, --space-4
+                     end padding (30px from header text to the next column's
+                     header text, 44px between body texts across the lane) and
+                     --space-2 between a cell's blocks; the Small step at
+                     300 and 400; --lh-body, and --lh-tight for headers; the
+                     --line-1 rule; --fg-3 for list markers; the 2px rail
+                     stroke and a --space-3 clearance, as the labeled range's
+                     lane takes them
+     variation       a group rule under each group header, from its content
+                     edge to its column gap, so neighboring groups' rules
+                     never join. Two placements of a rail: on the column's
+                     content edge, for text and, by default, for a rated
+                     figure, whose wrapper spans the cell so its figures keep
+                     the end; and, for a rated figure in a legend-led table,
+                     beside a value field at the column's end, whose width
+                     its group shares, never reaching past the content edge.
+                     Two presentations of the words: beside each rail, or,
+                     in a legend-led table, named once by the key directly
+                     after the table's box, each word staying in its cell as
+                     text that draws nothing
+     exclusions      never implied by the document table composition, by a
+                     narrative or dense table, or by the table element: a
+                     comparison is declared. Its cells, and their own text,
+                     never take .doc-body, .doc-label or .doc-table-cell (a
+                     review mark inside a cell keeps its own label), and it never
+                     shrinks the Body step for other prose. The first column
+                     holds the row headers and takes no lane, so it holds no
+                     assessment. A rail marks one wrapper, never a row, a
+                     column or a table, and is as tall as the wrapper; a
+                     cell takes no fill, tint, backplate or colored border.
+                     No flow composition, clamp, fixed row height or manual
+                     line break inside a cell. A rail never carries meaning
+                     alone: the word that names the assessment sits beside
+                     it, or, in a legend-led table, stays in the cell as text
+                     while the key after the table names each rail's color
+     example         three delivery options against four rows, each cell a
+                     summary in 400 over its facts in 300, a green, yellow or
+                     red rail beside each assessed summary and its word
+     counterexample  a comparison made compact by setting .doc-body smaller;
+                     a mono dense table standing in for short prose; a colored
+                     cell fill; a review or evidence color on a comparison
+                     rail; a rail in the gutter before the column it assesses;
+                     a figure's rail placed by its own value's width, so a
+                     column's rails do not line up; a legend-led table
+                     without its key
 
    ENTRY TITLE
      meaning         the primary text of an operable entry in a result list or
@@ -591,6 +677,13 @@
      1lh, 2lh, 3lh         blank source lines in structured text; 1lh is also
                            the one line between declared peer groups
      32rem                 a narrative document table's minimum measure
+     2px                   with --space-3, a comparison table's content
+                           edge, its assessment lane and its rail's stroke
+     1em                   a comparison table's point-list indent
+     1px                   a comparison table's group rule
+     1px, -1px, 50%        a legend-led table's word: kept as text, drawn
+                           nowhere, with the clipping the shell's visually
+                           hidden title uses
 
    LIMITS
      - The blank-line slots and the peer-group line use the lh unit. A browser
@@ -600,6 +693,13 @@
      - Without the helper a block or a table's box still scrolls and shows no
        cue. Keyboard scrolling of either is not claimed: nothing here sets a
        tabindex.
+     - A comparison table's group rule is a background, so a print that drops
+       backgrounds drops it; the grouped header's words and associations
+       remain. Its stroke is a border, which browsers print by default;
+       print is not rendered in the owner's checks. The lane and the rail are
+       drawn on the left: a right-to-left document is not yet served. A
+       first column that spans rows is not served: the lane keys on each
+       row's first cell.
    ========================================================================= */
 
 /* ---- Text roles ------------------------------------------------------- */
@@ -713,7 +813,7 @@
   font-weight: var(--fw-light);
   color: var(--fg-2);
 }
-.doc-code:where(:not(:is(.doc-body, .doc-meta, .doc-label, .doc-deep-title, .doc-subsection-title, .doc-section-title, .doc-lede, .doc-title, .doc-quote, .doc-toc-link, .doc-table-cell, .doc-entry-title) *)) {
+.doc-code:where(:not(:is(.doc-body, .doc-meta, .doc-label, .doc-deep-title, .doc-subsection-title, .doc-section-title, .doc-lede, .doc-title, .doc-quote, .doc-toc-link, .doc-table-cell, .doc-entry-title, .doc-compare-head, .doc-compare-cell, .doc-compare-summary) *)) {
   font-size: var(--fs-caption);
 }
 /* Code keeps its source case inside an operative label. The capitals are the
@@ -725,11 +825,11 @@
 /* Inline emphasis inside document text. Weight carries it: 500 against body
    copy at 200, rather than the browser's bolder step. Scoped to the register,
    so strong and em elsewhere keep their own styling. */
-:where(.doc-flow, .doc-title, .doc-section-title, .doc-subsection-title, .doc-deep-title, .doc-lede, .doc-body, .doc-label, .doc-meta, .doc-quote, .doc-pre, .doc-table-cell, .doc-toc-link, .doc-entry-title) strong {
+:where(.doc-flow, .doc-title, .doc-section-title, .doc-subsection-title, .doc-deep-title, .doc-lede, .doc-body, .doc-label, .doc-meta, .doc-quote, .doc-pre, .doc-table-cell, .doc-toc-link, .doc-entry-title, .doc-compare-head, .doc-compare-cell, .doc-compare-summary) strong {
   font-weight: var(--fw-medium);
   color: var(--fg-1);
 }
-:where(.doc-flow, .doc-title, .doc-section-title, .doc-subsection-title, .doc-deep-title, .doc-lede, .doc-body, .doc-label, .doc-meta, .doc-quote, .doc-pre, .doc-table-cell, .doc-toc-link, .doc-entry-title) em {
+:where(.doc-flow, .doc-title, .doc-section-title, .doc-subsection-title, .doc-deep-title, .doc-lede, .doc-body, .doc-label, .doc-meta, .doc-quote, .doc-pre, .doc-table-cell, .doc-toc-link, .doc-entry-title, .doc-compare-head, .doc-compare-cell, .doc-compare-summary) em {
   font-style: italic;
 }
 
@@ -757,8 +857,14 @@
 
 /* A section nested inside a section. The parent's gap is the heading-to-body
    rhythm, too tight to read a new subsection as starting, so the nesting adds
-   one shared lead wherever it occurs — nested rail levels included. */
-.doc-section > .doc-section { margin-top: var(--space-4); }
+   one shared lead wherever it occurs — nested rail levels included.
+   A part whose content is a run of substantial peer parts holds them in a
+   .doc-flow nested the same way: the flow takes the same lead after the part's
+   heading or introduction, then sets its peers --space-8 apart, the document
+   flow's own gap. Space follows the relationship, not the heading level, so
+   peer parts start as visibly at any depth. */
+.doc-section > .doc-section,
+.doc-section > .doc-flow { margin-top: var(--space-4); }
 
 .doc-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
 
@@ -887,6 +993,213 @@
 .doc-table-scroll.doc-table-scroll--range-lane {
   margin-left: calc(-1 * (var(--space-3) + 2px));
   padding-left: calc(var(--space-3) + 2px);
+}
+
+/* ---- Comparison table ------------------------------------------------- */
+
+/* A compact comparison a consumer declares: table.doc-compare-table on a
+   table that adopts the document table composition above. Its cells sit on
+   the Small step: headers and source summaries at 400, every other cell's
+   text at 300, so a summary reads above its detail by weight, not by a size
+   jump. Each role is a complete text style, as every role here is. */
+.doc-compare-head {
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-normal);
+  color: var(--fg-1);
+  margin: 0;
+}
+.doc-compare-cell {
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-body);
+  letter-spacing: var(--tracking-normal);
+  color: var(--fg-1);
+  margin: 0;
+}
+.doc-compare-summary {
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-body);
+  letter-spacing: var(--tracking-normal);
+  color: var(--fg-1);
+  margin: 0;
+}
+
+/* The geometry, at zero specificity like the document table's. A comparison
+   keeps the narrative table's 32rem measure and scrolls in its box below it.
+   Its cells keep the 12px block padding and take 16px of end padding rather
+   than 24px. Every column outside the first has a content edge 14px inside
+   it, where its headers begin, so header text sits 30px from the next
+   column's. Each of its body cells reserves the assessment lane from that
+   edge, 2px for a rail and 12px clear of the text, whether or not a rail is
+   drawn there: a rail never begins before the edge its column's header
+   begins on, so never reaches the gutter before it, and by default begins
+   on that edge; text never moves for a rail. The first column holds the
+   row headers and takes neither. */
+:where(.doc-table-scroll > table.doc-table.doc-compare-table > * > tr, .doc-table-scroll > table.doc-table.doc-compare-table > tr) > :where(th, td) {
+  padding-left: calc(var(--space-3) + 2px);
+  padding-right: var(--space-4);
+}
+:where(.doc-table-scroll > table.doc-table.doc-compare-table > :is(tbody, tfoot) > tr, .doc-table-scroll > table.doc-table.doc-compare-table > tr) > :where(td) {
+  padding-left: calc(var(--space-3) + 2px + var(--space-3) + 2px);
+}
+:where(.doc-table-scroll > table.doc-table.doc-compare-table > * > tr, .doc-table-scroll > table.doc-table.doc-compare-table > tr) > :where(:first-child) { padding-left: 0; }
+:where(.doc-table-scroll > table.doc-table.doc-compare-table > * > tr, .doc-table-scroll > table.doc-table.doc-compare-table > tr) > :where(:last-child) { padding-right: 0; }
+/* The grouped header: the row above the column headers. Its cells draw no row
+   rule. Each group header draws the --line-1 rule under its own columns'
+   text only, from its content edge to its column gap, so two groups' rules never
+   join; the column-header row keeps the header rule below it. */
+:where(.doc-table-scroll > table.doc-table.doc-compare-table > thead > tr.doc-compare-groups) > :where(th, td) { border-bottom-color: transparent; }
+:where(.doc-table-scroll > table.doc-table.doc-compare-table > thead > tr.doc-compare-groups) > :where(th) {
+  background: linear-gradient(var(--line-1), var(--line-1)) no-repeat;
+  background-position: left calc(var(--space-3) + 2px) bottom 0;
+  background-size: calc(100% - var(--space-3) - 2px - var(--space-4)) 1px;
+}
+:where(.doc-table-scroll > table.doc-table.doc-compare-table > thead > tr.doc-compare-groups) > :where(th:last-child) {
+  background-size: calc(100% - var(--space-3) - 2px) 1px;
+}
+/* Inside a cell. Points are independent statements, each a list item with a
+   restrained marker in the tertiary foreground; facts are fields the source
+   names, such as a speed and a cost, one per line with no marker. Neither
+   sets space between its items. */
+:where(.doc-compare-facts) { padding: 0; list-style: none; }
+:where(.doc-compare-points) { padding: 0 0 0 1em; list-style: disc outside; }
+:where(.doc-compare-points) > li::marker { color: var(--fg-3); }
+/* Structure replaces the register's rhythm inside a cell: its blocks take no
+   margin of their own, and each block after the first sits --space-2 below
+   the one before, so a summary stays with its detail. Inside an assessed
+   wrapper a role keeps its own zero margin, so the word sits directly under
+   what it names. A paragraph without a role takes the cell's. The foundation's paragraph rule carries one element
+   type, so the paragraph rules here name the element to outrank it, and a
+   role on the paragraph still wins. */
+:where(.doc-compare-table > * > tr > :is(th, td), .doc-compare-table > tr > :is(th, td), .doc-compare-assessed) > :where(*) { margin: 0; }
+:where(.doc-compare-table > * > tr > :is(th, td), .doc-compare-table > tr > :is(th, td), .doc-compare-assessed) > :where(* + *) { margin-top: var(--space-2); }
+:where(.doc-compare-table > * > tr > :is(th, td), .doc-compare-table > tr > :is(th, td), .doc-compare-assessed) > p {
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  margin: 0;
+}
+:where(.doc-compare-table > * > tr > :is(th, td), .doc-compare-table > tr > :is(th, td), .doc-compare-assessed) > * + p { margin-top: var(--space-2); }
+/* The assessment lane's rail. A .doc-compare-assessed wrapper holds what one
+   assessment concerns, usually the summary and the word that names the
+   assessment, and the rail is exactly as tall as the wrapper: never the
+   row's height, never the detail below. One straight 2px stroke in the
+   cell's lane, its ends plain. This draws the geometry only: no content is
+   generated here, so a wrapper draws nothing until a composing meaning
+   generates the rail and sets --doc-compare-rail-color, with that color's
+   paint as a rail through --doc-compare-rail-paint (Criterion Assessment,
+   criterion-assessment.css, binding surface-treatments.css's RAIL PAINT);
+   both are drawn in the rail's color. An unassessed summary needs no
+   wrapper. The stroke sits at the lane's start, which in a table cell is by
+   default its column's content edge, and the lane's 12px stays clear between it and the
+   text. In a numeric cell the wrapper spans the cell, so its rail begins on
+   the column's content edge, like every rail in the column, and its figures
+   keep the end, unless a legend-led table gives it a value field (below). */
+.doc-compare-assessed { position: relative; }
+.doc-compare-assessed::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(-1 * (var(--space-3) + 2px));
+  box-sizing: border-box;
+  width: 2px;
+  color: var(--doc-compare-rail-color, transparent);
+  border-left: 2px solid currentColor;
+  box-shadow: var(--doc-compare-rail-paint, none);
+  pointer-events: none;
+}
+:where(.doc-table-num) > .doc-compare-assessed { display: block; text-align: end; }
+/* A legend-led table, table.doc-compare-table.doc-compare-legend-led, lets
+   its key name the assessments: the consumer places the key directly after
+   the table's box, and each word inside a wrapper, marked .doc-compare-word,
+   stays in the cell as text for assistive technology and draws nothing. The
+   word is the wrapper's last child and holds no link or control; one that
+   does stays shown, so focus never lands where nothing is drawn, as with the
+   shell's visually hidden title, and a browser without :has() shows every
+   word. A hidden word takes no line and no space, so the wrapper, and with
+   it the rail, is exactly as tall as the summary or figure it shows. A
+   table without the marker keeps its words beside its rails, and a
+   legend-led table under forced colors, where every rail takes one system
+   color, falls back to that presentation (below). */
+:where(.doc-table-scroll > table.doc-table.doc-compare-table.doc-compare-legend-led) .doc-compare-assessed > .doc-compare-word:not(:has(a[href], button, input, select, textarea, [tabindex])) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+/* A value field, for a rated figure in a legend-led table. Its wrapper takes
+   data-value-field, a template of the widest value its group shows, such as
+   "0.00" or "-00.0%", and sits at the column's end as wide as that template
+   on the column's tabular figures, or as its own figure where that is
+   wider. Every wrapper in a group carries the same template, so their
+   fields share one width: their figures keep the end, and in each column
+   their rails share one line, each 12px before its field, rather than each
+   following its own figure's width. The field never reaches past the
+   column's content edge: in a column too narrow for it, it fills the
+   column, and its rail begins on that edge. The template is drawn nowhere.
+   The figure takes the cell's type, and a template narrower than its
+   figure is an authoring defect: that field widens and its rail leaves the
+   line. In an auto-sized table the template also sets the column's least
+   width, so a field is held to its column only where a fixed layout or a
+   declared width makes the column narrower. Outside a legend-led table the
+   word beside the figure would set the field's width, so the template is
+   ignored and the rail keeps the content edge. */
+:where(.doc-table-scroll > table.doc-table.doc-compare-table.doc-compare-legend-led) :where(.doc-table-num) > .doc-compare-assessed[data-value-field] {
+  width: max-content;
+  max-width: 100%;
+  margin-left: auto;
+}
+:where(.doc-table-scroll > table.doc-table.doc-compare-table.doc-compare-legend-led) :where(.doc-table-num) > .doc-compare-assessed[data-value-field]::after {
+  content: attr(data-value-field);
+  display: block;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+/* Under forced colors every rail takes one system color, so a legend-led
+   table falls back to the presentation of a table without the marker: its
+   words show again, and its figures' templates are ignored, their rails
+   back on the content edge. */
+@media (forced-colors: active) {
+  :where(.doc-table-scroll > table.doc-table.doc-compare-table.doc-compare-legend-led) .doc-compare-assessed > .doc-compare-word:not(:has(a[href], button, input, select, textarea, [tabindex])) {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+  }
+  :where(.doc-table-scroll > table.doc-table.doc-compare-table.doc-compare-legend-led) :where(.doc-table-num) > .doc-compare-assessed[data-value-field] {
+    width: auto;
+    max-width: none;
+    margin-left: 0;
+  }
+  :where(.doc-table-scroll > table.doc-table.doc-compare-table.doc-compare-legend-led) :where(.doc-table-num) > .doc-compare-assessed[data-value-field]::after {
+    content: none;
+  }
+}
+/* The key: one item per assessment the table uses, each a wrapper holding its
+   word, so the key draws the cells' rail. The list reserves the lane at its
+   start. */
+:where(.doc-compare-key) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  margin: 0;
+  padding: 0 0 0 calc(var(--space-3) + 2px);
+  list-style: none;
 }
 
 /* ---- Hierarchy rail --------------------------------------------------- */

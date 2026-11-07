@@ -1,7 +1,7 @@
 /* =========================================================================
    surface-treatments — separate surfaces composed from three axes; the
-   disclosure; content emphasis; the bordered label; the labeled range; the
-   scope underline.
+   disclosure; content emphasis; the bordered label; the labeled range; rail
+   paint; the scope underline.
 
    An OPT-IN VISUAL RULE under Foundations. It owns PRESENTATION ONLY: no
    markup, no semantics, no template, and no generated preview. A consuming
@@ -220,12 +220,14 @@
                      ends, and the neutral color. The run's own
                      flow is its composition's (.doc-group in a document); the
                      color comes from the composing meaning, through
-                     --surface-labeled-range-color
+                     --surface-labeled-range-color, and that color's paint as
+                     a rail (RAIL PAINT) through --surface-labeled-range-paint
      reuses          --fg-3 for the neutral rail; --space-1, --space-3 and
                      --space-5
-     variation       the rail color, set only by a governed meaning; for an
-                     item host, the list's indentation, which the host names
-                     through --surface-labeled-range-indent
+     variation       the rail color, set only by a governed meaning, with its
+                     color's rail paint; for an item host, the list's
+                     indentation, which the host names through
+                     --surface-labeled-range-indent
      exclusions      draws nothing on the range's own box and moves nothing it
                      holds sideways: no inline margin, no padding, border,
                      offset, transform, indent, fill or wash. Never a rail at
@@ -253,6 +255,49 @@
      counterexample  a review color on a paragraph's own rail; a scope rail
                      with no label at its head; one annotation range over
                      blocks whose judgments differ
+
+   RAIL PAINT
+     meaning         how a governed color is painted as a rail, in each
+                     theme: the same color drawn as the same rail in the same
+                     theme takes the same paint, whichever meaning draws it
+     population      the rails a governed meaning colors: the labeled range's
+                     scope rail (this module) and the comparison table's
+                     assessment rail (surface-document.css). One paint for
+                     each color both of them draw, the Spectral State values
+                     earned (green), structural (yellow) and deflated (red):
+                     --surface-rail-paint-earned,
+                     --surface-rail-paint-structural and
+                     --surface-rail-paint-deflated
+     owner           this module: each paint and its dose per theme. Spectral
+                     State owns each color and its theme. The composing meaning
+                     binds a role to its color and to that color's paint:
+                     Review Semantics for a range, Criterion Assessment for an
+                     assessment. Each rail's composition keeps its place,
+                     length, gap and containment
+     reuses          the rail's own color, through currentColor; the root
+                     theme, [data-theme] and prefers-color-scheme, as Spectral
+                     State resolves its values
+     variation       the dose, per color and theme: structural takes a 1px
+                     same-color, zero-blur ring in light, 4px apparent, and
+                     none in dark; earned and deflated take none in either
+     exclusions      paint only: no width, place, length or gap, and nothing
+                     that moves text. A rail only: never a bordered label's
+                     edge, an emphasis perimeter or bloom, the hierarchy rail,
+                     the not-yet-testable dashed rail, a scope underline, a
+                     diagram's stroke, a dot or a square. It assigns no
+                     color: a meaning paints only colors it is already
+                     admitted. A rail in a color with no paint here, such as
+                     a passage rail's emphasis accent, a proposed or open
+                     range's, or a neutral, keeps the plain stroke; a paint
+                     for one of those colors would bind every rail drawn in it
+     example         a declined range's scope rail and an adverse
+                     assessment's rail: one red, one paint, in two places;
+                     caution's yellow ring the same beside a summary, a value
+                     field and the key
+     counterexample  a meaning setting its own dose or theme branch for a
+                     color this module paints; the bordered label's edge
+                     recipe copied onto a rail; a rail's dose that follows a
+                     .theme-dark subtree while its color follows the root
 
    SCOPE UNDERLINE
      meaning         the exact words inside a block that one label governs:
@@ -349,6 +394,24 @@
    deeper wrapper is not reached; a host that nests its lists deeper
    composes its own buffer.
 
+   THE RAIL'S PAINT. A paint is a dose with no color of its own: a
+   zero-blur box-shadow layer, or none. The rail that takes it sets its
+   own color and draws both its 2px stroke and the paint in that color, so
+   a paint can never drift from its rail's color. Structural's light ring
+   paints 1px beyond the stroke on every side, 4px apparent and 1px past
+   each end; it is paint, not layout, so no text moves. The yellow is
+   Spectral State's recorded brightness watch-point on the light field,
+   and as a bare 2px rail on the light lavender ground it all but
+   disappears; green and red read as a bare stroke in both themes, and
+   every rail in dark keeps the bare stroke. A dose resolves where its
+   color does: Spectral State's values follow the root theme only, so a
+   .theme-dark subtree on a light page keeps the light value and the light
+   dose. A paint of none leaves its rail with no shadow at all, as the
+   labeled range's contract asks of every color it admits; a dose for
+   green or red would reach the scope rail too, and that contract with it.
+   Under forced colors the browser drops every shadow and gives the stroke
+   a system color; a print without background graphics drops the ring.
+
    THE SCOPE UNDERLINE'S PLACE. One solid 2px line, 0.36em below the
    baseline, drawn straight through descenders (no skip-ink), in the full
    value of the composing meaning. A text link's own line
@@ -389,6 +452,8 @@
                            of the ::before that draws it; with --space-3 it
                            sets the rail's lane, 14px outside the content edge
      2px                   the item host's rail ends, inside the item
+     0 0 0 1px, none       the structural rail paint, light and dark: a 1px
+                           zero-blur ring, 4px apparent, and none
      2px, 0.36em           the scope underline's thickness and its offset
                            below the baseline
 
@@ -647,13 +712,29 @@
 :where(.surface-disclosure, .surface-emphasis-chip) strong { font-weight: var(--fw-medium); color: var(--fg-1); }
 :where(.surface-disclosure, .surface-emphasis-chip) em { font-style: italic; }
 
+/* ---- Rail paint ------------------------------------------------------- */
+
+/* One paint for each governed color a rail draws, per theme (RAIL PAINT and
+   THE RAIL'S PAINT, above): a dose drawn in the rail's own color, or none.
+   It follows the root theme, as the Spectral State values it paints do. */
+:root {
+  --surface-rail-paint-earned:     none;
+  --surface-rail-paint-structural: 0 0 0 1px;
+  --surface-rail-paint-deflated:   none;
+}
+:root[data-theme="dark"] { --surface-rail-paint-structural: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) { --surface-rail-paint-structural: none; }
+}
+
 /* ---- Labeled range ---------------------------------------------------- */
 
 /* The scope rail: one straight stroke in the outer lane beside the label at
    the range's head and the blocks it governs, from just above the label to
    just below the last block, its ends plain. Paint only: the range takes no
    inline margin, padding or border, so nothing it holds moves sideways. The
-   host keeps the lane free and unclipped (THE LABELED RANGE'S LANE, above). */
+   host keeps the lane free and unclipped (THE LABELED RANGE'S LANE, above).
+   The stroke and its color's paint are drawn in the rail's color. */
 .surface-labeled-range { position: relative; }
 /* The rail ends just past the first and last child, not their outer margins. */
 .surface-labeled-range > :first-child { margin-top: 0; }
@@ -666,7 +747,9 @@
   left: calc(-1 * (var(--space-3) + 2px));
   box-sizing: border-box;
   width: 2px;
-  border-left: 2px solid var(--surface-labeled-range-color, var(--fg-3));
+  color: var(--surface-labeled-range-color, var(--fg-3));
+  border-left: 2px solid currentColor;
+  box-shadow: var(--surface-labeled-range-paint, none);
   pointer-events: none;
 }
 /* Two ranges in a row keep the passage buffer, so their rails never read as
