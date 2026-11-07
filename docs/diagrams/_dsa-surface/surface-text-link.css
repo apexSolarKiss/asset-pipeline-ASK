@@ -75,8 +75,8 @@
    surrounding prose has none — a non-color distinction — plus a keyboard-focus
    indicator that is governed separately and does clear its own requirement
    comfortably. Where a context genuinely requires the stricter floor it takes a
-   separately named alternate, on the default-ASK / AA-compliant pattern the
-   identity canonical already uses for the message-archive ramp. None ships here.
+   separately named alternate, explicitly scoped to that context, never a
+   muddied version of the default's hue. None ships here.
 
    NO LITERAL FALLBACK is needed for color-mix(). Where it is unsupported the
    declaration is invalid at computed-value time and text-decoration-color falls
