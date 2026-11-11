@@ -74,11 +74,11 @@
   ],
   "carriers": {
     "owner": "apexSolarKiss/design-system-ASK",
-    "pin": "14e1bb0c69dee70ed0ea17052ddf74e385c71f6d",
+    "pin": "8fbda728c958990a81d1cbfcd26a7dfe97cdc631",
     "vendored": [
       {"path": "tools/read/carriers/surface-text-link.css", "owner_path": "surface-text-link.css", "sha256": "9a6acf457ffbe2a0bb31ae28507855b6446195ff9dcd3cc7112f04ec5bf0fce3"},
-      {"path": "tools/read/carriers/surface-document.css", "owner_path": "surface-document.css", "sha256": "fc912a50a95ae93040fd7ff98ab4611ba28b70ee5e844058f9138334e08aee46"},
-      {"path": "tools/read/carriers/surface-treatments.css", "owner_path": "surface-treatments.css", "sha256": "ee6f1dc655d9fe84efaa6c5190320b5cabc823334b1e79cde999d4275e28d25b"},
+      {"path": "tools/read/carriers/surface-document.css", "owner_path": "surface-document.css", "sha256": "d0c67bedbe610a130f15a083329bf3455879a8c3cf1828f57db21aa8ac536543"},
+      {"path": "tools/read/carriers/surface-treatments.css", "owner_path": "surface-treatments.css", "sha256": "a277e97e99779f42053e6c1c4043ddda1ecdfaaa34945096dc1cf724b2625c31"},
       {"path": "tools/read/carriers/surface-document-overflow.js", "owner_path": "surface-document-overflow.js", "sha256": "d66d31b36f697e20739ba009dcfa7ba05328be33fd6f401fa41443d3e268bca1"}
     ],
     "reused": [

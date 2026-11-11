@@ -627,7 +627,8 @@
      reuses          the operative label metrics, --space-2, --space-6
      variation       "scroll >>", "<< scroll >>", "<< scroll"
      exclusions      nothing is shrunk, wrapped, enclosed or reflowed; a block
-                     that fits shows nothing
+                     that fits shows nothing; print shows neither the label
+                     nor the fade, because paper cannot scroll
      example         a wide diagram at a narrow width: a right-edge fade and
                      "scroll >>" held at the box's left edge
      counterexample  shrinking a diagram's type until it fits
@@ -693,6 +694,9 @@
      - Without the helper a block or a table's box still scrolls and shows no
        cue. Keyboard scrolling of either is not claimed: nothing here sets a
        tabindex.
+     - Print draws no overflow cue, but a block or a table's box that is wider
+       than the printed column keeps its scroll clip there: what lies past its
+       edge does not print. Nothing here reflows a block or a table for paper.
      - A comparison table's group rule is a background, so a print that drops
        backgrounds drops it; the grouped header's words and associations
        remain. Its stroke is a border, which browsers print by default;
@@ -1347,3 +1351,19 @@
 .doc-table-scroll[data-overflow-start][data-overflow-end]::after { content: "<< scroll >>"; }
 .doc-pre[data-overflow-start]:not([data-overflow-end])::after,
 .doc-table-scroll[data-overflow-start]:not([data-overflow-end])::after { content: "<< scroll"; }
+
+/* Print draws neither. Paper cannot scroll, so a label that says to scroll and
+   a fade over content no one can reach are both wrong there, and the helper's
+   attributes still describe the screen's width. The block and the table print
+   as laid out, their clip included (see LIMITS); only the cue goes. The
+   label's display is turned off, not its content, so all three variants are
+   covered at the base rule's specificity. */
+@media print {
+  .doc-pre[data-overflow-end],
+  .doc-table-scroll[data-overflow-end] {
+    -webkit-mask-image: none;
+            mask-image: none;
+  }
+  .doc-pre[data-overflow]::after,
+  .doc-table-scroll[data-overflow]::after { display: none; }
+}
