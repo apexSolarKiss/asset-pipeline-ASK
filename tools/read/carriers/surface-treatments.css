@@ -257,9 +257,9 @@
                      blocks whose judgments differ
 
    RAIL PAINT
-     meaning         how a governed color is painted as a rail, in each
-                     theme: the same color drawn as the same rail in the same
-                     theme takes the same paint, whichever meaning draws it
+     meaning         how a governed color is painted as a rail, on each
+                     field: the same color drawn as the same rail on the same
+                     field takes the same paint, whichever meaning draws it
      population      the rails a governed meaning colors: the labeled range's
                      scope rail (this module) and the comparison table's
                      assessment rail (surface-document.css). One paint for
@@ -268,7 +268,7 @@
                      --surface-rail-paint-earned,
                      --surface-rail-paint-structural and
                      --surface-rail-paint-deflated
-     owner           this module: each paint and its dose per theme. Spectral
+     owner           this module: each paint and its dose per field. Spectral
                      State owns each color and its theme. The composing meaning
                      binds a role to its color and to that color's paint:
                      Review Semantics for a range, Criterion Assessment for an
@@ -276,10 +276,18 @@
                      length, gap and containment
      reuses          the rail's own color, through currentColor; the root
                      theme, [data-theme] and prefers-color-scheme, as Spectral
-                     State resolves its values
-     variation       the dose, per color and theme: structural takes a 1px
-                     same-color, zero-blur ring in light, 4px apparent, and
-                     none in dark; earned and deflated take none in either
+                     State resolves its values; and a field the root declares
+                     with data-surface-field
+     variation       the dose, per color and field. Structural takes a 1px
+                     same-color, zero-blur ring, 4px apparent, on one reviewed
+                     pairing: the light lavender field with Spectral State's
+                     light values, which is the light theme's own field, or a
+                     root that declares ask-lavender in light. It takes none on
+                     the dark ink field and under any other declaration:
+                     ask-ink, ask-lavender in dark, or a field not reviewed
+                     here, which keeps the bare stroke until its own dose is
+                     measured and added. Earned and deflated take none
+                     everywhere
      exclusions      paint only: no width, place, length or gap, and nothing
                      that moves text. A rail only: never a bordered label's
                      edge, an emphasis perimeter or bloom, the hierarchy rail,
@@ -395,22 +403,29 @@
    composes its own buffer.
 
    THE RAIL'S PAINT. A paint is a dose with no color of its own: a
-   zero-blur box-shadow layer, or none. The rail that takes it sets its
-   own color and draws both its 2px stroke and the paint in that color, so
-   a paint can never drift from its rail's color. Structural's light ring
-   paints 1px beyond the stroke on every side, 4px apparent and 1px past
-   each end; it is paint, not layout, so no text moves. The yellow is
-   Spectral State's recorded brightness watch-point on the light field,
-   and as a bare 2px rail on the light lavender ground it all but
-   disappears; green and red read as a bare stroke in both themes, and
-   every rail in dark keeps the bare stroke. A dose resolves where its
-   color does: Spectral State's values follow the root theme only, so a
-   .theme-dark subtree on a light page keeps the light value and the light
-   dose. A paint of none leaves its rail with no shadow at all, as the
-   labeled range's contract asks of every color it admits; a dose for
-   green or red would reach the scope rail too, and that contract with it.
-   Under forced colors the browser drops every shadow and gives the stroke
-   a system color; a print without background graphics drops the ring.
+   zero-blur box-shadow layer, or none. The rail that takes it sets its own
+   color and draws both its 2px stroke and the paint in that color, so a
+   paint can never drift from its rail's color. Structural's ring on the
+   lavender field paints 1px beyond the stroke on every side, 4px apparent
+   and 1px past each end; it is paint, not layout, so no text moves. The
+   yellow is Spectral State's recorded brightness watch-point on the light
+   field, and as a bare 2px rail on the light lavender ground it all but
+   disappears; green and red read as a bare stroke on both fields, and
+   every rail on the dark ink keeps the bare stroke. The dose answers that
+   field and that value, not a light theme: a root that declares any other
+   field keeps the bare stroke rather than inheriting the lavender's ring.
+   ask-ink is the dark field's own; any other, a light field of another
+   color included, is unreviewed until a rail is measured on it. A root
+   that declares no field is taken to paint its theme's own. A dose
+   resolves at the root, as its color does: Spectral State's values follow
+   the root theme only, so a .theme-dark subtree on a light page keeps the
+   light value and the light dose. criterion-assessment.html draws each
+   rail bare and dosed on the same field, as the calibration's specimen. A
+   paint of none leaves its rail with no shadow at all, as the labeled
+   range's contract asks of every color it admits; a dose for green or red
+   would reach the scope rail too, and that contract with it. Under forced
+   colors the browser drops every shadow and gives the stroke a system
+   color; a print without background graphics drops the ring.
 
    THE SCOPE UNDERLINE'S PLACE. One solid 2px line, 0.36em below the
    baseline, drawn straight through descenders (no skip-ink), in the full
@@ -452,8 +467,9 @@
                            of the ::before that draws it; with --space-3 it
                            sets the rail's lane, 14px outside the content edge
      2px                   the item host's rail ends, inside the item
-     0 0 0 1px, none       the structural rail paint, light and dark: a 1px
-                           zero-blur ring, 4px apparent, and none
+     0 0 0 1px, none       the structural rail paint, on the lavender field in
+                           light and everywhere else: a 1px zero-blur ring,
+                           4px apparent, and none
      2px, 0.36em           the scope underline's thickness and its offset
                            below the baseline
 
@@ -714,9 +730,12 @@
 
 /* ---- Rail paint ------------------------------------------------------- */
 
-/* One paint for each governed color a rail draws, per theme (RAIL PAINT and
+/* One paint for each governed color a rail draws, per field (RAIL PAINT and
    THE RAIL'S PAINT, above): a dose drawn in the rail's own color, or none.
-   It follows the root theme, as the Spectral State values it paints do. */
+   The ring is reviewed on one pairing, the light lavender field with Spectral
+   State's light values. A root that declares no field is taken to paint its
+   theme's own, so the ring follows the light theme, as the values it paints
+   do; a root that declares any field but ask-lavender keeps the bare stroke. */
 :root {
   --surface-rail-paint-earned:     none;
   --surface-rail-paint-structural: 0 0 0 1px;
@@ -726,6 +745,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not([data-theme="dark"]) { --surface-rail-paint-structural: none; }
 }
+:root[data-surface-field]:not([data-surface-field="ask-lavender"]) { --surface-rail-paint-structural: none; }
 
 /* ---- Labeled range ---------------------------------------------------- */
 
