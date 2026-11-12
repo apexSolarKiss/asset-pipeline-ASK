@@ -1340,3 +1340,52 @@ a.surface-nav-row:focus-visible {
   button.surface-mark,
   .surface-nav-trigger { transition: none; }
 }
+
+/* ---------- Print ----------
+   Paper does not scroll, so the runtime's navigation has nothing to do there,
+   and its layers print badly. A `position: fixed` box is drawn on every sheet:
+   the fade repeats across the head of each sheet, and on a narrow layout
+   printed mid-scroll it covers most of every sheet; an open panel prints its
+   tree, over every sheet where it covers the page. The marks print once, but
+   where the window left them: the desktop mark at its scrolled offset, the
+   expanded symbol away from its slot, the seated mark at the foot of one sheet
+   or the head of the next. On paper the shell keeps its identity and drops its
+   navigation.
+
+   - The seat (its shield and seated mark), the fade and the panel do not print.
+   - The desktop mark prints once, at the head of the first sheet, where it
+     rests on screen before any scroll: the standard mark at the top of the
+     reserved head band, the expanded symbol inside its own slot in the lockup.
+     The scroll-driven offsets the runtime writes are not read, so a page
+     printed mid-scroll prints its resting head.
+   - The mobile reserve beneath the payload is released, so the last sheet
+     carries no empty seat band, and an open panel's scroll lock is released
+     for paper.
+
+   The hiding rules name no mode. The mark rules apply to the desktop mode,
+   where the mark is fixed; on a narrow layout the mark is already in the flow.
+   Together they cover either mode, because the mode during print may follow
+   the window or the print width. Paper size,
+   orientation and how the payload breaks across sheets stay the consuming
+   page's. */
+@media print {
+  .surface-nav-seat,
+  .surface-nav-fade,
+  .surface-nav-panel { display: none !important; }
+
+  :root[data-surface-nav-mode="desktop"] .surface[data-surface-nav="ready"] .surface-mark {
+    position: absolute;
+    top: var(--space-8);
+  }
+  :root[data-surface-nav-mode="desktop"] .surface[data-surface-identity="expanded"][data-surface-nav="ready"] .surface-identity .surface-mark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  :root[data-surface-nav-mode="mobile"] .surface[data-surface-nav="ready"] { padding-bottom: var(--space-10); }
+  :root[data-surface-nav-locked],
+  :root[data-surface-nav-locked] body { overflow: visible; }
+}

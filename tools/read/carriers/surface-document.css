@@ -401,33 +401,46 @@
      population      table.doc-table as the direct child of a .doc-table-scroll
                      box, for a narrative or a dense table alike; both markers
                      are needed. .doc-table-num on the th and td of a numeric
-                     column whose values share a format
+                     column whose values share a format.
+                     table.doc-compact-table on a narrative table the consumer
+                     declares short enough to fit its column
      owner           this module for the geometry of a table that adopts it.
                      The consumer owns the content, the columns, which tables
-                     are dense, which columns are numeric, any per-table
-                     widths, a name for each scroll box (role="region" with a
-                     label), and whether a table adopts the composition at all
+                     are dense, which are compact, which columns are numeric,
+                     any other per-table widths, a name for each scroll box
+                     (role="region" with a label), and whether a table adopts
+                     the composition at all. The consumer admits a table as
+                     compact only after its longest rows fit the narrowest
+                     column it ships to, at the register's own type sizes
      reuses          the --line-2 rule under every row and the --line-1 rule
                      under the header row; --space-3 block padding and
                      --space-5 between columns; tabular figures; the overflow
                      cue
      variation       a narrative table keeps a 32rem measure and scrolls below
-                     it; a dense value does not wrap; code in a cell breaks
-                     only at its own break opportunities. A table with a
-                     labeled range in its first or only column adds
-                     .doc-table-scroll--range-lane to its box, which keeps the
-                     range's lane inside the box that scrolls: the box reaches
-                     that 14px into the page's margin and pads it back, so no
-                     column, header or cell moves; scrolled, the table's
-                     content passes through the lane. A table without a range
-                     there does not take it, and a consumer that sets the
-                     box's inline margin or width itself restates the pair
+                     it; a compact table, marked table.doc-compact-table,
+                     takes no measure, with the same type, rules and spacing,
+                     and scrolls in its box, with the same cue, only where its
+                     content cannot fit; a dense value does not wrap; code in
+                     a cell breaks only at its own break opportunities. A
+                     table with a labeled range in its first or only column
+                     adds .doc-table-scroll--range-lane to its box, which
+                     keeps the range's lane inside the box that scrolls: the
+                     box reaches that 14px into the page's margin and pads it
+                     back, so no column, header or cell moves; scrolled, the
+                     table's content passes through the lane. A table without
+                     a range there does not take it, and a consumer that sets
+                     the box's inline margin or width itself restates the pair
      exclusions      never implied: not by table.doc-dense-table, not by a text
                      role on a cell and not by the table element, so a table
                      without both markers keeps its consumer's geometry, and a
                      table nested inside a cell takes none of the cell rules. It is
                      not itself a compact density: a comparison read across
                      options adds the comparison table composition (below).
+                     Nor is the compact marker a density: it gives up the
+                     measure alone, never type or spacing. The marker is
+                     never implied, not by a column count, and a comparison
+                     table (table.doc-compare-table) keeps the measure even
+                     when it is marked compact.
                      It has no stacked narrow-width layout: a surface that
                      must not scroll a table sideways, or that stacks its
                      rows, keeps its own geometry and does not adopt it. Text
@@ -628,7 +641,9 @@
      variation       "scroll >>", "<< scroll >>", "<< scroll"
      exclusions      nothing is shrunk, wrapped, enclosed or reflowed; a block
                      that fits shows nothing; print shows neither the label
-                     nor the fade, because paper cannot scroll
+                     nor the fade, because paper cannot scroll; while a block
+                     or box shows keyboard focus, the fade is dropped so its
+                     focus outline shows, and the label stays
      example         a wide diagram at a narrow width: a right-edge fade and
                      "scroll >>" held at the box's left edge
      counterexample  shrinking a diagram's type until it fits
@@ -674,6 +689,8 @@
      2px                   with --space-3, a labeled range's lane, which a
                            range-lane table's box keeps (surface-treatments.css)
      #000, transparent     overflow mask stops: alpha only, never paint
+     2px                   a scrollable block's or box's focus-outline width,
+                           the disclosure trigger's (surface-treatments.css)
      0.9em                 inline code, the foundation code rule's own size
      1lh, 2lh, 3lh         blank source lines in structured text; 1lh is also
                            the one line between declared peer groups
@@ -693,7 +710,11 @@
        larger value.
      - Without the helper a block or a table's box still scrolls and shows no
        cue. Keyboard scrolling of either is not claimed: nothing here sets a
-       tabindex.
+       tabindex, so whether either takes a Tab stop is the browser's choice,
+       or the consumer's where it sets one. When a browser or a consumer
+       makes one focusable, its focus indicator is the one this module draws:
+       a --fg-1 outline, 2px wide and --space-1 out, with the fade dropped
+       while it shows.
      - Print draws no overflow cue, but a block or a table's box that is wider
        than the printed column keeps its scroll clip there: what lies past its
        edge does not print. Nothing here reflows a block or a table for paper.
@@ -966,8 +987,13 @@
 :where(.doc-table-scroll > table.doc-table > thead > tr) > :where(th) { vertical-align: bottom; border-bottom-color: var(--line-1); }
 /* A narrative table keeps a readable measure: it never narrows below 32rem, and
    inside that width its columns share space by their content. At a narrower
-   width it scrolls in its box rather than squeezing prose. */
-:where(.doc-table-scroll > table.doc-table:not(.doc-dense-table)) { min-width: 32rem; }
+   width it scrolls in its box rather than squeezing prose. A compact table,
+   table.doc-compact-table, is a narrative table its consumer declares short
+   enough to fit, and takes no measure; where its content cannot fit at the
+   same sizes, it scrolls in its box as any table does. A comparison keeps the
+   measure even when it is marked compact. */
+:where(.doc-table-scroll > table.doc-table:not(.doc-dense-table, .doc-compact-table),
+       .doc-table-scroll > table.doc-table.doc-compare-table:not(.doc-dense-table)) { min-width: 32rem; }
 /* A numeric column — its header and its cells — aligns to the end on tabular
    figures, where its values share a format. */
 :where(.doc-table-scroll > table.doc-table > * > tr, .doc-table-scroll > table.doc-table > tr) > :where(.doc-table-num) {
@@ -1351,6 +1377,23 @@
 .doc-table-scroll[data-overflow-start][data-overflow-end]::after { content: "<< scroll >>"; }
 .doc-pre[data-overflow-start]:not([data-overflow-end])::after,
 .doc-table-scroll[data-overflow-start]:not([data-overflow-end])::after { content: "<< scroll"; }
+
+/* Focus. Nothing here sets a tabindex, but a browser may make a block or a
+   table's box that scrolls focusable, and a consumer may. When it shows
+   keyboard focus, a --fg-1 outline surrounds it, 2px wide and --space-1 out:
+   the disclosure trigger's outline geometry, without its foreground or
+   indicator. The fade is a mask on the same box, and a mask hides what is
+   drawn outside the box, so with the fade in place this outline would not
+   show at all. The fade is dropped while focus shows, and the label beneath
+   still names the direction. This follows the mask rule at the same
+   specificity, so it wins. */
+.doc-pre:focus-visible,
+.doc-table-scroll:focus-visible {
+  outline: 2px solid var(--fg-1);
+  outline-offset: var(--space-1);
+  -webkit-mask-image: none;
+          mask-image: none;
+}
 
 /* Print draws neither. Paper cannot scroll, so a label that says to scroll and
    a fade over content no one can reach are both wrong there, and the helper's

@@ -74,10 +74,10 @@
   ],
   "carriers": {
     "owner": "apexSolarKiss/design-system-ASK",
-    "pin": "8fbda728c958990a81d1cbfcd26a7dfe97cdc631",
+    "pin": "e84394bae81f7b202f1673e7ef7696a5bc3bba1c",
     "vendored": [
       {"path": "tools/read/carriers/surface-text-link.css", "owner_path": "surface-text-link.css", "sha256": "9a6acf457ffbe2a0bb31ae28507855b6446195ff9dcd3cc7112f04ec5bf0fce3"},
-      {"path": "tools/read/carriers/surface-document.css", "owner_path": "surface-document.css", "sha256": "d0c67bedbe610a130f15a083329bf3455879a8c3cf1828f57db21aa8ac536543"},
+      {"path": "tools/read/carriers/surface-document.css", "owner_path": "surface-document.css", "sha256": "1c122ddf355a065197b05bb4e8b3c821bee37617f052982c68da923cfdb72a27"},
       {"path": "tools/read/carriers/surface-treatments.css", "owner_path": "surface-treatments.css", "sha256": "a277e97e99779f42053e6c1c4043ddda1ecdfaaa34945096dc1cf724b2625c31"},
       {"path": "tools/read/carriers/surface-document-overflow.js", "owner_path": "surface-document-overflow.js", "sha256": "d66d31b36f697e20739ba009dcfa7ba05328be33fd6f401fa41443d3e268bca1"}
     ],
@@ -85,7 +85,7 @@
       {"path": "docs/diagrams/_dsa-tokens/colors_and_type.css", "owner_path": "colors_and_type.css", "sha256": "4fed9d796a0d51072802f430b9528459a5cbb9c709fa1964bf5b13f18464122a"},
       {"path": "docs/diagrams/_dsa-surface/surface-panel.css", "owner_path": "surface-panel.css", "sha256": "883e24ac5407a4fe24f9149b0d8964a06995cc88b6b6150b1a1bdfd9aee2976e"},
       {"path": "docs/diagrams/_dsa-surface/surface-action.css", "owner_path": "surface-action.css", "sha256": "f00ccde1b4db17687fd6ecd62644700932107352b37476184718f2036209fb2e"},
-      {"path": "docs/diagrams/_dsa-surface/surface-shell.css", "owner_path": "patterns/surface-shell/surface-shell.css", "sha256": "a960e0c0bae43c7e9b8f051579c3912b2b67d300bf94fdcd3d2bbe10ba8fa84e"},
+      {"path": "docs/diagrams/_dsa-surface/surface-shell.css", "owner_path": "patterns/surface-shell/surface-shell.css", "sha256": "2c9bbe388396f88198a08140758832ec09452a68addacce49f275728343559d3"},
       {"path": "docs/diagrams/_dsa-surface/surface-shell.js", "owner_path": "patterns/surface-shell/surface-shell.js", "sha256": "a69b9de1d5b316ab8ee37f2670f61284dac5f84be2ba43c522bdc2e2d6f8d5e9"}
     ]
   }
