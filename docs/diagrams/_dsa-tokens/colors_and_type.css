@@ -299,6 +299,12 @@ html, body {
 /* The root carries the solid edge; the body stays transparent so the root's
    background is what propagates to the canvas. */
 html { background-color: var(--bg-edge); }
+/* On paper the body's field scrolls with the document. Fixed, Chrome positions
+   it against the printing window's viewport and paints it only in a strip that
+   wide on each sheet, so a window narrower than the printed column leaves a band
+   of the root's field beside it. Scrolling, it is one gradient the length of the
+   document, the same from any window. It applies only in print. */
+@media print { body { background-attachment: scroll; } }
 body { background-color: transparent; }
 
 h1, .h1 {

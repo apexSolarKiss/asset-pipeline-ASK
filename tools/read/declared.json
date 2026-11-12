@@ -74,7 +74,7 @@
   ],
   "carriers": {
     "owner": "apexSolarKiss/design-system-ASK",
-    "pin": "e84394bae81f7b202f1673e7ef7696a5bc3bba1c",
+    "pin": "e88e92b42d354ae98f687c28b9f1eefcbeb4f557",
     "vendored": [
       {"path": "tools/read/carriers/surface-text-link.css", "owner_path": "surface-text-link.css", "sha256": "9a6acf457ffbe2a0bb31ae28507855b6446195ff9dcd3cc7112f04ec5bf0fce3"},
       {"path": "tools/read/carriers/surface-document.css", "owner_path": "surface-document.css", "sha256": "1c122ddf355a065197b05bb4e8b3c821bee37617f052982c68da923cfdb72a27"},
@@ -82,7 +82,7 @@
       {"path": "tools/read/carriers/surface-document-overflow.js", "owner_path": "surface-document-overflow.js", "sha256": "d66d31b36f697e20739ba009dcfa7ba05328be33fd6f401fa41443d3e268bca1"}
     ],
     "reused": [
-      {"path": "docs/diagrams/_dsa-tokens/colors_and_type.css", "owner_path": "colors_and_type.css", "sha256": "4fed9d796a0d51072802f430b9528459a5cbb9c709fa1964bf5b13f18464122a"},
+      {"path": "docs/diagrams/_dsa-tokens/colors_and_type.css", "owner_path": "colors_and_type.css", "sha256": "d00f1f4f17d4af5201d840dd9f1f558800e69c77280826a3f8d07e9ffd99ef5e"},
       {"path": "docs/diagrams/_dsa-surface/surface-panel.css", "owner_path": "surface-panel.css", "sha256": "883e24ac5407a4fe24f9149b0d8964a06995cc88b6b6150b1a1bdfd9aee2976e"},
       {"path": "docs/diagrams/_dsa-surface/surface-action.css", "owner_path": "surface-action.css", "sha256": "f00ccde1b4db17687fd6ecd62644700932107352b37476184718f2036209fb2e"},
       {"path": "docs/diagrams/_dsa-surface/surface-shell.css", "owner_path": "patterns/surface-shell/surface-shell.css", "sha256": "2c9bbe388396f88198a08140758832ec09452a68addacce49f275728343559d3"},
