@@ -12,26 +12,30 @@
 <!-- design-system-ASK foundations — local mirror (Tier 1 + Tier 2), no CDN. See _dsa-tokens/MANIFEST.md -->
 <link rel="stylesheet" href="./_dsa-tokens/colors_and_type.css">
 <link rel="stylesheet" href="diagrams.css">
-<!-- design-system-ASK disclosure grammar for the compact chrome triggers, from the local surface-module
-     mirror. surface-panel.css loads first, as surface-treatments.css requires. -->
+<!-- design-system-ASK surface modules, from the local surface-module mirror: the disclosure grammar for
+     the compact chrome triggers, and the FILL PAINT of surface-treatments.css, which paints the Three
+     Functions parts below. surface-panel.css loads first, as surface-treatments.css requires. -->
 <link rel="stylesheet" href="./_dsa-surface/surface-panel.css">
 <link rel="stylesheet" href="./_dsa-surface/surface-treatments.css">
 <!-- ASK Three Functions — opt-in semantic function-color primitive, vendored from design-system-ASK. See _dsa-tokens/MANIFEST.md -->
 <link rel="stylesheet" href="./_dsa-tokens/three-functions.css">
 <style>
-  /* ===== Three Functions consumption (source-v2 // render-v2 · primitive v0.2): role stroke + 30% fill; executive = the chamber, variance = negative cutouts.
-     legislative = the source-of-intent role box (constitutive) and the creative-brief box (delegated), one role value;
-     their rank is carried by topology — outside vs inside the bracket — not by a second hue. Labels stay on the theme
-     foreground. ===== */
-  .node-box.fn-leg  { stroke: var(--function-legislative); fill: color-mix(in srgb, var(--function-legislative) 30%, transparent); }
-  .node-box.fn-jud  { stroke: var(--function-judicial);    fill: color-mix(in srgb, var(--function-judicial) 30%, transparent); }
+  /* ===== Three Functions consumption (source-v2 // render-v3 · primitive v0.3): solid fill through the surface
+     treatments' FILL PAINT. Each role-bearing part carries .surface-fill and binds its role's value and ink: it is
+     filled at 100% of the role value, edged in the same value, and text set on it carries .surface-fill-ink and
+     takes the role's ink. executive = the chamber, with the variance candidates, the iris blades and the dotted
+     authorized-judgment rail cut out of it as holes; judicial = the ratified candidate, inside the selection ring,
+     which stays a ring in the role value. legislative = the source-of-intent role box (constitutive) and the
+     creative-brief box (delegated), one role value; their rank is carried by topology — outside vs inside the
+     bracket — not by a second hue. Text beside a part, the aperture, frames and beams stay neutral. ===== */
+  .fn-leg { --surface-fill-color: var(--function-legislative); --surface-fill-ink: var(--function-legislative-ink); }
+  .fn-exe { --surface-fill-color: var(--function-executive);   --surface-fill-ink: var(--function-executive-ink); }
+  .fn-jud { --surface-fill-color: var(--function-judicial);    --surface-fill-ink: var(--function-judicial-ink); }
   .edge.fn-jud-ring { stroke: var(--function-judicial); }
-  .fn-exe-wash               { fill: color-mix(in srgb, var(--function-executive) 30%, transparent); }
   .flow-group.fn-exe-chamber { stroke: var(--function-executive); fill: none; }
   .node-box.fn-cut           { fill: none; }
-  .legend .box-solid.fn-leg { background: color-mix(in srgb, var(--function-legislative) 30%, transparent); border-color: var(--function-legislative); }
-  .legend .box-solid.fn-exe { background: color-mix(in srgb, var(--function-executive) 30%, transparent); border-color: var(--function-executive); }
-  .legend .box-solid.fn-jud { background: color-mix(in srgb, var(--function-judicial) 30%, transparent); border-color: var(--function-judicial); }
+  /* the key's filled specimens take the same paint; diagrams.css's neutral swatch rule outranks .surface-fill */
+  .legend .sw .box-solid.surface-fill { background-color: var(--surface-fill-color); border-color: var(--surface-fill-color); }
   .legend .fn-divider { border: none; border-top: 1px dotted var(--diagram-line); margin: 12px 0 9px; }
   .legend .fn-down { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.13em; text-transform: uppercase; color: var(--diagram-muted); margin-bottom: 9px; }
 </style>
@@ -48,8 +52,8 @@
     <div class="spacer"></div>
     <div class="diagram-cue">illustrative</div>
     <div class="stamp">
-      <div><span class="k">source-v2</span> // <span class="k">render-v2</span></div>
-      <div>2026-09-14</div>
+      <div><span class="k">source-v2</span> // <span class="k">render-v3</span></div>
+      <div>2026-11-17</div>
     </div>
   </div>
 
@@ -76,15 +80,15 @@
       <div class="legend glass" id="diagramLegend">
         <div class="h"><span>Three functions</span><span class="fig">one spine</span></div>
         <div class="row">
-          <div class="sw"><div class="box-solid fn-leg"></div></div>
+          <div class="sw"><div class="box-solid fn-leg surface-fill"></div></div>
           <div><span class="lbl">legislative</span><span class="sub">source-of-intent role · creative brief</span></div>
         </div>
         <div class="row">
-          <div class="sw"><div class="box-solid fn-exe"></div></div>
+          <div class="sw"><div class="box-solid fn-exe surface-fill"></div></div>
           <div><span class="lbl">executive</span><span class="sub">variance production · fills the aperture · nonjudgmental</span></div>
         </div>
         <div class="row">
-          <div class="sw"><div class="box-solid fn-jud"></div></div>
+          <div class="sw"><div class="box-solid fn-jud surface-fill"></div></div>
           <div><span class="lbl">judicial</span><span class="sub">curatorial selection + closure · ratifies one candidate</span></div>
         </div>
         <hr class="fn-divider">

@@ -1,4 +1,4 @@
-/* asset-pipeline-ASK_bounded-generativity.figure.js — AP instance (source-v2 // render-v2, ASK 2026-09-14)
+/* asset-pipeline-ASK_bounded-generativity.figure.js — AP instance (source-v2 ASK 2026-09-14 // render-v3 2026-11-17)
    source-v2: conforms to Three Functions v0.2. The source-of-intent / normative-apex ROLE is the
    CONSTITUTIVE legislative source, so it now carries the role treatment in a role box on the main axis;
    the creative brief stays DELEGATED legislative apparatus. Both take the same role value — their rank is
@@ -6,6 +6,15 @@
    never a second hue, an opacity rank or a fourth function. The figure draws the role, not an occupying
    actor, so there is no actor envelope here. The role box and the shortened source beam follow the
    method-ASK bounded-generativity figure's source-v5.
+   render-v3: takes the Three Functions v0.3 paint (design-system-ASK #219; the solid treatment ASK
+   approved 2026-11-15). v0.3 changes how a role renders, not which elements qualify, so source-v2 and
+   every role assignment hold. Each role-bearing part carries the surface treatments' FILL PAINT
+   (.surface-fill): it is filled at 100% of its role value and edged in the same value, and text set on
+   it carries .surface-fill-ink and takes the role's ink (--function-*-ink). The 30% wash is retired.
+   The opaque chamber would cover the iris blades and the dotted authorized-judgment rail, whose neutral
+   line value equals the executive value in both themes, so they are cut out of it as holes along the
+   same geometry, as the variance candidates are; the rail's continuation to the selection ring is
+   painted outside the chamber only. The selection ring stays a ring; its ratified candidate is solid.
    Carried from source-v1 (derivation and AP adaptations):
    Derived from the method-ASK bounded-generativity topology @ 2e5d8c4. Per ASK apex ruling (2026-07-13),
    AP copy AND geometry are adapted for the commercial image-production surface under ASK authorization — the
@@ -17,7 +26,8 @@
    (3) "permitted creative variance" raised to clear the aperture arrow; (4) the dotted authorized-judgment rail
    continued from the chamber to the selection ring (no arrowhead) — creative discretion is exercised in
    realization AND at selection (recovers the retired SEQ 2->4 "exercised at selection" relation).
-   Consumes design-system-ASK Three Functions v0.2 by reference (_dsa-tokens/three-functions.css @ DS a7c5530):
+   Consumes design-system-ASK Three Functions v0.3 by reference (_dsa-tokens/three-functions.css @ DS 842f2722),
+   painted through the FILL PAINT of _dsa-surface/surface-treatments.css:
    legislative = the source-of-intent role box (constitutive) + the creative-brief box (delegated)
    · executive = the candidate-realization chamber (variance = negative cutouts)
    · judicial = selection ring + ratified node.
@@ -76,15 +86,15 @@
   const box = (x, y, w, h, cls='node-box') => el('rect', { x, y, width:w, height:h, rx:4, ry:4, class:cls });
   const line = (d, cls='edge', dash=null) => el('path', { class:cls, fill:'none', d, 'stroke-dasharray':dash });
   const lbl = (x, y, t, cls='node-label', a='start') => el('text', { x, y, class:cls, 'text-anchor':a }, [t]);
-  const note = (x, y, t, a='start') => el('text', { x, y, class:'node-note', 'text-anchor':a }, [t]);
-  const tag = (x, y, t, a='middle') => el('text', { x, y, class:'flow-tag', 'text-anchor':a }, [t]);
+  const note = (x, y, t, a='start', cls='node-note') => el('text', { x, y, class:cls, 'text-anchor':a }, [t]);
+  const tag = (x, y, t, a='middle', cls='flow-tag') => el('text', { x, y, class:cls, 'text-anchor':a }, [t]);
 
   /* ===== source of intent / normative apex — OUTSIDE the frame, left · LEGISLATIVE (CONSTITUTIVE) =====
      The role box sits ON the main axis so the source beam visibly leaves it. It carries the role label
-     only, on the theme foreground; the two descriptive lines sit below it as neutral captions rather
-     than on the role-bearing apparatus. */
-  nodes.append(box(124, YM-20, 172, 40, 'node-box fn-leg'));
-  nodes.append(lbl(140, YM, M.apex.label));
+     only, in the role's ink; the two descriptive lines sit below it as neutral captions rather than on
+     the role-bearing apparatus. */
+  nodes.append(box(124, YM-20, 172, 40, 'node-box fn-leg surface-fill'));
+  nodes.append(lbl(140, YM, M.apex.label, 'node-label fn-leg surface-fill-ink'));
   nodes.append(note(140, YM+36, M.apex.sub));
   nodes.append(note(140, YM+54, M.apex.note1));
 
@@ -97,10 +107,10 @@
      Carriage takes no function color: the beam between two legislative elements stays neutral. */
   edges.append(line(`M 296 ${YM} L 372 ${YM}`));
   edges.append(headR(372, YM));
-  nodes.append(box(376, YM-38, 164, 76, 'node-box fn-leg'));   // AP three-line node (150->164 w, 58->76 h) to carry the brief's two-part note without loss — ASK-authorized label-accommodation for the AP surface
-  nodes.append(lbl(392, YM-18, M.grammar.label));
-  nodes.append(note(392, YM, M.grammar.note1));
-  nodes.append(note(392, YM+18, M.grammar.note2));
+  nodes.append(box(376, YM-38, 164, 76, 'node-box fn-leg surface-fill'));   // AP three-line node (150->164 w, 58->76 h) to carry the brief's two-part note without loss — ASK-authorized label-accommodation for the AP surface
+  nodes.append(lbl(392, YM-18, M.grammar.label, 'node-label fn-leg surface-fill-ink'));
+  nodes.append(note(392, YM, M.grammar.note1, 'start', 'node-note fn-leg surface-fill-ink'));
+  nodes.append(note(392, YM+18, M.grammar.note2, 'start', 'node-note fn-leg surface-fill-ink'));
 
   /* ===== grammar/brief grants the aperture → beam · NEUTRAL → chamber = EXECUTIVE apparatus ===== */
   const CX = 590, CY = 184, CW = 428, CH = 250;    // chamber shifted +14 (576->590) so the aperture ↕ arrow (CX-14 = 576) sits 36px right of the widened brief box; top aligned to artifact-governance (y=184).
@@ -122,16 +132,26 @@
     g.t === 'circle' ? el('circle', Object.assign({ cx:g.cx, cy:g.cy, r:g.r }, attrs)) :
                        el('path',   Object.assign({ d:g.d }, attrs));
 
-  /* executive mask: chamber white (wash shows), glyphs black (punched out as holes) */
+  /* executive mask: chamber white (the fill shows), glyphs black (punched out as holes), and the
+     neutral edges that run inside the chamber black strokes (cut out as negative lines, below) */
   const defs = el('defs');
   const mask = el('mask', { id:'exe-holes', maskUnits:'userSpaceOnUse', x:CX-4, y:CY-4, width:CW+8, height:CH+8 });
   mask.append(el('rect', { x:CX, y:CY, width:CW, height:CH, rx:8, ry:8, fill:'#fff' }));
   glyphs.forEach(g => mask.append(glyphEl(g, { fill:'#000' })));
   defs.append(mask);
+  /* outside-the-chamber mask: a neutral edge that crosses the chamber's boundary is painted outside it
+     only, so inside it the hole cut along the same path shows the field rather than the line */
+  const outside = el('mask', { id:'exe-outside', maskUnits:'userSpaceOnUse', x:0, y:0, width:W, height:H });
+  outside.append(el('rect', { x:0, y:0, width:W, height:H, fill:'#fff' }));
+  outside.append(el('rect', { x:CX, y:CY, width:CW, height:CH, rx:8, ry:8, fill:'#000' }));
+  defs.append(outside);
   svg.insertBefore(defs, edges);
+  /* a neutral edge inside the chamber: its line value equals the executive value in both themes, so the
+     opaque fill would hide it; it is cut out of the fill along the same path, at the edge's own width */
+  const cut = (d, dash=null) => mask.append(el('path', { d, fill:'none', stroke:'#000', 'stroke-width':1, 'stroke-dasharray':dash }));
 
-  /* chamber = the EXECUTIVE apparatus: executive fill (30%, from the consuming CSS) with the glyphs punched OUT as holes, + executive stroke */
-  nodes.append(el('rect', { x:CX, y:CY, width:CW, height:CH, rx:8, ry:8, class:'fn-exe-wash', mask:'url(#exe-holes)' }));
+  /* chamber = the EXECUTIVE apparatus: executive fill (100%, FILL PAINT) with the glyphs and the in-chamber edges punched OUT as holes, + executive stroke */
+  nodes.append(el('rect', { x:CX, y:CY, width:CW, height:CH, rx:8, ry:8, class:'fn-exe surface-fill', mask:'url(#exe-holes)' }));
   nodes.append(el('rect', { x:CX, y:CY, width:CW, height:CH, rx:8, ry:8, class:'flow-group fn-exe-chamber' }));
   nodes.append(el('text', { x: CX + CW/2, y: CY + CH + 20, class:'section-tag', 'text-anchor':'middle' }, [M.field.tag]));
 
@@ -140,8 +160,8 @@
   edges.append(line(`M ${CX-14} ${YM-AP} L ${CX-14} ${YM+AP}`));   // ↕ permitted-variance dimension
   edges.append(headU(CX-14, YM-AP));
   edges.append(headD(CX-14, YM+AP));
-  edges.append(line(`M ${CX} ${YM-AP} L ${CX+18} ${YM-10}`));       // iris blade (upper)
-  edges.append(line(`M ${CX} ${YM+AP} L ${CX+18} ${YM+10}`));       // iris blade (lower)
+  cut(`M ${CX} ${YM-AP} L ${CX+18} ${YM-10}`);       // iris blade (upper) — inside the chamber: cut out of the fill
+  cut(`M ${CX} ${YM+AP} L ${CX+18} ${YM+10}`);       // iris blade (lower)
   // aperture / permitted variance — two labels flanking the arrow's centre (YM); the ↕ passes through the empty gap between them (no "·"), words held in place
   const apLoY = YM + 38, apHiY = YM - 100;   // AP: apHiY raised (-74 -> -100) so the longer "permitted creative variance" clears the ↕ arrow entry and the "aperture" label — matches method's flanking separation
   nodes.append(el('text', { x: CX-28, y: apLoY, class:'flow-tag', 'text-anchor':'middle',
@@ -149,13 +169,13 @@
   nodes.append(el('text', { x: CX-28, y: apHiY, class:'flow-tag', 'text-anchor':'middle',
     transform:`rotate(-90 ${CX-28} ${apHiY})` }, [M.field.apertureHi]));   // "permitted variance" (upper)
 
-  /* ---- variance candidates — NEGATIVE cutouts through the executive wash, neutral outlines
+  /* ---- variance candidates — NEGATIVE cutouts through the executive fill, neutral outlines
          (executive produces variance; the glyphs are content, NOT executive-function objects) ---- */
   glyphs.forEach(g => nodes.append(glyphEl(g, { class:'node-box fn-cut' })));
-  nodes.append(tag(CX + CW/2, 208, M.field.variance));   // AP: centred in the chamber (was right-anchored) so the longer "candidate image variance" stays inside the box
+  nodes.append(tag(CX + CW/2, 208, M.field.variance, 'middle', 'flow-tag fn-exe surface-fill-ink'));   // AP: centred in the chamber (was right-anchored) so the longer "candidate image variance" stays inside the box
 
-  edges.append(line(`M 620 396 L 988 396`, 'edge', '1 5'));       // dotted authorized-judgment path · NEUTRAL (shifted +14 with the chamber)
-  nodes.append(note(CX + CW/2, 390, M.field.judgment, 'middle'));
+  cut(`M 620 396 L 988 396`, '1 5');       // dotted authorized-judgment path · NEUTRAL, cut out of the chamber's fill (shifted +14 with the chamber)
+  nodes.append(note(CX + CW/2, 390, M.field.judgment, 'middle', 'node-note fn-exe surface-fill-ink'));
 
   /* ===== selection + closure = JUDICIAL — ring + ratified candidate ===== */
   const SC = { x: 1144, y: YM };   // shifted +14 with the chamber; centred under the governance box
@@ -165,8 +185,11 @@
   // AP (ASK apex ruling 2026-07-13): creative discretion is exercised in realization AND at selection —
   // dotted continuation of the judgment rail from the chamber to the ring's lower-left, NO arrowhead, NEUTRAL
   // (not a process flow into selection — the same authorized-judgment capacity at another site; recovers the retired SEQ 2->4 relation)
-  edges.append(line(`M 988 396 L ${SC.x-30} ${SC.y+30}`, 'edge', '1 5'));
-  nodes.append(box(SC.x-26, SC.y-26, 52, 52, 'node-box fn-jud'));
+  // inside the chamber the continuation is cut out of the fill; outside it, it is painted as before
+  const railOn = `M 988 396 L ${SC.x-30} ${SC.y+30}`;
+  cut(railOn, '1 5');
+  edges.append(el('path', { class:'edge', fill:'none', d:railOn, 'stroke-dasharray':'1 5', mask:'url(#exe-outside)' }));
+  nodes.append(box(SC.x-26, SC.y-26, 52, 52, 'node-box fn-jud surface-fill'));
   nodes.append(tag(SC.x, 394, M.select.tag));
   nodes.append(note(SC.x, 412, M.select.note1, 'middle'));
   nodes.append(note(SC.x, 429, M.select.note2, 'middle'));
