@@ -74,15 +74,15 @@
   ],
   "carriers": {
     "owner": "apexSolarKiss/design-system-ASK",
-    "pin": "e88e92b42d354ae98f687c28b9f1eefcbeb4f557",
+    "pin": "842f272280a3240ac51182d43d5d70efe7108f2c",
     "vendored": [
       {"path": "tools/read/carriers/surface-text-link.css", "owner_path": "surface-text-link.css", "sha256": "9a6acf457ffbe2a0bb31ae28507855b6446195ff9dcd3cc7112f04ec5bf0fce3"},
-      {"path": "tools/read/carriers/surface-document.css", "owner_path": "surface-document.css", "sha256": "1c122ddf355a065197b05bb4e8b3c821bee37617f052982c68da923cfdb72a27"},
-      {"path": "tools/read/carriers/surface-treatments.css", "owner_path": "surface-treatments.css", "sha256": "a277e97e99779f42053e6c1c4043ddda1ecdfaaa34945096dc1cf724b2625c31"},
+      {"path": "tools/read/carriers/surface-document.css", "owner_path": "surface-document.css", "sha256": "57140e0d5383f95d4d88001e535c682d0c47152e2165e92516ece2ba4cf999ed"},
+      {"path": "tools/read/carriers/surface-treatments.css", "owner_path": "surface-treatments.css", "sha256": "272bb52c3f84e845a2c040bf90e0b04289bd3b121512de8e879c70665fec06da"},
       {"path": "tools/read/carriers/surface-document-overflow.js", "owner_path": "surface-document-overflow.js", "sha256": "d66d31b36f697e20739ba009dcfa7ba05328be33fd6f401fa41443d3e268bca1"}
     ],
     "reused": [
-      {"path": "docs/diagrams/_dsa-tokens/colors_and_type.css", "owner_path": "colors_and_type.css", "sha256": "d00f1f4f17d4af5201d840dd9f1f558800e69c77280826a3f8d07e9ffd99ef5e"},
+      {"path": "docs/diagrams/_dsa-tokens/colors_and_type.css", "owner_path": "colors_and_type.css", "sha256": "14631bbcca9f18f2b59ec1483daac91dd3a51ada0f38f451ba06d73ebb838bf4"},
       {"path": "docs/diagrams/_dsa-surface/surface-panel.css", "owner_path": "surface-panel.css", "sha256": "883e24ac5407a4fe24f9149b0d8964a06995cc88b6b6150b1a1bdfd9aee2976e"},
       {"path": "docs/diagrams/_dsa-surface/surface-action.css", "owner_path": "surface-action.css", "sha256": "f00ccde1b4db17687fd6ecd62644700932107352b37476184718f2036209fb2e"},
       {"path": "docs/diagrams/_dsa-surface/surface-shell.css", "owner_path": "patterns/surface-shell/surface-shell.css", "sha256": "2c9bbe388396f88198a08140758832ec09452a68addacce49f275728343559d3"},

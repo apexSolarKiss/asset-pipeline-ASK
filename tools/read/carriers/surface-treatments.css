@@ -1,7 +1,7 @@
 /* =========================================================================
    surface-treatments — separate surfaces composed from three axes; the
    disclosure; content emphasis; the bordered label; the labeled range; rail
-   paint; the scope underline.
+   paint; fill paint; the scope underline.
 
    An OPT-IN VISUAL RULE under Foundations. It owns PRESENTATION ONLY: no
    markup, no semantics, no template, and no generated preview. A consuming
@@ -268,26 +268,16 @@
                      --surface-rail-paint-earned,
                      --surface-rail-paint-structural and
                      --surface-rail-paint-deflated
-     owner           this module: each paint and its dose per field. Spectral
-                     State owns each color and its theme. The composing meaning
+     owner           this module: each paint and its dose. Spectral State owns
+                     each color. The composing meaning
                      binds a role to its color and to that color's paint:
                      Review Semantics for a range, Criterion Assessment for an
                      assessment. Each rail's composition keeps its place,
                      length, gap and containment
-     reuses          the rail's own color, through currentColor; the root
-                     theme, [data-theme] and prefers-color-scheme, as Spectral
-                     State resolves its values; and a field the root declares
-                     with data-surface-field
-     variation       the dose, per color and field. Structural takes a 1px
-                     same-color, zero-blur ring, 4px apparent, on one reviewed
-                     pairing: the light lavender field with Spectral State's
-                     light values, which is the light theme's own field, or a
-                     root that declares ask-lavender in light. It takes none on
-                     the dark ink field and under any other declaration:
-                     ask-ink, ask-lavender in dark, or a field not reviewed
-                     here, which keeps the bare stroke until its own dose is
-                     measured and added. Earned and deflated take none
-                     everywhere
+     reuses          the rail's own color, through currentColor
+     variation       none today: every color takes none, the plain 2px stroke,
+                     on both fields. Each paint stays the one place a measured
+                     dose for its color would be added
      exclusions      paint only: no width, place, length or gap, and nothing
                      that moves text. A rail only: never a bordered label's
                      edge, an emphasis perimeter or bloom, the hierarchy rail,
@@ -300,12 +290,64 @@
                      for one of those colors would bind every rail drawn in it
      example         a declined range's scope rail and an adverse
                      assessment's rail: one red, one paint, in two places;
-                     caution's yellow ring the same beside a summary, a value
-                     field and the key
+                     caution's yellow the same plain stroke beside a summary, a
+                     value field and the key
      counterexample  a meaning setting its own dose or theme branch for a
                      color this module paints; the bordered label's edge
                      recipe copied onto a rail; a rail's dose that follows a
                      .theme-dark subtree while its color follows the root
+
+   FILL PAINT
+     meaning         how a governed color is painted as a filled shape or
+                     field: the shape at 100% of its color, its boundary in
+                     the same color, and the ink of any text set on it. The
+                     same color filled takes the same ink, whichever meaning
+                     draws it
+     population      role- and state-bearing filled shapes and fields: a
+                     state node, a function's part or field, a key's filled
+                     specimen. One ink per fill color, keyed by the color:
+                     --surface-fill-ink-on-yellow, -on-green, -on-orange,
+                     -on-cyan, -on-red, -on-violet, -on-magenta, -on-white
+                     and -on-lavender; and the neutral filled shape,
+                     --surface-fill-neutral, --surface-fill-neutral-edge and
+                     --surface-fill-ink-on-neutral
+     owner           this module: the recipe (fill, boundary, ink), each ink,
+                     the neutral shape's paint and every theme exception. The
+                     semantic systems own each color and bind each role to its
+                     color's ink: Spectral State (--state-*-ink) and Three
+                     Functions (--function-*-ink). The composing surface or
+                     engine owns the shape: its geometry, stroke width,
+                     cutouts, layout and emphasis
+     reuses          --ask-fg-light (#6A637F), --ask-lavender-ask (#D4C6E1)
+                     and, on magenta in dark only, --fg-high-contrast
+                     (#201D26, README registered use 4) as inks;
+                     --ask-surface for the neutral fill
+     variation       two declared theme exceptions and nothing else: magenta's
+                     ink is the lavender in light and the high-contrast ink in
+                     dark; the neutral shape is --ask-surface with a white edge
+                     in light and the lavender in dark. Every other ink is the
+                     same in both themes, as the colors are. The root theme
+                     decides, as it does for the colors; a .theme-dark subtree
+                     is not a field this module paints
+     exclusions      a dot, chip, rail, bordered label, range, underline or
+                     sequence node is not a filled shape: it takes no fill
+                     paint or ink and keeps its own paint, solid or not (a
+                     review state square, a key's marker dot). The interactive
+                     spine's and radial's state marks take this paint; a
+                     radial mark that asserts no state is structure, not a
+                     filled shape, and keeps its engine's own neutral wash,
+                     which this module does not govern. A
+                     structural diagram node (diagram-static-H, -V, -SEQ,
+                     -FLOW) keeps its own neutral paint. A geometric cutout is
+                     the composing shape's own, drawn as a hole, never painted.
+                     A filled shape's emphasis (hover, selection) is never a
+                     step in its fill
+     example         a held node and a judicial part: one cyan, one ink, two
+                     meanings
+     counterexample  a meaning restating an ink for its own role; a semantic
+                     fill at 30% beside one at 100%; text on a fill in the
+                     theme foreground; a neutral node drawn in --fg-1, the
+                     foreground's color rather than the neutral shape's paint
 
    SCOPE UNDERLINE
      meaning         the exact words inside a block that one label governs:
@@ -339,14 +381,20 @@
                      underline that brightens on hover; a text link's 1px line
                      reused to mark scope
 
-   THE BORDERED LABEL'S EDGE. An apparent 2px edge in light and 1.5px in
-   dark: the fixed 1px border plus a same-color, zero-blur reinforcement of
-   1px light and 0.5px dark. The reinforcement is paint, not layout, so the
+   THE BORDERED LABEL'S EDGE. An apparent 2px edge in light and the plain
+   1px border in dark: the fixed 1px border plus a same-color, zero-blur
+   reinforcement of 1px in light and 0px in dark, the same layer drawing
+   nothing. One recipe for the whole
+   family, review marks, neutral labels and emphasis chips alike, calibrated
+   by field: a 1px line in a bright color reads strongly on the dark ink and
+   quietly on the light lavender, so the light field takes the stronger edge.
+   The colors are the same in both themes; only the edge's
+   strength differs. The reinforcement is paint, not layout, so the
    box measures the same in both themes and nothing moves when the theme
    changes. Because it paints outside the border, a clipping box (a
    scrolling table, a scrolling block) would cut it where a label meets its
    edge, and that side would fall back to the bare 1px border. The label
-   therefore keeps 1px of inline margin, the larger of the two doses, in
+   therefore keeps 1px of inline margin, the light dose, in
    both themes: on its inline sides the reinforcement lands inside the
    label's own margin box, so a label at the start of a table's first column
    or the end of its last, scrolled fully into view, keeps its whole edge.
@@ -354,9 +402,9 @@
    table's cells do with their block padding; the label takes no block
    margin, which would change the line it sits on. On a
    surface with an accent of its own the chip's edge is heavier than the
-   panel's perimeter (2px against 1.5px in light, 1.5px against 1px in
-   dark); a compact label and a whole unit's perimeter work at different
-   scales, and neither is adjusted to match the other.
+   panel's perimeter in light (2px against 1.5px) and equal to it in dark
+   (1px each); a compact label and a whole unit's perimeter work at
+   different scales, and neither is adjusted to match the other.
 
    THE LABELED RANGE'S LANE. Every passage rail in the register sits at the
    content edge and insets its text. A range's scope rail sits outside that
@@ -405,27 +453,44 @@
    THE RAIL'S PAINT. A paint is a dose with no color of its own: a
    zero-blur box-shadow layer, or none. The rail that takes it sets its own
    color and draws both its 2px stroke and the paint in that color, so a
-   paint can never drift from its rail's color. Structural's ring on the
-   lavender field paints 1px beyond the stroke on every side, 4px apparent
-   and 1px past each end; it is paint, not layout, so no text moves. The
-   yellow is Spectral State's recorded brightness watch-point on the light
-   field, and as a bare 2px rail on the light lavender ground it all but
-   disappears; green and red read as a bare stroke on both fields, and
-   every rail on the dark ink keeps the bare stroke. The dose answers that
-   field and that value, not a light theme: a root that declares any other
-   field keeps the bare stroke rather than inheriting the lavender's ring.
-   ask-ink is the dark field's own; any other, a light field of another
-   color included, is unreviewed until a rail is measured on it. A root
-   that declares no field is taken to paint its theme's own. A dose
-   resolves at the root, as its color does: Spectral State's values follow
-   the root theme only, so a .theme-dark subtree on a light page keeps the
-   light value and the light dose. criterion-assessment.html draws each
-   rail bare and dosed on the same field, as the calibration's specimen. A
-   paint of none leaves its rail with no shadow at all, as the labeled
-   range's contract asks of every color it admits; a dose for green or red
-   would reach the scope rail too, and that contract with it. Under forced
-   colors the browser drops every shadow and gives the stroke a system
-   color; a print without background graphics drops the ring.
+   paint can never drift from its rail's color. Every paint is none: since
+   Spectral State v1.2 a color takes one value in both themes, and in it the
+   plain 2px stroke reads on the light lavender and the dark ink alike,
+   caution's yellow included. Until then caution's rail took
+   a 1px same-color ring on the light field, answering Spectral State's
+   deeper light yellow, which as a bare rail all but disappeared there; that
+   dose is retired with the value it answered, and the rail paint no longer
+   reads a root's data-surface-field declaration, which selected it (the
+   declaration keeps its other readers). A paint of none
+   leaves its rail with no shadow at all, as the labeled range's contract asks
+   of every color it admits. A dose added here later must be measured on the
+   field it answers, and would reach every rail drawn in its color, the scope
+   rail included. criterion-assessment.html draws the three assessment rails
+   as they ship. Under forced colors the browser gives the stroke a system
+   color.
+
+   THE FILL'S PAINT. A filled shape takes its color at 100%, its boundary
+   in the same color unless the composing meaning claims the outline for
+   another meaning (Three Functions gives function the fill and state the
+   outline), and any text on it in its color's ink. The inks are three
+   existing colors: the theme foreground's light value, #6A637F, on yellow,
+   green, orange, cyan, white and lavender, so that the bright fills read as
+   one family and no member of the set outweighs the others; the lavender on
+   red and violet. The set is consistent in ink, not in contrast: #6A637F
+   measures 5.07 on yellow and 4.02 on green, 2.65 on cyan and 2.25 on
+   orange. Magenta is the one color whose ink follows the theme:
+   the lavender in light, the high-contrast ink in dark. The neutral shape is
+   the static diagrams' own node in light, --ask-surface inside a white edge,
+   and the lavender in dark, its ink #6A637F in both; it is a paint of its
+   own, not --fg-1, which is a foreground and would leave the light neutral
+   node darker than every other shape. The recipe is two
+   classes and a modifier: .surface-fill on the shape, which reads --surface-fill-color and,
+   where the outline is claimed, --surface-fill-edge; and .surface-fill-ink on
+   text set on it, which reads --surface-fill-ink. .surface-fill--neutral
+   sets all three for the neutral shape. A semantic system binds a role to its
+   color and that color's ink; it sets no ink of its own. An exporter reads
+   the resolved paint from the page it exports, or resolves the same tokens;
+   it carries no copy of an ink.
 
    THE SCOPE UNDERLINE'S PLACE. One solid 2px line, 0.36em below the
    baseline, drawn straight through descenders (no skip-ink), in the full
@@ -457,9 +522,9 @@
      -90deg                the closed disclosure indicator's rotation
      1                     the disclosure indicator's leading
      2px                   the bordered label's block padding
-     1px, 0.5px            the bordered label's edge reinforcement, light and
-                           dark: an apparent 2px and 1.5px edge
-     1px                   the bordered label's inline margin, the larger dose
+     1px, 0                the bordered label's edge reinforcement, light and
+                           dark: an apparent 2px edge, and the plain 1px border
+     1px                   the bordered label's inline margin, the light dose
      calc(100% - 2px)      the bordered label's widest box: its container less
                            its two 1px margins
      2px                   the disclosure trigger's focus-outline width
@@ -467,9 +532,10 @@
                            of the ::before that draws it; with --space-3 it
                            sets the rail's lane, 14px outside the content edge
      2px                   the item host's rail ends, inside the item
-     0 0 0 1px, none       the structural rail paint, on the lavender field in
-                           light and everywhere else: a 1px zero-blur ring,
-                           4px apparent, and none
+     rgba(255, 255, 255, 0.90)  the neutral filled shape's edge in light: the
+                           static diagrams' own line, diagram-static-H
+                           --diagram-line, restated here for shapes that do
+                           not load diagrams.css
      2px, 0.36em           the scope underline's thickness and its offset
                            below the baseline
 
@@ -671,10 +737,10 @@
 /* The edge dose, per theme, set as the emphasis dose is set. */
 :root                             { --surface-bordered-label-reinforce: 1px; }
 :root[data-theme="dark"],
-.theme-dark                       { --surface-bordered-label-reinforce: 0.5px; }
+.theme-dark                       { --surface-bordered-label-reinforce: 0px; }
 :root[data-theme="light"]         { --surface-bordered-label-reinforce: 1px; }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { --surface-bordered-label-reinforce: 0.5px; }
+  :root:not([data-theme="light"]) { --surface-bordered-label-reinforce: 0px; }
 }
 
 /* The box. One atomic inline box on the text baseline, as wide as its words
@@ -730,22 +796,66 @@
 
 /* ---- Rail paint ------------------------------------------------------- */
 
-/* One paint for each governed color a rail draws, per field (RAIL PAINT and
-   THE RAIL'S PAINT, above): a dose drawn in the rail's own color, or none.
-   The ring is reviewed on one pairing, the light lavender field with Spectral
-   State's light values. A root that declares no field is taken to paint its
-   theme's own, so the ring follows the light theme, as the values it paints
-   do; a root that declares any field but ask-lavender keeps the bare stroke. */
+/* One paint for each governed color a rail draws (RAIL PAINT and THE RAIL'S
+   PAINT, above): a dose drawn in the rail's own color, or none. Every one is
+   none, the plain 2px stroke, in both themes. */
 :root {
   --surface-rail-paint-earned:     none;
-  --surface-rail-paint-structural: 0 0 0 1px;
+  --surface-rail-paint-structural: none;
   --surface-rail-paint-deflated:   none;
 }
-:root[data-theme="dark"] { --surface-rail-paint-structural: none; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]):not([data-theme="dark"]) { --surface-rail-paint-structural: none; }
+
+/* ---- Fill paint ------------------------------------------------------- */
+
+/* One ink per governed fill color, keyed by the color and not by any meaning
+   that draws it, and the neutral filled shape (FILL PAINT and THE FILL'S
+   PAINT, above). */
+:root {
+  --surface-fill-ink-on-yellow:   var(--ask-fg-light);
+  --surface-fill-ink-on-green:    var(--ask-fg-light);
+  --surface-fill-ink-on-orange:   var(--ask-fg-light);
+  --surface-fill-ink-on-cyan:     var(--ask-fg-light);
+  --surface-fill-ink-on-red:      var(--ask-lavender-ask);
+  --surface-fill-ink-on-violet:   var(--ask-lavender-ask);
+  --surface-fill-ink-on-magenta:  var(--ask-lavender-ask);
+  --surface-fill-ink-on-white:    var(--ask-fg-light);
+  --surface-fill-ink-on-lavender: var(--ask-fg-light);
+  --surface-fill-neutral:         var(--ask-surface);
+  --surface-fill-neutral-edge:    rgba(255, 255, 255, 0.90);
+  --surface-fill-ink-on-neutral:  var(--ask-fg-light);
 }
-:root[data-surface-field]:not([data-surface-field="ask-lavender"]) { --surface-rail-paint-structural: none; }
+/* The two declared theme exceptions: magenta's ink, and the neutral shape. */
+:root[data-theme="dark"] {
+  --surface-fill-ink-on-magenta: var(--fg-high-contrast);
+  --surface-fill-neutral:        var(--ask-lavender-ask);
+  --surface-fill-neutral-edge:   var(--ask-lavender-ask);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    --surface-fill-ink-on-magenta: var(--fg-high-contrast);
+    --surface-fill-neutral:        var(--ask-lavender-ask);
+    --surface-fill-neutral-edge:   var(--ask-lavender-ask);
+  }
+}
+/* The recipe. The composing surface sets --surface-fill-color on the shape,
+   --surface-fill-edge only where it claims the outline for another meaning,
+   and --surface-fill-ink where text sits on the fill. An HTML box takes the
+   background, border color and text color; an SVG shape the fill and stroke,
+   and its text .surface-fill-ink. Geometry, border width and stroke width
+   stay the composing surface's. */
+.surface-fill {
+  background-color: var(--surface-fill-color);
+  border-color: var(--surface-fill-edge, var(--surface-fill-color));
+  color: var(--surface-fill-ink);
+  fill: var(--surface-fill-color);
+  stroke: var(--surface-fill-edge, var(--surface-fill-color));
+}
+.surface-fill-ink { color: var(--surface-fill-ink); fill: var(--surface-fill-ink); }
+.surface-fill--neutral {
+  --surface-fill-color: var(--surface-fill-neutral);
+  --surface-fill-edge:  var(--surface-fill-neutral-edge);
+  --surface-fill-ink:   var(--surface-fill-ink-on-neutral);
+}
 
 /* ---- Labeled range ---------------------------------------------------- */
 

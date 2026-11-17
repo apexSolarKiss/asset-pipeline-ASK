@@ -6,8 +6,12 @@
    colors_and_type.css, and the ASK Spectral State role tokens (--state-*) from
    spectral-state.css. It does NOT depend on the static scaffolds' diagrams.css.
 
-   State color is applied via a single custom property --st per node (set by the
-   engine to one --state-* role). Color encodes state ONLY. */
+   Node paint is the fill paint's (surface-treatments.css, FILL PAINT): the engine sets each
+   node's --surface-fill-color and --surface-fill-ink from its --state-* role and that role's
+   ink, or .surface-fill--neutral on a node with no asserted state. --st, the role itself, is
+   still set on each node and on the inspector, where the legend's swatches and the inspector's dot
+   read it: a key's dots are not filled shapes, so they show their node's look in their own paint.
+   Color encodes state ONLY. */
 
 * { box-sizing: border-box; }
 
@@ -52,14 +56,22 @@ svg { width: 100%; height: 100%; display: block; }
 .edge { stroke: var(--fg-2); stroke-width: 1.3; opacity: 0; transition: opacity .15s; }
 .edge.on { opacity: 0.65; }
 
-/* ---- nodes ---- */
+/* ---- nodes ----
+   The fill paint (surface-treatments.css, FILL PAINT) paints each node: .surface-fill on the box,
+   .surface-fill-ink on its text, .surface-fill--neutral on a node that asserts no state. This
+   sheet owns the shape: its stroke width, the chip cut out as a hole (the engine's mask), and the
+   frame. Hover and selection never step the fill: one neutral frame outside the box shows them,
+   1px on hover (a preview included) and 2px once a node is locked, which keeps it while hovered.
+   A dimmed node under the pointer shows in full. */
 .node { cursor: pointer; transition: opacity .15s; }
-.node .box { fill: var(--st); fill-opacity: 0.15; stroke: var(--st); stroke-width: 1.5; rx: 9; ry: 9; }
-.node .chip { fill: var(--st); }
-.node text { fill: var(--fg-1); font-size: 12.5px; dominant-baseline: middle; }
-.node .grp { fill: var(--fg-3); font-family: var(--font-mono); font-size: 8.5px; letter-spacing: 0.14em; text-transform: uppercase; }
-.node:hover .box { stroke-width: 2.4; fill-opacity: 0.22; }
-.node.sel .box { stroke-width: 2.7; fill-opacity: 0.28; }
+.node .box { stroke-width: 1.5; rx: 9; ry: 9; }
+.node text { font-size: 12.5px; dominant-baseline: middle; }
+.node .grp { font-family: var(--font-mono); font-size: 8.5px; letter-spacing: 0.14em; text-transform: uppercase; }
+.node .frame { display: none; fill: none; stroke: var(--fg-1); vector-effect: non-scaling-stroke; pointer-events: none; }
+.node:hover .frame { display: inline; stroke-width: 1px; }
+.node.sel .frame { display: inline; stroke-width: 2px; }
+.node.sel.is-preview .frame { stroke-width: 1px; }      /* a hover preview, not yet locked */
+.node.dim:hover { opacity: 1; }                          /* a dimmed node under the pointer shows in full */
 .node.dim { opacity: 0.18; }
 
 /* ---- glass panels (inspector, legend, hud) ---- */
@@ -76,7 +88,8 @@ svg { width: 100%; height: 100%; display: block; }
 .inspector .h { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-2); margin-bottom: 8px; }
 .inspector .name { font-size: 14px; font-weight: 500; margin-bottom: 8px; }
 .inspector .state-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-.inspector .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--st, var(--fg-1)); flex: none; }
+.inspector .dot { width: 11px; height: 11px; border-radius: 50%; flex: none; box-sizing: border-box; border: 1px solid var(--st, var(--fg-1)); background: var(--st, var(--fg-1)); }
+:is(.legend .sw, .inspector .dot).sw--neutral { background: var(--surface-fill-neutral); border-color: var(--surface-fill-neutral-edge); }
 .inspector .state-name { font-family: var(--font-mono); font-size: 11px; }
 .inspector .state-mean { color: var(--fg-2); }
 .inspector .field { margin: 8px 0; }
@@ -87,7 +100,9 @@ svg { width: 100%; height: 100%; display: block; }
 .legend { bottom: 18px; right: 18px; padding: 14px 16px 12px; }
 .legend .h { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-2); margin-bottom: 10px; }
 .legend .row { display: flex; align-items: center; gap: 9px; margin: 5px 0; font-size: 11px; }
-.legend .sw { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+/* a key's dot shows its node's look in its own paint (it is not a filled shape): the state's color,
+   or, for the root, the neutral fill inside its edge */
+.legend .sw { width: 12px; height: 12px; border-radius: 3px; flex: none; box-sizing: border-box; border: 1px solid var(--st, var(--fg-1)); background: var(--st, var(--fg-1)); }
 .legend .row .lbl { color: var(--fg-1); }
 .legend .row .sub { color: var(--fg-2); font-size: 10px; }
 

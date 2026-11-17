@@ -2,8 +2,8 @@
    spectral-state.css — Spectral State
 
    A semantic state-color system: a small, identity-free vocabulary of eight STATE
-   roles — seven sparse neon state signals on a 12-step wheel, plus a neutral role
-   that resolves to the theme foreground — calibrated per theme.
+   roles — seven sparse neon state signals drawn from a 12-step wheel, plus a neutral
+   role that resolves to the theme foreground. One value per role in both themes.
 
    SPECIALIZED, OPT-IN foundation primitive. It is for surfaces that encode the
    *state* of architectural elements — e.g. an interactive state diagram where a
@@ -12,10 +12,26 @@
    `diagram-static-V`), which are structural and assert no state.
 
    Layer this ON TOP of `colors_and_type.css` — it relies on that file's theme
-   resolution (`[data-theme]` + `prefers-color-scheme`) and its `--fg-*` tokens.
+   resolution (`[data-theme]` + `prefers-color-scheme`), its `--fg-*` tokens, its
+   emphasis colors and its reserved state values — and with `surface-panel.css` and `surface-treatments.css`,
+   whose FILL PAINT supplies the inks the `--state-*-ink` bindings below name.
    Offline; no CDN.
 
-   STATUS: v1.1 — restructured after first-consumer proving. The eight-role
+   STATUS: v1.3 — green, yellow, orange and red are defined once, in the foundation's
+   reserved state values (colors_and_type.css), as the three emphasis colors already
+   were; the role values are unchanged. Re-sync this file with colors_and_type.css from
+   the same owner commit.
+
+   v1.2 — one value per role in both themes. The per-theme calibration
+   (S 85% / L 45% on the light field, S 95% / L 60% on the dark) is retired: so
+   that a state shape can be painted at 100% fill (surface-treatments.css, FILL
+   PAINT), a color must be the same in both themes. Every chromatic role now
+   takes the dark-theme value in both themes, except where ASK selected
+   otherwise (2026-11-15): partial takes a more vivid orange, and proposed, held
+   and external take the foundation's emphasis magenta, cyan and violet by
+   reference, so each physical color is defined once. Role names are unchanged.
+
+   v1.1 — restructured after first-consumer proving. The eight-role
    vocabulary and the wheel-as-resource concept were validated in a real surface
    (asset-pipeline-ASK's interactive IA state spine, which exercised all eight
    roles by reference). That proving surfaced a category error: `proposed` is a
@@ -29,10 +45,12 @@
    ---------------------------------------------------------------------------
    WHEEL LOGIC
    ---------------------------------------------------------------------------
-   12-hue neon wheel as the palette RESOURCE: hsl(H, S, L), H = n×30°. The wheel
-   is a resource, not a mandate to invent twelve states — only the eight roles
-   below draw from it. Meaning comes from SPARSE, intentional coloring against
-   the neutral lavender field: a node takes a neon hue only to say something.
+   12-hue neon wheel as the palette's ORIGIN: hsl(H, S, L), H = n×30°. The wheel
+   is where the hues were found, not a constraint on the final values: three
+   roles now share a foundation color, and cyan and violet sit a few degrees off
+   their wheel steps. Only the eight roles below draw from it. Meaning comes from
+   SPARSE, intentional coloring against the neutral lavender field: a node takes
+   a neon hue only to say something.
 
    Health ramp — achieved-provenness axis (ordered, green "go" → red "no"):
      state-earned      120°  green        operationally grounded at full depth
@@ -41,9 +59,10 @@
      state-deflated      0°  red          pressure showed it unnecessary / dead
 
    Orthogonal categories (NOT a health judgment; "different axis"):
-     state-held        180°  cyan         a named open question
-     state-external    270°  violet       owned elsewhere (inherited / upstream)
+     state-held        195°  cyan         a named open question
+     state-external    273°  violet       owned elsewhere (inherited / upstream)
      state-proposed    300°  magenta      a candidate / potentiality; not yet pressured
+   (cyan, violet and magenta are the foundation's emphasis colors, by reference)
 
    Neutral — the lavender identity field (the default; no neon):
      state-neutral     = var(--fg-1)       no asserted state
@@ -53,46 +72,36 @@
    the consuming surface, never in hue. (Consumer-side rule, noted for context.)
    ========================================================================= */
 
-/* ---------- Light (default) — on the light lavender field ----------
-   Deeper, more saturated neon so each hue reads against the light gradient.
-   (S 85% / L 45%.) The single yellow stop (`structural` 60°) is the brightness
-   watch-point on light; confirmed acceptable by the first consumer. An optional
-   strengthening (lower L / higher S on that stop) is available but not required. */
+/* ---------- One value per role, in both themes ----------
+   Every chromatic role takes its physical value by reference from the foundation
+   (colors_and_type.css), where each is defined once: green, yellow, orange and red
+   from its reserved state values (S 95% / L 60% on the wheel, orange at
+   S 100% / L 50%, which reads as orange rather than peach at full fill), cyan,
+   violet and magenta from its emphasis accents. No theme block redefines them.
+   --state-neutral alone follows the theme, through --fg-1. */
 :root {
-  --state-earned:     hsl(120, 85%, 45%);
-  --state-structural: hsl( 60, 85%, 45%);
-  --state-partial:    hsl( 30, 85%, 45%);
-  --state-proposed:   hsl(300, 85%, 45%);
-  --state-deflated:   hsl(  0, 85%, 45%);
-  --state-held:       hsl(180, 85%, 45%);
-  --state-external:   hsl(270, 85%, 45%);
+  --state-earned:     var(--ask-state-value-green);
+  --state-structural: var(--ask-state-value-yellow);
+  --state-partial:    var(--ask-state-value-orange);
+  --state-proposed:   var(--ask-emphasis-magenta);
+  --state-deflated:   var(--ask-state-value-red);
+  --state-held:       var(--ask-emphasis-cyan);
+  --state-external:   var(--ask-emphasis-violet);
   /* no asserted state — renders as the theme's default foreground (lavender
      field), never a neon. Auto-flips per theme via --fg-1. */
   --state-neutral:    var(--fg-1);
-}
 
-/* ---------- Dark — on the dark ink field ----------
-   Bright neon (S 95% / L 60%) to pop against the dark gradient. Explicit theme
-   + auto (prefers-color-scheme) blocks mirror each other, matching the
-   foundation's theme model. --state-neutral inherits var(--fg-1) (lavender). */
-:root[data-theme="dark"] {
-  --state-earned:     hsl(120, 95%, 60%);
-  --state-structural: hsl( 60, 95%, 60%);
-  --state-partial:    hsl( 30, 95%, 60%);
-  --state-proposed:   hsl(300, 95%, 60%);
-  --state-deflated:   hsl(  0, 95%, 60%);
-  --state-held:       hsl(180, 95%, 60%);
-  --state-external:   hsl(270, 95%, 60%);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]):not([data-theme="dark"]) {
-    --state-earned:     hsl(120, 95%, 60%);
-    --state-structural: hsl( 60, 95%, 60%);
-    --state-partial:    hsl( 30, 95%, 60%);
-    --state-proposed:   hsl(300, 95%, 60%);
-    --state-deflated:   hsl(  0, 95%, 60%);
-    --state-held:       hsl(180, 95%, 60%);
-    --state-external:   hsl(270, 95%, 60%);
-  }
+  /* Each role's ink: the color of text set on a shape filled in that role's
+     color, bound to the surface treatments' FILL PAINT, which keys each ink by
+     the fill color. A filled shape with no asserted state takes FILL PAINT's
+     neutral shape (.surface-fill--neutral), not --state-neutral: that is a
+     foreground, and a light neutral node in it would be the darkest shape. */
+  --state-earned-ink:     var(--surface-fill-ink-on-green);
+  --state-structural-ink: var(--surface-fill-ink-on-yellow);
+  --state-partial-ink:    var(--surface-fill-ink-on-orange);
+  --state-proposed-ink:   var(--surface-fill-ink-on-magenta);
+  --state-deflated-ink:   var(--surface-fill-ink-on-red);
+  --state-held-ink:       var(--surface-fill-ink-on-cyan);
+  --state-external-ink:   var(--surface-fill-ink-on-violet);
+  --state-neutral-ink:    var(--surface-fill-ink-on-neutral);
 }

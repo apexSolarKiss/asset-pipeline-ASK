@@ -24,7 +24,7 @@ window.IA_STATE_SPINE = {
   meta: {
     title: 'Layered IA — state',
     subtitle: 'Axis-independent state surface · what is earned / held / deflated, and where',
-    stamp: { source: 'source-v6', render: 'render-v7', date: '2026-08-15' },
+    stamp: { source: 'source-v6', render: 'render-v8', date: '2026-11-17' },
   },
 
   // Legend / state vocabulary (ASK Spectral State).

@@ -137,6 +137,39 @@
                      same heading treatment
      counterexample  a smaller, lighter or recolored heading signaling depth
 
+   ORDERED SEQUENCE
+     meaning         "this comes after the step before" — successive stages
+                     of one ordered run; it orders and does not emphasize.
+                     Succession is not containment: the sequence shares the
+                     hierarchy rail's geometry and keeps its own meaning, and
+                     neither composition composes the other
+     population      .doc-sequence on the list, an ol in the key, and
+                     .doc-sequence-step on each of its direct children. A step
+                     opens on its .doc-label; its internal rhythm is the
+                     composition it carries, a .doc-group in the key
+     owner           this module; the steps, their order and their words stay
+                     with the consuming surface, and the register supplies no
+                     numbering and no list semantics
+     reuses          the hierarchy rail's 1px --line-2 rule and --space-4
+                     inset, declared once for both compositions; --space-5
+                     between steps; the step label's own --fg-3 for each node
+     variation       none
+     exclusions      one continuous rail per sequence, through the whole of
+                     its last step: no segment per step and no rail on a step.
+                     A node is an unfilled ring, drawn only on a direct step:
+                     no fill, accent, glow, shadow or state, because the node
+                     is structural punctuation, not a status. In print, a rule
+                     asks the browser to keep a step that fits on one sheet
+                     whole, so its node, label and body travel together, and
+                     where the sequence continues on the next sheet the rail
+                     runs to the foot of the one before
+     example         five steps on one rail, a ring centered on the rail at
+                     each step's label line, the rail running on through the
+                     last step's body
+     counterexample  a timeline drawn as one segment per step; a filled or
+                     colored node marking progress; a sequence drawn as a
+                     hierarchy level, which says containment
+
    QUOTATION
      meaning         represented voice: words presented as someone's — quoted,
                      or introduced as what a speaker says — with optional
@@ -313,8 +346,9 @@
                      rail. Two railed passages in a row are held apart by
                      --space-5, as two emphasis rails are. NEUTRAL IS
                      STRUCTURE ONLY: the 1px hierarchy rail structures a section,
-                     a list or a block, and is never the outer boundary of a
-                     set-apart passage. A labeled range's scope rail
+                     a list or a block, the ordered sequence orders its steps
+                     on the same rule, and neither is ever the outer boundary
+                     of a set-apart passage. A labeled range's scope rail
                      (surface-treatments.css) is not a passage rail: it sits
                      in the outer margin, outside the content edge, and
                      bounds a label's scope beside a passage that keeps its own
@@ -685,7 +719,11 @@
    REGISTERED LITERALS — no token expresses these values
      1.4                   metadata and quotation-attribution leading
      1.3                   Caption leading inside document compositions
-     1px, 2px              hierarchy rail and passage rail widths
+     1px, 2px              hierarchy rail and passage rail widths; the
+                           hierarchy rail's 1px is also a sequence node's ring
+     7px, 50%              a sequence node's diameter and its round corners
+     0.5px, 3.5px          half the rail's rule and half a node: the offsets
+                           that center a node on the rail and its label line
      2px                   with --space-3, a labeled range's lane, which a
                            range-lane table's box keeps (surface-treatments.css)
      #000, transparent     overflow mask stops: alpha only, never paint
@@ -725,6 +763,19 @@
        drawn on the left: a right-to-left document is not yet served. A
        first column that spans rows is not served: the lane keys on each
        row's first cell.
+     - A sequence node is placed from the label role's own size and leading:
+       it sits on the first line of a step that opens on its .doc-label, at
+       the step's top. A step that opens on anything else, or that moves its
+       label down with padding or a border of its own, keeps the node where
+       the label line would be; the rendered check reports it.
+     - The node is drawn as the step's ::before. A consumer rule that gives a
+       step's ::before other content takes the node with it.
+     - In print a step longer than a sheet still breaks, and its node stays
+       with its label on the first part. Keeping a step whole can leave space
+       at the foot of a sheet; the rail runs on through it, because the
+       sequence continues on the next sheet.
+     - The sequence rail and its nodes are drawn on the left: a right-to-left
+       document is not yet served.
    ========================================================================= */
 
 /* ---- Text roles ------------------------------------------------------- */
@@ -1232,15 +1283,51 @@
   list-style: none;
 }
 
-/* ---- Hierarchy rail --------------------------------------------------- */
+/* ---- Hierarchy rail and ordered sequence ------------------------------ */
 
 /* The internal rhythm is a zero-specificity default, so a composition class
    placed alongside (.doc-section, .doc-group, .doc-prose) sets its own gap
    whatever the source order. */
 :where(.doc-hierarchy) { display: flex; flex-direction: column; gap: var(--space-3); }
-.doc-hierarchy {
+/* One neutral structural rail, declared once for two compositions. The
+   hierarchy rail says "this belongs inside the level above"; the sequence
+   says "this comes after the step before". They share this geometry and
+   nothing else: a sequence is not a hierarchy level, and neither composes
+   the other. */
+.doc-hierarchy,
+.doc-sequence {
   padding-left: var(--space-4);
   border-left: 1px solid var(--line-2);
+}
+
+/* The ordered sequence. The list's own markers give way to the rail, and the
+   steps sit --space-5 apart, a step being a larger unit than the lines of a
+   group. The rail is the list's border, so it runs the list's full height,
+   through the body of its last step. */
+.doc-sequence {
+  list-style: none;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+/* One node per direct step: an unfilled ring in the step label's own --fg-3,
+   centered on the rail's 1px rule and on the first line of the label the step
+   opens on. The rule's center lies the rail's --space-4 inset plus half the
+   rule, 0.5px, left of the step's content edge; the label's line is its
+   caption size at --lh-tight; 3.5px is half the ring. The rail shows through
+   the ring's empty center. */
+.doc-sequence > .doc-sequence-step { position: relative; }
+.doc-sequence > .doc-sequence-step::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--space-4) - 0.5px - 3.5px);
+  top: calc(var(--fs-caption) * var(--lh-tight) / 2 - 3.5px);
+  width: 7px;
+  height: 7px;
+  box-sizing: border-box;
+  border: 1px solid var(--fg-3);
+  border-radius: 50%;
 }
 
 /* ---- Passage rail ----------------------------------------------------- */
@@ -1255,7 +1342,8 @@
    content, so it takes the magenta emphasis rail, declared exactly as the
    emphasis rail declares it. The document's own callout — a thesis, a posed
    question, a contrast — is .surface-emphasis-rail itself, magenta, composed
-   onto a document text role. Neutral is structure only: the hierarchy rail. */
+   onto a document text role. Neutral is structure only: the hierarchy rail and
+   the ordered sequence on its geometry. */
 .doc-quote {
   --surface-emphasis-accent: var(--ask-emphasis-violet);
   border-left: 2px solid var(--surface-emphasis-accent);
@@ -1409,4 +1497,12 @@
   }
   .doc-pre[data-overflow]::after,
   .doc-table-scroll[data-overflow]::after { display: none; }
+}
+
+/* In print, the rule asks the browser to keep a sequence step that fits on
+   one sheet whole, so its node, its label and its body travel together.
+   Where the sequence breaks between steps, the rail, the list's own border,
+   runs to the foot of the sheet and resumes at the head of the next. */
+@media print {
+  .doc-sequence > .doc-sequence-step { break-inside: avoid; }
 }

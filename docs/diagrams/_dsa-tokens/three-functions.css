@@ -19,10 +19,18 @@
    palette, not a new hue.
 
    Layer this ON TOP of `colors_and_type.css` — it relies on that file's theme
-   resolution (`[data-theme]` + `prefers-color-scheme`) and its palette tokens.
+   resolution (`[data-theme]` + `prefers-color-scheme`) and its palette tokens —
+   and with `surface-panel.css` and `surface-treatments.css`, whose FILL PAINT
+   supplies the inks the `--function-*-ink` bindings below name.
    Offline; no CDN.
 
-   STATUS: v0.2 — semantic generation. Authorized by ASK source-of-intent
+   STATUS: v0.3 — solid fill. v0.3 CHANGES HOW A ROLE RENDERS, NOT WHICH
+   ELEMENTS QUALIFY. A role-bearing apparatus is filled at 100% of its role's
+   value, its boundary in the same value, and any label on it takes its role's
+   ink: the surface treatments' FILL PAINT, bound below (ASK, 2026-11-15). The
+   30% wash is retired. The role values are unchanged.
+
+   v0.2 — semantic generation. Authorized by ASK source-of-intent
    (2026-07-12; source-role correction 2026-09-11). Landed public consumption
    is recorded in CONSUMERS.md, which remains the record of what consumers
    have actually landed. three-functions.md documents the upstream
@@ -65,13 +73,17 @@
 
    CHANNEL DISCIPLINE (coexistence with Spectral State / Evidence State).
    Function, element state, and evidence state are three separate semantic axes.
-   Reused hue does NOT create semantic identity: magenta is both
-   --function-legislative and --state-proposed; cyan is both --function-judicial
-   and --state-held. They are not aliases. On one element, function / state /
+   Reused color does NOT create semantic identity: the one foundation magenta is
+   both --function-legislative and --state-proposed; the one cyan is both
+   --function-judicial and --state-held. Each refers to the foundation color, not
+   to the other; they are not aliases. On one element, function / state /
    evidence must not compete for the same visual channel:
      function role   -> fill / principal node treatment
      state           -> outline, badge, or separate state marker
      evidence state  -> evidence marker, rail, dash, or labelled annotation
+   A state in its element's function color (proposed on a legislative part,
+   held on a judicial one) would draw its outline in the fill's own color,
+   where it cannot be seen, so it takes the badge or the separate marker.
    Color stays redundant with visible labels and geometry: a consuming surface
    must still read legislative / executive / judicial in monochrome.
    ========================================================================= */
@@ -83,6 +95,12 @@
   --function-legislative: var(--ask-emphasis-magenta);   /* #FF00FF */
   --function-executive:   var(--ask-white);              /* #FFFFFF — neutral executor */
   --function-judicial:    var(--ask-emphasis-cyan);      /* #00BEFF */
+
+  /* Each role's ink: text set on its 100% fill, bound to the surface
+     treatments' FILL PAINT, which keys each ink by the fill color. */
+  --function-legislative-ink: var(--surface-fill-ink-on-magenta);
+  --function-executive-ink:   var(--surface-fill-ink-on-white);
+  --function-judicial-ink:    var(--surface-fill-ink-on-cyan);
 }
 
 /* ---------- Dark — on the dark ink field ----------
@@ -92,10 +110,12 @@
    blocks mirror each other, matching the foundation's theme model. */
 :root[data-theme="dark"] {
   --function-executive:   var(--ask-lavender-ask);       /* #D4C6E1 */
+  --function-executive-ink: var(--surface-fill-ink-on-lavender);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not([data-theme="dark"]) {
     --function-executive: var(--ask-lavender-ask);       /* #D4C6E1 */
+    --function-executive-ink: var(--surface-fill-ink-on-lavender);
   }
 }
