@@ -318,17 +318,42 @@
     }
 
     // ---- draw nodes ----
-    nodes.forEach(function (n) {
+    /* FILL PAINT (surface-treatments.css) paints each node: a state node takes its color at 100%
+       and its text that color's ink; a node that asserts no state takes the neutral filled shape.
+       The state chip is a hole cut through the box, so what runs behind it (the backbone, on a
+       spine node; a selected node's edges, which anchor at the chip) shows through it; its mask
+       lives inside the node, so a copy of the node carries it. Hover and selection never step the
+       fill: they show as one neutral frame outside the box, FRAME_PX screen pixels beyond its
+       painted edge (the box's 1.5 outline, which scales with the zoom) at every zoom (applyVp
+       resizes it), so it neither merges into the box when zoomed out nor drifts onto a neighbor
+       when zoomed in. */
+    var FRAME_PX = 4.75, BOX_HALF_STROKE = 0.75, frames = [];
+    function sizeFrame(f, d) {
+      f.el.setAttribute('x', f.x - d); f.el.setAttribute('y', f.y - d);
+      f.el.setAttribute('width', f.w + 2 * d); f.el.setAttribute('height', f.h + 2 * d);
+      f.el.setAttribute('rx', 9 + d); f.el.setAttribute('ry', 9 + d);
+    }
+    nodes.forEach(function (n, ni) {
       var L = layout[n.id];
       var g = el('g', { 'class': 'node', 'data-id': n.id }, nodesG);
       g.style.setProperty('--st', 'var(--state-' + n.state + ')');
-      el('rect', { 'class': 'box', x: L.cx - L.w / 2, y: L.cy - L.h / 2, width: L.w, height: L.h, rx: 9, ry: 9 }, g);
-      el('circle', { 'class': 'chip', cx: L.cx - L.w / 2 + 14, cy: L.cy, r: 5 }, g);
-      var gt = el('text', { 'class': 'grp', x: L.cx - L.w / 2 + 26, y: L.cy - L.h / 2 + 12 }, g);
+      if (n.state === 'neutral') g.classList.add('surface-fill--neutral');
+      else {
+        g.style.setProperty('--surface-fill-color', 'var(--state-' + n.state + ')');
+        g.style.setProperty('--surface-fill-ink', 'var(--state-' + n.state + '-ink)');
+      }
+      var bx = L.cx - L.w / 2, by = L.cy - L.h / 2, mid = 'spine-cut-' + ni;
+      var cut = el('mask', { id: mid, maskUnits: 'userSpaceOnUse', x: bx - 8, y: by - 8, width: L.w + 16, height: L.h + 16 }, g);
+      el('rect', { x: bx, y: by, width: L.w, height: L.h, rx: 9, ry: 9, style: 'fill:#fff;stroke:#fff;stroke-width:4' }, cut);
+      el('circle', { cx: bx + 14, cy: L.cy, r: 5, style: 'fill:#000;stroke:none' }, cut);
+      var fr = { el: el('rect', { 'class': 'frame' }, g), x: bx, y: by, w: L.w, h: L.h };
+      sizeFrame(fr, FRAME_PX + BOX_HALF_STROKE); frames.push(fr);
+      el('rect', { 'class': 'box surface-fill', x: bx, y: by, width: L.w, height: L.h, rx: 9, ry: 9, mask: 'url(#' + mid + ')' }, g);
+      var gt = el('text', { 'class': 'grp surface-fill-ink', x: L.cx - L.w / 2 + 26, y: L.cy - L.h / 2 + 12 }, g);
       gt.textContent = n.group;
       var lines = wrap(n.label, Math.floor((L.w - 42) / 6.6));
       var tx0 = L.cx - L.w / 2 + 26;
-      var t = el('text', { x: tx0, y: L.cy + (lines.length > 1 ? -2 : 4) }, g);
+      var t = el('text', { 'class': 'surface-fill-ink', x: tx0, y: L.cy + (lines.length > 1 ? -2 : 4) }, g);
       lines.forEach(function (ln, i) {
         var ts = el('tspan', { x: tx0, dy: i === 0 ? 0 : 14 }, t);
         ts.textContent = ln;
@@ -354,7 +379,7 @@
     }
     function clearSel() {
       var gs = nodesG.querySelectorAll('.node');
-      for (var i = 0; i < gs.length; i++) { gs[i].classList.remove('sel', 'dim'); }
+      for (var i = 0; i < gs.length; i++) { gs[i].classList.remove('sel', 'dim', 'is-preview'); }
       var ex = edgesG.querySelectorAll('.edge');
       for (var j = 0; j < ex.length; j++) edgesG.removeChild(ex[j]);
       if (!locked) inspectorIdle();
@@ -365,7 +390,7 @@
       var gs = nodesG.querySelectorAll('.node');
       for (var i = 0; i < gs.length; i++) {
         var id = gs[i].getAttribute('data-id');
-        if (id === n.id) gs[i].classList.add('sel');
+        if (id === n.id) { gs[i].classList.add('sel'); if (!lock) gs[i].classList.add('is-preview'); }
         else if (!rel[id]) gs[i].classList.add('dim');
       }
       // edges from n to related — anchored at the dot (chip) centers, not the box centers
@@ -389,7 +414,7 @@
       insp.style.setProperty('--st', 'var(--state-' + n.state + ')');
       var html = '<div class="h">' + esc(n.group) + '</div>';
       html += '<div class="name">' + esc(n.label) + '</div>';
-      html += '<div class="state-row"><span class="dot"></span><span class="state-name">' + esc(sm.label) + '</span></div>';
+      html += '<div class="state-row"><span class="dot' + (n.state === 'neutral' ? ' sw--neutral' : '') + '"></span><span class="state-name">' + esc(sm.label) + '</span></div>';
       html += '<div class="state-mean">' + esc(sm.meaning) + '</div>';
       html += '<div class="field"><span class="lbl">evidence</span>' + esc(n.evidence) + '</div>';
       if (n.qualifier) html += '<div class="field"><span class="lbl">qualifier</span>' + esc(n.qualifier) + '</div>';
@@ -418,7 +443,12 @@
     var stage = document.getElementById('stage');
     var wrapEl = document.getElementById('canvasWrap');
     var pctEl = document.getElementById('zoomPct');
-    function applyVp() { vp.setAttribute('transform', 'translate(' + tx + ',' + ty + ') scale(' + sc + ')'); if (pctEl) pctEl.textContent = Math.round(sc * 100) + '%'; }
+    var framedAt = 1;
+    function applyVp() {
+      vp.setAttribute('transform', 'translate(' + tx + ',' + ty + ') scale(' + sc + ')');
+      if (pctEl) pctEl.textContent = Math.round(sc * 100) + '%';
+      if (sc !== framedAt) { framedAt = sc; frames.forEach(function (f) { sizeFrame(f, FRAME_PX / sc + BOX_HALF_STROKE); }); }
+    }
     function contentBounds() {
       var minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
       nodes.forEach(function (n) { var L = layout[n.id]; minX = Math.min(minX, L.cx - L.w / 2); maxX = Math.max(maxX, L.cx + L.w / 2); minY = Math.min(minY, L.cy - L.h / 2); maxY = Math.max(maxY, L.cy + L.h / 2); });
@@ -664,8 +694,10 @@
       while (leg.firstChild) leg.removeChild(leg.firstChild);   // a second render replaces the rows
       states.forEach(function (s) {
         var row = document.createElement('div'); row.className = 'row';
-        var sw = document.createElement('span'); sw.className = 'sw';
-        sw.style.background = s.role === 'neutral' ? 'var(--fg-1)' : 'var(--state-' + s.role + ')';
+        /* a key's dot is not a filled shape (surface-treatments.css): it shows its node's look in its
+           own paint, the state's color, or the root's neutral fill inside its edge */
+        var sw = document.createElement('span'); sw.className = 'sw' + (s.role === 'neutral' ? ' sw--neutral' : '');
+        if (s.role !== 'neutral') sw.style.setProperty('--st', 'var(--state-' + s.role + ')');
         var lbl = document.createElement('span'); lbl.className = 'lbl'; lbl.textContent = s.label;
         row.appendChild(sw); row.appendChild(lbl); leg.appendChild(row);
       });

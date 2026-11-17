@@ -103,6 +103,20 @@
   --ask-emphasis-violet:  #AA40FF;
   --ask-emphasis-cyan:    #00BEFF;
 
+  /* ---------- State values (reserved — the sanctioned semantic systems only) ----------
+     The physical colors of Spectral State's health ramp and Evidence State's two own roles,
+     defined once here beside the emphasis accents those systems also bind. One value in both
+     themes; no theme block redefines them. They are NOT general UI, chrome, emphasis or
+     interaction color: a surface reaches them only through a semantic role (--state-*,
+     --evidence-*), whose system owns its meaning, applicability and grammar. They add no hue to
+     the palette above, and the emphasis accents stay three. */
+  --ask-state-value-green:         hsl(120, 95%, 60%);   /* #38FA38 — Spectral State earned */
+  --ask-state-value-yellow:        hsl( 60, 95%, 60%);   /* #FAFA38 — Spectral State structural */
+  --ask-state-value-orange:        hsl( 30, 100%, 50%);  /* #FF8000 — Spectral State partial */
+  --ask-state-value-red:           hsl(  0, 95%, 60%);   /* #FA3838 — Spectral State deflated */
+  --ask-state-value-brown:         hsl( 30, 45%, 48%);   /* #B17A43 — Evidence State weakened */
+  --ask-state-value-lavender-gray: hsl(264,  8%, 53%);   /* #857E91 — Evidence State not yet testable */
+
   /* ==== TIER 1 — Foundation (semantic role tokens; gradient mechanism uses Tier 2 values) ==== */
   /* ---------- Semantic — Light mode (default) ---------- */
   --bg-from: var(--ask-lavender-dark);                /* bottom-left */

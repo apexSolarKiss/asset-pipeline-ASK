@@ -4,8 +4,9 @@
    diagrams' export-png.js (same page size, same "PNG" button in the .hud, same
    ?export=png auto-run hook, same filename grammar), adapted to the interactive
    surface: the diagram <svg> has no width/height attributes (it is CSS-sized and
-   pan/zoomed via a #vp transform), and node color comes from the per-node
-   --st → --state-* role rather than the static scaffold's --node-fill. So the
+   pan/zoomed via a #vp transform), and node color comes from the fill paint
+   (each node's --surface-fill-color and --surface-fill-ink, from its --state-* role)
+   rather than the static scaffold's --node-fill. So the
    content bounds are read from #vp.getBBox() and every presentation property (the
    resolved Spectral State colors, foundation chrome colors, fonts) is baked inline
    into a freshly serialized, self-contained SVG before it is rasterized — no
@@ -169,7 +170,11 @@
   function inlineStyles(liveRoot, cloneRoot) {
     var live = [liveRoot].concat(Array.prototype.slice.call(liveRoot.querySelectorAll('*')));
     var clone = [cloneRoot].concat(Array.prototype.slice.call(cloneRoot.querySelectorAll('*')));
+    /* a node's frame is interaction only (hover, selection) and its geometry follows the zoom:
+       the snapshot is the resting view, so the frame is dropped, never baked */
+    var drop = [];
     for (var i = 0; i < live.length && i < clone.length; i++) {
+      if (live[i].classList && live[i].classList.contains('frame')) drop.push(clone[i]);
       var cs = getComputedStyle(live[i]);
       var st = '';
       for (var p = 0; p < INLINE_PROPS.length; p++) {
@@ -186,11 +191,23 @@
         }
       }
     }
+    drop.forEach(function (e) { if (e.parentNode) e.parentNode.removeChild(e); });
   }
 
   /* Reset the live surface to its unselected resting view so the snapshot is
      the neutral diagram (no dimmed/selected nodes, no transient edges). */
   function neutralize(svg) {
+    /* The snapshot reads a settled resting view in this same tick: a node's opacity changes without
+       its transition (else a dimmed node bakes mid-fade), and no frame counts toward the bounds (a
+       hovered node's frame is still shown, and its size follows the zoom). Both are put back after
+       the synchronous build. */
+    var ns = svg.querySelectorAll('#nodes .node'), fs = svg.querySelectorAll('#nodes .frame'), q;
+    for (q = 0; q < ns.length; q++) ns[q].style.transition = 'none';
+    for (q = 0; q < fs.length; q++) fs[q].style.display = 'none';
+    setTimeout(function () {
+      for (var r = 0; r < ns.length; r++) ns[r].style.removeProperty('transition');
+      for (r = 0; r < fs.length; r++) fs[r].style.removeProperty('display');
+    }, 0);
     var ex = svg.querySelectorAll('#edges .edge');
     for (var i = 0; i < ex.length; i++) ex[i].parentNode.removeChild(ex[i]);
     var sel = svg.querySelectorAll('.node.dim, .node.sel');
@@ -204,9 +221,12 @@
   }
   function getLegendRows() {
     return Array.prototype.slice.call(document.querySelectorAll('.legend .row')).map(function (r) {
-      var sw = r.querySelector('.sw');
+      var sw = r.querySelector('.sw'), cs = sw ? getComputedStyle(sw) : null;
       return {
-        color: sw ? getComputedStyle(sw).backgroundColor : 'currentColor',
+        color: cs ? cs.backgroundColor : 'currentColor',
+        // the swatch's edge, where its paint draws one (the neutral filled shape's, in light)
+        edge: cs && cs.borderTopStyle !== 'none' && parseFloat(cs.borderTopWidth) > 0 &&
+              cs.borderTopColor !== cs.backgroundColor ? cs.borderTopColor : null,
         lbl: text(r.querySelector('.lbl')),
       };
     });
@@ -285,7 +305,8 @@
     legend.forEach(function (row, i) {
       var y = legendY + 60 + i * 40;
       legendBody +=
-        '<rect x="' + (legendX + 26) + '" y="' + (y - 9) + '" width="18" height="18" rx="4" fill="' + row.color + '"/>' +
+        '<rect x="' + (legendX + 26) + '" y="' + (y - 9) + '" width="18" height="18" rx="4" fill="' + row.color + '"' +
+        (row.edge ? ' stroke="' + row.edge + '" stroke-width="1.5"' : '') + '/>' +
         '<text x="' + (legendX + 58) + '" y="' + (y + 5) +
         '" font-size="18" fill="' + fg1 + '">' + xml(row.lbl) + '</text>';
     });
@@ -342,7 +363,7 @@
      WITHIN (v4 audit). The fit() step is what scales the diagram up to fill.
      Header / caption / legend / HUD live outside #edges/#nodes, so cloning only
      those excludes them. neutralize() gives the stable resting frame; per-node
-     semantic state (--st → --state-*) is preserved by inlineStyles. */
+     resolved fill paint (from each node's --state-* role) is preserved by inlineStyles. */
   function buildDiagramSvg(fontStyle) {
     var svg = document.getElementById('svg');
     neutralize(svg);
