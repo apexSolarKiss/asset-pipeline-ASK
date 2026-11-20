@@ -114,7 +114,7 @@
   --ask-state-value-yellow:        hsl( 60, 95%, 60%);   /* #FAFA38 — Spectral State structural */
   --ask-state-value-orange:        hsl( 30, 100%, 50%);  /* #FF8000 — Spectral State partial */
   --ask-state-value-red:           hsl(  0, 95%, 60%);   /* #FA3838 — Spectral State deflated */
-  --ask-state-value-brown:         hsl( 30, 45%, 48%);   /* #B17A43 — Evidence State weakened */
+  --ask-state-value-brown:         hsl( 21, 41.8%, 38%); /* #895538 — Evidence State weakened */
   --ask-state-value-lavender-gray: hsl(264,  8%, 53%);   /* #857E91 — Evidence State not yet testable */
 
   /* ==== TIER 1 — Foundation (semantic role tokens; gradient mechanism uses Tier 2 values) ==== */
