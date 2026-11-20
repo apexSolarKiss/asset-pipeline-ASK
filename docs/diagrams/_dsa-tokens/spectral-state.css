@@ -14,10 +14,21 @@
    Layer this ON TOP of `colors_and_type.css` — it relies on that file's theme
    resolution (`[data-theme]` + `prefers-color-scheme`), its `--fg-*` tokens, its
    emphasis colors and its reserved state values — and with `surface-panel.css` and `surface-treatments.css`,
-   whose FILL PAINT supplies the inks the `--state-*-ink` bindings below name.
+   whose FILL PAINT supplies the inks the `--state-*-ink` bindings below name, and whose bordered label and
+   labeled range draw the state label and the range it opens (A STATE IN WORDS, below).
    Offline; no CDN.
 
-   STATUS: v1.3 — green, yellow, orange and red are defined once, in the foundation's
+   STATUS: v1.4 — a state named in words. Outside a multi-axis review
+   annotation, an element's state may be named on a keyed bordered label,
+   .state-label with data-state, whose words are exactly State // <Role>, and
+   a labeled range that label opens takes the role's value on its scope rail,
+   with green's, yellow's or red's rail paint for earned, structural and
+   deflated (A STATE IN WORDS, below). Neutral takes no keyed label, and inside
+   a Review Semantics annotation state keeps its square. The role values are
+   unchanged. Re-sync this file with surface-treatments.css from the same owner
+   commit.
+
+   v1.3 — green, yellow, orange and red are defined once, in the foundation's
    reserved state values (colors_and_type.css), as the three emphasis colors already
    were; the role values are unchanged. Re-sync this file with colors_and_type.css from
    the same owner commit.
@@ -70,6 +81,30 @@
    ONE state role per node. Color encodes state ONLY — evidence depth, risk,
    normative force, and structural-axis membership belong in panels/metadata on
    the consuming surface, never in hue. (Consumer-side rule, noted for context.)
+
+   ---------------------------------------------------------------------------
+   A STATE IN WORDS
+   ---------------------------------------------------------------------------
+   Outside a multi-axis review annotation, in an architecture description, a
+   figure caption or a table, an element's state may be named in words on the
+   surface treatments' bordered label: .state-label on a .surface-bordered-label
+   (.doc-label in a document) with data-state, its words exactly the axis and
+   the role's word, "State // Held". Its edge takes the role's value. A labeled
+   range whose first child is that label takes the same value on its scope
+   rail, and that color's rail paint where the surface treatments give one:
+   earned green, structural yellow and deflated red. Partial, held, external
+   and proposed keep the plain stroke. The label is a word that is read: inert,
+   unfilled, never a status chip, a button or a link.
+
+   Neutral asserts no state and takes no keyed label. Inside Review Semantics'
+   annotation composition state keeps its square: a keyed label never sits in
+   its rows, items, lists or notes. The class and the attribute opt in together,
+   and only with the words: a bare data-state keys nothing, and a label whose
+   words do not name its axis and role is not a state label
+   (tools/role-conformance.js, C13). These rules set only the label's and the
+   range's color and paint properties, which no other module sets on those
+   elements, so this file's place beside the surface treatments still changes
+   no resolved value.
    ========================================================================= */
 
 /* ---------- One value per role, in both themes ----------
@@ -105,3 +140,33 @@
   --state-external-ink:   var(--surface-fill-ink-on-violet);
   --state-neutral-ink:    var(--surface-fill-ink-on-neutral);
 }
+
+/* ---------- A state in words: the keyed label and the range it opens ----------
+   Each chromatic role colors the bordered label's edge and, through the label at
+   a range's head, the labeled range's scope rail (surface-treatments.css), with
+   its color's rail paint for green, yellow and red. Neutral takes no keyed label
+   (A STATE IN WORDS, above). */
+.state-label[data-state="earned"]     { --surface-bordered-label-color: var(--state-earned); }
+.state-label[data-state="structural"] { --surface-bordered-label-color: var(--state-structural); }
+.state-label[data-state="partial"]    { --surface-bordered-label-color: var(--state-partial); }
+.state-label[data-state="deflated"]   { --surface-bordered-label-color: var(--state-deflated); }
+.state-label[data-state="held"]       { --surface-bordered-label-color: var(--state-held); }
+.state-label[data-state="external"]   { --surface-bordered-label-color: var(--state-external); }
+.state-label[data-state="proposed"]   { --surface-bordered-label-color: var(--state-proposed); }
+
+.surface-labeled-range:has(> .state-label[data-state="earned"]:first-child) {
+  --surface-labeled-range-color: var(--state-earned);
+  --surface-labeled-range-paint: var(--surface-rail-paint-green);
+}
+.surface-labeled-range:has(> .state-label[data-state="structural"]:first-child) {
+  --surface-labeled-range-color: var(--state-structural);
+  --surface-labeled-range-paint: var(--surface-rail-paint-yellow);
+}
+.surface-labeled-range:has(> .state-label[data-state="partial"]:first-child)  { --surface-labeled-range-color: var(--state-partial); }
+.surface-labeled-range:has(> .state-label[data-state="deflated"]:first-child) {
+  --surface-labeled-range-color: var(--state-deflated);
+  --surface-labeled-range-paint: var(--surface-rail-paint-red);
+}
+.surface-labeled-range:has(> .state-label[data-state="held"]:first-child)     { --surface-labeled-range-color: var(--state-held); }
+.surface-labeled-range:has(> .state-label[data-state="external"]:first-child) { --surface-labeled-range-color: var(--state-external); }
+.surface-labeled-range:has(> .state-label[data-state="proposed"]:first-child) { --surface-labeled-range-color: var(--state-proposed); }

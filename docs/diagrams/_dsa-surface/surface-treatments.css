@@ -1,7 +1,7 @@
 /* =========================================================================
    surface-treatments — separate surfaces composed from three axes; the
-   disclosure; content emphasis; the bordered label; the labeled range; rail
-   paint; fill paint; the scope underline.
+   disclosure; content emphasis; perimeter paint; the bordered label; the
+   labeled range; rail paint; fill paint; the scope underline; the marker.
 
    An OPT-IN VISUAL RULE under Foundations. It owns PRESENTATION ONLY: no
    markup, no semantics, no template, and no generated preview. A consuming
@@ -134,7 +134,8 @@
                      not containment and not interaction — hover and focus are
                      transient and border-only; emphasis stays at rest
      population      .surface-emphasis for a whole unit (a perimeter and a
-                     soft bloom, present at rest); .surface-emphasis-rail for a
+                     soft bloom, present at rest, drawn with PERIMETER PAINT
+                     in its accent); .surface-emphasis-rail for a
                      bounded passage in the reading flow (a vertical accent
                      rule and an inset), which in a document is the authorial
                      callout; .surface-emphasis-chip for the marker that names
@@ -158,17 +159,63 @@
      counterexample  a hard directional drop shadow with no visible border,
                      or chip words set in the accent
 
+   PERIMETER PAINT
+     meaning         how a governed color is drawn on a separate surface's
+                     perimeter, present at rest: a 1px edge in the color, a
+                     thin ring in light, and a soft bloom outside the edge. It
+                     draws a meaning another owner assigns and asserts none of
+                     its own: no emphasis, interaction, urgency or authority
+     population      .surface-perimeter on a separate surface, its color in
+                     --surface-perimeter-color, and the content-emphasis
+                     panel, .surface-emphasis, by selector grouping, in its
+                     accent. Two governed meanings draw it: content emphasis,
+                     in magenta, violet or cyan, and Review Semantics'
+                     decision record shown as a panel, in its role's value
+     owner           this module: the edge, the ring, the bloom's blur and
+                     spread, and the dose per theme, which is the emphasis
+                     dose (--surface-emphasis-ring, --surface-emphasis-bloom).
+                     The governing meaning owns the color and binds it, as
+                     content emphasis binds its accent and Review Semantics
+                     its role values
+     reuses          the emphasis dose; --fg-3 for the edge of a perimeter no
+                     meaning colors, which draws no ring or bloom
+     variation       the color, set only by a governed meaning; the dose per
+                     theme
+     exclusions      no hover, press, focus or animation, and no fill or
+                     wash: the surface keeps its material. Never a color
+                     chosen for decoration and never a general accent: a green
+                     or red perimeter arrives only with a review record, and
+                     content emphasis keeps its three accents. A bloom arrives
+                     only with a governed color: with none bound, the edge is
+                     the neutral --fg-3 and nothing blooms. The color does not
+                     inherit, so a surface inside an emphasis panel or a
+                     record takes none of theirs. It is not the attention edge
+                     (README, Hover, press, focus), which is transient and
+                     draws no bloom
+     example         a THESIS panel in the emphasis magenta and an Accepted
+                     record in the earned green: one perimeter, two meanings
+     counterexample  a red perimeter chosen for a warning's look; a record's
+                     perimeter repainted on hover
+
    BORDERED LABEL
      meaning         a short inert label inside a thin border: a word that is
                      read, never operated. One box for every such label, so a
                      label measures the same wherever it appears and only its
                      meaning changes its color
      population      .surface-bordered-label, neutral by default: a status
-                     word such as DRAFT. Two governed meanings take the same
+                     word such as DRAFT. Five governed meanings take the same
                      box: the emphasis chip, by selector grouping in this file,
-                     its border the emphasis accent; and Review Semantics'
-                     review mark, which carries the class, its border the
-                     review role's value
+                     its border the emphasis accent; Review Semantics' review
+                     mark, which carries the class, its border the review
+                     role's value; the outcome label that heads Review
+                     Semantics' decision record shown as a panel,
+                     .review-record-outcome, which carries the class, its
+                     border the record's role value; and, outside a
+                     multi-axis review annotation, Spectral State's
+                     .state-label and Evidence
+                     State's .evidence-label, which carry the class and name
+                     their axis and role in their words (State // Held,
+                     Evidence // Supported), each border the role's value
      owner           this module: display, size, baseline, wrapping, padding,
                      corners, the 1px layout border, the per-theme edge
                      reinforcement, the clearance that keeps the reinforcement
@@ -184,13 +231,17 @@
                      not --radius-pill; corner shape alone assigns no
                      interaction. Never a color chosen for contrast or
                      decoration: a neutral label stays --fg-3, and a color
-                     arrives only with the emphasis chip or a review mark.
-                     Evidence dots, state squares and the not-yet-testable
-                     rail are not bordered labels, and the status badge
-                     (surface-shell) is an unbordered note
+                     arrives only with the emphasis chip, a review mark, a
+                     decision record's outcome label or a keyed state or
+                     evidence label whose words name its axis and role.
+                     Spectral State's neutral and Evidence State's not yet
+                     testable take no keyed label. Evidence dots,
+                     state squares and the not-yet-testable rail are not
+                     bordered labels, and the status badge (surface-shell) is
+                     an unbordered note
      example         a neutral DRAFT; a THESIS chip in the emphasis magenta; a
-                     PROPOSED review mark in its role value — one box, three
-                     meanings
+                     PROPOSED review mark in its role value; STATE // HELD in
+                     the held role's cyan — one box, four meanings
      counterexample  a review module or a consumer setting its own padding,
                      edge width or corner for a label; a bordered label used as
                      a button
@@ -207,10 +258,13 @@
                      child is the label itself, a
                      neutral bordered label such as DRAFT, over the blocks it
                      marks; a neutral range claims no judgment, and content
-                     inside it keeps its own marks. One governed meaning sets
-                     its color: Review Semantics' annotation range, whose first
-                     child is the row naming its one review judgment, and whose
-                     rail takes that judgment's value
+                     inside it keeps its own marks. Three governed meanings
+                     set its color: Review Semantics' annotation range, whose
+                     first child is the row naming its one review judgment,
+                     and whose rail takes that judgment's value; and Spectral
+                     State's and Evidence State's keyed range, whose first
+                     child is a keyed state or evidence label, and whose rail
+                     takes that label's role value
      owner           this module: the rail's stroke, its lane outside the
                      content edge, its reach past the range's first child, the
                      label or its row, and its last block (whose outer margins
@@ -243,15 +297,19 @@
                      range it takes no content role, so its words sit in its
                      own blocks. No ornament at the rail's ends: no foot, cap,
                      dot or arrow. Never the cue for words inside a block:
-                     that is the scope underline. Colors other than neutral
-                     and the governed review value are not admitted: emphasis
-                     keeps its own rail
+                     that is the scope underline. Colors other than neutral,
+                     the governed review value and a keyed label's role value
+                     are not admitted: emphasis keeps its own rail, an
+                     assessment its own, and not yet testable's lavender-gray
+                     is never a scope rail
      example         two paragraphs beside a magenta scope rail under
                      PROPOSED, then one beside a green rail under ACCEPTED; a
                      quotation and the sentence that reads it, beside one
                      scope rail that runs outside the quotation's own violet
                      rail; two judged items of one list, each beside its own
-                     rail in that same lane, outside the bullets
+                     rail in that same lane, outside the bullets; an
+                     unsettled architectural question beside a cyan rail
+                     under STATE // HELD
      counterexample  a review color on a paragraph's own rail; a scope rail
                      with no label at its head; one annotation range over
                      blocks whose judgments differ
@@ -263,17 +321,20 @@
      population      the rails a governed meaning colors: the labeled range's
                      scope rail (this module) and the comparison table's
                      assessment rail (surface-document.css). One paint for
-                     each color both of them draw, the Spectral State values
-                     earned (green), structural (yellow) and deflated (red):
-                     --surface-rail-paint-earned,
-                     --surface-rail-paint-structural and
-                     --surface-rail-paint-deflated
-     owner           this module: each paint and its dose. Spectral State owns
-                     each color. The composing meaning
+                     each color both of them draw, keyed by the color and not
+                     by any meaning that draws it: --surface-rail-paint-green,
+                     --surface-rail-paint-yellow and --surface-rail-paint-red.
+                     The meaning-named --surface-rail-paint-earned,
+                     -structural and -deflated are aliases of green, yellow
+                     and red: each reads its color's paint and carries no
+                     value of its own
+     owner           this module: each paint and its dose. The semantic
+                     systems own each color. The composing meaning
                      binds a role to its color and to that color's paint:
-                     Review Semantics for a range, Criterion Assessment for an
-                     assessment. Each rail's composition keeps its place,
-                     length, gap and containment
+                     Review Semantics for an annotation range, Spectral State
+                     and Evidence State for a keyed range, Criterion
+                     Assessment for an assessment. Each rail's composition
+                     keeps its place, length, gap and containment
      reuses          the rail's own color, through currentColor
      variation       none today: every color takes none, the plain 2px stroke,
                      on both fields. Each paint stays the one place a measured
@@ -285,13 +346,17 @@
                      diagram's stroke, a dot or a square. It assigns no
                      color: a meaning paints only colors it is already
                      admitted. A rail in a color with no paint here, such as
-                     a passage rail's emphasis accent, a proposed or open
-                     range's, or a neutral, keeps the plain stroke; a paint
-                     for one of those colors would bind every rail drawn in it
+                     a passage rail's emphasis accent, a range's magenta,
+                     cyan, violet, orange or brown, or a neutral, keeps the
+                     plain stroke; a paint for one of those colors would bind
+                     every rail drawn in it. A meaning binds the color's
+                     paint, never an alias: an alias is read-only, and
+                     setting one reaches no rail
      example         a declined range's scope rail and an adverse
                      assessment's rail: one red, one paint, in two places;
                      caution's yellow the same plain stroke beside a summary, a
-                     value field and the key
+                     value field and the key, and beside a structural state
+                     range
      counterexample  a meaning setting its own dose or theme branch for a
                      color this module paints; the bordered label's edge
                      recipe copied onto a rail; a rail's dose that follows a
@@ -304,20 +369,25 @@
                      same color filled takes the same ink, whichever meaning
                      draws it
      population      role- and state-bearing filled shapes and fields: a
-                     state node, a function's part or field, a key's filled
-                     specimen. One ink per fill color, keyed by the color:
+                     state node, an evidence-bearing shape, an assessment
+                     node, a decision node in a diagram, a function's part
+                     or field, a key's filled specimen. One ink per fill
+                     color, keyed by the color:
                      --surface-fill-ink-on-yellow, -on-green, -on-orange,
-                     -on-cyan, -on-red, -on-violet, -on-magenta, -on-white
-                     and -on-lavender; and the neutral filled shape,
-                     --surface-fill-neutral, --surface-fill-neutral-edge and
-                     --surface-fill-ink-on-neutral
+                     -on-cyan, -on-red, -on-brown, -on-violet, -on-magenta,
+                     -on-white and -on-lavender; and the neutral filled
+                     shape, --surface-fill-neutral, --surface-fill-neutral-edge
+                     and --surface-fill-ink-on-neutral
      owner           this module: the recipe (fill, boundary, ink), each ink,
                      the neutral shape's paint and every theme exception. The
                      semantic systems own each color and bind each role to its
-                     color's ink: Spectral State (--state-*-ink) and Three
-                     Functions (--function-*-ink). The composing surface or
-                     engine owns the shape: its geometry, stroke width,
-                     cutouts, layout and emphasis
+                     color's ink: Spectral State (--state-*-ink), Evidence
+                     State (--evidence-*-ink), Review Semantics
+                     (--review-*-ink), Criterion Assessment
+                     (--assessment-*-ink) and Three Functions
+                     (--function-*-ink). The composing surface or engine owns
+                     the shape: its geometry, stroke width, cutouts, layout
+                     and emphasis
      reuses          --ask-fg-light (#6A637F), --ask-lavender-ask (#D4C6E1)
                      and, on magenta in dark only, --fg-high-contrast
                      (#201D26, README registered use 4) as inks;
@@ -329,10 +399,13 @@
                      same in both themes, as the colors are. The root theme
                      decides, as it does for the colors; a .theme-dark subtree
                      is not a field this module paints
-     exclusions      a dot, chip, rail, bordered label, range, underline or
-                     sequence node is not a filled shape: it takes no fill
-                     paint or ink and keeps its own paint, solid or not (a
-                     review state square, a key's marker dot). The interactive
+     exclusions      a marker (MARKER, below: an evidence dot, a state
+                     square, a key's swatch), chip, rail, bordered label,
+                     range, underline or sequence node is not a filled shape:
+                     it takes no fill paint or ink and keeps its own paint,
+                     solid or not. A decision record shown on its own as a
+                     panel is not a filled shape: it takes PERIMETER PAINT
+                     and keeps its material. The interactive
                      spine's and radial's state marks take this paint; a
                      radial mark that asserts no state is structure, not a
                      filled shape, and keeps its engine's own neutral wash,
@@ -341,9 +414,11 @@
                      -FLOW) keeps its own neutral paint. A geometric cutout is
                      the composing shape's own, drawn as a hole, never painted.
                      A filled shape's emphasis (hover, selection) is never a
-                     step in its fill
-     example         a held node and a judicial part: one cyan, one ink, two
-                     meanings
+                     step in its fill. Lavender-gray has no ink and takes no
+                     fill paint: its one role, Evidence State's not yet
+                     testable, is drawn hollow, dashed and labeled
+     example         a held node, an open decision node and a judicial
+                     part: one cyan, one ink, three meanings
      counterexample  a meaning restating an ink for its own role; a semantic
                      fill at 30% beside one at 100%; text on a fill in the
                      theme foreground; a neutral node drawn in --fg-1, the
@@ -381,11 +456,53 @@
                      underline that brightens on hover; a text link's 1px line
                      reused to mark scope
 
+   MARKER
+     meaning         a small inert shape beside the visible label that names
+                     its role: one anatomy wherever it appears, so a dot, a
+                     square or a hollow dot measures the same in a document,
+                     a key and a legend, and only its meaning changes its color
+     population      .surface-marker with one shape and one size: the shape
+                     .surface-marker--dot (the default), --square, or --hollow,
+                     a hollow dashed dot; the size .surface-marker--sm (the
+                     default, 10px, beside a label in the reading flow), --md
+                     (12px, a key's or a legend's row) or --lg (30px, a key's
+                     swatch). Neutral by default. Review Semantics' evidence
+                     and state marks draw the same anatomy on their own
+                     ::before at the small size, reading this module's marker
+                     properties, so their markup carries no marker class
+     owner           this module: the box, its three sizes, the dot's and the
+                     square's corners, the hollow marker's dashed edge and
+                     the neutral color. The color comes from the composing
+                     meaning, through --surface-marker-color; which shape an
+                     axis takes is the composing meaning's (Review Semantics
+                     gives evidence the dot, state the square and not yet
+                     testable the hollow dot)
+     reuses          --fg-3 for the neutral marker
+     variation       the shape and the size, by modifier; the color, set only
+                     by a governed meaning
+     exclusions      never alone: the visible label beside it names its role,
+                     and color never carries it alone. No text, ink, shadow,
+                     bloom, hover, press, focus or cursor, and never a control
+                     or a focusable element. Never also a bordered label, a
+                     chip, a filled shape (FILL PAINT), a rail, a range, an
+                     underline, a sequence node or an element of an
+                     annotation composition, whose mark draws its own marker.
+                     A hollow marker is never filled and never square, and
+                     lavender-gray is drawn only as a hollow marker, never
+                     filled. A bare data-state or data-evidence opts nothing
+                     in
+     example         a key's 30px green swatch beside "state-earned"; a 10px
+                     square beside EARNED in a document annotation: one
+                     anatomy at two sizes
+     counterexample  a hollow swatch drawn larger than the filled swatches
+                     beside it because its dashed edge sits outside its box;
+                     a colored dot standing for a role with no label beside it
+
    THE BORDERED LABEL'S EDGE. An apparent 2px edge in light and the plain
    1px border in dark: the fixed 1px border plus a same-color, zero-blur
    reinforcement of 1px in light and 0px in dark, the same layer drawing
-   nothing. One recipe for the whole
-   family, review marks, neutral labels and emphasis chips alike, calibrated
+   nothing. One recipe for the whole family, review marks, keyed state and
+   evidence labels, neutral labels and emphasis chips alike, calibrated
    by field: a 1px line in a bright color reads strongly on the dark ink and
    quietly on the light lavender, so the light field takes the stronger edge.
    The colors are the same in both themes; only the edge's
@@ -453,7 +570,10 @@
    THE RAIL'S PAINT. A paint is a dose with no color of its own: a
    zero-blur box-shadow layer, or none. The rail that takes it sets its own
    color and draws both its 2px stroke and the paint in that color, so a
-   paint can never drift from its rail's color. Every paint is none: since
+   paint can never drift from its rail's color. Each paint is named by the
+   color it is drawn in, as each ink is named by the fill it is set on (THE
+   FILL'S PAINT); the names earned, structural and deflated are only aliases
+   of green, yellow and red. Every paint is none: since
    Spectral State v1.2 a color takes one value in both themes, and in it the
    plain 2px stroke reads on the light lavender and the dark ink alike,
    caution's yellow included. Until then caution's rail took
@@ -476,9 +596,9 @@
    existing colors: the theme foreground's light value, #6A637F, on yellow,
    green, orange, cyan, white and lavender, so that the bright fills read as
    one family and no member of the set outweighs the others; the lavender on
-   red and violet. The set is consistent in ink, not in contrast: #6A637F
-   measures 5.07 on yellow and 4.02 on green, 2.65 on cyan and 2.25 on
-   orange. Magenta is the one color whose ink follows the theme:
+   red, violet and brown. The set is consistent in ink, not in contrast:
+   #6A637F measures 5.07 on yellow and 4.02 on green, 2.65 on cyan and 2.25
+   on orange. Magenta is the one color whose ink follows the theme:
    the lavender in light, the high-contrast ink in dark. The neutral shape is
    the static diagrams' own node in light, --ask-surface inside a white edge,
    and the lavender in dark, its ink #6A637F in both; it is a paint of its
@@ -505,6 +625,25 @@
    paint, not layout, so no line of text moves, and what follows the words
    keeps its own clearance (Review Semantics gives a note in a list item its
    attachment space).
+
+   THE MARKER'S BOX. One empty border-box square, so a hollow marker's 2px
+   dashed edge sits inside its size and a filled and a hollow marker of one
+   size measure the same. The three sizes are the ones each place draws: 10px
+   beside a label in the reading flow, 12px on a key's or a legend's row and
+   30px for a key's swatch. A dot's corner is 50%, a circle; a square keeps a
+   2px corner, which softens it without reading as a dot. A filled marker is
+   its color at 100%, with no edge of its own; where its color is its own
+   field's, such as Spectral State's neutral or Three Functions' executive,
+   the composing surface may draw one 1px solid line around it, inside its
+   box. A hollow marker is a transparent box inside a 2px dashed edge in its
+   color: Evidence State's not yet testable draws it. A flex row neither
+   stretches nor squeezes a marker, and it sits on the middle of the line of
+   text beside it. Review Semantics' evidence and state marks keep their own
+   ::before and read its size, corners and dashed edge from the custom
+   properties this module declares (--surface-marker-size-sm, -md and -lg,
+   --surface-marker-corner-dot and -square, --surface-marker-hollow-edge), so
+   a document's marks and a key's swatches are one anatomy and no existing
+   markup changes.
 
    THE EMPHASIS DOSE. The themes are deliberately not numerically equal,
    because equal numbers do not read as equal emphasis: light has an apparent
@@ -538,6 +677,11 @@
                            not load diagrams.css
      2px, 0.36em           the scope underline's thickness and its offset
                            below the baseline
+     10px, 12px, 30px      the marker's three sizes: beside a label, on a key's
+                           or a legend's row, and a key's swatch
+     50%, 2px              the marker's corners: the dot's (a circle) and the
+                           square's
+     2px                   the hollow marker's dashed edge
 
    LIMITS
      - Hover and focus colors on the disclosure trigger depend on the
@@ -553,10 +697,10 @@
        14px of space left of the content edge, or a clipping box at the
        content edge, cuts it. The rail is drawn on the left: a right-to-left
        document is not yet served.
-     - The rail's color for an annotation range comes through :has(). A
-       browser without :has() draws the neutral rail beside the colored
-       label. The buffer at a list's edge comes through :has() too: without
-       it, an item host's rail can meet a neighboring range's. It counts
+     - The rail's color for an annotation range or a keyed range comes
+       through :has(). A browser without :has() draws the neutral rail beside
+       the colored label. The buffer at a list's edge comes through :has()
+       too: without it, an item host's rail can meet a neighboring range's. It counts
        siblings, so a wrapper laid out beside its neighbor, a grid or flex
        column, takes the margin too; a host that sets such lists side by side
        composes its own spacing.
@@ -568,6 +712,19 @@
        text link, draws it beside the scope line. The 0.36em offset follows
        the font's metrics, so the line sits a little differently in another
        family.
+     - Perimeter paint's bloom is a box-shadow: a clipping box around the
+       surface, or a neighbor painted over it, cuts the bloom. Under forced
+       colors the browser drops the bloom and gives the edge, and a decision
+       record's outcome label's border, a system color, so the record's
+       outcome is carried by its label's words. The perimeter takes the
+       emphasis dose; a theme the foundation does not declare keeps the light
+       dose. The color's non-inheritance is an @property registration: a
+       browser without @property lets it inherit, so an unbound perimeter
+       inside a colored one takes that color.
+     - A filled marker is a background. Where a browser suppresses
+       backgrounds (forced colors, a print without backgrounds) it may not
+       paint, and the label beside it still names the role; a hollow marker's
+       dashed edge is a border and still draws.
    ========================================================================= */
 
 /* ---- Surface axes ----------------------------------------------------- */
@@ -708,14 +865,28 @@
   :root:not([data-theme="light"]) { --surface-emphasis-ring: 0;     --surface-emphasis-bloom: 50%; }
 }
 
-/* The panel: a perimeter plus a soft bloom, present at rest. Flush by default:
-   an emphasized unit must be easier to notice, not necessarily higher. */
+/* The panel: a perimeter plus a soft bloom, present at rest, drawn with
+   PERIMETER PAINT in its accent. Flush by default: an emphasized unit must be
+   easier to notice, not necessarily higher. */
 .surface-emphasis {
   --surface-emphasis-accent: var(--ask-emphasis-magenta);
-  border: 1px solid var(--surface-emphasis-accent);
+  --surface-perimeter-color: var(--surface-emphasis-accent);
+}
+/* PERIMETER PAINT: a governed color on a separate surface's perimeter, at
+   rest. One recipe, shared by selector grouping: the emphasis panel draws it
+   in its accent, and .surface-perimeter in the color a governed meaning binds
+   to --surface-perimeter-color (Review Semantics' decision record, in its
+   role's value). The edge, the ring and the bloom take the emphasis dose.
+   The color does not inherit: each surface binds its own. With none bound
+   the edge is the neutral --fg-3, and the ring and the bloom are transparent:
+   a bloom arrives only with a governed color. */
+@property --surface-perimeter-color { syntax: '*'; inherits: false; }
+.surface-emphasis,
+.surface-perimeter {
+  border: 1px solid var(--surface-perimeter-color, var(--fg-3));
   box-shadow:
-    0 0 0 var(--surface-emphasis-ring) color-mix(in srgb, var(--surface-emphasis-accent) 70%, transparent),
-    0 0 22px 1px color-mix(in srgb, var(--surface-emphasis-accent) var(--surface-emphasis-bloom), transparent);
+    0 0 0 var(--surface-emphasis-ring) color-mix(in srgb, var(--surface-perimeter-color, transparent) 70%, transparent),
+    0 0 22px 1px color-mix(in srgb, var(--surface-perimeter-color, transparent) var(--surface-emphasis-bloom), transparent);
 }
 /* Emphasis and elevation are separate axes: a raised emphasized surface keeps
    both rather than one replacing the other. */
@@ -796,13 +967,18 @@
 
 /* ---- Rail paint ------------------------------------------------------- */
 
-/* One paint for each governed color a rail draws (RAIL PAINT and THE RAIL'S
-   PAINT, above): a dose drawn in the rail's own color, or none. Every one is
-   none, the plain 2px stroke, in both themes. */
+/* One paint for each governed color a rail draws, keyed by the color and not
+   by any meaning that draws it (RAIL PAINT and THE RAIL'S PAINT, above): a
+   dose drawn in the rail's own color, or none. Every one is none, the plain
+   2px stroke, in both themes. The meaning-named paints are aliases: each reads
+   its color's paint and carries no value of its own. */
 :root {
-  --surface-rail-paint-earned:     none;
-  --surface-rail-paint-structural: none;
-  --surface-rail-paint-deflated:   none;
+  --surface-rail-paint-green:      none;
+  --surface-rail-paint-yellow:     none;
+  --surface-rail-paint-red:        none;
+  --surface-rail-paint-earned:     var(--surface-rail-paint-green);
+  --surface-rail-paint-structural: var(--surface-rail-paint-yellow);
+  --surface-rail-paint-deflated:   var(--surface-rail-paint-red);
 }
 
 /* ---- Fill paint ------------------------------------------------------- */
@@ -817,6 +993,7 @@
   --surface-fill-ink-on-cyan:     var(--ask-fg-light);
   --surface-fill-ink-on-red:      var(--ask-lavender-ask);
   --surface-fill-ink-on-violet:   var(--ask-lavender-ask);
+  --surface-fill-ink-on-brown:    var(--ask-lavender-ask);
   --surface-fill-ink-on-magenta:  var(--ask-lavender-ask);
   --surface-fill-ink-on-white:    var(--ask-fg-light);
   --surface-fill-ink-on-lavender: var(--ask-fg-light);
@@ -932,3 +1109,42 @@ li.surface-labeled-range + li.surface-labeled-range { margin-top: 0; }
   text-decoration-skip-ink: none;
   text-decoration-color: var(--surface-scope-underline-color, var(--fg-3));
 }
+
+/* ---- Marker ----------------------------------------------------------- */
+
+/* The marker's sizes, corners and dashed edge (THE MARKER'S BOX, above).
+   Review Semantics' evidence and state marks read them on their own
+   ::before. */
+:root {
+  --surface-marker-size-sm:       10px;
+  --surface-marker-size-md:       12px;
+  --surface-marker-size-lg:       30px;
+  --surface-marker-corner-dot:    50%;
+  --surface-marker-corner-square: 2px;
+  --surface-marker-hollow-edge:   2px;
+}
+/* One empty border-box square beside its label: a filled dot at the small
+   size by default, in the neutral color. A flex row neither stretches nor
+   squeezes it. A governed meaning sets --surface-marker-color and nothing
+   else; the modifiers set the shape and the size. */
+.surface-marker {
+  display: inline-block;
+  flex: none;
+  box-sizing: border-box;
+  width: var(--surface-marker-size-sm);
+  height: var(--surface-marker-size-sm);
+  vertical-align: middle;
+  border-radius: var(--surface-marker-corner-dot);
+  background-color: var(--surface-marker-color, var(--fg-3));
+}
+.surface-marker--dot    { border-radius: var(--surface-marker-corner-dot); }
+.surface-marker--square { border-radius: var(--surface-marker-corner-square); }
+/* The hollow dashed dot: no fill, and its dashed edge inside its box. */
+.surface-marker--hollow {
+  border-radius: var(--surface-marker-corner-dot);
+  background-color: transparent;
+  border: var(--surface-marker-hollow-edge) dashed var(--surface-marker-color, var(--fg-3));
+}
+.surface-marker--sm { width: var(--surface-marker-size-sm); height: var(--surface-marker-size-sm); }
+.surface-marker--md { width: var(--surface-marker-size-md); height: var(--surface-marker-size-md); }
+.surface-marker--lg { width: var(--surface-marker-size-lg); height: var(--surface-marker-size-lg); }
