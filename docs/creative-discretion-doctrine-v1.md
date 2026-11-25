@@ -56,7 +56,7 @@ These distinctions keep the governing intent connected to what may be generated,
 
 AP's five distinctions are the domain-language articulation of that topology: the **creative brief** carries creative intent, the governing standard, and the aperture grant; **realization** produces candidate variance; **creative discretion** names authorized judgment wherever it enters; **curatorial selection** ratifies one candidate and closes the aperture; **artifact governance** binds the accepted result; and the **governance record** carries the trace. One topology, not two structures.
 
-`asset-pipeline-ASK` is the **worked instance with governance built out first-class** — the full topology through to the governed-asset record. It is **not** the primitive's owner. The cross-ecology relation (the same structure in [`isometric-cubes-ASK`](https://github.com/apexSolarKiss/isometric-cubes-ASK), [`mazeASK`](https://github.com/apexSolarKiss/mazeASK), this repo, and generative-AI workflows generally) is recorded at the ecology tier; `isometric-cubes-ASK` and `mazeASK` are **antecedent studies, not dependencies or imports** of this repo.
+`asset-pipeline-ASK` is the **worked instance with governance built out first-class** — the full topology through to the governed-asset record. It is **not** the primitive's owner. The cross-ecology relation (the same structure in [`cubes-ASK`](https://github.com/apexSolarKiss/cubes-ASK), [`mazes-ASK`](https://github.com/apexSolarKiss/mazes-ASK), this repo, and generative-AI workflows generally) is recorded at the ecology tier; `cubes-ASK` and `mazes-ASK` are **antecedent studies, not dependencies or imports** of this repo.
 
 ## Where the topology is carried in this repo
 
