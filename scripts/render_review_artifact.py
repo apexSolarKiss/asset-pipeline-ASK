@@ -88,10 +88,14 @@ WORDS = {
                "accepted": ("Accepted",), "declined": ("Declined",),
                "none": ("No decision recorded",)},
     "evidence": {"supported": ("Supported",), "partially-supported": ("Partially supported",),
-                 "unresolved": ("Unresolved",), "weakened": ("Weakened",)},
+                 "unresolved": ("Unresolved",), "weakened": ("Weakened",), "contradicted": ("Contradicted",)},
     "state": {r: (r.capitalize(),) for r in ("earned", "structural", "partial", "deflated",
-                                             "held", "external", "proposed", "neutral")},
+                                             "held", "proposed", "neutral")},
 }
+# A role the owner has retired, refused with the owner's reason rather than as an unknown role: no alias, no
+# rewrite of the record and no fallback role.
+RETIRED = {"state:external": "external is retired in Spectral State v2.0 (design-system-ASK #237, 89397df) because "
+                             "provenance is not a state; an item owned elsewhere says so in its basis or in a statement"}
 PENDING = ("proposed", "open")
 # The review roles whose exact words take a passage mark, pending or decided; No decision recorded marks no words.
 MARKED = PENDING + ("accepted", "declined")
@@ -125,6 +129,10 @@ NEEDS = {"surface-treatments.css": (r"^\.surface-bordered-label\s*[,{]", r"^\.su
          "review-semantics.css": (r"^\.doc-mark\[data-review\]\s*\{[^}]*--surface-bordered-label-color\s*:",
                                   r"^\.doc-annotation-range:has\(",
                                   r"^mark\.doc-passage-mark\s*\{[^}]*--surface-scope-underline-color\s*:")}
+# What a role needs from the owner files when the copy draws it, in a row or in a key entry it shows, and the
+# change that first carries it. A copy that does not draw the role is unaffected at any commit NEEDS accepts.
+ROLE_NEEDS = {"evidence:contradicted": ("review-semantics.css", r'^\.doc-mark\[data-evidence="contradicted"\]',
+                                        "#237 (89397df)")}
 
 LOCAL_CSS = """    /* ---------- Figures: this artifact's own geometry ---------- */
     .review-figures {
@@ -505,6 +513,8 @@ def validate_row(row: dict, cfg: dict) -> None:
         raise RecordError(f"{where}: unknown item '{item}'")
     if item in WORDS:
         roles = WORDS[item]
+        if f"{item}:{mark}" in RETIRED:
+            raise RecordError(f"{where}: {RETIRED[f'{item}:{mark}']}")
         if mark not in roles:
             raise RecordError(f"{where}: '{mark}' is not a {item} role this renderer draws")
         if words_ not in roles[mark]:
@@ -1093,6 +1103,7 @@ class Renderer:
             raise RecordError("a URL other than an embedded font survived in the foundation")
         self.foundation_sha = sha(css.encode("utf-8"))
         parts = [f"{BANNER}{FOUNDATION} (upstream {short}) + base64 fonts === */\n{css}"]
+        drawn = self.drawn()
         for m in REGISTER + SEMANTIC:
             text = self.dep(m).decode("utf-8")
             for need in NEEDS.get(m, ()):
@@ -1101,6 +1112,12 @@ class Renderer:
                                       f"({need}): the bordered label on review marks, the annotation range, the whole "
                                       "list item that is its own range and the scope underline, which "
                                       "design-system-ASK first carries together at #185")
+            for kind, (module, need, first) in ROLE_NEEDS.items():
+                if module == m and kind in drawn and not re.search(need, text, re.M):
+                    facet, role = kind.split(":", 1)
+                    raise RecordError(f"{m} at design-system commit {short} lacks the rule that draws {facet} "
+                                      f"{WORDS[facet][role][0]} ({need}), which this record uses and "
+                                      f"design-system-ASK first carries at {first}")
             parts.append(f"{BANNER}{m} (upstream {short}, verbatim) === */\n{text}")
         tpl = self.dep(TEMPLATE).decode("utf-8")
         overlay = re.search(r"<style>\n(.*?)\n  </style>", tpl, flags=re.S)
@@ -1290,12 +1307,19 @@ class Renderer:
 </html>
 """
 
+    def drawn(self) -> set:
+        """Every facet:role the copy draws: on a row of this artifact, or in a key entry its key section shows."""
+        used = {f"{r['item']}:{r['mark']}" for r in self.rows if r["item"] in WORDS}
+        return used | {g["entry"] for g in self.glosses if g["show"] == "always" and ":" in g["entry"]}
+
     def key_html(self) -> str:
         used = {f"{r['item']}:{r['mark']}" if r["item"] in WORDS else r["item"] for r in self.rows}
         rows = []
         for g in self.glosses:
             entry = g["entry"]
             facet_role = entry.split(":", 1)
+            if entry in RETIRED:
+                raise RecordError(f"key entry '{entry}': {RETIRED[entry]}")
             if not (entry in ("basis", "check") or (len(facet_role) == 2 and facet_role[1] in WORDS.get(facet_role[0], {}))):
                 raise RecordError(f"key entry '{entry}' is not basis, check or a facet:role the renderer draws")
             if not (g["show"] == "always" or entry in used):

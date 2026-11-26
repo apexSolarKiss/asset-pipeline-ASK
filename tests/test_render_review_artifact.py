@@ -74,7 +74,9 @@ def ds_files() -> dict:
                                         b"li.surface-labeled-range::before {}\n.surface-scope-underline {}\n")
     files["review-semantics.css"] += (b".doc-mark[data-review] { --surface-bordered-label-color: x; }\n"
                                       b".doc-annotation-range:has(> .doc-annotations) {}\n"
-                                      b"mark.doc-passage-mark { --surface-scope-underline-color: x; }\n")
+                                      b"mark.doc-passage-mark { --surface-scope-underline-color: x; }\n"
+                                      # the rule a copy drawing Contradicted needs, which the owner carries from #237
+                                      b'.doc-mark[data-evidence="contradicted"] { --review-mark-color: x; }\n')
     return files
 
 
@@ -1497,6 +1499,77 @@ def test_render_refuses_a_donor_without_what_its_markup_needs(module, line):
     r = rra.Renderer(src, glosses, rows, "XX", cfg, lambda rel: files[rel], "a" * 40, "2026-01-01", lambda fid: PAYLOADS[fid])
     with pytest.raises(rra.RecordError, match=f"{module} at design-system commit aaaaaaa lacks .*#185"):
         r.render("2026-01-01T00:00:00+00:00")
+
+
+def contradicted_record(show: str = "used", row: bool = True) -> str:
+    """The sample record with an evidence:contradicted key entry and, with row, a Contradicted row on XX-1.1."""
+    rec = edit(RECORD, "| basis | Basis | Where a marked statement comes from. | always |\n",
+               "| basis | Basis | Where a marked statement comes from. | always |\n"
+               "| evidence:contradicted | Contradicted | The evidence named beside it gives grounds to reject the "
+               f"statement as stated. | {show} |\n")
+    if row:
+        rec = edit(rec, "| XX-1.3 | whole |",
+                   "| XX-1.1 | whole | evidence | contradicted | Contradicted | the input photographs |\n| XX-1.3 | whole |")
+    return rec
+
+
+def test_contradicted_evidence_renders_in_the_owners_words_in_a_row_and_in_the_key():
+    rec = contradicted_record()
+    page, build, _ = render(record=rec)
+    mark = '<span class="doc-mark doc-label" data-evidence="contradicted">Contradicted</span>'
+    row = re.search(r'<strong>Light:</strong>.*?<div class="doc-annotations">(.*?)</div>', page, re.S).group(1)
+    assert mark + '<span class="doc-meta">the input photographs</span>' in row
+    key = re.search(r'id="marks">(.*?)</section>', page, re.S).group(1)
+    assert mark in key
+    assert check(page, build, record=rec)["fails"] == []
+    # the owner's wording and no other, on a row and in the key
+    with pytest.raises(rra.RecordError, match="'Refuted' is not the owner's wording for evidence contradicted"):
+        render(record=edit(rec, "| contradicted | Contradicted | the input", "| contradicted | Refuted | the input"))
+    with pytest.raises(rra.RecordError, match="key entry evidence:contradicted: 'Refuted' is not the owner's wording"):
+        render(record=edit(rec, "| evidence:contradicted | Contradicted |", "| evidence:contradicted | Refuted |"))
+
+
+def test_the_retired_external_state_is_refused_on_a_row_and_in_the_key():
+    retired = (r"external is retired in Spectral State v2\.0 \(design-system-ASK #237, 89397df\) because provenance "
+               r"is not a state; an item owned elsewhere says so in its basis or in a statement")
+    rec = edit(RECORD, "| XX-1.3 | whole |", "| XX-1.1 | whole | state | external | External | the client's guide |\n"
+               "| XX-1.3 | whole |")
+    with pytest.raises(rra.RecordError, match="XX-1.1 / whole / state: " + retired):
+        render(record=rec)
+    # a key entry naming it is refused the same way, shown or not; no other state stands in for it
+    for show in ("used", "always"):
+        rec = edit(RECORD, "| basis | Basis | Where a marked statement comes from. | always |\n",
+                   "| basis | Basis | Where a marked statement comes from. | always |\n"
+                   f"| state:external | External | Owned elsewhere. | {show} |\n")
+        with pytest.raises(rra.RecordError, match="key entry 'state:external': " + retired):
+            render(record=rec)
+    assert set(rra.WORDS["state"]) == {"earned", "structural", "partial", "deflated", "held", "proposed", "neutral"}
+
+
+def test_render_refuses_contradicted_at_a_donor_without_its_mark_and_nothing_else():
+    cfg = config()
+    files = ds_files()
+    line = b'.doc-mark[data-evidence="contradicted"] { --review-mark-color: x; }\n'
+    # a donor from before design-system-ASK #237; a commented rule or a look-alike does not stand in
+    assert line in files["review-semantics.css"]
+    files["review-semantics.css"] = files["review-semantics.css"].replace(
+        line, b"/* " + line.strip() + b' */\n.doc-mark[data-evidence="contradicted-other"] {}\n')
+
+    def at_that_donor(rec: str) -> str:
+        src = rra.parse_source(SOURCE, cfg)
+        glosses, rows = rra.parse_record(rec, cfg["record_section"])
+        r = rra.Renderer(src, glosses, rows, "XX", cfg, lambda rel: files[rel], "a" * 40, "2026-01-01",
+                         lambda fid: PAYLOADS[fid])
+        return r.render("2026-01-01T00:00:00+00:00")
+    refused = (r"review-semantics\.css at design-system commit aaaaaaa lacks the rule that draws evidence Contradicted "
+               r".*design-system-ASK first carries at #237 \(89397df\)")
+    # Contradicted drawn on a row, or in a key entry the key always shows
+    for rec in (contradicted_record(), contradicted_record(show="always", row=False)):
+        with pytest.raises(rra.RecordError, match=refused):
+            at_that_donor(rec)
+    # a record that draws no Contradicted renders there, one whose key entry for it is not shown included
+    for rec in (RECORD, contradicted_record(row=False)):
+        assert 'data-evidence="contradicted"' not in at_that_donor(rec).split("</style>")[-1]
 
 
 def test_a_row_moved_across_a_section_boundary_fails():
