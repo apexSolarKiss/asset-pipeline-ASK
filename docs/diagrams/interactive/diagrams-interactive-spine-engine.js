@@ -16,6 +16,7 @@
            window.IA_SPINE.report()  a read-only account of the camera, the chrome arrangement
                                      and the last Fit (diagnostics and the behavior harness)
    Requires diagrams-fit.js and diagrams-pointer.js loaded before it (it fails closed otherwise).
+   render() refuses a source that names Spectral State's retired external state.
 */
 (function () {
   'use strict';
@@ -280,7 +281,21 @@
     return lines;
   }
 
+  /* A RETIRED STATE FAILS CLOSED. Spectral State v2.0 removed `external`: owned elsewhere is
+     provenance, not a state, and spectral-state.css no longer paints it, so a node naming it
+     would draw black. A source that names it in a legend row or a node is refused before
+     anything is drawn; migrate it by what it meant (README, Data grammar). */
+  function refuseRetired(data) {
+    (data.states || []).forEach(function (s) {
+      if (s && s.role === 'external') throw new Error('Spectral State retired the external state. Remove its legend row: owned elsewhere is provenance, not a state.');
+    });
+    (data.nodes || []).forEach(function (n) {
+      if (n && n.state === 'external') throw new Error('Spectral State retired the external state. Migrate node ' + n.id + ' by what it meant: owned elsewhere is provenance, not a state.');
+    });
+  }
+
   function render(data) {
+    refuseRetired(data);
     var svg = document.getElementById('svg');
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     var vp = el('g', { id: 'vp' }, svg);

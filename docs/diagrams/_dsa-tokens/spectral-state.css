@@ -1,9 +1,9 @@
 /* =========================================================================
    spectral-state.css — Spectral State
 
-   A semantic state-color system: a small, identity-free vocabulary of eight STATE
-   roles — seven sparse neon state signals drawn from a 12-step wheel, plus a neutral
-   role that resolves to the theme foreground. One value per role in both themes.
+   A semantic state-color system: a small, identity-free vocabulary of seven STATE
+   roles — six sparse neon state signals, plus a neutral role that resolves to
+   the theme foreground. One value per role in both themes.
 
    SPECIALIZED, OPT-IN foundation primitive. It is for surfaces that encode the
    *state* of architectural elements — e.g. an interactive state diagram where a
@@ -18,7 +18,24 @@
    labeled range draw the state label and the range it opens (A STATE IN WORDS, below).
    Offline; no CDN.
 
-   STATUS: v1.4 — a state named in words. Outside a multi-axis review
+   STATUS: v2.0 — traffic-light coherence (ASK, 2026-11-25). Partial takes
+   the yellow and structural the violet, and external leaves the state
+   vocabulary. The evaluative sequence is earned, partial and deflated:
+   green, yellow and red, affirmative, qualified and negative within the
+   question this system asks. Structural, held and proposed are categories
+   off that sequence, and no role ranks structural above or below partial:
+   THE SELECTION RULE, below, says which applies. Orange has no Spectral
+   role. That an element is owned elsewhere is provenance, not a state: a
+   consumer shows it as neutral metadata or a neutral Source // External
+   label, beside whatever state the element asserts or none, and never
+   infers structural from the violet external used to take. Each role binds
+   its physical value directly, from the foundation. Re-sync this file with
+   colors_and_type.css, surface-treatments.css and every profile from the
+   same owner commit. A consumer whose data names the retired external
+   migrates that data by what it meant (outside ownership, a proposal, an
+   unclassified record) before rendering; there is no alias.
+
+   v1.4 — a state named in words. Outside a multi-axis review
    annotation, an element's state may be named on a keyed bordered label,
    .state-label with data-state, whose words are exactly State // <Role>, and
    a labeled range that label opens takes the role's value on its scope rail,
@@ -54,33 +71,46 @@
    AP re-consumes the recolor by re-sync.
 
    ---------------------------------------------------------------------------
-   WHEEL LOGIC
+   ROLES
    ---------------------------------------------------------------------------
-   12-hue neon wheel as the palette's ORIGIN: hsl(H, S, L), H = n×30°. The wheel
-   is where the hues were found, not a constraint on the final values: three
-   roles now share a foundation color, and cyan and violet sit a few degrees off
-   their wheel steps. Only the eight roles below draw from it. Meaning comes from
-   SPARSE, intentional coloring against the neutral lavender field: a node takes
-   a neon hue only to say something.
+   The hues were found on a 12-step neon wheel, hsl(H, S, L), H = n×30°; the
+   wheel is their origin, not a constraint on the final values. Meaning comes
+   from SPARSE, intentional coloring against the neutral lavender field: a node
+   takes a neon hue only to say something.
 
-   Health ramp — achieved-provenness axis (ordered, green "go" → red "no"):
-     state-earned      120°  green        operationally grounded at full depth
-     state-structural   60°  yellow       schema/structurally proven
-     state-partial      30°  orange       operational at bounded depth
-     state-deflated      0°  red          pressure showed it unnecessary / dead
+   The evaluative sequence (green affirmative, yellow qualified, red negative,
+   within the question Spectral State asks):
+     state-earned      green        operationally grounded at full depth
+     state-partial     yellow       operational at bounded depth
+     state-deflated    red          pressure showed it unnecessary / dead
 
-   Orthogonal categories (NOT a health judgment; "different axis"):
-     state-held        195°  cyan         a named open question
-     state-external    273°  violet       owned elsewhere (inherited / upstream)
-     state-proposed    300°  magenta      a candidate / potentiality; not yet pressured
-   (cyan, violet and magenta are the foundation's emphasis colors, by reference)
+   Categories off that sequence (NOT a health judgment):
+     state-structural  violet       structural or schema assurance established;
+                                    operational assurance not established at
+                                    this scope
+     state-held        cyan         a named open question
+     state-proposed    magenta      a candidate / potentiality; not yet pressured
+   (violet, cyan and magenta are the foundation's emphasis colors, by reference)
 
    Neutral — the lavender identity field (the default; no neon):
      state-neutral     = var(--fg-1)       no asserted state
 
-   ONE state role per node. Color encodes state ONLY — evidence depth, risk,
-   normative force, and structural-axis membership belong in panels/metadata on
+   ONE state role per node at one declared scope. Color encodes state ONLY —
+   evidence depth, risk, normative force, provenance (owned elsewhere) and
+   structural-axis membership belong in panels, metadata or neutral labels on
    the consuming surface, never in hue. (Consumer-side rule, noted for context.)
+
+   ---------------------------------------------------------------------------
+   THE SELECTION RULE
+   ---------------------------------------------------------------------------
+   For one element at one declared scope or version, show one primary state.
+   Where operation is established only at bounded depth, the state is partial,
+   and any structural or schema assurance is recorded as its basis. Structural
+   applies where structural or schema assurance is established and operational
+   assurance is not, for that scope. Earned still requires full-depth
+   operational grounding. Different scopes may carry separate labeled
+   records. The rule replaces no consumer's own evidence: it does not
+   reassign an existing element's state on its own.
 
    ---------------------------------------------------------------------------
    A STATE IN WORDS
@@ -92,8 +122,8 @@
    the role's word, "State // Held". Its edge takes the role's value. A labeled
    range whose first child is that label takes the same value on its scope
    rail, and that color's rail paint where the surface treatments give one:
-   earned green, structural yellow and deflated red. Partial, held, external
-   and proposed keep the plain stroke. The label is a word that is read: inert,
+   earned green, partial yellow and deflated red. Structural, held and
+   proposed keep the plain stroke. The label is a word that is read: inert,
    unfilled, never a status chip, a button or a link.
 
    Neutral asserts no state and takes no keyed label. Inside Review Semantics'
@@ -109,19 +139,17 @@
 
 /* ---------- One value per role, in both themes ----------
    Every chromatic role takes its physical value by reference from the foundation
-   (colors_and_type.css), where each is defined once: green, yellow, orange and red
-   from its reserved state values (S 95% / L 60% on the wheel, orange at
-   S 100% / L 50%, which reads as orange rather than peach at full fill), cyan,
-   violet and magenta from its emphasis accents. No theme block redefines them.
+   (colors_and_type.css), where each is defined once: green, yellow and red from
+   its reserved state values (S 95% / L 60% on the wheel), violet, cyan and
+   magenta from its emphasis accents. No theme block redefines them.
    --state-neutral alone follows the theme, through --fg-1. */
 :root {
   --state-earned:     var(--ask-state-value-green);
-  --state-structural: var(--ask-state-value-yellow);
-  --state-partial:    var(--ask-state-value-orange);
-  --state-proposed:   var(--ask-emphasis-magenta);
+  --state-partial:    var(--ask-state-value-yellow);
   --state-deflated:   var(--ask-state-value-red);
+  --state-structural: var(--ask-emphasis-violet);
   --state-held:       var(--ask-emphasis-cyan);
-  --state-external:   var(--ask-emphasis-violet);
+  --state-proposed:   var(--ask-emphasis-magenta);
   /* no asserted state — renders as the theme's default foreground (lavender
      field), never a neon. Auto-flips per theme via --fg-1. */
   --state-neutral:    var(--fg-1);
@@ -132,12 +160,11 @@
      neutral shape (.surface-fill--neutral), not --state-neutral: that is a
      foreground, and a light neutral node in it would be the darkest shape. */
   --state-earned-ink:     var(--surface-fill-ink-on-green);
-  --state-structural-ink: var(--surface-fill-ink-on-yellow);
-  --state-partial-ink:    var(--surface-fill-ink-on-orange);
-  --state-proposed-ink:   var(--surface-fill-ink-on-magenta);
+  --state-partial-ink:    var(--surface-fill-ink-on-yellow);
   --state-deflated-ink:   var(--surface-fill-ink-on-red);
+  --state-structural-ink: var(--surface-fill-ink-on-violet);
   --state-held-ink:       var(--surface-fill-ink-on-cyan);
-  --state-external-ink:   var(--surface-fill-ink-on-violet);
+  --state-proposed-ink:   var(--surface-fill-ink-on-magenta);
   --state-neutral-ink:    var(--surface-fill-ink-on-neutral);
 }
 
@@ -147,26 +174,24 @@
    its color's rail paint for green, yellow and red. Neutral takes no keyed label
    (A STATE IN WORDS, above). */
 .state-label[data-state="earned"]     { --surface-bordered-label-color: var(--state-earned); }
-.state-label[data-state="structural"] { --surface-bordered-label-color: var(--state-structural); }
 .state-label[data-state="partial"]    { --surface-bordered-label-color: var(--state-partial); }
 .state-label[data-state="deflated"]   { --surface-bordered-label-color: var(--state-deflated); }
+.state-label[data-state="structural"] { --surface-bordered-label-color: var(--state-structural); }
 .state-label[data-state="held"]       { --surface-bordered-label-color: var(--state-held); }
-.state-label[data-state="external"]   { --surface-bordered-label-color: var(--state-external); }
 .state-label[data-state="proposed"]   { --surface-bordered-label-color: var(--state-proposed); }
 
 .surface-labeled-range:has(> .state-label[data-state="earned"]:first-child) {
   --surface-labeled-range-color: var(--state-earned);
   --surface-labeled-range-paint: var(--surface-rail-paint-green);
 }
-.surface-labeled-range:has(> .state-label[data-state="structural"]:first-child) {
-  --surface-labeled-range-color: var(--state-structural);
+.surface-labeled-range:has(> .state-label[data-state="partial"]:first-child) {
+  --surface-labeled-range-color: var(--state-partial);
   --surface-labeled-range-paint: var(--surface-rail-paint-yellow);
 }
-.surface-labeled-range:has(> .state-label[data-state="partial"]:first-child)  { --surface-labeled-range-color: var(--state-partial); }
 .surface-labeled-range:has(> .state-label[data-state="deflated"]:first-child) {
   --surface-labeled-range-color: var(--state-deflated);
   --surface-labeled-range-paint: var(--surface-rail-paint-red);
 }
-.surface-labeled-range:has(> .state-label[data-state="held"]:first-child)     { --surface-labeled-range-color: var(--state-held); }
-.surface-labeled-range:has(> .state-label[data-state="external"]:first-child) { --surface-labeled-range-color: var(--state-external); }
-.surface-labeled-range:has(> .state-label[data-state="proposed"]:first-child) { --surface-labeled-range-color: var(--state-proposed); }
+.surface-labeled-range:has(> .state-label[data-state="structural"]:first-child) { --surface-labeled-range-color: var(--state-structural); }
+.surface-labeled-range:has(> .state-label[data-state="held"]:first-child)       { --surface-labeled-range-color: var(--state-held); }
+.surface-labeled-range:has(> .state-label[data-state="proposed"]:first-child)   { --surface-labeled-range-color: var(--state-proposed); }

@@ -1,4 +1,4 @@
-/* asset-pipeline-ASK_bounded-generativity.figure.js — AP instance (source-v2 ASK 2026-09-14 // render-v3 2026-11-17)
+/* asset-pipeline-ASK_bounded-generativity.figure.js — AP instance (source-v2 ASK 2026-09-14 // render-v4 2026-11-25)
    source-v2: conforms to Three Functions v0.2. The source-of-intent / normative-apex ROLE is the
    CONSTITUTIVE legislative source, so it now carries the role treatment in a role box on the main axis;
    the creative brief stays DELEGATED legislative apparatus. Both take the same role value — their rank is
@@ -15,6 +15,12 @@
    line value equals the executive value in both themes, so they are cut out of it as holes along the
    same geometry, as the variance candidates are; the rail's continuation to the selection ring is
    painted outside the chamber only. The selection ring stays a ring; its ratified candidate is solid.
+   render-v4: takes the fill inks ASK approved on 2026-11-25 (design-system-ASK #237), through the
+   unchanged --function-*-ink bindings: the legislative ink on magenta is now one light lavender in
+   both themes, so the legislative labels turn light in dark, and the executive ink on white is
+   lighter in light. The dark executive (lavender) and judicial (cyan) inks are unchanged. This
+   file's drawing does not change, and no role assignment, geometry or relationship changes, so
+   source-v2 holds.
    Carried from source-v1 (derivation and AP adaptations):
    Derived from the method-ASK bounded-generativity topology @ 2e5d8c4. Per ASK apex ruling (2026-07-13),
    AP copy AND geometry are adapted for the commercial image-production surface under ASK authorization — the
