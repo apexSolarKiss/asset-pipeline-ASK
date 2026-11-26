@@ -203,7 +203,7 @@
                      label measures the same wherever it appears and only its
                      meaning changes its color
      population      .surface-bordered-label, neutral by default: a status
-                     word such as DRAFT. Five governed meanings take the same
+                     word such as DRAFT. Six governed meanings take the same
                      box: the emphasis chip, by selector grouping in this file,
                      its border the emphasis accent; Review Semantics' review
                      mark, which carries the class, its border the review
@@ -212,10 +212,11 @@
                      .review-record-outcome, which carries the class, its
                      border the record's role value; and, outside a
                      multi-axis review annotation, Spectral State's
-                     .state-label and Evidence
-                     State's .evidence-label, which carry the class and name
-                     their axis and role in their words (State // Held,
-                     Evidence // Supported), each border the role's value
+                     .state-label, Evidence State's .evidence-label and
+                     Criterion Assessment's .assessment-label, which carry
+                     the class and name their axis and role in their words
+                     (State // Held, Evidence // Supported, Assessment //
+                     Caution), each border the role's value
      owner           this module: display, size, baseline, wrapping, padding,
                      corners, the 1px layout border, the per-theme edge
                      reinforcement, the clearance that keeps the reinforcement
@@ -232,10 +233,12 @@
                      interaction. Never a color chosen for contrast or
                      decoration: a neutral label stays --fg-3, and a color
                      arrives only with the emphasis chip, a review mark, a
-                     decision record's outcome label or a keyed state or
-                     evidence label whose words name its axis and role.
-                     Spectral State's neutral and Evidence State's not yet
-                     testable take no keyed label. Evidence dots,
+                     decision record's outcome label or a keyed state,
+                     evidence or assessment label whose words name its axis
+                     and role.
+                     Spectral State's neutral, Evidence State's not yet
+                     testable and Criterion Assessment's unassessed take no
+                     keyed label. Evidence dots,
                      state squares and the not-yet-testable rail are not
                      bordered labels, and the status badge (surface-shell) is
                      an unbordered note
@@ -258,13 +261,17 @@
                      child is the label itself, a
                      neutral bordered label such as DRAFT, over the blocks it
                      marks; a neutral range claims no judgment, and content
-                     inside it keeps its own marks. Three governed meanings
-                     set its color: Review Semantics' annotation range, whose
+                     inside it keeps its own marks. Governed meanings set its
+                     color: Review Semantics' annotation range, whose
                      first child is the row naming its one review judgment,
-                     and whose rail takes that judgment's value; and Spectral
+                     and whose rail takes that judgment's value; Spectral
                      State's and Evidence State's keyed range, whose first
                      child is a keyed state or evidence label, and whose rail
-                     takes that label's role value
+                     takes that label's role value; and Criterion
+                     Assessment's bounded assessed range, whose first child
+                     is its assessment record, headed by a keyed assessment
+                     label and naming the criterion, direction, scope and
+                     basis, and whose rail takes that assessment's value
      owner           this module: the rail's stroke, its lane outside the
                      content edge, its reach past the range's first child, the
                      label or its row, and its last block (whose outer margins
@@ -299,9 +306,9 @@
                      dot or arrow. Never the cue for words inside a block:
                      that is the scope underline. Colors other than neutral,
                      the governed review value and a keyed label's role value
-                     are not admitted: emphasis keeps its own rail, an
-                     assessment its own, and not yet testable's lavender-gray
-                     is never a scope rail
+                     are not admitted: emphasis keeps its own rail, a
+                     comparison table's assessment its cell-local rail, and
+                     not yet testable's lavender-gray is never a scope rail
      example         two paragraphs beside a magenta scope rail under
                      PROPOSED, then one beside a green rail under ACCEPTED; a
                      quotation and the sentence that reads it, beside one
@@ -324,16 +331,18 @@
                      each color both of them draw, keyed by the color and not
                      by any meaning that draws it: --surface-rail-paint-green,
                      --surface-rail-paint-yellow and --surface-rail-paint-red.
-                     The meaning-named --surface-rail-paint-earned,
-                     -structural and -deflated are aliases of green, yellow
-                     and red: each reads its color's paint and carries no
-                     value of its own
+                     The meaning-named --surface-rail-paint-earned and
+                     -deflated are aliases of green and red: each reads its
+                     color's paint and carries no value of its own. The
+                     -structural alias, which read yellow, is retired with
+                     structural's move to violet (2026-11-25)
      owner           this module: each paint and its dose. The semantic
                      systems own each color. The composing meaning
                      binds a role to its color and to that color's paint:
                      Review Semantics for an annotation range, Spectral State
                      and Evidence State for a keyed range, Criterion
-                     Assessment for an assessment. Each rail's composition
+                     Assessment for an assessment's table rail and its
+                     bounded assessed range. Each rail's composition
                      keeps its place, length, gap and containment
      reuses          the rail's own color, through currentColor
      variation       none today: every color takes none, the plain 2px stroke,
@@ -347,7 +356,7 @@
                      color: a meaning paints only colors it is already
                      admitted. A rail in a color with no paint here, such as
                      a passage rail's emphasis accent, a range's magenta,
-                     cyan, violet, orange or brown, or a neutral, keeps the
+                     cyan, violet or orange, or a neutral, keeps the
                      plain stroke; a paint for one of those colors would bind
                      every rail drawn in it. A meaning binds the color's
                      paint, never an alias: an alias is read-only, and
@@ -355,7 +364,7 @@
      example         a declined range's scope rail and an adverse
                      assessment's rail: one red, one paint, in two places;
                      caution's yellow the same plain stroke beside a summary, a
-                     value field and the key, and beside a structural state
+                     value field and the key, and beside a partial state
                      range
      counterexample  a meaning setting its own dose or theme branch for a
                      color this module paints; the bordered label's edge
@@ -388,19 +397,26 @@
                      (--function-*-ink). The composing surface or engine owns
                      the shape: its geometry, stroke width, cutouts, layout
                      and emphasis
-     reuses          --ask-fg-light (#6A637F), --ask-lavender-ask (#D4C6E1)
-                     and, on magenta in dark only, --fg-high-contrast
-                     (#201D26, README registered use 4) as inks;
-                     --ask-surface for the neutral fill
-     variation       two declared theme exceptions and nothing else: magenta's
-                     ink is the lavender in light and the high-contrast ink in
-                     dark; the neutral shape is --ask-surface with a white edge
-                     in light and the lavender in dark. Every other ink is the
-                     same in both themes, as the colors are. The root theme
-                     decides, as it does for the colors; a .theme-dark subtree
-                     is not a field this module paints
-     exclusions      a marker (MARKER, below: an evidence dot, a state
-                     square, a key's swatch), chip, rail, bordered label,
+     reuses          the two ink families, --ask-fg-light (#6A637F) and
+                     --ask-lavender-ask (#D4C6E1), each at the lightness ASK
+                     selected for its fill (2026-11-25): the family's own
+                     value on cyan, brown, lavender and the neutral shape,
+                     and a registered lighter or darker step of the same hue
+                     and saturation on every other fill; --ask-surface for
+                     the neutral fill
+     variation       one declared theme exception and nothing else: the
+                     neutral shape is --ask-surface with a white edge in
+                     light and the lavender in dark. Every ink is the same in
+                     both themes, as the colors are, magenta's included. The
+                     root theme decides, as it does for the colors; a
+                     .theme-dark subtree is not a field this module paints
+     exclusions      the fill-ink family is an ink for text set on an opaque
+                     filled shape and nothing else: never reading text, an
+                     outlined label or emphasis chip, a translucent wash, a
+                     marker, a rail or a perimeter panel's words, which keep
+                     the theme's text roles. A marker (MARKER, below: an
+                     evidence dot, a state square, a key's swatch), chip,
+                     rail, bordered label,
                      range, underline or sequence node is not a filled shape:
                      it takes no fill paint or ink and keeps its own paint,
                      solid or not. A decision record shown on its own as a
@@ -417,8 +433,8 @@
                      step in its fill. Lavender-gray has no ink and takes no
                      fill paint: its one role, Evidence State's not yet
                      testable, is drawn hollow, dashed and labeled
-     example         a held node, an open decision node and a judicial
-                     part: one cyan, one ink, three meanings
+     example         a held node, an open-question decision node and a
+                     judicial part: one cyan, one ink, three meanings
      counterexample  a meaning restating an ink for its own role; a semantic
                      fill at 30% beside one at 100%; text on a fill in the
                      theme foreground; a neutral node drawn in --fg-1, the
@@ -501,8 +517,8 @@
    THE BORDERED LABEL'S EDGE. An apparent 2px edge in light and the plain
    1px border in dark: the fixed 1px border plus a same-color, zero-blur
    reinforcement of 1px in light and 0px in dark, the same layer drawing
-   nothing. One recipe for the whole family, review marks, keyed state and
-   evidence labels, neutral labels and emphasis chips alike, calibrated
+   nothing. One recipe for the whole family, review marks, keyed state,
+   evidence and assessment labels, neutral labels and emphasis chips alike, calibrated
    by field: a 1px line in a bright color reads strongly on the dark ink and
    quietly on the light lavender, so the light field takes the stronger edge.
    The colors are the same in both themes; only the edge's
@@ -572,8 +588,8 @@
    color and draws both its 2px stroke and the paint in that color, so a
    paint can never drift from its rail's color. Each paint is named by the
    color it is drawn in, as each ink is named by the fill it is set on (THE
-   FILL'S PAINT); the names earned, structural and deflated are only aliases
-   of green, yellow and red. Every paint is none: since
+   FILL'S PAINT); the names earned and deflated are only aliases of green
+   and red, and structural's alias is retired. Every paint is none: since
    Spectral State v1.2 a color takes one value in both themes, and in it the
    plain 2px stroke reads on the light lavender and the dark ink alike,
    caution's yellow included. Until then caution's rail took
@@ -592,14 +608,19 @@
    THE FILL'S PAINT. A filled shape takes its color at 100%, its boundary
    in the same color unless the composing meaning claims the outline for
    another meaning (Three Functions gives function the fill and state the
-   outline), and any text on it in its color's ink. The inks are three
-   existing colors: the theme foreground's light value, #6A637F, on yellow,
-   green, orange, cyan, white and lavender, so that the bright fills read as
-   one family and no member of the set outweighs the others; the lavender on
-   red, violet and brown. The set is consistent in ink, not in contrast:
-   #6A637F measures 5.07 on yellow and 4.02 on green, 2.65 on cyan and 2.25
-   on orange. Magenta is the one color whose ink follows the theme:
-   the lavender in light, the high-contrast ink in dark. The neutral shape is
+   outline), and any text on it in its color's ink. The inks are two
+   families, each held to its own hue and saturation: the theme
+   foreground's light value, #6A637F, on yellow, green, orange, cyan, white
+   and lavender, and the lavender, #D4C6E1, on red, violet, brown and
+   magenta. ASK selected each ink's lightness on its fill by rendered
+   comparison, in both themes (2026-11-25): a lighter step of #6A637F on
+   yellow, green and white, a darker one on orange, and a lighter step of the
+   lavender on red, violet and magenta; cyan, brown and lavender keep their
+   family's own value. The set was chosen to read as one balanced family, not
+   to a contrast target, and its measured ratios differ from fill to fill; a
+   new fill joins only through the same rendered comparison. Magenta's ink is
+   the same in both themes; the dark-only high-contrast ink it took until
+   then is retired. The neutral shape is
    the static diagrams' own node in light, --ask-surface inside a white edge,
    and the lavender in dark, its ink #6A637F in both; it is a paint of its
    own, not --fg-1, which is a foreground and would leave the light neutral
@@ -682,6 +703,16 @@
      50%, 2px              the marker's corners: the dot's (a circle) and the
                            square's
      2px                   the hollow marker's dashed edge
+     hsl(255.0000 12.3894% 51.0988%), hsl(255.0000 12.3894% 54.6289%),
+     hsl(255.0000 12.3894% 25.4694%), hsl(255.0000 12.3894% 53.9877%)
+                           the fill inks on yellow, green, orange and white:
+                           #6A637F's hue and saturation at the lightness ASK
+                           selected for each fill (THE FILL'S PAINT)
+     hsl(271.1111 31.0345% 88.0838%), hsl(271.1111 31.0345% 84.9231%),
+     hsl(271.1111 31.0345% 91.9618%)
+                           the fill inks on red, violet and magenta: the
+                           lavender's hue and saturation at the lightness ASK
+                           selected for each fill
 
    LIMITS
      - Hover and focus colors on the disclosure trigger depend on the
@@ -697,8 +728,8 @@
        14px of space left of the content edge, or a clipping box at the
        content edge, cuts it. The rail is drawn on the left: a right-to-left
        document is not yet served.
-     - The rail's color for an annotation range or a keyed range comes
-       through :has(). A browser without :has() draws the neutral rail beside
+     - The rail's color for an annotation range, a keyed range or a bounded
+       assessed range comes through :has(). A browser without :has() draws the neutral rail beside
        the colored label. The buffer at a list's edge comes through :has()
        too: without it, an item host's rail can meet a neighboring range's. It counts
        siblings, so a wrapper laid out beside its neighbor, a grid or flex
@@ -977,7 +1008,6 @@
   --surface-rail-paint-yellow:     none;
   --surface-rail-paint-red:        none;
   --surface-rail-paint-earned:     var(--surface-rail-paint-green);
-  --surface-rail-paint-structural: var(--surface-rail-paint-yellow);
   --surface-rail-paint-deflated:   var(--surface-rail-paint-red);
 }
 
@@ -985,31 +1015,36 @@
 
 /* One ink per governed fill color, keyed by the color and not by any meaning
    that draws it, and the neutral filled shape (FILL PAINT and THE FILL'S
-   PAINT, above). */
+   PAINT, above). Each ink is one of the two ink families, the foreground's
+   light value #6A637F, hsl(255 12.3894% 44.3137%), or the lavender #D4C6E1,
+   hsl(271.1111 31.0345% 82.9412%), at the lightness ASK selected for its fill
+   by rendered comparison (2026-11-25); its hue and saturation stay the
+   family's. Where the selected ink is the family's own value, the token is
+   named. These are the fill-ink family's registered literals (REGISTERED
+   LITERALS, above). */
 :root {
-  --surface-fill-ink-on-yellow:   var(--ask-fg-light);
-  --surface-fill-ink-on-green:    var(--ask-fg-light);
-  --surface-fill-ink-on-orange:   var(--ask-fg-light);
+  --surface-fill-ink-on-yellow:   hsl(255.0000 12.3894% 51.0988%);
+  --surface-fill-ink-on-green:    hsl(255.0000 12.3894% 54.6289%);
+  --surface-fill-ink-on-orange:   hsl(255.0000 12.3894% 25.4694%);
   --surface-fill-ink-on-cyan:     var(--ask-fg-light);
-  --surface-fill-ink-on-red:      var(--ask-lavender-ask);
-  --surface-fill-ink-on-violet:   var(--ask-lavender-ask);
+  --surface-fill-ink-on-red:      hsl(271.1111 31.0345% 88.0838%);
+  --surface-fill-ink-on-violet:   hsl(271.1111 31.0345% 84.9231%);
   --surface-fill-ink-on-brown:    var(--ask-lavender-ask);
-  --surface-fill-ink-on-magenta:  var(--ask-lavender-ask);
-  --surface-fill-ink-on-white:    var(--ask-fg-light);
+  --surface-fill-ink-on-magenta:  hsl(271.1111 31.0345% 91.9618%);
+  --surface-fill-ink-on-white:    hsl(255.0000 12.3894% 53.9877%);
   --surface-fill-ink-on-lavender: var(--ask-fg-light);
   --surface-fill-neutral:         var(--ask-surface);
   --surface-fill-neutral-edge:    rgba(255, 255, 255, 0.90);
   --surface-fill-ink-on-neutral:  var(--ask-fg-light);
 }
-/* The two declared theme exceptions: magenta's ink, and the neutral shape. */
+/* The one declared theme exception: the neutral shape. Every ink is the same
+   in both themes, magenta's included. */
 :root[data-theme="dark"] {
-  --surface-fill-ink-on-magenta: var(--fg-high-contrast);
   --surface-fill-neutral:        var(--ask-lavender-ask);
   --surface-fill-neutral-edge:   var(--ask-lavender-ask);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not([data-theme="dark"]) {
-    --surface-fill-ink-on-magenta: var(--fg-high-contrast);
     --surface-fill-neutral:        var(--ask-lavender-ask);
     --surface-fill-neutral-edge:   var(--ask-lavender-ask);
   }

@@ -17,25 +17,24 @@
 
    Node: { id, group, label, state, evidence, qualifier?, pointer, modes? }
      group: 'root' | 'mode' | 'spine' | 'question' | 'external'
-     state: one of the eight Spectral State roles
+     state: one of the seven Spectral State roles
 */
 
 window.IA_STATE_SPINE = {
   meta: {
     title: 'Layered IA — state',
     subtitle: 'Axis-independent state surface · what is earned / held / deflated, and where',
-    stamp: { source: 'source-v6', render: 'render-v8', date: '2026-11-17' },
+    stamp: { source: 'source-v7', render: 'render-v9', date: '2026-11-25' },
   },
 
   // Legend / state vocabulary (ASK Spectral State).
   states: [
     { role: 'earned',     label: 'earned',     meaning: 'operationally grounded at full depth' },
-    { role: 'structural', label: 'structural', meaning: 'structurally / schema proven; not full-flow pressured' },
+    { role: 'structural', label: 'structural', meaning: 'structural or schema assurance established; not yet operated at this scope' },
     { role: 'partial',    label: 'partial',    meaning: 'operational at bounded depth' },
     { role: 'proposed',   label: 'proposed',   meaning: 'articulated as a candidate; not yet pressured' },
     { role: 'deflated',   label: 'deflated',   meaning: 'pressure showed it unnecessary / dead' },
     { role: 'held',       label: 'held',       meaning: 'a named open question, not yet resolved' },
-    { role: 'external',   label: 'external',   meaning: 'owned elsewhere (inherited / upstream)' },
     { role: 'neutral',    label: 'neutral',    meaning: 'no asserted state (the lavender field)' },
   ],
 
@@ -123,9 +122,9 @@ window.IA_STATE_SPINE = {
       qualifier: 'first operational consumer calibrated at run-1 (one package, one target, two runners); second target since exercised by a constructive prototype (milestone 16); calibrated consumer repetition still not tested; consuming grammar still held',
       pointer: 'docs/package-instantiation-consumer-evidence-boundary-v1.md', modes: ['m-marketing'] },
 
-    // ---- external ----
-    { id: 'x-design-system', group: 'external', label: 'design-system-ASK foundations', state: 'external',
+    // ---- external (owned elsewhere / inherited): provenance, not a state ----
+    { id: 'x-design-system', group: 'external', label: 'design-system-ASK foundations', state: 'neutral',
       evidence: 'diagram-tree · diagram-spine-static · ASK Spectral State — inherited from design-system-ASK by reference; AP is the consumer.',
-      pointer: 'docs/diagrams/_dsa-tokens/MANIFEST.md' },
+      qualifier: 'Source // External', pointer: 'docs/diagrams/_dsa-tokens/MANIFEST.md' },
   ],
 };
