@@ -32,7 +32,7 @@ Three owners meet here, and the renderer takes the side of none of them:
   - exclusions: patterns that must not appear in the visible text. `exclude_footer` leaves the colophon out of an exclusion's scope, and `allow_source_versions` allows the version tokens the source's own header names.
 - **Figures:** optional. Identifiers in backticks, matching a configured pattern, resolve to numbered figures. A figure manifest lists each identifier's payload file, SHA-256, pixel size and media type. The renderer embeds declared payloads and checks their hashes. It does not derive, crop or retouch images.
 - **The design system:** a design-system-ASK checkout and one commit. Every owner file is read from that commit, verbatim. A deployed documentation mirror is not a build input.
-  - The commit must carry what the renderer's markup needs: the bordered label on review marks, the annotation range, the whole list item that is its own range and the scope underline under a passage mark's words, which design-system-ASK first carries together at #185 (`705a195`). `render` refuses a commit whose `surface-treatments.css` or `review-semantics.css` lacks them. That is a compatibility preflight on the owner's source, not proof that the sealed file conforms; the owner's checker and the rendered proof are.
+  - The commit must carry what the renderer's markup needs: the bordered label on review marks, the annotation range, the whole list item that is its own range and the scope underline under a passage mark's words, which design-system-ASK first carries together at #185 (`705a195`). `render` refuses a commit whose `surface-treatments.css` or `review-semantics.css` lacks them. A copy that draws the evidence role Contradicted, on a row or in a key entry it shows, also needs the rule in `review-semantics.css` that draws it, which design-system-ASK first carries at #237 (`89397df`), and `render` refuses that copy at a commit without it; a copy that does not draw Contradicted is unaffected. That is a compatibility preflight on the owner's source, not proof that the sealed file conforms; the owner's checker and the rendered proof are.
   - A file built from an earlier commit is verified with a renderer revision that reproduces it byte for byte at its recorded commit, not reinterpreted by this one.
 
 ## Annotation rows
@@ -79,6 +79,7 @@ It stops, naming the line, key, row or figure concerned, when:
 - the source uses Markdown outside the subset above;
 - the record section is missing or repeated, or holds an unknown table, a malformed or indented row, a key outside the key pattern, or a prefix outside the declared artifacts;
 - a key-table entry is not `basis`, `check` or a role the renderer draws;
+- a row or a key-table entry names the state `external`, which Spectral State v2.0 retires (design-system-ASK #237, `89397df`) because provenance is not a state: an item owned elsewhere says so in its basis or in a statement. No other role stands in for it;
 - a key is unknown or sits inside a word, or a passage is missing, occurs more than once, sits in a table heading, or cuts through bold, code or a figure reference;
 - the quoted words of a row or note that no passage mark names occur more than once in the text it follows;
 - `whole` covers only part of a unit, or several units without their whole block;
@@ -93,7 +94,7 @@ It stops, naming the line, key, row or figure concerned, when:
 - a review judgment covers one block inside a group of blocks whose own row names no review judgment, since no range can open there;
 - two review judgments cover one whole list item or one whole table cell, since record order does not choose which leads;
 - a table cell holds several separately judged statements, which the owner gives a range each and this renderer does not draw inside a cell. Each judged scope in the cell counts once, by its review item, however the record's keys divide the cell's text: a judgment on the whole cell, one on words of it and one in a row quoting its words each count, while a basis, check, evidence, state or statement beside a judgment does not;
-- the design-system commit lacks the bordered label, the annotation range, the whole list item as its own range or the scope underline;
+- the design-system commit lacks the bordered label, the annotation range, the whole list item as its own range or the scope underline, or, for a copy that draws Contradicted, the rule that draws it;
 - a figure payload differs from its manifest, a figure range is not ascending, does not cover consecutively numbered figures or ends with an identifier not written like its start, or a figure is referenced outside body text;
 - the render time given is not a timestamp.
 
@@ -113,7 +114,7 @@ Supported:
 - statements;
 - figures.
 
-Not emitted: collapsible sections, framing or synthesis panels, quotations, annotation lists, the Not yet testable evidence role, a neutral scope underline or labeled range, and annotation ranges over one of several statements in a table cell (so the owner's first-column range lane, `.doc-table-scroll--range-lane`, is not used). Annotations on those compositions are therefore unexercised by this renderer. Of the evidence and state roles, the tests exercise Supported and Earned; the others are checked for their words only. Extending to them means verifying them against the owner checker at the pinned commit, including any owner correction that concerns them; it does not mean refusing them as a rule.
+Not emitted: collapsible sections, framing or synthesis panels, quotations, annotation lists, the Not yet testable evidence role, a neutral scope underline or labeled range, and annotation ranges over one of several statements in a table cell (so the owner's first-column range lane, `.doc-table-scroll--range-lane`, is not used). Annotations on those compositions are therefore unexercised by this renderer. Of the evidence and state roles, the tests exercise Supported, Contradicted and Earned; the others are checked for their words only. Extending to them means verifying them against the owner checker at the pinned commit, including any owner correction that concerns them; it does not mean refusing them as a rule.
 
 ## Verifying a rendered artifact
 
