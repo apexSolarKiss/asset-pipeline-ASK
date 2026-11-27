@@ -5,9 +5,9 @@ This repo's `AGENTS.md` is a **resolved carrier**: the shared execution protocol
 <!-- BEGIN carrier-metadata -->
 CARRIER_TYPE: resolved-local
 SHARED_BLOCK_SOURCE: apexSolarKiss/control-surface/protocol/AGENTS.shared.md
-SHARED_BLOCK_PIN: 645d01ee7a4973435185cd0cd587201a6406836c
+SHARED_BLOCK_PIN: a30ab59d51b53e4e3f77b9de63e316680243a331
 PROFILES: [advisor-project-surface]
-GRANT_FRAGMENT: standing-upstream-conformance-grant@645d01ee7a4973435185cd0cd587201a6406836c
+GRANT_FRAGMENT: standing-upstream-conformance-grant@a30ab59d51b53e4e3f77b9de63e316680243a331
 OPERATING_SURFACE: separately-operated
 <!-- END carrier-metadata -->
 
@@ -135,6 +135,8 @@ This gate governs **private persistent agent surfaces**: auto-memory stores and 
 
 A private persistent instruction imported from any other path is governed by this gate as well. It must not be used unless its exact path is declared, a matching `Edit(...)` ask rule is installed, and the active-session receipt classifies it as covered. A private import outside the standard guarded paths is a stop condition.
 
+A record registered with a scheduling or triggering mechanism and kept in that mechanism's own store, which delegates only a specified task, bounded in purpose and permitted actions, to a later execution, is governed by §Delegated Later Executions, including when the mechanism stores or delivers it as an instruction file. Such a task record is not, by that role alone, a governed private persistent surface under this gate. Future work written anywhere else — auto memory, subagent memory, a user-scope or gitignored instruction file, or a private import — is not a task record and stays governed here, even when its text describes later work. Any private memory or standing cross-session instruction a task record creates, changes, deletes, or imports remains subject to this gate; storing one inside a task record does not exempt that payload.
+
 Any governed private persistent creation or edit requires all of:
 
 1. the learning has been classified under §Learning Disposition and its visible owner has been named;
@@ -173,6 +175,17 @@ Before memory-bearing work, confirm that the required ask rules are active and t
 Do not perform private persistent-context maintenance in a mode that disables the runtime's safety checks. This is defense in depth: explicit ask rules currently still apply in that mode, but the gate must not depend on one product carve-out while other checks are disabled.
 
 Where the runtime enforces this gate with a permission prompt, treat the prompt as the technical gate only. The visible disposition above is the semantic gate, and a runtime status message is not evidence that a write did or did not persist — verify the filesystem.
+
+---
+
+## Delegated Later Executions
+<!-- rule-id: delegated-later-executions -->
+
+Create a task-specific schedule or trigger record only for work authorized by ASK. Its scope is the specified work; it does not set standing behavior for other work. Before registering or materially changing such a task, make its exact payload, destination, timing or trigger, recurrence or stopping condition, and material permissions and connectors visible to ASK. An existing ASK instruction authorizes the registration without a further ask where it covers the task, its destination, timing, recurrence or stopping condition, permissions and connectors, and the applicable gates. Ask only for an uncovered decision; do not originate additional future work as incidental retention or cleanup.
+
+Preserve the exact ASK authorization, or its durable locator. Before activating the task or a material change to it, establish and configure the route that delivers that authorization and the governing instructions to the later execution, and verify from the task's saved configuration that the route is in place. Where the launch path is not established to deliver the governing instructions, the task's payload itself carries the authorization, a direction to read the governing owners before acting, and the stop condition below. Where no such route can be established, do not activate the task or the change. The stored record, trigger event, and runtime permissions confer no additional authority and are not a fresh ASK utterance. Before acting on the task, the later execution must establish its scope, confirm that it received the applicable governing instructions, and read current owners as those instructions require. Every other rule of this protocol still applies, including action-specific approvals, review windows, walls, single-writer discipline, and §Private-Memory Write Gate. If required authority or governing-context delivery cannot be established, stop the dependent action.
+
+A timer that returns only to the active session remains current task state. A checked-in workflow definition remains under ordinary repository review, which covers its payload, trigger, and permissions. Any private memory or standing cross-session instruction embedded in, imported by, or created, changed, or deleted through a delegated task retains its existing governance; packaging it as a task does not exempt it.
 
 ---
 
