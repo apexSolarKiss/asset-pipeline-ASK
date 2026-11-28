@@ -5,9 +5,9 @@ This repo's `AGENTS.md` is a **resolved carrier**: the shared execution protocol
 <!-- BEGIN carrier-metadata -->
 CARRIER_TYPE: resolved-local
 SHARED_BLOCK_SOURCE: apexSolarKiss/control-surface/protocol/AGENTS.shared.md
-SHARED_BLOCK_PIN: a30ab59d51b53e4e3f77b9de63e316680243a331
+SHARED_BLOCK_PIN: 52334e29a72137696f7e98969e9bd679f11f597b
 PROFILES: [advisor-project-surface]
-GRANT_FRAGMENT: standing-upstream-conformance-grant@a30ab59d51b53e4e3f77b9de63e316680243a331
+GRANT_FRAGMENT: standing-upstream-conformance-grant@52334e29a72137696f7e98969e9bd679f11f597b
 OPERATING_SURFACE: separately-operated
 <!-- END carrier-metadata -->
 
@@ -664,6 +664,8 @@ If the project meets the preconditions for adversarial collaboration (per [*Adve
 ASK forwarding an advisor approval to the executor is the relay. Forwarding may be done by pasting the advisor's approval, summary, or equivalent review result. No additional approval phrase is required after the forwarding act.
 
 Forwarding advisor notes that contain required fixes, blocking concerns, or open questions is not approval relay; it is fix-direction or question-forwarding.
+
+**Configured advisor and quiet-period assessments.** ASK determines whether an assessment of no live architectural uncertainty justifies a different review path for the named unit. The executor or advisor may recommend that assessment from current exact evidence, including a dated, coverage-bounded critique or rake. The assessment does not itself change the review path: configured review windows remain in force unless ASK explicitly elects direct execution for the named unit under §Advisor-Readable Review Objects, or authorizes an applicable declared carry-through exception. A completed critique, advisor inactivity, silence, or the executor's assessment supplies no such authorization. An existing ASK authorization that explicitly covers the named unit need not be requested again; any declared local exception retains its own scope and prerequisites. Material changes to the approved scope or the basis of that decision require re-evaluation before carry-through.
 
 If no advisor surface is configured, carry through to merged + cleanup once diff approval is given. The pattern is proportional to architectural uncertainty live at any moment.
 
